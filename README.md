@@ -126,7 +126,8 @@ Generic AI planners (like ChatGPT or Google Gemini prompts) suffer from severe h
 
 ### 2. Installation
 ```bash
-cd dari-karnataka
+git clone https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner.git
+cd dari-karnataka-travel-planner
 npm install --legacy-peer-deps
 ```
 

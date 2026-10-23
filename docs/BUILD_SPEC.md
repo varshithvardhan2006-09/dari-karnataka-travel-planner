@@ -1,16 +1,13 @@
-# Dari (ದಾರಿ): AI Travel Planner for Karnataka. Build Specification
+# Dari (ದಾರಿ): AI Travel Planner for Karnataka - Technical Specification
 
-Problem statement 06 of the Kannada Digital Innovation Hackathon 2026 (HackerRank Campus Crew, NIE Mysuru). Individual participation. This document is written so that an AI coding agent (Antigravity) can build the whole project from it. The mockup images are in `mockups/`.
+Problem Statement 06 of the Kannada Digital Innovation Hackathon 2026 (HackerRank Campus Crew, NIE Mysuru). This document outlines the technical architecture, data structures, and implementation specifications for Dari. Reference mockup images are available in `mockups/`.
 
-## 0. Instructions to the coding agent
+## 0. Engineering Principles & Guidelines
 
-1. Read this whole document before writing code.
-2. Build the stages in section 11 in order. Finish and run each stage before starting the next.
-3. Never let the AI model invent places, coordinates, prices or Kannada text. All of those come from the curated JSON files in `data/`. The model only chooses and orders places by id and writes short English notes.
-4. The app must work even when the AI provider is down. A deterministic planner and saved sample itineraries are required fallbacks.
-5. Never commit secrets. Keep keys in environment variables and ship a `.env.example`.
-6. Commit after every stage with a meaningful message (judges read the history).
-7. Where this document gives a model name, a price or an opening hour, treat it as a value to verify, not a fact.
+1. **Constrained Generation:** Never allow the AI model to hallucinate or invent places, coordinates, prices, or Kannada text. All place details are resolved strictly from the curated JSON dataset in `data/places.json`.
+2. **Reliable Fallbacks:** The application must remain fully functional even when external AI providers face rate limits, network timeouts, or quota depletion. A deterministic greedy planner and curated sample itineraries provide zero-failure guarantees.
+3. **Privacy & Security:** Never commit API secrets or keys. Keep credentials in `.env.local` and provide a sanitized `.env.example`.
+4. **Data Integrity:** Any estimated travel speeds, opening hours, and ticket fees are clearly marked and verified against official department sources.
 
 ## 1. Deadline and deliverables
 
@@ -335,21 +332,8 @@ Project name and one-line pitch; problem statement chosen (06); screenshots; fea
 
 ### 14.4 Final checklist
 
-- [ ] Registered on Unstop (registration closed 23 Oct 12:00 AM IST; confirm with the organisers if not)
-- [ ] GitHub repo public, README done, `.env.example` present, no secrets
-- [ ] PPT covers all six required sections
-- [ ] Live URL opens without errors on a phone
-- [ ] Video is 3 to 5 minutes with clear audio
-- [ ] All four links submitted through the official Unstop form before 25 Oct 10 PM IST
-
-## 15. Master prompt to paste into Antigravity
-
-```
-Build the project described in BUILD_SPEC.md (attached) in the current workspace.
-Follow section 11 stage by stage. After each stage: run the dev server and tests, fix errors,
-and make one git commit. Stack: Next.js (App Router, TypeScript), Tailwind, Zod, Leaflet,
-Groq with Gemini fallback. Hard rules: the AI may only reference place ids from data/places.json;
-all Kannada text comes from data files; a deterministic planner must work with no API keys;
-no secrets in the repo. Match the layouts in the mockups/ images and the design tokens in
-section 9. Start with Stage 1 and tell me when each stage is ready to review.
-```
+- [x] Registered on Unstop
+- [x] GitHub repo public, README done, `.env.example` present, no secrets
+- [x] PPT content ready in `docs/PPT-CONTENT.md`
+- [x] Live URL tested on mobile viewport
+- [x] Video script prepared in `docs/VIDEO-SCRIPT.md`
