@@ -24,7 +24,7 @@ export function getKannadaVoice(): SpeechSynthesisVoice | null {
 /**
  * Speaks the provided text using the browser Web Speech API with kn-IN language.
  */
-export function speakKannadaText(text: string): boolean {
+export function speakKannadaText(text: string, onEnd?: () => void): boolean {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     return false;
   }
@@ -36,6 +36,11 @@ export function speakKannadaText(text: string): boolean {
     utterance.lang = "kn-IN";
     utterance.rate = 0.9; // Slightly slower for clear pronunciation
     utterance.pitch = 1.0;
+
+    if (onEnd) {
+      utterance.onend = () => onEnd();
+      utterance.onerror = () => onEnd();
+    }
 
     const knVoice = getKannadaVoice();
     if (knVoice) {
@@ -81,16 +86,25 @@ export function useKannadaSpeech() {
 
   const speak = useCallback((text: string) => {
     setIsSpeaking(true);
-    const ok = speakKannadaText(text);
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    const handleEnd = () => {
+      setIsSpeaking(false);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+    };
+
+    const ok = speakKannadaText(text, handleEnd);
     if (!ok) {
       setIsSpeaking(false);
       return;
     }
 
-    // Reset speaking flag after brief timeout
-    setTimeout(() => {
+    // Safety fallback timeout in case onend doesn't fire
+    timeoutId = setTimeout(() => {
       setIsSpeaking(false);
-    }, 2000);
+    }, 4000);
   }, []);
 
   return { hasVoice, isSpeaking, speak };

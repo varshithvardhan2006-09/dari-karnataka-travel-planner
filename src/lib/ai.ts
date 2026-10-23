@@ -1,4 +1,4 @@
-﻿import { PlanRequest, AIModelOutput, AIModelOutputSchema, Place, Plan } from "./schema";
+import { PlanRequest, AIModelOutput, AIModelOutputSchema, Place, Plan } from "./schema";
 import { getCandidates } from "./candidates";
 import { PACE_STOP_LIMITS, validateAIOutput, buildDeterministicPlan } from "./planner";
 import { enrichPlan } from "./enrich";
@@ -107,6 +107,19 @@ async function callGeminiAPI(
 }
 
 /**
+ * Safely extracts JSON from LLM text output, stripping markdown fences or stray commentary.
+ */
+function extractJsonPayload(text: string): string {
+  const stripped = text.replace(/```json\n?|```/g, "").trim();
+  const firstBrace = stripped.indexOf("{");
+  const lastBrace = stripped.lastIndexOf("}");
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    return stripped.slice(firstBrace, lastBrace + 1);
+  }
+  return stripped;
+}
+
+/**
  * Parses, cleans, and validates raw LLM JSON text against the Zod schema.
  */
 function parseAndValidateModelOutput(
@@ -114,8 +127,7 @@ function parseAndValidateModelOutput(
   request: PlanRequest
 ): { success: true; data: AIModelOutput } | { success: false; errors: string[] } {
   try {
-    // Strip markdown code fences if present
-    const cleaned = rawText.replace(/```json\n?|```/g, "").trim();
+    const cleaned = extractJsonPayload(rawText);
     const parsed = JSON.parse(cleaned);
 
     const schemaResult = AIModelOutputSchema.safeParse(parsed);

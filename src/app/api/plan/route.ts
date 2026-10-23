@@ -13,10 +13,21 @@ const allPlaces = placesData as Place[];
 const ipRequestTimestamps = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 12;
+const MAX_TRACKED_IPS = 5000;
 
 function checkRateLimit(ip: string): { allowed: boolean; retryAfterS: number } {
   const now = Date.now();
   const windowStart = now - RATE_LIMIT_WINDOW_MS;
+
+  // Prune map if it exceeds maximum size threshold to prevent memory growth
+  if (ipRequestTimestamps.size > MAX_TRACKED_IPS) {
+    for (const [key, times] of ipRequestTimestamps.entries()) {
+      const active = times.filter((t) => t > windowStart);
+      if (active.length === 0) {
+        ipRequestTimestamps.delete(key);
+      }
+    }
+  }
 
   const timestamps = (ipRequestTimestamps.get(ip) || []).filter((t) => t > windowStart);
 

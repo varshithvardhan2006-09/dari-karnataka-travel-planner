@@ -86,9 +86,17 @@ export function computeTravelLeg(
  * Adds minutes to an "HH:MM" string, returning a new "HH:MM" string.
  */
 export function addMinutesToTime(timeStr: string, minutesToAdd: number): string {
+  if (!timeStr || typeof timeStr !== "string" || !timeStr.includes(":")) {
+    return "09:00";
+  }
   const [hStr, mStr] = timeStr.split(":");
-  const totalMinutes = parseInt(hStr, 10) * 60 + parseInt(mStr, 10) + minutesToAdd;
-  const hours = Math.floor(totalMinutes / 60) % 24;
-  const minutes = totalMinutes % 60;
+  const parsedH = parseInt(hStr, 10);
+  const parsedM = parseInt(mStr, 10);
+  if (isNaN(parsedH) || isNaN(parsedM)) {
+    return "09:00";
+  }
+  const totalMinutes = parsedH * 60 + parsedM + minutesToAdd;
+  const hours = ((Math.floor(totalMinutes / 60) % 24) + 24) % 24;
+  const minutes = ((totalMinutes % 60) + 60) % 60;
   return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
 }

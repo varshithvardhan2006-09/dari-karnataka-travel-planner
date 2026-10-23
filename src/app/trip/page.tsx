@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense, useTransition } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -42,7 +42,7 @@ function TripViewContent() {
     matchCount?: number;
     retryAfterS?: number;
   } | null>(null);
-  const [, startTransition] = useTransition();
+  const [refreshKey, setRefreshKey] = useState<number>(0);
 
   // Extract query parameters
   const dParam = searchParams.get("d");
@@ -202,7 +202,7 @@ function TripViewContent() {
     return () => {
       isCancelled = true;
     };
-  }, [dParam, sampleParam, simulateParam, interestsParam, daysParam, startCityParam, budgetParam, paceParam, travellersParam, monthParam, parsedDays, lang]);
+  }, [dParam, sampleParam, simulateParam, interestsParam, daysParam, startCityParam, budgetParam, paceParam, travellersParam, monthParam, parsedDays, lang, refreshKey]);
 
   // Handle Share Link with lz-string
   const handleShareLink = () => {
@@ -210,11 +210,40 @@ function TripViewContent() {
     try {
       const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(plan));
       const shareUrl = `${window.location.origin}/trip?d=${compressed}`;
-      navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
+      if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+        navigator.clipboard
+          .writeText(shareUrl)
+          .then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 3000);
+          })
+          .catch((err) => {
+            console.warn("Clipboard API failed, attempting fallback:", err);
+            fallbackCopy(shareUrl);
+          });
+      } else {
+        fallbackCopy(shareUrl);
+      }
     } catch (err) {
       console.error("Failed to copy share link:", err);
+    }
+  };
+
+  const fallbackCopy = (text: string) => {
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch (fallbackErr) {
+      console.warn("Fallback copy failed:", fallbackErr);
     }
   };
 
@@ -223,9 +252,7 @@ function TripViewContent() {
     if (dParam) {
       router.push("/plan");
     } else {
-      startTransition(() => {
-        router.refresh();
-      });
+      setRefreshKey((prev) => prev + 1);
     }
   };
 
