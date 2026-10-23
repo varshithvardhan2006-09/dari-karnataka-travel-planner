@@ -5,7 +5,7 @@ import {
   Place,
   AIModelOutput,
 } from "./schema";
-import { getCandidates, calculateHaversineKm, START_CITY_COORDINATES } from "./candidates";
+import { getCandidates, calculateHaversineKm, getStartCityCoordinates } from "./candidates";
 import { enrichPlan } from "./enrich";
 import { estimateRoadDistanceKm, estimateTravelTimeMin, addMinutesToTime } from "./geo";
 
@@ -123,7 +123,7 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
   }
 
   const unusedPlaces = [...pool];
-  const startCoords = START_CITY_COORDINATES[request.start_city] || START_CITY_COORDINATES.Bengaluru;
+  const startCoords = getStartCityCoordinates(request.start_city);
 
   const rawDays: {
     day: number;

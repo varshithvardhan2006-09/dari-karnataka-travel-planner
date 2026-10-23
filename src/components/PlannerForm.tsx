@@ -19,7 +19,24 @@ const CATEGORY_KEYS: { id: Category; labelKey: string }[] = [
   { id: "culture", labelKey: "form.categories.culture" },
 ];
 
-const START_CITIES: StartCity[] = ["Bengaluru", "Mysuru", "Mangaluru", "Hubballi"];
+const POPULAR_START_CITIES: string[] = [
+  "Bengaluru",
+  "Mysuru",
+  "Mangaluru",
+  "Hubballi",
+  "Hampi",
+  "Madikeri",
+  "Chikkamagaluru",
+  "Udupi",
+  "Gokarna",
+  "Belagavi",
+  "Shivamogga",
+  "Hassan",
+  "Vijayapura",
+  "Kalaburagi",
+  "Badami",
+  "Bidar",
+];
 const BUDGET_TIERS: BudgetFit[] = ["budget", "mid", "premium"];
 const PACE_TIERS: Pace[] = ["relaxed", "balanced", "packed"];
 const TRAVELLERS_LIST: Travellers[] = ["solo", "couple", "family", "friends"];
@@ -33,6 +50,8 @@ export default function PlannerForm() {
   const [interests, setInterests] = useState<Category[]>(["heritage", "food"]);
   const [days, setDays] = useState<number>(4);
   const [startCity, setStartCity] = useState<StartCity>("Bengaluru");
+  const [customCity, setCustomCity] = useState<string>("");
+  const [isCustomCity, setIsCustomCity] = useState<boolean>(false);
   const [budget, setBudget] = useState<BudgetFit>("mid");
   const [pace, setPace] = useState<Pace>("relaxed");
   const [travellers, setTravellers] = useState<Travellers>("couple");
@@ -168,16 +187,43 @@ export default function PlannerForm() {
                 {t("form.start_city_label")}
               </label>
               <select
-                value={startCity}
-                onChange={(e) => setStartCity(e.target.value as StartCity)}
+                value={isCustomCity ? "Other" : startCity}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "Other") {
+                    setIsCustomCity(true);
+                    setStartCity(customCity || "Bengaluru");
+                  } else {
+                    setIsCustomCity(false);
+                    setStartCity(val);
+                  }
+                }}
                 className="w-full h-11 px-3.5 rounded-xl border border-[#DCE1DD] bg-white text-sm font-medium text-[#14202B] shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#8E1F2F]"
               >
-                {START_CITIES.map((city) => (
+                {POPULAR_START_CITIES.map((city) => (
                   <option key={city} value={city}>
-                    {t(`form.cities.${city}`)}
+                    {t(`form.cities.${city}`, city)}
                   </option>
                 ))}
+                <option value="Other">
+                  {t("form.cities.Other", "Other / Enter Location")}
+                </option>
               </select>
+
+              {isCustomCity && (
+                <input
+                  type="text"
+                  value={customCity}
+                  onChange={(e) => {
+                    const text = e.target.value;
+                    setCustomCity(text);
+                    setStartCity(text.trim() || "Bengaluru");
+                  }}
+                  placeholder={t("form.cities.custom_placeholder", "Enter any Karnataka city or town...")}
+                  className="mt-2.5 w-full h-11 px-3.5 rounded-xl border border-[#8E1F2F]/40 bg-white text-sm font-medium text-[#14202B] shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#8E1F2F] animate-in fade-in duration-200"
+                  autoFocus
+                />
+              )}
             </div>
           </div>
 
@@ -320,7 +366,7 @@ export default function PlannerForm() {
             {t("brief.tag_trip")}
           </span>
           <p className="font-semibold text-base text-[#14202B] mt-1">
-            {days} {t("common.days")} from {t(`form.cities.${startCity}`)},{" "}
+            {days} {t("common.days")} from {t(`form.cities.${startCity}`, startCity)},{" "}
             {t(`form.traveller_types.${travellers}`).toLowerCase()}
           </p>
         </div>

@@ -1,12 +1,67 @@
 import placesData from "../../data/places.json";
-import { Place, PlanRequest, StartCity } from "./schema";
+import { Place, PlanRequest } from "./schema";
 
-export const START_CITY_COORDINATES: Record<StartCity, { lat: number; lng: number }> = {
+export const START_CITY_COORDINATES: Record<string, { lat: number; lng: number }> = {
   Bengaluru: { lat: 12.9716, lng: 77.5946 },
   Mysuru: { lat: 12.2958, lng: 76.6394 },
   Mangaluru: { lat: 12.9141, lng: 74.8560 },
   Hubballi: { lat: 15.3647, lng: 75.1240 },
+  Hampi: { lat: 15.3350, lng: 76.4600 },
+  Madikeri: { lat: 12.4244, lng: 75.7382 },
+  Coorg: { lat: 12.4244, lng: 75.7382 },
+  Chikkamagaluru: { lat: 13.3161, lng: 75.7720 },
+  Udupi: { lat: 13.3409, lng: 74.7421 },
+  Gokarna: { lat: 14.5479, lng: 74.3188 },
+  Belagavi: { lat: 15.8497, lng: 74.4977 },
+  Shivamogga: { lat: 13.9299, lng: 75.5681 },
+  Hassan: { lat: 13.0033, lng: 76.1004 },
+  Vijayapura: { lat: 16.8302, lng: 75.7100 },
+  Kalaburagi: { lat: 17.3297, lng: 76.8343 },
+  Badami: { lat: 15.9189, lng: 75.6766 },
+  Dharwad: { lat: 15.4589, lng: 75.0078 },
+  Bidar: { lat: 17.9104, lng: 77.5199 },
+  Belur: { lat: 13.1623, lng: 75.8643 },
+  Halebidu: { lat: 13.2136, lng: 75.9936 },
+  Srirangapatna: { lat: 12.4237, lng: 76.6830 },
+  Bhatkal: { lat: 13.9787, lng: 74.5653 },
+  Sagara: { lat: 14.1670, lng: 75.0333 },
+  Shravanabelagola: { lat: 12.8583, lng: 76.4856 },
+  Mandya: { lat: 12.5234, lng: 76.8973 },
+  Kushalnagar: { lat: 12.4583, lng: 75.9614 },
+  Gundlupete: { lat: 11.8080, lng: 76.6890 },
 };
+
+/**
+ * Resolves geographic coordinates for any specified starting city, town, or place in Karnataka.
+ */
+export function getStartCityCoordinates(cityName: string): { lat: number; lng: number } {
+  if (!cityName || typeof cityName !== "string") {
+    return START_CITY_COORDINATES.Bengaluru;
+  }
+
+  const normalized = cityName.trim().toLowerCase();
+
+  // 1. Direct dictionary match
+  for (const [key, coords] of Object.entries(START_CITY_COORDINATES)) {
+    if (key.toLowerCase() === normalized) {
+      return coords;
+    }
+  }
+
+  // 2. Fuzzy match against curated places dataset
+  const matchingPlace = (placesData as Place[]).find(
+    (p) =>
+      p.city.toLowerCase() === normalized ||
+      p.region.toLowerCase() === normalized ||
+      p.name_en.toLowerCase().includes(normalized)
+  );
+  if (matchingPlace) {
+    return { lat: matchingPlace.lat, lng: matchingPlace.lng };
+  }
+
+  // 3. Fallback to Bengaluru capital hub
+  return START_CITY_COORDINATES.Bengaluru;
+}
 
 /**
  * Calculates straight-line great circle distance (Haversine) in kilometers.
@@ -55,7 +110,7 @@ export function scoreCandidate(place: Place, request: Pick<PlanRequest, "interes
   }
 
   // 4. Distance from starting hub
-  const startCoords = START_CITY_COORDINATES[request.start_city] || START_CITY_COORDINATES.Bengaluru;
+  const startCoords = getStartCityCoordinates(request.start_city);
   const distanceKm = calculateHaversineKm(startCoords.lat, startCoords.lng, place.lat, place.lng);
 
   // Proximity scoring depends on trip duration:

@@ -78,7 +78,21 @@
       "Bengaluru": "ಬೆಂಗಳೂರು",
       "Mysuru": "ಮೈಸೂರು",
       "Mangaluru": "ಮಂಗಳೂರು",
-      "Hubballi": "ಹುಬ್ಬಳ್ಳಿ"
+      "Hubballi": "ಹುಬ್ಬಳ್ಳಿ / ಧಾರವಾಡ",
+      "Hampi": "ಹಂಪಿ / ಹೊಸಪೇಟೆ",
+      "Madikeri": "ಮಡಿಕೇರಿ (ಕೊಡಗು)",
+      "Chikkamagaluru": "ಚಿಕ್ಕಮಗಳೂರು",
+      "Udupi": "ಉಡುಪಿ",
+      "Gokarna": "ಗೋಕರ್ಣ",
+      "Belagavi": "ಬೆಳಗಾವಿ",
+      "Shivamogga": "ಶಿವಮೊಗ್ಗ",
+      "Hassan": "ಹಾಸನ",
+      "Vijayapura": "ವಿಜಯಪುರ",
+      "Kalaburagi": "ಕಲಬುರಗಿ",
+      "Badami": "ಬಾದಾಮಿ",
+      "Bidar": "ಬೀದರ್",
+      "Other": "ಇತರ / ಬೇರೆ ಊರು",
+      "custom_placeholder": "ಕರ್ನಾಟಕದ ಯಾವುದೇ ಊರು ಅಥವಾ ನಗರ ನಮೂದಿಸಿ..."
     },
     "months": {
       "1": "ಜನವರಿ",

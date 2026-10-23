@@ -78,7 +78,21 @@
       "Bengaluru": "Bengaluru",
       "Mysuru": "Mysuru",
       "Mangaluru": "Mangaluru",
-      "Hubballi": "Hubballi"
+      "Hubballi": "Hubballi / Dharwad",
+      "Hampi": "Hampi / Hosapete",
+      "Madikeri": "Madikeri (Coorg)",
+      "Chikkamagaluru": "Chikkamagaluru",
+      "Udupi": "Udupi",
+      "Gokarna": "Gokarna",
+      "Belagavi": "Belagavi",
+      "Shivamogga": "Shivamogga",
+      "Hassan": "Hassan",
+      "Vijayapura": "Vijayapura",
+      "Kalaburagi": "Kalaburagi",
+      "Badami": "Badami",
+      "Bidar": "Bidar",
+      "Other": "Other / Custom Location",
+      "custom_placeholder": "Enter any Karnataka city or town..."
     },
     "months": {
       "1": "January",

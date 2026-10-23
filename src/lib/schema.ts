@@ -79,8 +79,9 @@ export const PlaceSchema = z.object({
 });
 export type Place = z.infer<typeof PlaceSchema>;
 
-export const StartCityEnum = z.enum(["Bengaluru", "Mysuru", "Mangaluru", "Hubballi"]);
-export type StartCity = z.infer<typeof StartCityEnum>;
+export const StartCitySchema = z.string().min(1, "Please provide a starting city or town");
+export const StartCityEnum = StartCitySchema;
+export type StartCity = string;
 
 export const PaceEnum = z.enum(["relaxed", "balanced", "packed"]);
 export type Pace = z.infer<typeof PaceEnum>;
