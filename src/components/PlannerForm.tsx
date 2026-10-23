@@ -414,24 +414,28 @@ export default function PlannerForm() {
           </div>
 
           {matchedCandidates.length > 0 ? (
-            <div className="space-y-2.5">
-              {matchedCandidates.slice(0, 4).map((place) => (
+            <div className="space-y-1.5 max-h-[420px] overflow-y-auto pr-1.5 divide-y divide-dashed divide-[#DCE1DD]/60 scrollbar-thin">
+              {matchedCandidates.map((place, idx) => (
                 <div
                   key={place.id}
-                  className="flex items-center justify-between text-sm py-1 border-b border-dashed border-[#DCE1DD]/60 last:border-0"
+                  className="flex items-center justify-between text-sm py-1.5 first:pt-0"
                 >
-                  <span className="font-medium text-[#14202B] truncate max-w-[200px]">
-                    {lang === "kn" ? place.name_kn : place.name_en}
+                  <div className="flex items-center gap-2 truncate pr-2">
+                    <span className="text-xs font-bold text-[#8E1F2F]/60 w-5 shrink-0 text-right">
+                      {idx + 1}.
+                    </span>
+                    <span
+                      className="font-medium text-[#14202B] truncate"
+                      title={lang === "kn" ? place.name_kn : place.name_en}
+                    >
+                      {lang === "kn" ? place.name_kn : place.name_en}
+                    </span>
+                  </div>
+                  <span className="text-xs text-[#586673] shrink-0 font-medium bg-[#F2F4F1] px-2 py-0.5 rounded-md">
+                    {place.city}
                   </span>
-                  <span className="text-xs text-[#586673]">{place.city}</span>
                 </div>
               ))}
-
-              {matchedCandidates.length > 4 && (
-                <div className="text-xs font-medium text-[#586673] pt-1">
-                  + {matchedCandidates.length - 4} more
-                </div>
-              )}
             </div>
           ) : (
             <p className="text-xs text-[#586673] italic">
