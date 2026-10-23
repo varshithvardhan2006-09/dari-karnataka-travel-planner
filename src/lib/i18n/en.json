@@ -1,0 +1,139 @@
+{
+  "nav": {
+    "plan_a_trip": "Plan a trip",
+    "sample_trips": "Sample trips",
+    "about": "About"
+  },
+  "landing": {
+    "eyebrow": "AI TRAVEL PLANNER FOR KARNATAKA",
+    "title": "Plan Karnataka your way.",
+    "subtitle": "Tell us what you enjoy, how many days you have and what you can spend. Get a day-by-day plan built only from real places, with a route on the map and Kannada phrases for every stop.",
+    "cta_plan": "Plan my trip",
+    "cta_sample": "See a sample trip",
+    "destinations": {
+      "mysuru": "Mysuru",
+      "mysuru_sub": "Palaces and markets",
+      "hampi": "Hampi",
+      "hampi_sub": "Boulders and ruins",
+      "gokarna": "Gokarna",
+      "gokarna_sub": "Quiet beaches"
+    },
+    "features": {
+      "real_places_title": "Real places only",
+      "real_places_desc": "Every stop comes from a checked list of Karnataka places, never invented by the AI.",
+      "kannada_title": "Kannada at every stop",
+      "kannada_desc": "Switch the whole plan to ಕನ್ನಡ and hear useful phrases for each place.",
+      "route_costs_title": "Route and costs",
+      "route_costs_desc": "See travel time between stops and a rupee estimate for the whole trip."
+    }
+  },
+  "form": {
+    "title": "Tell us about your trip",
+    "subtitle": "Five quick choices. You can change them and regenerate any time.",
+    "interests_label": "What do you enjoy?",
+    "interests_hint": "Pick one or more (up to 4)",
+    "days_label": "How many days?",
+    "start_city_label": "Starting from",
+    "budget_label": "Budget",
+    "budget_sub": "per person per day, stay and food included",
+    "budget_tiers": {
+      "budget": "Budget",
+      "budget_sub": "under Rs 2,500",
+      "mid": "Mid-range",
+      "mid_sub": "Rs 2,500 to 5,000",
+      "premium": "Premium",
+      "premium_sub": "above Rs 5,000"
+    },
+    "pace_label": "Pace",
+    "pace_tiers": {
+      "relaxed": "Relaxed",
+      "relaxed_sub": "2 to 3 stops a day",
+      "balanced": "Balanced",
+      "balanced_sub": "3 to 4 stops",
+      "packed": "Packed",
+      "packed_sub": "5 or more"
+    },
+    "travellers_label": "Travelling as",
+    "traveller_types": {
+      "solo": "Solo",
+      "couple": "Couple",
+      "family": "Family",
+      "friends": "Friends"
+    },
+    "month_label": "Month of travel",
+    "submit_button": "Generate my itinerary",
+    "submit_disabled": "Pick at least one interest to generate",
+    "categories": {
+      "heritage": "Heritage",
+      "nature": "Nature",
+      "food": "Food",
+      "spiritual": "Spiritual",
+      "adventure": "Adventure",
+      "beach": "Beaches",
+      "wildlife": "Wildlife",
+      "coffee": "Coffee estates",
+      "culture": "Culture"
+    },
+    "cities": {
+      "Bengaluru": "Bengaluru",
+      "Mysuru": "Mysuru",
+      "Mangaluru": "Mangaluru",
+      "Hubballi": "Hubballi"
+    },
+    "months": {
+      "1": "January",
+      "2": "February",
+      "3": "March",
+      "4": "April",
+      "5": "May",
+      "6": "June",
+      "7": "July",
+      "8": "August",
+      "9": "September",
+      "10": "October",
+      "11": "November",
+      "12": "December"
+    }
+  },
+  "brief": {
+    "title": "Your trip brief",
+    "tag_trip": "TRIP",
+    "tag_interests": "INTERESTS",
+    "tag_spend": "SPEND",
+    "tag_places": "Places that match",
+    "more_places": "+ {count} more",
+    "no_matches": "No places match these criteria yet. Try selecting more interests."
+  },
+  "common": {
+    "days": "days",
+    "day": "Day",
+    "hours": "h",
+    "minutes": "min",
+    "free": "free",
+    "about": "about",
+    "stay": "Stay",
+    "food": "Food",
+    "transport": "Transport",
+    "entry": "Entry",
+    "total": "Total",
+    "estimated_for": "Estimated for",
+    "people": "people",
+    "person": "person",
+    "regenerate": "Regenerate",
+    "share_link": "Share link",
+    "copied": "Copied to clipboard!",
+    "sample_data": "SAMPLE DATA"
+  },
+  "errors": {
+    "busy_title": "The AI is busy right now",
+    "busy_desc": "Too many requests in the last minute. Try again in {seconds} seconds, or open a ready-made trip while you wait.",
+    "busy_retry": "Try again",
+    "busy_sample": "Open a sample trip",
+    "few_matches_title": "Only {count} places match",
+    "few_matches_desc": "{interests} in {month} with a {budget} budget leaves few places. Add Nature or Spiritual to get a fuller {days}-day plan.",
+    "few_matches_action": "Widen my interests",
+    "fallback_title": "Showing a ready-made trip",
+    "fallback_desc": "We could not reach the AI, so this is a saved {days}-day {theme} sample. Your choices are kept. Regenerate when you are back online.",
+    "fallback_action": "Regenerate"
+  }
+}

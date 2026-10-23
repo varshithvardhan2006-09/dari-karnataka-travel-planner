@@ -1,0 +1,704 @@
+{
+  "title": "3-Day Royal Karnataka & Hoysala Heritage Trail",
+  "summary": "A regal journey through Bengaluru palaces, Mysuru's royal court, and the intricate Hoysala stone temples of Belur and Halebidu.",
+  "days": [
+    {
+      "day": 1,
+      "theme": "Bengaluru Highlights",
+      "stops": [
+        {
+          "place_id": "lalbagh-gardens",
+          "start": "09:00",
+          "duration_min": 90,
+          "note_en": "Historical 240-acre botanical garden commissioned by Hyder Ali featuring the Victorian Glass House and ancient rock.",
+          "place": {
+            "id": "lalbagh-gardens",
+            "name_en": "Lalbagh Botanical Garden",
+            "name_kn": "ಲಾಲ್‌ಬಾಗ್ ಸಸ್ಯತೋಟ",
+            "region": "Bengaluru",
+            "city": "Bengaluru",
+            "lat": 12.9507,
+            "lng": 77.5848,
+            "categories": [
+              "nature",
+              "heritage"
+            ],
+            "duration_min": 90,
+            "entry_inr": 25,
+            "best_months": [
+              1,
+              2,
+              3,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Historical 240-acre botanical garden commissioned by Hyder Ali featuring the Victorian Glass House and ancient rock.",
+            "desc_kn": "ಹೈದರ್ ಅಲಿ ಕಾಲದ ೨೪೦ ಎಕರೆ ವಿಸ್ತೀರ್ಣದ ಐತಿಹಾಸಿಕ ಗಾಜಿನ ಮನೆ ಹಾಗೂ ಪುರಾತನ ಬಂಡೆ ಹೊಂದಿರುವ ಸಸ್ಯತೋಟ.",
+            "tip_en": "Walk up the 3,000-million-year-old Lalbagh Rock near the main gate for a garden vista.",
+            "tip_kn": "ಉದ್ಯಾನವನದ ವಿಹಂಗಮ ನೋಟಕ್ಕಾಗಿ ಮುಖ್ಯ ದ್ವಾರದ ಬಳಿಯ ಪುರಾತನ ಲಾಲ್‌ಬಾಗ್ ಬಂಡೆಯನ್ನು ಹತ್ತಿ.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-take-photo",
+              "phrase-thanks"
+            ],
+            "verified": false,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "vv-puram-food-street",
+          "start": "10:30",
+          "duration_min": 75,
+          "note_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
+          "travel_from_prev": {
+            "km": 1.2,
+            "min": 10,
+            "mode": "auto"
+          },
+          "place": {
+            "id": "vv-puram-food-street",
+            "name_en": "VV Puram Food Street (Thindi Beedi)",
+            "name_kn": "ವಿ.ವಿ. ಪುರಂ ತಿಂಡಿ ಬೀದಿ",
+            "region": "Bengaluru",
+            "city": "Bengaluru",
+            "lat": 12.9526,
+            "lng": 77.5772,
+            "categories": [
+              "food",
+              "culture"
+            ],
+            "duration_min": 75,
+            "entry_inr": 200,
+            "best_months": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "is_meal": "dinner",
+            "desc_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
+            "desc_kn": "ಬಿಸಿಬಿಸಿ ಅಕ್ಕಿ ರೊಟ್ಟಿ, ಪದ್ದು, ಮಸಾಲೆ ದೋಸೆ ಮತ್ತು ಗುಲ್ಕಂಡ್ ಸಿಹಿಗೆ ಹೆಸರಾದ ಬೆಂಗಳೂರಿನ ಆಹಾರ ರಸ್ತೆ.",
+            "tip_en": "Shops open after 18:30. Try warm akki rotti followed by traditional gulkand ice cream.",
+            "tip_kn": "ಸಂಜೆ ೬:೩೦ ರ ನಂತರ ಅಂಗಡಿಗಳು ತೆರೆಯುತ್ತವೆ. ಬಿಸಿ ಅಕ್ಕಿರೊಟ್ಟಿ ಮತ್ತು ಗುಲ್ಕಂಡ್ ರುಚಿ ನೋಡಿ.",
+            "phrase_ids": [
+              "phrase-how-much",
+              "phrase-delicious-food",
+              "phrase-bill-please"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-how-much",
+              "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು?",
+              "translit": "Idakke eshtu?",
+              "en": "How much for this?",
+              "context": "shopping"
+            },
+            {
+              "id": "phrase-delicious-food",
+              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
+              "translit": "Oota tumba ruchi aagide",
+              "en": "The food is very tasty",
+              "context": "food"
+            },
+            {
+              "id": "phrase-bill-please",
+              "kn": "ಬಿಲ್ ಕೊಡಿ",
+              "translit": "Bill kodi",
+              "en": "Please give the bill",
+              "context": "food"
+            }
+          ]
+        },
+        {
+          "place_id": "bangalore-palace",
+          "start": "11:55",
+          "duration_min": 90,
+          "note_en": "Tudor-style royal estate with fortified towers, wood carvings, and paintings of the Mysore royal family.",
+          "travel_from_prev": {
+            "km": 7,
+            "min": 20,
+            "mode": "auto"
+          },
+          "place": {
+            "id": "bangalore-palace",
+            "name_en": "Bangalore Palace",
+            "name_kn": "ಬೆಂಗಳೂರು ಅರಮನೆ",
+            "region": "Bengaluru",
+            "city": "Bengaluru",
+            "lat": 12.9988,
+            "lng": 77.5921,
+            "categories": [
+              "heritage"
+            ],
+            "duration_min": 90,
+            "entry_inr": 250,
+            "best_months": [
+              1,
+              2,
+              3,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Tudor-style royal estate with fortified towers, wood carvings, and paintings of the Mysore royal family.",
+            "desc_kn": "ಟ್ಯೂಡರ್ ವಾಸ್ತುಶಿಲ್ಪ ಶೈಲಿಯಲ್ಲಿ ನಿರ್ಮಿಸಲಾದ ಕೋಟೆ ಬುರುಜುಗಳುಳ್ಳ ಸುಂದರ ಬೆಂಗಳೂರು ಅರಮನೆ.",
+            "tip_en": "Audio guides are provided with entry; they narrate fascinating stories of the Wadiyar dynasty.",
+            "tip_kn": "ಪ್ರವೇಶದ ಜೊತೆಗೆ ದೊರೆಯುವ ಆಡಿಯೋ ಗೈಡ್ ಅರಮನೆಯ ಇತಿಹಾಸವನ್ನು ವಿವರವಾಗಿ ವಿವರಿಸುತ್ತದೆ.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-take-photo",
+              "phrase-thanks"
+            ],
+            "verified": false,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
+        }
+      ],
+      "travel_total_min": 30
+    },
+    {
+      "day": 2,
+      "theme": "Mysuru Highlights",
+      "stops": [
+        {
+          "place_id": "somanathapura-temple",
+          "start": "09:00",
+          "duration_min": 75,
+          "note_en": "UNESCO World Heritage trikuta Hoysala temple renowned for pristine star-shaped soapstone friezes.",
+          "place": {
+            "id": "somanathapura-temple",
+            "name_en": "Chennakeshava Temple Somanathapura",
+            "name_kn": "ಸೋಮನಾಥಪುರ ಚನ್ನಕೇಶವ ದೇವಾಲಯ",
+            "region": "Mysuru",
+            "city": "Somanathapura",
+            "lat": 12.2764,
+            "lng": 76.8817,
+            "categories": [
+              "heritage",
+              "spiritual"
+            ],
+            "duration_min": 75,
+            "entry_inr": 25,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "UNESCO World Heritage trikuta Hoysala temple renowned for pristine star-shaped soapstone friezes.",
+            "desc_kn": "ಯುನೆಸ್ಕೋ ವಿಶ್ವ ಪರಂಪರೆ ತಾಣ, ನಕ್ಷತ್ರಾಕಾರದ ವೇದಿಕೆಯ ಮೇಲೆ ಕಡೆದ ಹೊಯ್ಸಳ ಶಿಲ್ಪಕಲೆಯ ಅದ್ಭುತ ಚನ್ನಕೇಶವ ದೇವಾಲಯ.",
+            "tip_en": "Hire an authorized ASI guide to decode the Ramayana relief bands carved along the lower plinth.",
+            "tip_kn": "ಕೆಳಗಿನ ಪಟ್ಟಿಕೆಗಳಲ್ಲಿರುವ ರಾಮಾಯಣ ಕೆತ್ತನೆಗಳನ್ನು ವಿವರವಾಗಿ ಅರಿಯಲು ಅಧಿಕೃತ ಮಾರ್ಗದರ್ಶಕರನ್ನು ಸಂಪರ್ಕಿಸಿ.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-take-photo",
+              "phrase-very-nice"
+            ],
+            "verified": false,
+            "source_url": "https://asi.nic.in"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-very-nice",
+              "kn": "ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ!",
+              "translit": "Tumba chennagide!",
+              "en": "It is very beautiful!",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "tipu-summer-palace",
+          "start": "10:15",
+          "duration_min": 60,
+          "note_en": "Ornate teakwood palace set amidst landscaped lawns displaying intricate battle murals and relics.",
+          "travel_from_prev": {
+            "km": 32.4,
+            "min": 60,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "tipu-summer-palace",
+            "name_en": "Tipu Sultan Summer Palace (Dariya Daulat)",
+            "name_kn": "ದರಿಯಾ ದೌಲತ್ ಬಾಗ್",
+            "region": "Mysuru",
+            "city": "Srirangapatna",
+            "lat": 12.4172,
+            "lng": 76.7031,
+            "categories": [
+              "heritage"
+            ],
+            "duration_min": 60,
+            "entry_inr": 25,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Ornate teakwood palace set amidst landscaped lawns displaying intricate battle murals and relics.",
+            "desc_kn": "ಸುಂದರ ತೇಗದ ಮರದ ಕೆತ್ತನೆಗಳು ಮತ್ತು ಐತಿಹಾಸಿಕ ಯುದ್ಧ ವರ್ಣಚಿತ್ರಗಳನ್ನು ಹೊಂದಿರುವ ಬೇಸಿಗೆ ಅರಮನೆ.",
+            "tip_en": "Inspect the intricate western wall fresco illustrating the 1780 Battle of Pollilur.",
+            "tip_kn": "ಗೋಡೆಗಳ ಮೇಲಿನ ಐತಿಹಾಸಿಕ ವರ್ಣಚಿತ್ರಗಳನ್ನು ಗಮನವಿಟ್ಟು ನೋಡಿ.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-which-way",
+              "phrase-thanks"
+            ],
+            "verified": false,
+            "source_url": "https://asi.nic.in"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-which-way",
+              "kn": "ಈ ರಸ್ತೆ ಎಲ್ಲಿಗೆ ಹೋಗುತ್ತೆ?",
+              "translit": "Ee raste ellige hogutte?",
+              "en": "Where does this road lead to?",
+              "context": "directions"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "devaraja-market",
+          "start": "12:15",
+          "duration_min": 75,
+          "note_en": "Vibrant 130-year-old traditional bazaar packed with fragrant flowers, Mysore betel leaves, and perfumes.",
+          "travel_from_prev": {
+            "km": 17,
+            "min": 35,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "devaraja-market",
+            "name_en": "Devaraja Market",
+            "name_kn": "ದೇವರಾಜ ಮಾರುಕಟ್ಟೆ",
+            "region": "Mysuru",
+            "city": "Mysuru",
+            "lat": 12.3113,
+            "lng": 76.6508,
+            "categories": [
+              "culture",
+              "food"
+            ],
+            "duration_min": 75,
+            "entry_inr": 0,
+            "best_months": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Vibrant 130-year-old traditional bazaar packed with fragrant flowers, Mysore betel leaves, and perfumes.",
+            "desc_kn": "ಸುಗಂಧಭರಿತ ಮಲ್ಲಿಗೆ ಹೂವುಗಳು, ಮೈಸೂರು ವೀಳೆಯದೆಲೆ ಮತ್ತು ಸುಗಂಧ ದ್ರವ್ಯಗಳಿಂದ ಕೂಡಿದ ೧೩೦ ವರ್ಷ ಹಳೆಯ ಸಾಂಪ್ರದಾಯಿಕ ಮಾರುಕಟ್ಟೆ.",
+            "tip_en": "Flowers, kumkum and sandalwood. Good spot for practicing basic Kannada greetings with vendors.",
+            "tip_kn": "ಹೂವು ಮತ್ತು ಗಂಧದ ಅಂಗಡಿಗಳ ವ್ಯಾಪಾರಿಗಳೊಂದಿಗೆ ಕನ್ನಡ ನುಡಿಗಟ್ಟುಗಳನ್ನು ಬಳಸಲು ಉತ್ತಮ ಸ್ಥಳ.",
+            "phrase_ids": [
+              "phrase-how-much",
+              "phrase-take-photo",
+              "phrase-thanks"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-how-much",
+              "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು?",
+              "translit": "Idakke eshtu?",
+              "en": "How much for this?",
+              "context": "shopping"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
+        }
+      ],
+      "travel_total_min": 95
+    },
+    {
+      "day": 3,
+      "theme": "Mysuru & Coast Highlights",
+      "stops": [
+        {
+          "place_id": "mysore-palace",
+          "start": "09:00",
+          "duration_min": 120,
+          "note_en": "Indo-Saracenic royal seat of the Wadiyar dynasty featuring grand courtyards and ornate glass domes.",
+          "place": {
+            "id": "mysore-palace",
+            "name_en": "Mysore Palace",
+            "name_kn": "ಮೈಸೂರು ಅರಮನೆ",
+            "region": "Mysuru",
+            "city": "Mysuru",
+            "lat": 12.3051,
+            "lng": 76.6551,
+            "categories": [
+              "heritage",
+              "culture"
+            ],
+            "duration_min": 120,
+            "entry_inr": 100,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Indo-Saracenic royal seat of the Wadiyar dynasty featuring grand courtyards and ornate glass domes.",
+            "desc_kn": "ಒಡೆಯರ್ ರಾಜವಂಶದ ಭವ್ಯ ಇಂಡೋ-ಸಾರಸೆನಿಕ್ ಅರಮನೆ, ಸುಂದರ ಗಾಜಿನ ಛಾವಣಿಗಳು ಮತ್ತು ದರ್ಬಾರ್ ಹಾಲ್ ಹೊಂದಿದೆ.",
+            "tip_en": "Arrive at opening to beat the tour buses and see the palace bathed in soft morning light.",
+            "tip_kn": "ಪ್ರವಾಸಿಗರ ದಟ್ಟಣೆ ತಪ್ಪಿಸಲು ಬೆಳಿಗ್ಗೆ ತೆರೆಯುವ ಸಮಯದಲ್ಲೇ ಭೇಟಿ ನೀಡಿ.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-take-photo",
+              "phrase-very-nice"
+            ],
+            "verified": false,
+            "source_url": "https://mysorepalace.karnataka.gov.in"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-very-nice",
+              "kn": "ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ!",
+              "translit": "Tumba chennagide!",
+              "en": "It is very beautiful!",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "srirangapatna-temple",
+          "start": "11:00",
+          "duration_min": 75,
+          "note_en": "Majestic river island shrine on the Kaveri dedicated to Lord Ranganatha, dating to the 9th-century Ganga dynasty.",
+          "travel_from_prev": {
+            "km": 18.1,
+            "min": 35,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "srirangapatna-temple",
+            "name_en": "Sri Ranganathaswamy Temple",
+            "name_kn": "ಶ್ರೀ ರಂಗನಾಥಸ್ವಾಮಿ ದೇವಾಲಯ",
+            "region": "Mysuru",
+            "city": "Srirangapatna",
+            "lat": 12.4239,
+            "lng": 76.6946,
+            "categories": [
+              "spiritual",
+              "heritage"
+            ],
+            "duration_min": 75,
+            "entry_inr": 0,
+            "best_months": [
+              1,
+              2,
+              3,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Majestic river island shrine on the Kaveri dedicated to Lord Ranganatha, dating to the 9th-century Ganga dynasty.",
+            "desc_kn": "ಕಾವೇರಿ ನದಿ ದ್ವೀಪದಲ್ಲಿರುವ ೯ನೇ ಶತಮಾನದ ಗಂಗರ ಕಾಲದ ಭವ್ಯ ರಂಗನಾಥಸ್ವಾಮಿ ಕ್ಷೇತ್ರ.",
+            "tip_en": "Dress modestly in traditional Indian clothing for darshan inside the inner sanctum.",
+            "tip_kn": "ಗರ್ಭಗುಡಿಯ ದರ್ಶನಕ್ಕಾಗಿ ಸಾಂಪ್ರದಾಯಿಕ ಉಡುಪನ್ನು ಧರಿಸಿ.",
+            "phrase_ids": [
+              "phrase-temple-darshan",
+              "phrase-water",
+              "phrase-thanks"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-temple-darshan",
+              "kn": "ದೇವಸ್ಥಾನದ ದರ್ಶನ ಸಮಯ ಯಾವಾಗ?",
+              "translit": "Devasthanada darshana samaya yavaga?",
+              "en": "When is the temple darshan time?",
+              "context": "temple"
+            },
+            {
+              "id": "phrase-water",
+              "kn": "ನೀರು ಕೊಡಿ",
+              "translit": "Neeru kodi",
+              "en": "Please give water",
+              "context": "food"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "udupi-krishna-temple",
+          "start": "12:50",
+          "duration_min": 90,
+          "note_en": "13th-century Vaishnavite temple founded by Saint Madhvacharya where Lord Krishna is viewed through the Kanakana Kindi window.",
+          "travel_from_prev": {
+            "km": 304.1,
+            "min": 465,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "udupi-krishna-temple",
+            "name_en": "Udupi Sri Krishna Temple & Matha",
+            "name_kn": "ಉಡುಪಿ ಶ್ರೀ ಕೃಷ್ಣ ಮಠ",
+            "region": "Coast",
+            "city": "Udupi",
+            "lat": 13.3409,
+            "lng": 74.7523,
+            "categories": [
+              "spiritual",
+              "food",
+              "culture"
+            ],
+            "duration_min": 90,
+            "entry_inr": 0,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "is_meal": "lunch",
+            "desc_en": "13th-century Vaishnavite temple founded by Saint Madhvacharya where Lord Krishna is viewed through the Kanakana Kindi window.",
+            "desc_kn": "ಮಧ್ವಾಚಾರ್ಯರಿಂದ ಸ್ಥಾಪಿತವಾದ, ಕನಕನ ಕಿಂಡಿಯ ಮೂಲಕ ಕೃಷ್ಣನ ದರ್ಶನ ಪಡೆಯುವ ಪವಿತ್ರ ಮಠ ಮತ್ತು ಅನ್ನದಾನ ಕ್ಷೇತ್ರ.",
+            "tip_en": "Partake in the serene temple bhojana (free community lunch) served in the grand dining halls.",
+            "tip_kn": "ಮಧ್ಯಾಹ್ನದ ಶ್ರೀಕೃಷ್ಣನ ಸಾತ್ವಿಕ ಪ್ರಸಾದ ಊಟವನ್ನು ತಪ್ಪದೇ ಸ್ವೀಕರಿಸಿ.",
+            "phrase_ids": [
+              "phrase-temple-darshan",
+              "phrase-delicious-food",
+              "phrase-thanks"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-temple-darshan",
+              "kn": "ದೇವಸ್ಥಾನದ ದರ್ಶನ ಸಮಯ ಯಾವಾಗ?",
+              "translit": "Devasthanada darshana samaya yavaga?",
+              "en": "When is the temple darshan time?",
+              "context": "temple"
+            },
+            {
+              "id": "phrase-delicious-food",
+              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
+              "translit": "Oota tumba ruchi aagide",
+              "en": "The food is very tasty",
+              "context": "food"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
+        }
+      ],
+      "travel_total_min": 500
+    }
+  ],
+  "cost": {
+    "stay": 8800,
+    "food": 7200,
+    "transport": 8046,
+    "entry": 1250,
+    "total": 25296,
+    "people": 2
+  },
+  "tips": [
+    "Start mornings by 08:30 to enjoy peaceful monuments before peak tourist traffic.",
+    "Dress respectfully when entering active sanctums and historic temples.",
+    "Sample local Karnataka breakfast specialities including Tatte Idli and Benne Dosa."
+  ],
+  "source": "sample"
+}

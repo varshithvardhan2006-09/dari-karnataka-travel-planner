@@ -1,0 +1,713 @@
+{
+  "title": "3-Day Western Ghats Wildlife & Coffee Mist Retreat",
+  "summary": "Breathe in the lush flora of Bandipur forests, encounter elephants at Dubare, and explore misty Coorg coffee plantations.",
+  "days": [
+    {
+      "day": 1,
+      "theme": "Mysuru Highlights",
+      "stops": [
+        {
+          "place_id": "mysore-palace",
+          "start": "09:00",
+          "duration_min": 120,
+          "note_en": "Indo-Saracenic royal seat of the Wadiyar dynasty featuring grand courtyards and ornate glass domes.",
+          "place": {
+            "id": "mysore-palace",
+            "name_en": "Mysore Palace",
+            "name_kn": "ಮೈಸೂರು ಅರಮನೆ",
+            "region": "Mysuru",
+            "city": "Mysuru",
+            "lat": 12.3051,
+            "lng": 76.6551,
+            "categories": [
+              "heritage",
+              "culture"
+            ],
+            "duration_min": 120,
+            "entry_inr": 100,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Indo-Saracenic royal seat of the Wadiyar dynasty featuring grand courtyards and ornate glass domes.",
+            "desc_kn": "ಒಡೆಯರ್ ರಾಜವಂಶದ ಭವ್ಯ ಇಂಡೋ-ಸಾರಸೆನಿಕ್ ಅರಮನೆ, ಸುಂದರ ಗಾಜಿನ ಛಾವಣಿಗಳು ಮತ್ತು ದರ್ಬಾರ್ ಹಾಲ್ ಹೊಂದಿದೆ.",
+            "tip_en": "Arrive at opening to beat the tour buses and see the palace bathed in soft morning light.",
+            "tip_kn": "ಪ್ರವಾಸಿಗರ ದಟ್ಟಣೆ ತಪ್ಪಿಸಲು ಬೆಳಿಗ್ಗೆ ತೆರೆಯುವ ಸಮಯದಲ್ಲೇ ಭೇಟಿ ನೀಡಿ.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-take-photo",
+              "phrase-very-nice"
+            ],
+            "verified": false,
+            "source_url": "https://mysorepalace.karnataka.gov.in"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-very-nice",
+              "kn": "ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ!",
+              "translit": "Tumba chennagide!",
+              "en": "It is very beautiful!",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "devaraja-market",
+          "start": "11:00",
+          "duration_min": 75,
+          "note_en": "Vibrant 130-year-old traditional bazaar packed with fragrant flowers, Mysore betel leaves, and perfumes.",
+          "travel_from_prev": {
+            "km": 1,
+            "min": 10,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "devaraja-market",
+            "name_en": "Devaraja Market",
+            "name_kn": "ದೇವರಾಜ ಮಾರುಕಟ್ಟೆ",
+            "region": "Mysuru",
+            "city": "Mysuru",
+            "lat": 12.3113,
+            "lng": 76.6508,
+            "categories": [
+              "culture",
+              "food"
+            ],
+            "duration_min": 75,
+            "entry_inr": 0,
+            "best_months": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Vibrant 130-year-old traditional bazaar packed with fragrant flowers, Mysore betel leaves, and perfumes.",
+            "desc_kn": "ಸುಗಂಧಭರಿತ ಮಲ್ಲಿಗೆ ಹೂವುಗಳು, ಮೈಸೂರು ವೀಳೆಯದೆಲೆ ಮತ್ತು ಸುಗಂಧ ದ್ರವ್ಯಗಳಿಂದ ಕೂಡಿದ ೧೩೦ ವರ್ಷ ಹಳೆಯ ಸಾಂಪ್ರದಾಯಿಕ ಮಾರುಕಟ್ಟೆ.",
+            "tip_en": "Flowers, kumkum and sandalwood. Good spot for practicing basic Kannada greetings with vendors.",
+            "tip_kn": "ಹೂವು ಮತ್ತು ಗಂಧದ ಅಂಗಡಿಗಳ ವ್ಯಾಪಾರಿಗಳೊಂದಿಗೆ ಕನ್ನಡ ನುಡಿಗಟ್ಟುಗಳನ್ನು ಬಳಸಲು ಉತ್ತಮ ಸ್ಥಳ.",
+            "phrase_ids": [
+              "phrase-how-much",
+              "phrase-take-photo",
+              "phrase-thanks"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-how-much",
+              "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು?",
+              "translit": "Idakke eshtu?",
+              "en": "How much for this?",
+              "context": "shopping"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "mylari-dosa",
+          "start": "12:25",
+          "duration_min": 45,
+          "note_en": "Legendary eatery renowned for melt-in-your-mouth butter benne dosas served with fresh coconut chutney.",
+          "travel_from_prev": {
+            "km": 1,
+            "min": 10,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "mylari-dosa",
+            "name_en": "Lunch at Mylari",
+            "name_kn": "ಮೈಲಾರಿ ದೋಸೆ",
+            "region": "Mysuru",
+            "city": "Mysuru",
+            "lat": 12.3117,
+            "lng": 76.6578,
+            "categories": [
+              "food"
+            ],
+            "duration_min": 45,
+            "entry_inr": 150,
+            "best_months": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "is_meal": "breakfast",
+            "desc_en": "Legendary eatery renowned for melt-in-your-mouth butter benne dosas served with fresh coconut chutney.",
+            "desc_kn": "ಬೆಣ್ಣೆ ಮಸಾಲೆ ದೋಸೆ ಮತ್ತು ಸಾಗುಗೆ ಹೆಸರುವಾಸಿಯಾದ ಮೈಸೂರಿನ ಐತಿಹಾಸಿಕ ಹೋಟೆಲ್.",
+            "tip_en": "Soft butter dosa from a Mysuru institution. Expect a short wait during peak morning hours.",
+            "tip_kn": "ಬೆಣ್ಣೆ ದೋಸೆಗೆ ಹೆಸರಾದ ಮೈಸೂರಿನ ಹೋಟೆಲ್. ಬೆಳಿಗ್ಗೆ ಸ್ವಲ್ಪ ಸರತಿ ಸಾಲಿರುತ್ತದೆ.",
+            "phrase_ids": [
+              "phrase-masale-dose",
+              "phrase-delicious-food",
+              "phrase-bill-please"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-masale-dose",
+              "kn": "ಒಂದು ಮಸಾಲೆ ದೋಸೆ ಕೊಡಿ",
+              "translit": "Ondu masale dose kodi",
+              "en": "Please give one masala dosa",
+              "context": "food"
+            },
+            {
+              "id": "phrase-delicious-food",
+              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
+              "translit": "Oota tumba ruchi aagide",
+              "en": "The food is very tasty",
+              "context": "food"
+            },
+            {
+              "id": "phrase-bill-please",
+              "kn": "ಬಿಲ್ ಕೊಡಿ",
+              "translit": "Bill kodi",
+              "en": "Please give the bill",
+              "context": "food"
+            }
+          ]
+        }
+      ],
+      "travel_total_min": 20
+    },
+    {
+      "day": 2,
+      "theme": "Mysuru & Bengaluru Highlights",
+      "stops": [
+        {
+          "place_id": "mysore-zoo",
+          "start": "09:00",
+          "duration_min": 150,
+          "note_en": "One of India's oldest and best maintained zoological gardens with spacious enclosures and exotic species.",
+          "place": {
+            "id": "mysore-zoo",
+            "name_en": "Mysore Zoo",
+            "name_kn": "ಮೈಸೂರು ಮೃಗಾಲಯ",
+            "region": "Mysuru",
+            "city": "Mysuru",
+            "lat": 12.3023,
+            "lng": 76.6644,
+            "categories": [
+              "wildlife",
+              "nature"
+            ],
+            "duration_min": 150,
+            "entry_inr": 100,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "One of India's oldest and best maintained zoological gardens with spacious enclosures and exotic species.",
+            "desc_kn": "ವಿಶಾಲ ಆವರಣಗಳು ಮತ್ತು ಅಪರೂಪದ ಪ್ರಾಣಿ ಸಂಕುಲ ಹೊಂದಿರುವ ಭಾರತದ ಅತ್ಯಂತ ಪುರಾತನ ಮತ್ತು ಸುಂದರ ಮೃಗಾಲಯ.",
+            "tip_en": "Rent a battery-operated buggy if travelling with seniors or small children.",
+            "tip_kn": "ಹಿರಿಯರು ಅಥವಾ ಮಕ್ಕಳೊಂದಿಗೆ ಪ್ರಯಾಣಿಸುತ್ತಿದ್ದರೆ ಬ್ಯಾಟರಿ ವಾಹನವನ್ನು ಬಳಸಬಹುದು.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-water",
+              "phrase-thanks"
+            ],
+            "verified": false,
+            "source_url": "https://mysorezoo.info"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-water",
+              "kn": "ನೀರು ಕೊಡಿ",
+              "translit": "Neeru kodi",
+              "en": "Please give water",
+              "context": "food"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "chamundi-hill",
+          "start": "11:30",
+          "duration_min": 90,
+          "note_en": "Prominent hill overlooking Mysuru with the historic Chamundeshwari Temple and massive monolith Nandi.",
+          "travel_from_prev": {
+            "km": 4.4,
+            "min": 15,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "chamundi-hill",
+            "name_en": "Chamundi Hill",
+            "name_kn": "ಚಾಮುಂಡಿ ಬೆಟ್ಟ",
+            "region": "Mysuru",
+            "city": "Mysuru",
+            "lat": 12.2724,
+            "lng": 76.6713,
+            "categories": [
+              "spiritual",
+              "nature"
+            ],
+            "duration_min": 90,
+            "entry_inr": 0,
+            "best_months": [
+              1,
+              2,
+              3,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Prominent hill overlooking Mysuru with the historic Chamundeshwari Temple and massive monolith Nandi.",
+            "desc_kn": "ಮೈಸೂರಿನ ಸುಂದರ ನೋಟ ನೀಡುವ ಪ್ರಸಿದ್ಧ ಬೆಟ್ಟ, ಐತಿಹಾಸಿಕ ಚಾಮುಂಡೇಶ್ವರಿ ದೇಗುಲ ಮತ್ತು ಏಕಶಿಲಾ ನಂದಿ ವಿಗ್ರಹ.",
+            "tip_en": "Visit near sunset for cool breezes and a panoramic view of illuminated Mysuru city.",
+            "tip_kn": "ಸಂಜೆ ಸೂರ್ಯಾಸ್ತದ ಸಮಯದಲ್ಲಿ ನಗರದ ವಿಹಂಗಮ ನೋಟ ಕಣ್ತುಂಬಿಕೊಳ್ಳಲು ಭೇಟಿ ನೀಡಿ.",
+            "phrase_ids": [
+              "phrase-temple-darshan",
+              "phrase-take-photo",
+              "phrase-very-nice"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-temple-darshan",
+              "kn": "ದೇವಸ್ಥಾನದ ದರ್ಶನ ಸಮಯ ಯಾವಾಗ?",
+              "translit": "Devasthanada darshana samaya yavaga?",
+              "en": "When is the temple darshan time?",
+              "context": "temple"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-very-nice",
+              "kn": "ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ!",
+              "translit": "Tumba chennagide!",
+              "en": "It is very beautiful!",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "vidyarthi-bhavan",
+          "start": "13:15",
+          "duration_min": 45,
+          "note_en": "Iconic 1943 heritage eatery famous for thick crispy golden benne masala dosas and filter coffee.",
+          "travel_from_prev": {
+            "km": 159.4,
+            "min": 250,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "vidyarthi-bhavan",
+            "name_en": "Vidyarthi Bhavan Gandhi Bazaar",
+            "name_kn": "ವಿದ್ಯಾರ್ಥಿ ಭವನ ಗಾಂಧಿ ಬಜಾರ್",
+            "region": "Bengaluru",
+            "city": "Bengaluru",
+            "lat": 12.9427,
+            "lng": 77.5684,
+            "categories": [
+              "food"
+            ],
+            "duration_min": 45,
+            "entry_inr": 120,
+            "best_months": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "is_meal": "breakfast",
+            "desc_en": "Iconic 1943 heritage eatery famous for thick crispy golden benne masala dosas and filter coffee.",
+            "desc_kn": "೧೯೪೩ ರಿಂದ ಗಾಂಧಿ ಬಜಾರಿನಲ್ಲಿ ಗರಿಗರಿ ಮಸಾಲೆ ದೋಸೆ ಮತ್ತು ಘಮಘಮಿಸುವ ಫಿಲ್ಟರ್ ಕಾಫಿಗೆ ಹೆಸರಾದ ಹೆಗ್ಗುರುತು.",
+            "tip_en": "Watch waiters masterfully balance stacks of up to 20 dosa plates across their arms.",
+            "tip_kn": "ಮಾಣಿಗಳು ಒಂದೇ ಕೈಯಲ್ಲಿ ಹತ್ತಾರು ದೋಸೆ ತಟ್ಟೆಗಳನ್ನು ಹೊತ್ತು ತರುವುದನ್ನು ನೋಡುವುದೇ ಸಂಭ್ರಮ.",
+            "phrase_ids": [
+              "phrase-masale-dose",
+              "phrase-delicious-food",
+              "phrase-bill-please"
+            ],
+            "verified": true,
+            "source_url": "https://vidyarthibhavan.in"
+          },
+          "phrases": [
+            {
+              "id": "phrase-masale-dose",
+              "kn": "ಒಂದು ಮಸಾಲೆ ದೋಸೆ ಕೊಡಿ",
+              "translit": "Ondu masale dose kodi",
+              "en": "Please give one masala dosa",
+              "context": "food"
+            },
+            {
+              "id": "phrase-delicious-food",
+              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
+              "translit": "Oota tumba ruchi aagide",
+              "en": "The food is very tasty",
+              "context": "food"
+            },
+            {
+              "id": "phrase-bill-please",
+              "kn": "ಬಿಲ್ ಕೊಡಿ",
+              "translit": "Bill kodi",
+              "en": "Please give the bill",
+              "context": "food"
+            }
+          ]
+        }
+      ],
+      "travel_total_min": 265
+    },
+    {
+      "day": 3,
+      "theme": "Bengaluru & Mysuru Highlights",
+      "stops": [
+        {
+          "place_id": "vv-puram-food-street",
+          "start": "09:00",
+          "duration_min": 75,
+          "note_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
+          "place": {
+            "id": "vv-puram-food-street",
+            "name_en": "VV Puram Food Street (Thindi Beedi)",
+            "name_kn": "ವಿ.ವಿ. ಪುರಂ ತಿಂಡಿ ಬೀದಿ",
+            "region": "Bengaluru",
+            "city": "Bengaluru",
+            "lat": 12.9526,
+            "lng": 77.5772,
+            "categories": [
+              "food",
+              "culture"
+            ],
+            "duration_min": 75,
+            "entry_inr": 200,
+            "best_months": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "is_meal": "dinner",
+            "desc_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
+            "desc_kn": "ಬಿಸಿಬಿಸಿ ಅಕ್ಕಿ ರೊಟ್ಟಿ, ಪದ್ದು, ಮಸಾಲೆ ದೋಸೆ ಮತ್ತು ಗುಲ್ಕಂಡ್ ಸಿಹಿಗೆ ಹೆಸರಾದ ಬೆಂಗಳೂರಿನ ಆಹಾರ ರಸ್ತೆ.",
+            "tip_en": "Shops open after 18:30. Try warm akki rotti followed by traditional gulkand ice cream.",
+            "tip_kn": "ಸಂಜೆ ೬:೩೦ ರ ನಂತರ ಅಂಗಡಿಗಳು ತೆರೆಯುತ್ತವೆ. ಬಿಸಿ ಅಕ್ಕಿರೊಟ್ಟಿ ಮತ್ತು ಗುಲ್ಕಂಡ್ ರುಚಿ ನೋಡಿ.",
+            "phrase_ids": [
+              "phrase-how-much",
+              "phrase-delicious-food",
+              "phrase-bill-please"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-how-much",
+              "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು?",
+              "translit": "Idakke eshtu?",
+              "en": "How much for this?",
+              "context": "shopping"
+            },
+            {
+              "id": "phrase-delicious-food",
+              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
+              "translit": "Oota tumba ruchi aagide",
+              "en": "The food is very tasty",
+              "context": "food"
+            },
+            {
+              "id": "phrase-bill-please",
+              "kn": "ಬಿಲ್ ಕೊಡಿ",
+              "translit": "Bill kodi",
+              "en": "Please give the bill",
+              "context": "food"
+            }
+          ]
+        },
+        {
+          "place_id": "lalbagh-gardens",
+          "start": "10:15",
+          "duration_min": 90,
+          "note_en": "Historical 240-acre botanical garden commissioned by Hyder Ali featuring the Victorian Glass House and ancient rock.",
+          "travel_from_prev": {
+            "km": 1.2,
+            "min": 10,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "lalbagh-gardens",
+            "name_en": "Lalbagh Botanical Garden",
+            "name_kn": "ಲಾಲ್‌ಬಾಗ್ ಸಸ್ಯತೋಟ",
+            "region": "Bengaluru",
+            "city": "Bengaluru",
+            "lat": 12.9507,
+            "lng": 77.5848,
+            "categories": [
+              "nature",
+              "heritage"
+            ],
+            "duration_min": 90,
+            "entry_inr": 25,
+            "best_months": [
+              1,
+              2,
+              3,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Historical 240-acre botanical garden commissioned by Hyder Ali featuring the Victorian Glass House and ancient rock.",
+            "desc_kn": "ಹೈದರ್ ಅಲಿ ಕಾಲದ ೨೪೦ ಎಕರೆ ವಿಸ್ತೀರ್ಣದ ಐತಿಹಾಸಿಕ ಗಾಜಿನ ಮನೆ ಹಾಗೂ ಪುರಾತನ ಬಂಡೆ ಹೊಂದಿರುವ ಸಸ್ಯತೋಟ.",
+            "tip_en": "Walk up the 3,000-million-year-old Lalbagh Rock near the main gate for a garden vista.",
+            "tip_kn": "ಉದ್ಯಾನವನದ ವಿಹಂಗಮ ನೋಟಕ್ಕಾಗಿ ಮುಖ್ಯ ದ್ವಾರದ ಬಳಿಯ ಪುರಾತನ ಲಾಲ್‌ಬಾಗ್ ಬಂಡೆಯನ್ನು ಹತ್ತಿ.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-take-photo",
+              "phrase-thanks"
+            ],
+            "verified": false,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "brindavan-gardens",
+          "start": "11:55",
+          "duration_min": 120,
+          "note_en": "Terraced botanical gardens laid across the KRS Dam with synchronized musical fountains at dusk.",
+          "travel_from_prev": {
+            "km": 161.7,
+            "min": 255,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "brindavan-gardens",
+            "name_en": "Brindavan Gardens",
+            "name_kn": "ಬೃಂದಾವನ ಉದ್ಯಾನವನ",
+            "region": "Mysuru",
+            "city": "Mandya",
+            "lat": 12.4244,
+            "lng": 76.5728,
+            "categories": [
+              "nature"
+            ],
+            "duration_min": 120,
+            "entry_inr": 50,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2
+            ],
+            "budget_fit": [
+              "budget",
+              "mid"
+            ],
+            "desc_en": "Terraced botanical gardens laid across the KRS Dam with synchronized musical fountains at dusk.",
+            "desc_kn": "ಕೆಆರ್‌ಎಸ್ ಅಣೆಕಟ್ಟಿನ ಹಿಂಭಾಗದಲ್ಲಿರುವ ಹಂತ ಹಂತದ ಸುಂದರ ಉದ್ಯಾನವನ ಮತ್ತು ಸಂಜೆಯ ಸಂಗೀತ ಕಾರಂಜಿ.",
+            "tip_en": "Arrive around 17:30 to walk the gardens before musical fountain show starts at dusk.",
+            "tip_kn": "ಸಂಜೆಯ ಸಂಗೀತ ಕಾರಂಜಿ ಪ್ರದರ್ಶನ ವೀಕ್ಷಿಸಲು ಸಂಜೆ ೫:೩೦ಕ್ಕೆ ತಲುಪಿ.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-which-way",
+              "phrase-take-photo"
+            ],
+            "verified": false,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-which-way",
+              "kn": "ಈ ರಸ್ತೆ ಎಲ್ಲಿಗೆ ಹೋಗುತ್ತೆ?",
+              "translit": "Ee raste ellige hogutte?",
+              "en": "Where does this road lead to?",
+              "context": "directions"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            }
+          ]
+        }
+      ],
+      "travel_total_min": 265
+    }
+  ],
+  "cost": {
+    "stay": 17600,
+    "food": 14400,
+    "transport": 7024,
+    "entry": 2980,
+    "total": 42004,
+    "people": 4
+  },
+  "tips": [
+    "Start mornings by 08:30 to enjoy peaceful monuments before peak tourist traffic.",
+    "Dress respectfully when entering active sanctums and historic temples.",
+    "Sample local Karnataka breakfast specialities including Tatte Idli and Benne Dosa."
+  ],
+  "source": "sample"
+}

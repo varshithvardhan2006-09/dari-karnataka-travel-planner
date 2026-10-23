@@ -1,0 +1,40 @@
+import { describe, it, expect } from "vitest";
+import LZString from "lz-string";
+import { buildDeterministicPlan } from "../src/lib/planner";
+import { PlanRequest, Plan } from "../src/lib/schema";
+
+describe("Trip URL Share with lz-string", () => {
+  const sampleRequest: PlanRequest = {
+    interests: ["heritage", "nature"],
+    days: 3,
+    start_city: "Mysuru",
+    budget: "mid",
+    pace: "balanced",
+    travellers: "couple",
+    month: 10,
+    lang: "en",
+  };
+
+  it("compresses and decompresses a full Plan without losing data", () => {
+    const originalPlan = buildDeterministicPlan(sampleRequest);
+
+    // Compress
+    const jsonStr = JSON.stringify(originalPlan);
+    const compressed = LZString.compressToEncodedURIComponent(jsonStr);
+
+    expect(compressed).toBeDefined();
+    expect(compressed.length).toBeGreaterThan(0);
+
+    // Decompress
+    const decompressed = LZString.decompressFromEncodedURIComponent(compressed);
+    expect(decompressed).toBeDefined();
+
+    const restoredPlan = JSON.parse(decompressed!) as Plan;
+    expect(restoredPlan.title).toBe(originalPlan.title);
+    expect(restoredPlan.days.length).toBe(originalPlan.days.length);
+    expect(restoredPlan.cost.total).toBe(originalPlan.cost.total);
+    expect(restoredPlan.days[0].stops[0].place_id).toBe(
+      originalPlan.days[0].stops[0].place_id
+    );
+  });
+});

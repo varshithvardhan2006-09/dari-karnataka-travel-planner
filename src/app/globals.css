@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+:root {
+  --red: #8E1F2F;
+  --gold: #F2B705;
+  --gold-soft: #FDF2CC;
+  --green: #1E6B52;
+  --green-soft: #DDEFE7;
+  --blue: #2B5F8A;
+  --blue-soft: #E1ECF5;
+  --ink: #14202B;
+  --mute: #586673;
+  --bg: #F2F4F1;
+  --line: #DCE1DD;
+}
+
+@theme {
+  --color-brand-red: #8E1F2F;
+  --color-brand-gold: #F2B705;
+  --color-brand-gold-soft: #FDF2CC;
+  --color-brand-green: #1E6B52;
+  --color-brand-green-soft: #DDEFE7;
+  --color-brand-blue: #2B5F8A;
+  --color-brand-blue-soft: #E1ECF5;
+  --color-brand-ink: #14202B;
+  --color-brand-mute: #586673;
+  --color-brand-bg: #F2F4F1;
+  --color-brand-line: #DCE1DD;
+
+  --font-heading: var(--font-bricolage), system-ui, sans-serif;
+  --font-body: var(--font-hanken), var(--font-noto-kannada), system-ui, sans-serif;
+  --font-kannada: var(--font-noto-kannada), system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-hanken), var(--font-noto-kannada), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-bricolage), var(--font-noto-kannada), sans-serif;
+}
+
+/* Custom utility classes */
+.bg-brand-bg { background-color: var(--bg); }
+.bg-brand-red { background-color: var(--red); }
+.bg-brand-gold { background-color: var(--gold); }
+.bg-brand-gold-soft { background-color: var(--gold-soft); }
+.bg-brand-green { background-color: var(--green); }
+.bg-brand-green-soft { background-color: var(--green-soft); }
+.bg-brand-blue { background-color: var(--blue); }
+.bg-brand-blue-soft { background-color: var(--blue-soft); }
+.bg-brand-ink { background-color: var(--ink); }
+
+.text-brand-red { color: var(--red); }
+.text-brand-gold { color: var(--gold); }
+.text-brand-green { color: var(--green); }
+.text-brand-blue { color: var(--blue); }
+.text-brand-ink { color: var(--ink); }
+.text-brand-mute { color: var(--mute); }
+
+.border-brand-line { border-color: var(--line); }
+.border-brand-red { border-color: var(--red); }
+.border-brand-gold { border-color: var(--gold); }

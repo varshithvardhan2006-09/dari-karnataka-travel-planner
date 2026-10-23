@@ -1,0 +1,107 @@
+[
+  {
+    "id": "phrase-ticket-cost",
+    "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+    "translit": "Ticket elli siguttade?",
+    "en": "Where do I get tickets?",
+    "context": "ticket"
+  },
+  {
+    "id": "phrase-how-much",
+    "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು?",
+    "translit": "Idakke eshtu?",
+    "en": "How much for this?",
+    "context": "shopping"
+  },
+  {
+    "id": "phrase-water",
+    "kn": "ನೀರು ಕೊಡಿ",
+    "translit": "Neeru kodi",
+    "en": "Please give water",
+    "context": "food"
+  },
+  {
+    "id": "phrase-thanks",
+    "kn": "ಧನ್ಯವಾದಗಳು",
+    "translit": "Dhanyavadagalu",
+    "en": "Thank you very much",
+    "context": "thanks"
+  },
+  {
+    "id": "phrase-please",
+    "kn": "ದಯವಿಟ್ಟು",
+    "translit": "Dayavittu",
+    "en": "Please",
+    "context": "greeting"
+  },
+  {
+    "id": "phrase-bus-stand",
+    "kn": "ಬಸ್ ನಿಲ್ದಾಣ ಎಲ್ಲಿದೆ?",
+    "translit": "Bus nildana ellide?",
+    "en": "Where is the bus stand?",
+    "context": "transport"
+  },
+  {
+    "id": "phrase-very-nice",
+    "kn": "ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ!",
+    "translit": "Tumba chennagide!",
+    "en": "It is very beautiful!",
+    "context": "thanks"
+  },
+  {
+    "id": "phrase-masale-dose",
+    "kn": "ಒಂದು ಮಸಾಲೆ ದೋಸೆ ಕೊಡಿ",
+    "translit": "Ondu masale dose kodi",
+    "en": "Please give one masala dosa",
+    "context": "food"
+  },
+  {
+    "id": "phrase-take-photo",
+    "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+    "translit": "Ondu photo tegeyiri, dayavittu",
+    "en": "Please take one photo",
+    "context": "greeting"
+  },
+  {
+    "id": "phrase-auto-call",
+    "kn": "ಆಟೋ ಬರುತ್ತೀರಾ?",
+    "translit": "Auto barthira?",
+    "en": "Will you come by auto?",
+    "context": "transport"
+  },
+  {
+    "id": "phrase-delicious-food",
+    "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
+    "translit": "Oota tumba ruchi aagide",
+    "en": "The food is very tasty",
+    "context": "food"
+  },
+  {
+    "id": "phrase-temple-darshan",
+    "kn": "ದೇವಸ್ಥಾನದ ದರ್ಶನ ಸಮಯ ಯಾವಾಗ?",
+    "translit": "Devasthanada darshana samaya yavaga?",
+    "en": "When is the temple darshan time?",
+    "context": "temple"
+  },
+  {
+    "id": "phrase-which-way",
+    "kn": "ಈ ರಸ್ತೆ ಎಲ್ಲಿಗೆ ಹೋಗುತ್ತೆ?",
+    "translit": "Ee raste ellige hogutte?",
+    "en": "Where does this road lead to?",
+    "context": "directions"
+  },
+  {
+    "id": "phrase-hello",
+    "kn": "ನಮಸ್ಕಾರ!",
+    "translit": "Namaskara!",
+    "en": "Hello / Greetings!",
+    "context": "greeting"
+  },
+  {
+    "id": "phrase-bill-please",
+    "kn": "ಬಿಲ್ ಕೊಡಿ",
+    "translit": "Bill kodi",
+    "en": "Please give the bill",
+    "context": "food"
+  }
+]
