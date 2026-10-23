@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
-import { MapContainer, TileLayer, Marker, Polyline, Tooltip, useMap } from "react-leaflet";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { DayPlan } from "@/lib/schema";
@@ -23,51 +22,13 @@ interface TripMapProps {
   onPinClick?: (placeId: string) => void;
 }
 
-// Controller component inside MapContainer to smoothly re-center / fitBounds on day change
-function MapViewController({
-  days,
-  selectedDay,
-  fitWholeTrip,
-}: {
-  days: DayPlan[];
-  selectedDay: number;
-  fitWholeTrip: boolean;
-}) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (fitWholeTrip) {
-      const allLatLngs = days.flatMap((d) =>
-        d.stops.map((s) => [s.place.lat, s.place.lng] as [number, number])
-      );
-      if (allLatLngs.length > 0) {
-        const bounds = L.latLngBounds(allLatLngs);
-        map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12, animate: true });
-      }
-      return;
-    }
-
-    const currentDayPlan = days.find((d) => d.day === selectedDay) || days[0];
-    if (!currentDayPlan || currentDayPlan.stops.length === 0) return;
-
-    const latLngs = currentDayPlan.stops.map(
-      (s) => [s.place.lat, s.place.lng] as [number, number]
-    );
-
-    if (latLngs.length === 1) {
-      map.setView(latLngs[0], 12, { animate: true });
-    } else if (latLngs.length > 1) {
-      const bounds = L.latLngBounds(latLngs);
-      map.fitBounds(bounds, { padding: [60, 60], maxZoom: 13, animate: true });
-    }
-  }, [map, selectedDay, days, fitWholeTrip]);
-
-  return null;
-}
-
 export default function TripMap({ days, selectedDay, onPinClick }: TripMapProps) {
   const { lang, t } = useLang();
-  const [wholeTrip, setWholeTrip] = React.useState<boolean>(false);
+  const [wholeTrip, setWholeTrip] = useState<boolean>(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<L.Map | null>(null);
+  const layerGroupRef = useRef<L.LayerGroup | null>(null);
 
   // Create custom HTML divIcon for a stop
   const createDayPinIcon = (dayNum: number) => {
@@ -94,40 +55,163 @@ export default function TripMap({ days, selectedDay, onPinClick }: TripMapProps)
     });
   };
 
-  // Center on Karnataka or first stop
-  const defaultCenter: [number, number] = useMemo(() => {
-    const firstStop = days[0]?.stops[0];
-    if (firstStop) {
-      return [firstStop.place.lat, firstStop.place.lng];
-    }
-    return [13.5, 75.8]; // Centroid of Karnataka
-  }, [days]);
+  const handleMarkerClick = useCallback(
+    (placeId: string) => {
+      if (onPinClick) {
+        onPinClick(placeId);
+      } else {
+        const cardEl = document.getElementById(`stop-card-${placeId}`);
+        if (cardEl) {
+          cardEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+    },
+    [onPinClick]
+  );
 
-  // Collect polylines for each day
-  const routePolylines = useMemo(() => {
-    return days.map((dayPlan) => {
+  // 1. Initialize Leaflet Map Instance Safely
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Clean up any stale map or container state (e.g. from React 19 fast-refresh)
+    if (mapRef.current) {
+      try {
+        mapRef.current.remove();
+      } catch {
+        // ignore
+      }
+      mapRef.current = null;
+    }
+
+    const rawContainer = container as unknown as { _leaflet_id?: number };
+    if (rawContainer._leaflet_id) {
+      delete rawContainer._leaflet_id;
+    }
+    container.innerHTML = "";
+
+    const map = L.map(container, {
+      center: [14.5, 75.8],
+      zoom: 7,
+      scrollWheelZoom: false,
+    });
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    const layerGroup = L.layerGroup().addTo(map);
+    mapRef.current = map;
+    layerGroupRef.current = layerGroup;
+
+    // Trigger map resize after mounting
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 150);
+
+    return () => {
+      clearTimeout(timer);
+      if (layerGroupRef.current) {
+        try {
+          layerGroupRef.current.clearLayers();
+        } catch {
+          // ignore
+        }
+        layerGroupRef.current = null;
+      }
+      if (mapRef.current) {
+        try {
+          mapRef.current.remove();
+        } catch {
+          // ignore
+        }
+        mapRef.current = null;
+      }
+      if (rawContainer._leaflet_id) {
+        delete rawContainer._leaflet_id;
+      }
+    };
+  }, []);
+
+  // 2. Update Map Layers (Routes, Markers, Bounds) on state change
+  useEffect(() => {
+    const map = mapRef.current;
+    const layerGroup = layerGroupRef.current;
+    if (!map || !layerGroup) return;
+
+    layerGroup.clearLayers();
+
+    // Draw route polylines
+    days.forEach((dayPlan) => {
       const points = dayPlan.stops.map((s) => [s.place.lat, s.place.lng] as [number, number]);
       const color = DAY_PIN_COLORS[dayPlan.day] || "#586673";
       const isSelected = dayPlan.day === selectedDay;
-      return {
-        day: dayPlan.day,
-        points,
-        color,
-        isSelected,
-      };
-    });
-  }, [days, selectedDay]);
 
-  const handleMarkerClick = (placeId: string) => {
-    if (onPinClick) {
-      onPinClick(placeId);
+      L.polyline(points, {
+        color: isSelected ? "#14202B" : color,
+        weight: isSelected ? 3.5 : 2,
+        dashArray: "6, 8",
+        opacity: isSelected ? 0.9 : 0.4,
+      }).addTo(layerGroup);
+    });
+
+    // Draw markers and tooltips
+    days.forEach((dayPlan) => {
+      dayPlan.stops.forEach((stop) => {
+        const isCurrentDay = dayPlan.day === selectedDay;
+        const placeLabel = lang === "kn" ? stop.place.name_kn : stop.place.name_en;
+
+        const marker = L.marker([stop.place.lat, stop.place.lng], {
+          icon: createDayPinIcon(dayPlan.day),
+          opacity: isCurrentDay ? 1.0 : 0.6,
+        }).addTo(layerGroup);
+
+        marker.bindTooltip(
+          `<span style="font-weight:700">${placeLabel}</span>`,
+          {
+            direction: "right",
+            offset: [16, 0],
+            permanent: isCurrentDay,
+            opacity: 0.95,
+            className: "font-medium text-xs font-sans",
+          }
+        );
+
+        marker.on("click", () => handleMarkerClick(stop.place_id));
+      });
+    });
+
+    // Fit bounds smoothly
+    if (wholeTrip) {
+      const allLatLngs = days.flatMap((d) =>
+        d.stops.map((s) => [s.place.lat, s.place.lng] as [number, number])
+      );
+      if (allLatLngs.length > 0) {
+        map.fitBounds(L.latLngBounds(allLatLngs), {
+          padding: [40, 40],
+          maxZoom: 12,
+          animate: true,
+        });
+      }
     } else {
-      const cardEl = document.getElementById(`stop-card-${placeId}`);
-      if (cardEl) {
-        cardEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      const currentDayPlan = days.find((d) => d.day === selectedDay) || days[0];
+      if (currentDayPlan && currentDayPlan.stops.length > 0) {
+        const latLngs = currentDayPlan.stops.map(
+          (s) => [s.place.lat, s.place.lng] as [number, number]
+        );
+        if (latLngs.length === 1) {
+          map.setView(latLngs[0], 12, { animate: true });
+        } else if (latLngs.length > 1) {
+          map.fitBounds(L.latLngBounds(latLngs), {
+            padding: [60, 60],
+            maxZoom: 13,
+            animate: true,
+          });
+        }
       }
     }
-  };
+  }, [days, selectedDay, wholeTrip, lang, handleMarkerClick]);
 
   return (
     <div className="relative w-full h-[450px] lg:h-full min-h-[450px] rounded-2xl overflow-hidden border border-[#DCE1DD] shadow-xs">
@@ -161,63 +245,8 @@ export default function TripMap({ days, selectedDay, onPinClick }: TripMapProps)
           : "Whole trip"}
       </button>
 
-      <MapContainer
-        center={defaultCenter}
-        zoom={8}
-        scrollWheelZoom={false}
-        className="w-full h-full z-0"
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-
-        <MapViewController days={days} selectedDay={selectedDay} fitWholeTrip={wholeTrip} />
-
-        {/* Polylines for day routes */}
-        {routePolylines.map((route) => (
-          <Polyline
-            key={`route-${route.day}`}
-            positions={route.points}
-            pathOptions={{
-              color: route.isSelected ? "#14202B" : route.color,
-              weight: route.isSelected ? 3.5 : 2,
-              dashArray: "6, 8",
-              opacity: route.isSelected ? 0.9 : 0.4,
-            }}
-          />
-        ))}
-
-        {/* Numbered Pins */}
-        {days.map((dayPlan) =>
-          dayPlan.stops.map((stop) => {
-            const isCurrentDay = dayPlan.day === selectedDay;
-            const placeLabel = lang === "kn" ? stop.place.name_kn : stop.place.name_en;
-
-            return (
-              <Marker
-                key={`${dayPlan.day}-${stop.place_id}`}
-                position={[stop.place.lat, stop.place.lng]}
-                icon={createDayPinIcon(dayPlan.day)}
-                opacity={isCurrentDay ? 1.0 : 0.6}
-                eventHandlers={{
-                  click: () => handleMarkerClick(stop.place_id),
-                }}
-              >
-                <Tooltip
-                  direction="right"
-                  offset={[16, 0]}
-                  permanent={isCurrentDay}
-                  opacity={0.95}
-                  className="font-medium text-xs font-sans"
-                >
-                  <span className="font-bold">{placeLabel}</span>
-                </Tooltip>
-              </Marker>
-            );
-          })
-        )}
-      </MapContainer>
+      {/* Leaflet Map DOM Element */}
+      <div ref={containerRef} className="w-full h-full z-0" />
     </div>
   );
 }
