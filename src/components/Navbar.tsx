@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -40,12 +40,12 @@ export default function Navbar() {
             >
               {t("nav.sample_trips")}
             </Link>
-            <a
-              href="#about"
+            <Link
+              href="/#about"
               className="text-sm font-medium text-[#14202B]/80 hover:text-[#8E1F2F] transition-colors"
             >
               {t("nav.about")}
-            </a>
+            </Link>
           </nav>
         </div>
 
