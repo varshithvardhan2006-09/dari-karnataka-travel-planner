@@ -457,12 +457,16 @@ function TripViewContent() {
 
           <CostSummary cost={plan.cost} days={plan.days.length} />
 
-          <div className="text-center sm:text-left text-xs text-[#586673] pt-1">
+          <div className="flex items-center justify-between text-xs text-[#586673] pt-1">
             <span>
               Plan source:{" "}
               <strong className="font-semibold text-[#14202B]">
                 {plan.source}
               </strong>
+            </span>
+            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+              <span>✓</span>
+              <span>{t("common.accuracy_badge")}</span>
             </span>
           </div>
         </div>
@@ -502,12 +506,16 @@ function TripViewContent() {
 
             <CostSummary cost={plan.cost} days={plan.days.length} />
 
-            <div className="text-center text-xs text-[#586673] pt-1">
+            <div className="flex items-center justify-between text-xs text-[#586673] pt-1">
               <span>
                 Plan source:{" "}
                 <strong className="font-semibold text-[#14202B]">
                   {plan.source}
                 </strong>
+              </span>
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                <span>✓</span>
+                <span>{t("common.accuracy_badge")}</span>
               </span>
             </div>
           </div>

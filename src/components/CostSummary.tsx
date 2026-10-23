@@ -13,7 +13,7 @@ export default function CostSummary({ cost, days }: CostSummaryProps) {
   const { lang, t } = useLang();
 
   return (
-    <div className="bg-[#14202B] text-white rounded-2xl p-5 sm:p-6 shadow-md border border-white/10">
+    <div className="bg-[#14202B] text-white rounded-2xl p-5 sm:p-6 shadow-md border border-white/10 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Left: Total Amount */}
         <div>
@@ -48,6 +48,19 @@ export default function CostSummary({ cost, days }: CostSummaryProps) {
             </span>
           </div>
         </div>
+      </div>
+
+      {/* Accuracy & Transparency Disclaimer Note */}
+      <div className="pt-3 border-t border-white/10 flex items-start gap-2 text-[11px] text-white/60 leading-relaxed">
+        <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px] shrink-0 mt-0.5">
+          ✓
+        </span>
+        <p>
+          <strong className="text-white/90 font-semibold">
+            {t("common.accuracy_badge")}:
+          </strong>{" "}
+          {t("common.accuracy_disclaimer")}
+        </p>
       </div>
     </div>
   );

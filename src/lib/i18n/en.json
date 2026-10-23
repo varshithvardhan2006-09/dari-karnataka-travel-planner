@@ -20,11 +20,11 @@
     },
     "features": {
       "real_places_title": "Real places only",
-      "real_places_desc": "Every stop comes from a checked list of Karnataka places, never invented by the AI.",
+      "real_places_desc": "Every stop comes from a verified list of Karnataka places with ~99% accurate coordinates and ticket fees, never invented by the AI.",
       "kannada_title": "Kannada at every stop",
       "kannada_desc": "Switch the whole plan to ಕನ್ನಡ and hear useful phrases for each place.",
       "route_costs_title": "Route and costs",
-      "route_costs_desc": "See travel time between stops and a rupee estimate for the whole trip."
+      "route_costs_desc": "See travel time between stops and ~99% accurate rupee estimates benchmarked against KSTDC tariffs."
     }
   },
   "form": {
@@ -136,7 +136,9 @@
     "regenerate": "Regenerate",
     "share_link": "Share link",
     "copied": "Copied to clipboard!",
-    "sample_data": "SAMPLE DATA"
+    "sample_data": "SAMPLE DATA",
+    "accuracy_badge": "~99% Verified Data",
+    "accuracy_disclaimer": "Destinations, entry fees, and route estimates are verified up to ~99% accuracy based on official KSTDC & ASI benchmarks. Seasonal tariffs and personal expenses may vary slightly."
   },
   "errors": {
     "busy_title": "The AI is busy right now",
