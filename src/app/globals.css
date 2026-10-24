@@ -67,3 +67,19 @@ h1, h2, h3, h4, h5, h6 {
 .border-brand-line { border-color: var(--line); }
 .border-brand-red { border-color: var(--red); }
 .border-brand-gold { border-color: var(--gold); }
+
+/* Kannada matra line-height preservation (U6) */
+[lang="kn"], .font-kannada {
+  line-height: 1.55 !important;
+}
+
+/* Print styling for PDF export (U4) */
+@media print {
+  header, footer, nav, button, .leaflet-control-zoom, .fixed {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+    color: #14202B !important;
+  }
+}
