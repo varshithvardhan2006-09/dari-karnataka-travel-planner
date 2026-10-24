@@ -1,5 +1,5 @@
 import placesData from "../../data/places.json";
-import { Place, PlanRequest } from "./schema";
+import { Place, PlanRequest, Category } from "./schema";
 
 export const START_CITY_COORDINATES: Record<string, { lat: number; lng: number }> = {
   Bengaluru: { lat: 12.9716, lng: 77.5946 },
@@ -163,4 +163,16 @@ export function getCandidates(
 
   // Select top candidates
   return scoredPlaces.slice(0, targetCandidatesCount).map((item) => item.place);
+}
+
+/**
+ * Counts places in data that match at least one of the selected categories.
+ */
+export function countMatchingPlaces(
+  interests: Category[],
+  allPlaces: Place[] = placesData as Place[]
+): number {
+  if (!interests || interests.length === 0) return 0;
+  const set = new Set(interests);
+  return allPlaces.filter((p) => p.categories.some((c) => set.has(c))).length;
 }

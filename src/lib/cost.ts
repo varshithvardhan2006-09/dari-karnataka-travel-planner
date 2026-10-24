@@ -73,3 +73,31 @@ export function calculateTripCost(params: {
     people,
   };
 }
+
+/**
+ * Computes estimated total rupee range [min, max] for a trip brief.
+ */
+export function estimateCostRange(
+  days: number,
+  budget: BudgetFit,
+  people: number
+): { min: number; max: number; text: string } {
+  const rates = TIER_DAILY_RATES[budget] || TIER_DAILY_RATES.mid;
+  const nights = days > 1 ? days - 1 : 0;
+  const stay = people * rates.stayPerPerson * nights;
+  const food = people * rates.foodPerPerson * days;
+  const avgKmPerDay = 80;
+  const transport = days * avgKmPerDay * 20;
+  const avgEntry = days * 3 * 50 * people;
+  const baseTotal = stay + food + transport + avgEntry;
+
+  const min = Math.round((baseTotal * 0.85) / 1000) * 1000;
+  const max = Math.round((baseTotal * 1.25) / 1000) * 1000;
+  const minK = Math.round(min / 1000);
+  const maxK = Math.round(max / 1000);
+  return {
+    min,
+    max,
+    text: `Rs ${minK}k to ${maxK}k`,
+  };
+}
