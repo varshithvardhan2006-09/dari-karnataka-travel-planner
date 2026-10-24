@@ -529,7 +529,16 @@ function TripViewContent() {
   if (loading) {
     return (
       <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <ProgressSteps days={parsedDays} placeCount={parsedDays * 3} />
+        <ProgressSteps
+          days={parsedDays}
+          placeCount={parsedDays * 3}
+          interests={interestsParam ? interestsParam.split(",").join(" & ") : "Heritage & Food"}
+          budget={budgetParam || "Mid-range"}
+          pace={paceParam || "Relaxed"}
+          month={currentMonth}
+          onCancel={() => router.push("/plan")}
+          onUseReadyMade={() => router.push("/trip?sample=heritage")}
+        />
       </div>
     );
   }
