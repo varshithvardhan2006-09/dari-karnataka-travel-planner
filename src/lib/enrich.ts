@@ -9,7 +9,7 @@ import {
   Stop,
   DayPlan,
 } from "./schema";
-import { computeTravelLeg, addMinutesToTime } from "./geo";
+import { computeTravelLeg, addMinutesToTime, roundTimeTo5Min } from "./geo";
 import { calculateTripCost, PEOPLE_COUNT_MAP } from "./cost";
 
 const placesMap = new Map<string, Place>(
@@ -69,13 +69,23 @@ export function enrichPlan(
           dayTravelTotalMin += leg.min;
           totalTripKm += leg.km;
 
-          // Advance clock by travel time if start not provided or to ensure realistic flow
+          // Advance clock by travel time
           currentClock = addMinutesToTime(currentClock, leg.min);
         }
       }
 
-      // Format start time
-      const startTime = stopRef.start && stopRef.start.length === 5 ? stopRef.start : currentClock;
+      currentClock = roundTimeTo5Min(currentClock);
+
+      // Format start time - verify no overlap with previous stop plus travel
+      let startTime = currentClock;
+      if (stopRef.start && stopRef.start.length === 5) {
+        const roundedStart = roundTimeTo5Min(stopRef.start);
+        const [reqH, reqM] = roundedStart.split(":").map(Number);
+        const [curH, curM] = currentClock.split(":").map(Number);
+        if (reqH * 60 + reqM >= curH * 60 + curM) {
+          startTime = roundedStart;
+        }
+      }
 
       // Note text
       const noteEn = stopRef.note_en || place.desc_en;
@@ -90,8 +100,8 @@ export function enrichPlan(
         phrases,
       });
 
-      // Advance clock by stop visit duration
-      currentClock = addMinutesToTime(startTime, place.duration_min);
+      // Advance clock by stop visit duration rounded to 5 mins
+      currentClock = roundTimeTo5Min(addMinutesToTime(startTime, place.duration_min));
     }
 
     return {

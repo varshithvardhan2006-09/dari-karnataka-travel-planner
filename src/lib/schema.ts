@@ -76,6 +76,9 @@ export const PlaceSchema = z.object({
   phrase_ids: z.array(z.string()),
   verified: z.boolean(),
   source_url: z.string().optional(),
+  best_time_en: z.string().optional(),
+  crowd: z.enum(["low", "medium", "high"]).optional(),
+  opening_hours: z.string().optional(),
 });
 export type Place = z.infer<typeof PlaceSchema>;
 

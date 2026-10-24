@@ -444,7 +444,7 @@ export default function PlannerForm() {
           )}
         </div>
 
-        {/* 99% Verified Accuracy Notice */}
+        {/* Honest Dataset Estimate Notice */}
         <div className="mt-5 pt-4 border-t border-[#DCE1DD] flex items-start gap-2.5 text-xs text-[#586673] bg-[#F7F9F6] p-3 rounded-xl border border-[#E2E7E2]">
           <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] shrink-0 mt-0.5">
             ✓

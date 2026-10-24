@@ -5,53 +5,62 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { DayPlan } from "@/lib/schema";
 import { useLang } from "@/lib/i18n/useLang";
+import { getPinNumber, DAY_PIN_COLORS } from "@/lib/geo";
 
-export const DAY_PIN_COLORS: Record<number, string> = {
-  1: "#8E1F2F", // Red
-  2: "#D99A00", // Gold
-  3: "#1E6B52", // Green
-  4: "#2B5F8A", // Blue
-  5: "#6A4C93", // Purple
-  6: "#C05621", // Terracotta
-  7: "#2D3748", // Dark slate
-};
+export { DAY_PIN_COLORS };
 
 interface TripMapProps {
   days: DayPlan[];
   selectedDay: number;
+  selectedPlaceId?: string | null;
+  onSelectDay?: (day: number) => void;
   onPinClick?: (placeId: string) => void;
 }
 
-export default function TripMap({ days, selectedDay, onPinClick }: TripMapProps) {
+export default function TripMap({
+  days,
+  selectedDay,
+  selectedPlaceId,
+  onSelectDay,
+  onPinClick,
+}: TripMapProps) {
   const { lang, t } = useLang();
   const [wholeTrip, setWholeTrip] = useState<boolean>(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const layerGroupRef = useRef<L.LayerGroup | null>(null);
+  const markersRef = useRef<Map<string, L.Marker>>(new Map());
 
-  // Create custom HTML divIcon for a stop
-  const createDayPinIcon = (dayNum: number) => {
+  // Create custom HTML divIcon for a stop with pin numbering
+  const createDayPinIcon = (pinNumber: number, dayNum: number, isSelected: boolean) => {
     const color = DAY_PIN_COLORS[dayNum] || "#8E1F2F";
+    const size = isSelected ? 34 : 28;
+    const borderWidth = isSelected ? 3 : 2;
+    const shadow = isSelected
+      ? "0 4px 12px rgba(142,31,47,0.5), 0 0 0 4px rgba(255,255,255,0.85)"
+      : "0 2px 6px rgba(0,0,0,0.35)";
+
     return L.divIcon({
       className: "custom-day-pin-marker",
       html: `<div style="
         background-color: ${color};
-        width: 28px;
-        height: 28px;
+        width: ${size}px;
+        height: ${size}px;
         border-radius: 50%;
-        border: 2px solid #ffffff;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+        border: ${borderWidth}px solid #ffffff;
+        box-shadow: ${shadow};
         color: #ffffff;
-        font-weight: 700;
-        font-size: 13px;
+        font-weight: 800;
+        font-size: ${isSelected ? 14 : 12}px;
         display: flex;
         align-items: center;
         justify-content: center;
-      ">${dayNum}</div>`,
-      iconSize: [28, 28],
-      iconAnchor: [14, 14],
-      popupAnchor: [0, -14],
+        transition: transform 0.15s ease-out;
+      ">${pinNumber}</div>`,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2],
+      popupAnchor: [0, -size / 2],
     });
   };
 
@@ -74,7 +83,6 @@ export default function TripMap({ days, selectedDay, onPinClick }: TripMapProps)
     const container = containerRef.current;
     if (!container) return;
 
-    // Clean up any stale map or container state (e.g. from React 19 fast-refresh)
     if (mapRef.current) {
       try {
         mapRef.current.remove();
@@ -97,6 +105,7 @@ export default function TripMap({ days, selectedDay, onPinClick }: TripMapProps)
       zoomControl: false,
     });
 
+    // Zoom control at bottom right
     L.control.zoom({ position: "bottomright" }).addTo(map);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -108,7 +117,6 @@ export default function TripMap({ days, selectedDay, onPinClick }: TripMapProps)
     mapRef.current = map;
     layerGroupRef.current = layerGroup;
 
-    // Trigger map resize after mounting
     const timer = setTimeout(() => {
       map.invalidateSize();
     }, 150);
@@ -144,56 +152,82 @@ export default function TripMap({ days, selectedDay, onPinClick }: TripMapProps)
     if (!map || !layerGroup) return;
 
     layerGroup.clearLayers();
+    markersRef.current.clear();
 
-    // Draw route polylines
-    days.forEach((dayPlan) => {
+    // Determine which days to display
+    const visibleDays = wholeTrip ? days : days.filter((d) => d.day === selectedDay);
+
+    // 2a. Draw polylines with white casing underneath for high contrast
+    visibleDays.forEach((dayPlan) => {
       const points = dayPlan.stops.map((s) => [s.place.lat, s.place.lng] as [number, number]);
-      const color = DAY_PIN_COLORS[dayPlan.day] || "#586673";
-      const isSelected = dayPlan.day === selectedDay;
+      if (points.length < 2) return;
 
+      const color = DAY_PIN_COLORS[dayPlan.day] || "#8E1F2F";
+
+      // White casing line underneath
       L.polyline(points, {
-        color: isSelected ? "#14202B" : color,
-        weight: isSelected ? 3.5 : 2,
+        color: "#ffffff",
+        weight: 6,
+        opacity: 0.9,
+      }).addTo(layerGroup);
+
+      // Dashed colored route on top
+      L.polyline(points, {
+        color: color,
+        weight: 3.5,
         dashArray: "6, 8",
-        opacity: isSelected ? 0.9 : 0.4,
+        opacity: 0.95,
       }).addTo(layerGroup);
     });
 
-    // Draw markers and tooltips
-    days.forEach((dayPlan) => {
-      dayPlan.stops.forEach((stop) => {
-        const isCurrentDay = dayPlan.day === selectedDay;
+    // 2b. Draw pins and single active popup
+    visibleDays.forEach((dayPlan, dayIdx) => {
+      dayPlan.stops.forEach((stop, stopIdx) => {
+        const pinNumber = getPinNumber(
+          wholeTrip ? dayPlan.day - 1 : dayIdx,
+          stopIdx,
+          days,
+          wholeTrip
+        );
+        const isSelected = selectedPlaceId === stop.place_id;
         const placeLabel = lang === "kn" ? stop.place.name_kn : stop.place.name_en;
 
         const marker = L.marker([stop.place.lat, stop.place.lng], {
-          icon: createDayPinIcon(dayPlan.day),
-          opacity: isCurrentDay ? 1.0 : 0.6,
+          icon: createDayPinIcon(pinNumber, dayPlan.day, isSelected),
+          zIndexOffset: isSelected ? 1000 : 100,
         }).addTo(layerGroup);
 
-        marker.bindTooltip(
-          `<span style="font-weight:700">${placeLabel}</span>`,
-          {
-            direction: "right",
-            offset: [16, 0],
-            permanent: isCurrentDay,
-            opacity: 0.95,
-            className: "font-medium text-xs font-sans",
-          }
+        markersRef.current.set(stop.place_id, marker);
+
+        // Bind popup only for selected pin or when clicked (no permanent overlapping labels)
+        marker.bindPopup(
+          `<div style="font-family: inherit; font-size: 13px; line-height: 1.4; padding: 2px;">
+            <div style="font-weight: 800; color: #14202B; margin-bottom: 2px;">${placeLabel}</div>
+            <div style="color: #586673; font-size: 11px;">${stop.start} · ${stop.duration_min} min</div>
+          </div>`,
+          { closeButton: false, offset: [0, -14] }
         );
 
-        marker.on("click", () => handleMarkerClick(stop.place_id));
+        if (isSelected) {
+          marker.openPopup();
+        }
+
+        marker.on("click", () => {
+          handleMarkerClick(stop.place_id);
+          marker.openPopup();
+        });
       });
     });
 
-    // Fit bounds smoothly
+    // 2c. Fit bounds smoothly
     if (wholeTrip) {
       const allLatLngs = days.flatMap((d) =>
         d.stops.map((s) => [s.place.lat, s.place.lng] as [number, number])
       );
       if (allLatLngs.length > 0) {
         map.fitBounds(L.latLngBounds(allLatLngs), {
-          padding: [40, 40],
-          maxZoom: 12,
+          padding: [60, 60],
+          maxZoom: 14,
           animate: true,
         });
       }
@@ -204,48 +238,113 @@ export default function TripMap({ days, selectedDay, onPinClick }: TripMapProps)
           (s) => [s.place.lat, s.place.lng] as [number, number]
         );
         if (latLngs.length === 1) {
-          map.setView(latLngs[0], 12, { animate: true });
+          map.setView(latLngs[0], 13, { animate: true });
         } else if (latLngs.length > 1) {
           map.fitBounds(L.latLngBounds(latLngs), {
             padding: [60, 60],
-            maxZoom: 13,
+            maxZoom: 14,
             animate: true,
           });
         }
       }
     }
-  }, [days, selectedDay, wholeTrip, lang, handleMarkerClick]);
+  }, [days, selectedDay, wholeTrip, selectedPlaceId, lang, handleMarkerClick]);
+
+  // Center on selected stop when selectedPlaceId changes
+  useEffect(() => {
+    if (!selectedPlaceId || !mapRef.current) return;
+    const marker = markersRef.current.get(selectedPlaceId);
+    if (marker) {
+      const latLng = marker.getLatLng();
+      mapRef.current.panTo(latLng, { animate: true, duration: 0.5 });
+      marker.openPopup();
+    }
+  }, [selectedPlaceId]);
+
+  const handleLocateMe = () => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (wholeTrip) {
+      const allLatLngs = days.flatMap((d) =>
+        d.stops.map((s) => [s.place.lat, s.place.lng] as [number, number])
+      );
+      if (allLatLngs.length > 0) {
+        map.fitBounds(L.latLngBounds(allLatLngs), { padding: [60, 60], maxZoom: 14 });
+      }
+    } else {
+      const currentDayPlan = days.find((d) => d.day === selectedDay) || days[0];
+      if (currentDayPlan && currentDayPlan.stops.length > 0) {
+        const latLngs = currentDayPlan.stops.map(
+          (s) => [s.place.lat, s.place.lng] as [number, number]
+        );
+        if (latLngs.length > 0) {
+          map.fitBounds(L.latLngBounds(latLngs), { padding: [60, 60], maxZoom: 14 });
+        }
+      }
+    }
+  };
 
   return (
     <div className="relative w-full h-[450px] lg:h-full min-h-[450px] rounded-2xl overflow-hidden border border-[#DCE1DD] shadow-xs">
-      {/* Floating Day Legend Bar matching mockup 04 */}
-      <div className="absolute top-3 left-3 z-[1000] max-w-[calc(100%-125px)] overflow-x-auto scrollbar-none bg-white/95 backdrop-blur-xs px-2.5 py-1.5 rounded-xl shadow-sm border border-[#DCE1DD] flex items-center gap-2.5 text-xs font-semibold text-[#14202B]">
+      {/* Day Chips on the Map (matching mockup 04: Day 1 / 2 / 3 / 4 / All) */}
+      <div className="absolute top-3 left-3 z-[1000] flex items-center gap-1.5 bg-white/95 backdrop-blur-xs p-1.5 rounded-xl shadow-sm border border-[#DCE1DD] text-xs font-semibold text-[#14202B]">
         {days.map((d) => (
-          <div key={d.day} className="flex items-center gap-1.5 shrink-0">
+          <button
+            key={d.day}
+            type="button"
+            onClick={() => {
+              setWholeTrip(false);
+              onSelectDay?.(d.day);
+            }}
+            className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
+              !wholeTrip && selectedDay === d.day
+                ? "bg-[#14202B] text-white shadow-2xs"
+                : "text-[#586673] hover:text-[#14202B] hover:bg-gray-100"
+            }`}
+          >
             <span
-              className="w-2.5 h-2.5 rounded-full inline-block"
+              className="w-2 h-2 rounded-full inline-block shrink-0"
               style={{ backgroundColor: DAY_PIN_COLORS[d.day] || "#8E1F2F" }}
             />
-            <span className="whitespace-nowrap">
+            <span>
               {t("common.day")} {d.day}
             </span>
-          </div>
+          </button>
         ))}
+
+        <button
+          type="button"
+          onClick={() => setWholeTrip(true)}
+          className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+            wholeTrip
+              ? "bg-[#14202B] text-white shadow-2xs"
+              : "text-[#586673] hover:text-[#14202B] hover:bg-gray-100"
+          }`}
+        >
+          {lang === "kn" ? "ಎಲ್ಲಾ" : "All"}
+        </button>
       </div>
 
-      {/* Whole Trip Toggle Button matching mockup 07 */}
+      {/* Locate/Reset View Button */}
       <button
         type="button"
-        onClick={() => setWholeTrip((prev) => !prev)}
-        className="absolute top-3 right-3 z-[1000] bg-white/95 backdrop-blur-xs px-2.5 py-1.5 rounded-xl shadow-sm border border-[#DCE1DD] text-xs font-semibold text-[#14202B] hover:bg-gray-50 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+        onClick={handleLocateMe}
+        title="Reset map view"
+        aria-label="Reset map view"
+        className="absolute bottom-20 right-3 z-[1000] w-8 h-8 bg-white/95 backdrop-blur-xs rounded-lg shadow-sm border border-[#DCE1DD] flex items-center justify-center text-[#14202B] hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
       >
-        {wholeTrip
-          ? lang === "kn"
-            ? `ದಿನ ${selectedDay} ಮಾರ್ಗ`
-            : `Day ${selectedDay} route`
-          : lang === "kn"
-          ? "ಸಂಪೂರ್ಣ ಪ್ರವಾಸ"
-          : "Whole trip"}
+        <svg
+          className="w-4 h-4 text-[#14202B]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="12" cy="12" r="3" />
+          <path d="M12 2v3m0 14v3M2 12h3m14 0h3" />
+        </svg>
       </button>
 
       {/* Leaflet Map DOM Element */}

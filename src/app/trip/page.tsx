@@ -1,13 +1,22 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, Suspense, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import LZString from "lz-string";
-import { Plan, PlanRequest, Category, StartCity, BudgetFit, Pace, Travellers } from "@/lib/schema";
+import {
+  Plan,
+  PlanRequest,
+  Category,
+  StartCity,
+  BudgetFit,
+  Pace,
+  Travellers,
+  TravelMode,
+  Place,
+} from "@/lib/schema";
 import { useLang } from "@/lib/i18n/useLang";
-import DayTabs from "@/components/DayTabs";
 import StopCard from "@/components/StopCard";
 import PhraseCard from "@/components/PhraseCard";
 import CostSummary from "@/components/CostSummary";
@@ -15,6 +24,11 @@ import ProgressSteps from "@/components/ProgressSteps";
 import ErrorState from "@/components/ErrorState";
 import { buildDeterministicPlan } from "@/lib/planner";
 import { getSamplePlan, getSamplePlanForInterests } from "@/lib/samples";
+import { computeTravelLeg, addMinutesToTime, roundTimeTo5Min, getPinNumber } from "@/lib/geo";
+import { calculateTripCost, PEOPLE_COUNT_MAP } from "@/lib/cost";
+import placesData from "../../../data/places.json";
+
+const allPlaces = placesData as Place[];
 
 // Dynamic import of Leaflet map with ssr: false to prevent Next.js SSR crashes
 const TripMap = dynamic(() => import("@/components/TripMap"), {
@@ -25,6 +39,70 @@ const TripMap = dynamic(() => import("@/components/TripMap"), {
     </div>
   ),
 });
+
+const KARNATAKA_WEATHER: Record<number, { temp: string; descEn: string; descKn: string }> = {
+  1: { temp: "28° / 15°", descEn: "January, pleasant", descKn: "ಜನವರಿ, ಹಿತಕರ" },
+  2: { temp: "30° / 17°", descEn: "February, warm", descKn: "ಫೆಬ್ರವರಿ, ಬೆಚ್ಚಗಿನ" },
+  3: { temp: "33° / 20°", descEn: "March, sunny", descKn: "ಮಾರ್ಚ್, ಬಿಸಿಲು" },
+  4: { temp: "35° / 22°", descEn: "April, summer", descKn: "ಏಪ್ರಿಲ್, ಬೇಸಿಗೆ" },
+  5: { temp: "33° / 22°", descEn: "May, pre-monsoon", descKn: "ಮೇ, ಮುಂಗಾರು ಪೂರ್ವ" },
+  6: { temp: "29° / 20°", descEn: "June, monsoon", descKn: "ಜೂನ್, ಮುಂಗಾರು" },
+  7: { temp: "27° / 19°", descEn: "July, monsoon", descKn: "ಜುಲೈ, ಮುಂಗಾರು ಮಳೆ" },
+  8: { temp: "27° / 19°", descEn: "August, lush rains", descKn: "ಆಗಸ್ಟ್, ಹಸಿರು ಮಳೆ" },
+  9: { temp: "28° / 19°", descEn: "September, retreat", descKn: "ಸೆಪ್ಟೆಂಬರ್, ಹಿಂಗಾರು" },
+  10: { temp: "28° / 18°", descEn: "October, pleasant", descKn: "ಅಕ್ಟೋಬರ್, ಹಿತಕರ" },
+  11: { temp: "26° / 15°", descEn: "November, dry", descKn: "ನವೆಂಬರ್, ಒಣ ಹವೆ" },
+  12: { temp: "25° / 14°", descEn: "December, cool", descKn: "ಡಿಸೆಂಬರ್, ತಂಪಾದ ಹವೆ" },
+};
+
+function downloadIcsFile(plan: Plan, travelMonth: number = 11) {
+  const year = new Date().getFullYear();
+  const icsLines: string[] = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Dari Karnataka//Travel Planner//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+  ];
+
+  plan.days.forEach((day, dIdx) => {
+    const dayDate = new Date(year, travelMonth - 1, 10 + dIdx);
+    const dateStr = dayDate.toISOString().slice(0, 10).replace(/-/g, "");
+
+    day.stops.forEach((stop) => {
+      const [h, m] = (stop.start || "09:00").split(":").map(Number);
+      const startIso = `${dateStr}T${String(h).padStart(2, "0")}${String(m).padStart(2, "0")}00`;
+      const endTotalMin = h * 60 + m + stop.duration_min;
+      const endH = Math.floor(endTotalMin / 60) % 24;
+      const endM = endTotalMin % 60;
+      const endIso = `${dateStr}T${String(endH).padStart(2, "0")}${String(endM).padStart(2, "0")}00`;
+
+      icsLines.push(
+        "BEGIN:VEVENT",
+        `UID:dari-${day.day}-${stop.place_id}-${Date.now()}@dari-karnataka.vercel.app`,
+        `DTSTAMP:${dateStr}T000000Z`,
+        `DTSTART:${startIso}`,
+        `DTEND:${endIso}`,
+        `SUMMARY:${stop.place.name_en}`,
+        `DESCRIPTION:${stop.note_en.replace(/\n/g, " ")}`,
+        `LOCATION:${stop.place.city}, Karnataka`,
+        "END:VEVENT"
+      );
+    });
+  });
+
+  icsLines.push("END:VCALENDAR");
+
+  const blob = new Blob([icsLines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `dari-karnataka-plan.ics`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
 
 function TripViewContent() {
   const searchParams = useSearchParams();
@@ -59,6 +137,7 @@ function TripViewContent() {
   const monthParam = searchParams.get("month");
 
   const parsedDays = daysParam ? parseInt(daysParam, 10) : 4;
+  const currentMonth = monthParam ? parseInt(monthParam, 10) : 11;
 
   useEffect(() => {
     let isCancelled = false;
@@ -67,7 +146,7 @@ function TripViewContent() {
       setLoading(true);
       setErrorState(null);
 
-      // Case 0: Simulation hooks for testing acceptance criteria
+      // Simulation hooks
       if (simulateParam === "busy") {
         setErrorState({ type: "busy", retryAfterS: 30 });
         setLoading(false);
@@ -87,7 +166,7 @@ function TripViewContent() {
         return;
       }
 
-      // Case 1: Open a curated sample itinerary directly (?sample=heritage|nature|food|mixed)
+      // Case 1: Curated sample
       if (sampleParam) {
         const sample = getSamplePlan(sampleParam);
         if (!isCancelled) {
@@ -98,7 +177,7 @@ function TripViewContent() {
         return;
       }
 
-      // Case 2: Decompress plan from lz-string URL parameter (?d=...)
+      // Case 2: Decompress from lz-string
       if (dParam) {
         try {
           const decompressed = LZString.decompressFromEncodedURIComponent(dParam);
@@ -116,7 +195,7 @@ function TripViewContent() {
         }
       }
 
-      // Case 3: Construct request from query params (or defaults)
+      // Case 3: API call with fallback
       const interests: Category[] = interestsParam
         ? (interestsParam.split(",") as Category[])
         : ["heritage", "food"];
@@ -124,7 +203,6 @@ function TripViewContent() {
       const budget: BudgetFit = (budgetParam as BudgetFit) || "mid";
       const pace: Pace = (paceParam as Pace) || "relaxed";
       const travellers: Travellers = (travellersParam as Travellers) || "couple";
-      const month = monthParam ? parseInt(monthParam, 10) : 11;
 
       const request: PlanRequest = {
         interests,
@@ -133,39 +211,30 @@ function TripViewContent() {
         budget,
         pace,
         travellers,
-        month,
+        month: currentMonth,
         lang,
       };
 
       try {
-        // Call the API route
         const res = await fetch("/api/plan", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(request),
         });
 
-        // 429 Too Many Requests -> Show Busy Error State
         if (res.status === 429) {
           const errData = await res.json().catch(() => ({}));
           if (!isCancelled) {
-            setErrorState({
-              type: "busy",
-              retryAfterS: errData.retry_after_s || 30,
-            });
+            setErrorState({ type: "busy", retryAfterS: errData.retry_after_s || 30 });
             setLoading(false);
           }
           return;
         }
 
-        // 422 Few Matches -> Show Widen Interests Error State
         if (res.status === 422) {
           const errData = await res.json().catch(() => ({}));
           if (!isCancelled) {
-            setErrorState({
-              type: "few_matches",
-              matchCount: errData.match_count ?? 3,
-            });
+            setErrorState({ type: "few_matches", matchCount: errData.match_count ?? 3 });
             setLoading(false);
           }
           return;
@@ -184,7 +253,7 @@ function TripViewContent() {
         console.warn("API request failed, falling back to deterministic planner:", err);
       }
 
-      // Fallback: Deterministic Planner (or Sample if planner errors)
+      // Fallback: Deterministic Planner
       if (!isCancelled) {
         try {
           const fallback = buildDeterministicPlan(request);
@@ -204,7 +273,156 @@ function TripViewContent() {
     return () => {
       isCancelled = true;
     };
-  }, [dParam, sampleParam, simulateParam, interestsParam, daysParam, startCityParam, budgetParam, paceParam, travellersParam, monthParam, parsedDays, lang, refreshKey]);
+  }, [
+    dParam,
+    sampleParam,
+    simulateParam,
+    interestsParam,
+    daysParam,
+    startCityParam,
+    budgetParam,
+    paceParam,
+    travellersParam,
+    monthParam,
+    parsedDays,
+    currentMonth,
+    lang,
+    refreshKey,
+  ]);
+
+  // Recalculate plan travel legs, times, and costs after local edits
+  const recomputePlanLocally = (updatedDays: Plan["days"]) => {
+    if (!plan) return;
+    const people = plan.cost.people || 2;
+    let totalTripKm = 0;
+    const allVisitedPlaces: Place[] = [];
+
+    const computedDays = updatedDays.map((d) => {
+      let dayTravelMin = 0;
+      let clock = "09:00";
+
+      const recomputedStops = d.stops.map((stop, sIdx) => {
+        allVisitedPlaces.push(stop.place);
+        let leg = undefined;
+        if (sIdx > 0) {
+          const prev = d.stops[sIdx - 1].place;
+          leg = computeTravelLeg(prev.lat, prev.lng, stop.place.lat, stop.place.lng, people);
+          dayTravelMin += leg.min;
+          totalTripKm += leg.km;
+          clock = addMinutesToTime(clock, leg.min);
+        }
+        clock = roundTimeTo5Min(clock);
+        const startTime = clock;
+        clock = roundTimeTo5Min(addMinutesToTime(startTime, stop.place.duration_min));
+
+        return {
+          ...stop,
+          start: startTime,
+          travel_from_prev: leg,
+        };
+      });
+
+      return {
+        ...d,
+        stops: recomputedStops,
+        travel_total_min: dayTravelMin,
+      };
+    });
+
+    const travellersVal = (travellersParam as Travellers) || "couple";
+    const budgetVal = (budgetParam as BudgetFit) || "mid";
+
+    const newCost = calculateTripCost({
+      days: plan.days.length,
+      budget: budgetVal,
+      travellers: travellersVal,
+      totalKm: totalTripKm,
+      visitedPlaces: allVisitedPlaces,
+    });
+
+    const newPlan: Plan = {
+      ...plan,
+      days: computedDays,
+      cost: newCost,
+    };
+
+    setPlan(newPlan);
+  };
+
+  // Remove a stop
+  const handleRemoveStop = (placeId: string) => {
+    if (!plan) return;
+    const updatedDays = plan.days.map((d) => {
+      if (d.day !== selectedDay) return d;
+      return {
+        ...d,
+        stops: d.stops.filter((s) => s.place_id !== placeId),
+      };
+    });
+    recomputePlanLocally(updatedDays);
+  };
+
+  // Swap stop with alternative
+  const handleSwapStop = (placeId: string) => {
+    if (!plan) return;
+    const currentDay = plan.days.find((d) => d.day === selectedDay);
+    if (!currentDay) return;
+
+    const stopToSwap = currentDay.stops.find((s) => s.place_id === placeId);
+    if (!stopToSwap) return;
+
+    const visitedSet = new Set(plan.days.flatMap((d) => d.stops.map((s) => s.place_id)));
+    const alternative = allPlaces.find(
+      (p) =>
+        !visitedSet.has(p.id) &&
+        (p.region === stopToSwap.place.region || p.city === stopToSwap.place.city)
+    );
+
+    if (!alternative) return;
+
+    const updatedDays = plan.days.map((d) => {
+      if (d.day !== selectedDay) return d;
+      return {
+        ...d,
+        stops: d.stops.map((s) => {
+          if (s.place_id !== placeId) return s;
+          return {
+            place_id: alternative.id,
+            start: s.start,
+            duration_min: alternative.duration_min,
+            note_en: alternative.desc_en,
+            place: alternative,
+            phrases: [],
+          };
+        }),
+      };
+    });
+
+    recomputePlanLocally(updatedDays);
+  };
+
+  // Add a suggested stop
+  const handleAddStop = (place: Place) => {
+    if (!plan) return;
+    const updatedDays = plan.days.map((d) => {
+      if (d.day !== selectedDay) return d;
+      return {
+        ...d,
+        stops: [
+          ...d.stops,
+          {
+            place_id: place.id,
+            start: "14:00",
+            duration_min: place.duration_min,
+            note_en: place.desc_en,
+            place,
+            phrases: [],
+          },
+        ],
+      };
+    });
+    recomputePlanLocally(updatedDays);
+  };
 
   // Handle Share Link with lz-string
   const handleShareLink = () => {
@@ -219,10 +437,7 @@ function TripViewContent() {
             setCopied(true);
             setTimeout(() => setCopied(false), 3000);
           })
-          .catch((err) => {
-            console.warn("Clipboard API failed, attempting fallback:", err);
-            fallbackCopy(shareUrl);
-          });
+          .catch(() => fallbackCopy(shareUrl));
       } else {
         fallbackCopy(shareUrl);
       }
@@ -244,12 +459,11 @@ function TripViewContent() {
       document.body.removeChild(textArea);
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);
-    } catch (fallbackErr) {
-      console.warn("Fallback copy failed:", fallbackErr);
+    } catch (e) {
+      console.warn("Fallback copy failed:", e);
     }
   };
 
-  // Handle Regenerate
   const handleRegenerate = () => {
     if (dParam) {
       router.push("/plan");
@@ -258,7 +472,6 @@ function TripViewContent() {
     }
   };
 
-  // Handle Map Pin Click
   const handlePinClick = (placeId: string) => {
     setSelectedStopPlaceId(placeId);
     setIsSheetClosed(false);
@@ -269,6 +482,50 @@ function TripViewContent() {
     }
   };
 
+  // Compute Trip Stats
+  const tripStats = useMemo(() => {
+    if (!plan) return null;
+    const totalStops = plan.days.reduce((acc, d) => acc + d.stops.length, 0);
+    const uniqueTowns = new Set(plan.days.flatMap((d) => d.stops.map((s) => s.place.city))).size;
+    const totalKm = Math.round(
+      plan.days.reduce(
+        (acc, d) =>
+          acc + d.stops.reduce((sAcc, s) => sAcc + (s.travel_from_prev?.km || 0), 0),
+        0
+      )
+    );
+    const totalDriveMin = plan.days.reduce((acc, d) => acc + d.travel_total_min, 0);
+    const totalDriveHours = Math.max(1, Math.round(totalDriveMin / 60));
+
+    // Estimated cost range
+    const lowCostK = Math.round((plan.cost.total * 0.9) / 1000);
+    const highCostK = Math.round((plan.cost.total * 1.15) / 1000);
+
+    const weather = KARNATAKA_WEATHER[currentMonth] || KARNATAKA_WEATHER[11];
+
+    return {
+      totalStops,
+      uniqueTowns,
+      totalKm,
+      totalDriveHours,
+      costRangeText: `Rs ${lowCostK}k to ${highCostK}k`,
+      weather,
+    };
+  }, [plan, currentMonth]);
+
+  // Suggested places nearby for "+ Add a stop"
+  const suggestedPlaces = useMemo(() => {
+    if (!plan) return [];
+    const currentDay = plan.days.find((d) => d.day === selectedDay);
+    if (!currentDay) return [];
+    const visitedIds = new Set(plan.days.flatMap((d) => d.stops.map((s) => s.place_id)));
+    const targetRegion = currentDay.stops[0]?.place.region;
+
+    return allPlaces
+      .filter((p) => !visitedIds.has(p.id) && (!targetRegion || p.region === targetRegion))
+      .slice(0, 3);
+  }, [plan, selectedDay]);
+
   if (loading) {
     return (
       <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -277,7 +534,6 @@ function TripViewContent() {
     );
   }
 
-  // Error States: AI Busy (429) or Too Few Matches (422)
   if (errorState && (errorState.type === "busy" || errorState.type === "few_matches")) {
     return (
       <div className="flex-1 flex items-center justify-center px-4 py-16">
@@ -288,7 +544,7 @@ function TripViewContent() {
           days={parsedDays}
           interests={interestsParam ? (interestsParam.split(",") as Category[]) : ["beach"]}
           budget={budgetParam || "premium"}
-          month={monthParam ? parseInt(monthParam, 10) : 11}
+          month={currentMonth}
           onRetry={handleRegenerate}
           onOpenSample={() => router.push("/trip?sample=heritage")}
           onWidenInterests={() => router.push("/plan")}
@@ -315,7 +571,6 @@ function TripViewContent() {
   }
 
   const currentDayData = plan.days.find((d) => d.day === selectedDay) || plan.days[0];
-
   const activeDayStops = currentDayData?.stops || [];
   const stopIndex = activeDayStops.findIndex((s) => s.place_id === selectedStopPlaceId);
   const currentStopIdx = stopIndex !== -1 ? stopIndex : 0;
@@ -323,157 +578,279 @@ function TripViewContent() {
 
   return (
     <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex flex-col gap-6 pb-24 lg:pb-8">
-      {/* Fallback Sample Alert Notification (mockup 06 Card 3) */}
-      {(errorState?.type === "fallback_sample" || simulateParam === "fallback") && (
-        <div className="bg-[#DDEFE7]/80 border border-[#1E6B52]/20 rounded-2xl p-4 sm:p-5 flex items-start justify-between gap-4 text-[#14202B]">
-          <div className="flex items-start gap-3.5">
-            <div className="w-9 h-9 rounded-xl bg-[#DDEFE7] text-[#1E6B52] flex items-center justify-center font-bold text-base shrink-0">
-              ✓
+      {/* Top Header matching mockup 04 */}
+      <div className="flex flex-col gap-4">
+        {/* Tag pills */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-[#F9EBEB] text-[#8E1F2F]">
+              {interestsParam
+                ? interestsParam
+                    .split(",")
+                    .map((c) => t(`form.categories.${c}`, c))
+                    .join(" & ")
+                : "Heritage & Food"}
+            </span>
+            <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-[#FDF2CC] text-[#8C6D05]">
+              {t(`form.budget_tiers.${budgetParam || "mid"}`, "Mid-range")}
+            </span>
+            <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-[#E1ECF5] text-[#2B5F8A]">
+              {t(`form.pace_tiers.${paceParam || "relaxed"}`, "Relaxed")}
+            </span>
+            <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-[#DDEFE7] text-[#1E6B52]">
+              Cab
+            </span>
+            {plan.source === "sample" && (
+              <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#F2B705] text-[#14202B]">
+                {t("common.sample_data", "SAMPLE DATA")}
+              </span>
+            )}
+          </div>
+
+          {/* Action buttons: Regenerate, Calendar .ics, PDF print, Share */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleRegenerate}
+              title="Regenerate"
+              aria-label="Regenerate plan"
+              className="w-9 h-9 rounded-xl bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19" />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => downloadIcsFile(plan, currentMonth)}
+              title="Add to calendar .ics"
+              aria-label="Download calendar file"
+              className="w-9 h-9 rounded-xl bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => window.print()}
+              title="PDF Print View"
+              className="px-3 py-2 rounded-xl text-xs font-bold bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 transition-all cursor-pointer shadow-2xs active:scale-95"
+            >
+              PDF
+            </button>
+
+            <button
+              type="button"
+              onClick={handleShareLink}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#8E1F2F] hover:bg-[#781926] text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                <polyline points="16 6 12 2 8 6" />
+                <line x1="12" y1="2" x2="12" y2="15" />
+              </svg>
+              <span>{copied ? t("common.copied", "Copied!") : t("common.share_link", "Share link")}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Title and Short Summary */}
+        <div>
+          <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-[#14202B] tracking-tight">
+            {plan.title}
+          </h1>
+          <p className="text-sm text-[#586673] mt-1 max-w-3xl leading-relaxed">
+            {plan.summary}
+          </p>
+        </div>
+
+        {/* 5 Stat Cards Row matching mockup 04 */}
+        {tripStats && (
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-2">
+            {/* Stat 1: Days */}
+            <div className="bg-white p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+              </div>
+              <div className="truncate">
+                <div className="font-heading font-bold text-sm text-[#14202B]">
+                  {plan.days.length} {t("common.days", "days")}
+                </div>
+                <div className="text-[11px] text-[#586673] truncate">
+                  {lang === "kn" ? tripStats.weather.descKn.split(",")[0] : tripStats.weather.descEn.split(",")[0]}
+                </div>
+              </div>
             </div>
-            <div>
-              <h4 className="font-heading font-bold text-base text-[#14202B]">
-                {t("errors.fallback_title", "Showing a ready-made trip")}
-              </h4>
-              <p className="text-sm text-[#586673] mt-0.5">
-                {t(
-                  "errors.fallback_desc",
-                  "We could not reach the AI, so this is a saved sample. Your choices are kept. Regenerate when you are back online."
-                )
-                  .replace("{days}", String(plan.days.length))
-                  .replace("{theme}", "Karnataka")}
-              </p>
+
+            {/* Stat 2: Stops */}
+            <div className="bg-white p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-[#E1ECF5] text-[#2B5F8A] flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </div>
+              <div className="truncate">
+                <div className="font-heading font-bold text-sm text-[#14202B]">
+                  {tripStats.totalStops} stops
+                </div>
+                <div className="text-[11px] text-[#586673] truncate">
+                  {tripStats.uniqueTowns} towns
+                </div>
+              </div>
+            </div>
+
+            {/* Stat 3: Distance */}
+            <div className="bg-white p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-[#DDEFE7] text-[#1E6B52] flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </div>
+              <div className="truncate">
+                <div className="font-heading font-bold text-sm text-[#14202B]">
+                  {tripStats.totalKm} km
+                </div>
+                <div className="text-[11px] text-[#586673] truncate">
+                  about {tripStats.totalDriveHours} h driving
+                </div>
+              </div>
+            </div>
+
+            {/* Stat 4: Estimated Cost Range */}
+            <div className="bg-white p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-[#FDF2CC] text-[#8C6D05] flex items-center justify-center font-bold text-sm shrink-0">
+                ₹
+              </div>
+              <div className="truncate">
+                <div className="font-heading font-bold text-sm text-[#14202B] truncate">
+                  {tripStats.costRangeText}
+                </div>
+                <div className="text-[11px] text-[#586673] truncate">
+                  for {plan.cost.people}, estimate
+                </div>
+              </div>
+            </div>
+
+            {/* Stat 5: Season & Weather */}
+            <div className="col-span-2 sm:col-span-1 bg-white p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" />
+                  <line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              </div>
+              <div className="truncate">
+                <div className="font-heading font-bold text-sm text-[#14202B]">
+                  {tripStats.weather.temp}
+                </div>
+                <div className="text-[11px] text-[#586673] truncate">
+                  {lang === "kn" ? tripStats.weather.descKn : tripStats.weather.descEn}
+                </div>
+              </div>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={handleRegenerate}
-            className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#8E1F2F] text-white hover:bg-[#781926] shrink-0 active:scale-95 transition-all shadow-2xs"
-          >
-            {t("errors.fallback_action", "Regenerate")}
-          </button>
-        </div>
-      )}
+        )}
 
-      {/* Sample Switcher Pills when viewing curated samples */}
-      {plan.source === "sample" && (
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-[#586673]">
-            {lang === "kn" ? "ಮಾದರಿ ಪ್ರವಾಸಗಳು:" : "Sample itineraries:"}
-          </span>
-          {[
-            { key: "heritage", labelEn: "Heritage", labelKn: "ಪರಂಪರೆ" },
-            { key: "nature", labelEn: "Nature & Wildlife", labelKn: "ಪ್ರಕೃತಿ" },
-            { key: "food", labelEn: "Food & Coast", labelKn: "ಆಹಾರ ಮತ್ತು ಕರಾವಳಿ" },
-            { key: "mixed", labelEn: "Mixed Panorama", labelKn: "ಸಂಯೋಜಿತ" },
-          ].map((s) => (
-            <button
-              key={s.key}
-              type="button"
-              onClick={() => router.push(`/trip?sample=${s.key}`)}
-              className={`px-3 py-1 rounded-full text-xs font-medium cursor-pointer transition-all ${
-                sampleParam === s.key || (!sampleParam && s.key === "heritage")
-                  ? "bg-[#14202B] text-white shadow-2xs"
-                  : "bg-white border border-[#DCE1DD] text-[#586673] hover:text-[#14202B] hover:bg-gray-50"
-              }`}
-            >
-              {lang === "kn" ? s.labelKn : s.labelEn}
-            </button>
-          ))}
-        </div>
-      )}
+        {/* Day Cards Row Acting as Tabs matching mockup 04 */}
+        <div className="flex items-center gap-3 overflow-x-auto scrollbar-none py-1">
+          {plan.days.map((day) => {
+            const isSelected = day.day === selectedDay;
+            const dayCity = day.stops[0]?.place.city || day.theme;
+            const stopCount = day.stops.length;
+            const dayKm = Math.round(
+              day.stops.reduce((acc, s) => acc + (s.travel_from_prev?.km || 0), 0)
+            );
 
-      {/* Top Header / Metadata & Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        {/* Pills / Badges matching mockup 04, 05 & 07 */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-[#F9EBEB] text-[#8E1F2F]">
-            {plan.days.length} {lang === "kn" ? "ದಿನ" : t("common.days")}
-          </span>
-          <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-[#F9EBEB] text-[#8E1F2F]">
-            {interestsParam
-              ? interestsParam
-                  .split(",")
-                  .map((c) => t(`form.categories.${c}`, c))
-                  .join(lang === "kn" ? " ಮತ್ತು " : " and ")
-              : lang === "kn"
-              ? "ಕರ್ನಾಟಕ ಪ್ರವಾಸ"
-              : "Curated Journey"}
-          </span>
-          <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-[#FDF2CC] text-[#8C6D05]">
-            {t(`form.budget_tiers.${budgetParam || "mid"}`)} {lang === "kn" ? "ಬಜೆಟ್" : ""}
-          </span>
-          {paceParam && (
-            <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-[#E1ECF5] text-[#2B5F8A]">
-              {t(`form.pace_tiers.${paceParam}`)}
-            </span>
-          )}
-
-          {plan.source === "sample" && (
-            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#F2B705] text-[#14202B]">
-              {t("common.sample_data")}
-            </span>
-          )}
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={handleRegenerate}
-            className="px-4 py-2 rounded-xl text-sm font-semibold bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 active:scale-95 transition-all shadow-2xs cursor-pointer min-h-[40px]"
-          >
-            {t("common.regenerate")}
-          </button>
-          <button
-            type="button"
-            onClick={handleShareLink}
-            className="px-4 py-2 rounded-xl text-sm font-semibold bg-[#8E1F2F] hover:bg-[#781926] text-white active:scale-95 transition-all shadow-xs cursor-pointer min-h-[40px] flex items-center gap-1.5"
-          >
-            {copied ? (
-              <span>✓ {t("common.copied")}</span>
-            ) : (
-              <span>{t("common.share_link")}</span>
-            )}
-          </button>
+            return (
+              <button
+                key={day.day}
+                type="button"
+                onClick={() => setSelectedDay(day.day)}
+                className={`flex flex-col text-left px-4 py-2.5 rounded-2xl border transition-all cursor-pointer shrink-0 min-w-[140px] ${
+                  isSelected
+                    ? "bg-[#14202B] text-white border-[#14202B] shadow-sm"
+                    : "bg-white text-[#14202B] border-[#DCE1DD] hover:bg-gray-50"
+                }`}
+              >
+                <div className="font-heading font-bold text-sm">
+                  {t("common.day", "Day")} {day.day}
+                </div>
+                <div className={`text-[11px] mt-0.5 truncate ${isSelected ? "text-white/80" : "text-[#586673]"}`}>
+                  {dayCity} · {stopCount} stops {dayKm > 0 ? `· ${dayKm} km` : ""}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* DESKTOP VIEW (>= lg): Side-by-side Itinerary & Sticky Map */}
       <div className="hidden lg:grid lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Day Tabs, Stop Cards, and Cost Summary */}
+        {/* Left Column: Stops & Cost Summary */}
         <div className="lg:col-span-6 space-y-6">
-          <DayTabs
-            days={plan.days}
-            selectedDay={selectedDay}
-            onSelectDay={(dayNum) => setSelectedDay(dayNum)}
-          />
-
           <div className="space-y-2">
-            {currentDayData?.stops.map((stop, idx) => (
-              <StopCard
-                key={`${currentDayData.day}-${stop.place_id}`}
-                stop={stop}
-                index={idx}
-                isFirst={idx === 0}
-                onCardClick={handlePinClick}
-              />
-            ))}
+            {currentDayData?.stops.map((stop, idx) => {
+              const pinNumber = getPinNumber(
+                currentDayData.day - 1,
+                idx,
+                plan.days,
+                false
+              );
+              return (
+                <StopCard
+                  key={`${currentDayData.day}-${stop.place_id}`}
+                  stop={stop}
+                  index={idx}
+                  isFirst={idx === 0}
+                  pinNumber={pinNumber}
+                  dayNum={currentDayData.day}
+                  onCardClick={handlePinClick}
+                  onSwap={handleSwapStop}
+                  onRemove={handleRemoveStop}
+                />
+              );
+            })}
           </div>
 
-          <CostSummary cost={plan.cost} days={plan.days.length} />
+          {/* "+ Add a stop to Day X" suggestion row matching mockup 04 */}
+          {suggestedPlaces.length > 0 && (
+            <div className="p-3.5 rounded-2xl bg-[#F7F9F6] border border-[#E2E7E2] text-xs text-[#586673] flex flex-wrap items-center gap-2">
+              <span className="font-semibold text-[#14202B]">
+                + Add a stop to Day {selectedDay}:
+              </span>
+              {suggestedPlaces.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => handleAddStop(p)}
+                  className="px-2.5 py-1 rounded-lg bg-white border border-[#DCE1DD] text-[#14202B] hover:border-[#8E1F2F] hover:text-[#8E1F2F] transition-all cursor-pointer font-medium"
+                >
+                  {lang === "kn" ? p.name_kn : p.name_en}
+                </button>
+              ))}
+            </div>
+          )}
 
-          <div className="flex items-center justify-between text-xs text-[#586673] pt-1">
-            <span>
-              Plan source:{" "}
-              <strong className="font-semibold text-[#14202B]">
-                {plan.source}
-              </strong>
-            </span>
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-              <span>✓</span>
-              <span>{t("common.accuracy_badge")}</span>
-            </span>
-          </div>
+          <CostSummary cost={plan.cost} days={plan.days.length} source={plan.source} />
         </div>
 
         {/* Right Column: Leaflet Map */}
@@ -481,6 +858,8 @@ function TripViewContent() {
           <TripMap
             days={plan.days}
             selectedDay={selectedDay}
+            selectedPlaceId={selectedStopPlaceId}
+            onSelectDay={(dayNum) => setSelectedDay(dayNum)}
             onPinClick={handlePinClick}
           />
         </div>
@@ -491,54 +870,67 @@ function TripViewContent() {
         {/* 1. Mobile Plan Tab */}
         {activeMobileTab === "plan" && (
           <div className="space-y-6">
-            <DayTabs
-              days={plan.days}
-              selectedDay={selectedDay}
-              onSelectDay={(dayNum) => setSelectedDay(dayNum)}
-            />
-
             <div className="space-y-2">
-              {currentDayData?.stops.map((stop, idx) => (
-                <StopCard
-                  key={`${currentDayData.day}-${stop.place_id}`}
-                  stop={stop}
-                  index={idx}
-                  isFirst={idx === 0}
-                  onCardClick={handlePinClick}
-                />
-              ))}
+              {currentDayData?.stops.map((stop, idx) => {
+                const pinNumber = getPinNumber(
+                  currentDayData.day - 1,
+                  idx,
+                  plan.days,
+                  false
+                );
+                return (
+                  <StopCard
+                    key={`${currentDayData.day}-${stop.place_id}`}
+                    stop={stop}
+                    index={idx}
+                    isFirst={idx === 0}
+                    pinNumber={pinNumber}
+                    dayNum={currentDayData.day}
+                    onCardClick={handlePinClick}
+                    onSwap={handleSwapStop}
+                    onRemove={handleRemoveStop}
+                  />
+                );
+              })}
             </div>
 
-            <CostSummary cost={plan.cost} days={plan.days.length} />
+            {/* "+ Add a stop" suggestion row */}
+            {suggestedPlaces.length > 0 && (
+              <div className="p-3.5 rounded-2xl bg-[#F7F9F6] border border-[#E2E7E2] text-xs text-[#586673] flex flex-wrap items-center gap-2">
+                <span className="font-semibold text-[#14202B]">
+                  + Add a stop:
+                </span>
+                {suggestedPlaces.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => handleAddStop(p)}
+                    className="px-2 py-1 rounded-lg bg-white border border-[#DCE1DD] text-[#14202B] hover:text-[#8E1F2F] font-medium"
+                  >
+                    {lang === "kn" ? p.name_kn : p.name_en}
+                  </button>
+                ))}
+              </div>
+            )}
 
-            <div className="flex items-center justify-between text-xs text-[#586673] pt-1">
-              <span>
-                Plan source:{" "}
-                <strong className="font-semibold text-[#14202B]">
-                  {plan.source}
-                </strong>
-              </span>
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                <span>✓</span>
-                <span>{t("common.accuracy_badge")}</span>
-              </span>
-            </div>
+            <CostSummary cost={plan.cost} days={plan.days.length} source={plan.source} />
           </div>
         )}
 
-        {/* 2. Mobile Map Tab with Interactive Bottom Sheet matching mockup 07 */}
+        {/* 2. Mobile Map Tab with Interactive Bottom Sheet */}
         {activeMobileTab === "map" && (
           <div className="relative w-full h-[calc(100dvh-200px)] min-h-[460px] rounded-2xl overflow-hidden border border-[#DCE1DD] shadow-sm">
             <TripMap
               days={plan.days}
               selectedDay={selectedDay}
+              selectedPlaceId={selectedStopPlaceId}
+              onSelectDay={(dayNum) => setSelectedDay(dayNum)}
               onPinClick={handlePinClick}
             />
 
             {/* Bottom Sheet for Selected Stop */}
             {currentActiveStop && !isSheetClosed && (
               isSheetMinimized ? (
-                /* Minimized Sleek Bar */
                 <div className="absolute bottom-3 left-3 right-3 z-[1000] bg-white/95 backdrop-blur-md rounded-xl px-3.5 py-2.5 border border-[#DCE1DD] shadow-lg flex items-center justify-between gap-2 text-xs">
                   <div className="flex items-center gap-2 truncate">
                     <span className="font-bold text-[#8E1F2F]">
@@ -580,7 +972,6 @@ function TripViewContent() {
                   </div>
                 </div>
               ) : (
-                /* Compact Floating Card (Leaves 75%+ of map clear and visible) */
                 <div className="absolute bottom-3 left-3 right-3 z-[1000] bg-white/95 backdrop-blur-md rounded-2xl p-3.5 border border-[#DCE1DD] shadow-2xl animate-in slide-in-from-bottom duration-200">
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center gap-2">
@@ -598,7 +989,7 @@ function TripViewContent() {
                         type="button"
                         disabled={currentStopIdx === 0}
                         onClick={() => setSelectedStopPlaceId(activeDayStops[currentStopIdx - 1]?.place_id)}
-                        className="w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold bg-[#F2F4F1] border border-[#DCE1DD] text-[#14202B] disabled:opacity-30 cursor-pointer active:scale-95"
+                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F2F4F1] border border-[#DCE1DD] text-[#14202B] disabled:opacity-30 cursor-pointer active:scale-95"
                         aria-label="Previous stop"
                       >
                         ←
@@ -607,7 +998,7 @@ function TripViewContent() {
                         type="button"
                         disabled={currentStopIdx >= activeDayStops.length - 1}
                         onClick={() => setSelectedStopPlaceId(activeDayStops[currentStopIdx + 1]?.place_id)}
-                        className="w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold bg-[#F2F4F1] border border-[#DCE1DD] text-[#14202B] disabled:opacity-30 cursor-pointer active:scale-95"
+                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F2F4F1] border border-[#DCE1DD] text-[#14202B] disabled:opacity-30 cursor-pointer active:scale-95"
                         aria-label="Next stop"
                       >
                         →
@@ -615,154 +1006,125 @@ function TripViewContent() {
                       <button
                         type="button"
                         onClick={() => setIsSheetMinimized(true)}
-                        className="w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold bg-[#F2F4F1] border border-[#DCE1DD] text-[#586673] hover:text-[#14202B] cursor-pointer active:scale-95 ml-1"
+                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F2F4F1] border border-[#DCE1DD] text-[#586673] hover:text-[#14202B] cursor-pointer active:scale-95"
                         aria-label="Minimize"
-                        title={lang === "kn" ? "ಕನಿಷ್ಠಗೊಳಿಸಿ" : "Minimize"}
                       >
                         _
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsSheetClosed(true)}
-                        className="w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold bg-[#F2F4F1] border border-[#DCE1DD] text-[#586673] hover:text-[#14202B] cursor-pointer active:scale-95"
+                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F2F4F1] border border-[#DCE1DD] text-[#586673] hover:text-[#14202B] cursor-pointer active:scale-95"
                         aria-label="Close"
-                        title={lang === "kn" ? "ಮುಚ್ಚಿ" : "Close"}
                       >
                         ✕
                       </button>
                     </div>
                   </div>
 
-                  <h3 className="font-heading font-bold text-base text-[#14202B] truncate">
+                  <h3 className="font-heading font-bold text-base text-[#14202B] line-clamp-1">
                     {lang === "kn" ? currentActiveStop.place.name_kn : currentActiveStop.place.name_en}
                   </h3>
-                  <p className="text-xs text-[#586673] mt-0.5">
-                    {Math.round(currentActiveStop.duration_min / 60)} {t("common.hours")} {t("common.stay").toLowerCase()} · {currentActiveStop.place.entry_inr === 0 ? t("common.free") : `₹${currentActiveStop.place.entry_inr} ${t("common.entry").toLowerCase()}`}
-                  </p>
 
-                  {/* Clean CTA to dedicated Phrases tab instead of exploding map sheet height */}
-                  {currentActiveStop.phrases && currentActiveStop.phrases.length > 0 && (
+                  <div className="flex items-center justify-between text-xs text-[#586673] mt-0.5 mb-2.5">
+                    <span>
+                      {currentActiveStop.place.entry_inr === 0
+                        ? t("common.free", "Free")
+                        : `₹${currentActiveStop.place.entry_inr}`}
+                      {" · "}
+                      {(currentActiveStop.duration_min / 60).toFixed(1).replace(/\.0$/, "")}{" "}
+                      {t("common.hours", "h")}
+                    </span>
                     <button
                       type="button"
                       onClick={() => setActiveMobileTab("phrases")}
-                      className="mt-2.5 w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#FDF2CC] border border-[#F2B705]/50 text-xs font-semibold text-[#8C6D05] hover:bg-[#faebba] active:scale-[0.99] transition-all cursor-pointer"
+                      className="text-[#8E1F2F] font-semibold flex items-center gap-1 active:scale-95"
                     >
-                      <span className="flex items-center gap-1.5">
-                        <span>🗣️</span>
-                        <span>
-                          {lang === "kn"
-                            ? `${currentActiveStop.phrases.length} ಕನ್ನಡ ನುಡಿಗಟ್ಟುಗಳು ಲಭ್ಯವಿದೆ`
-                            : `${currentActiveStop.phrases.length} Kannada phrases available`}
-                        </span>
-                      </span>
-                      <span className="font-bold underline">
-                        {lang === "kn" ? "ನುಡಿಗಟ್ಟುಗಳ ಟ್ಯಾಬ್ ತೆರೆಯಿರಿ →" : "View in Phrases tab →"}
-                      </span>
+                      <span>{lang === "kn" ? "ವಾಕ್ಯಗಳು" : "Phrases"}</span>
+                      <span>→</span>
                     </button>
-                  )}
+                  </div>
                 </div>
               )
-            )}
-
-            {/* When closed, show subtle floating pill to reopen */}
-            {isSheetClosed && (
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSheetClosed(false);
-                  setIsSheetMinimized(false);
-                }}
-                className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[1000] bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-[#DCE1DD] shadow-md text-xs font-semibold text-[#14202B] hover:bg-gray-50 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5"
-              >
-                <span>📍</span>
-                <span>{lang === "kn" ? "ವಿವರಗಳನ್ನು ತೋರಿಸಿ" : "Show stop details"}</span>
-              </button>
             )}
           </div>
         )}
 
         {/* 3. Mobile Phrases Tab */}
         {activeMobileTab === "phrases" && (
-          <div className="space-y-4">
-            <div className="bg-[#FDF2CC] border border-[#F2B705]/40 rounded-2xl p-4">
-              <h3 className="font-heading font-bold text-base text-[#14202B]">
-                {lang === "kn" ? `ದಿನ ${selectedDay} ರ ಉಪಯುಕ್ತ ಕನ್ನಡ ನುಡಿಗಟ್ಟುಗಳು` : `Day ${selectedDay} Kannada Phrases`}
-              </h3>
-              <p className="text-xs text-[#8C6D05] mt-1">
-                {lang === "kn"
-                  ? "ನೈಸರ್ಗಿಕ ಧ್ವನಿಯನ್ನು ಆಲಿಸಲು ಸ್ಪೀಕರ್ ಗುಂಡಿಯನ್ನು ಒತ್ತಿ."
-                  : "Tap the red speaker button to hear native pronunciation."}
-              </p>
-            </div>
+          <div className="space-y-6">
+            <h3 className="font-heading font-bold text-lg text-[#14202B]">
+              {lang === "kn"
+                ? `ದಿನ ${selectedDay} ಕನ್ನಡ ವಾಕ್ಯಗಳು`
+                : `Day ${selectedDay} Useful Phrases`}
+            </h3>
 
-            <DayTabs
-              days={plan.days}
-              selectedDay={selectedDay}
-              onSelectDay={(dayNum) => setSelectedDay(dayNum)}
-            />
-
-            <div className="space-y-3">
-              {activeDayStops.map((stop) => (
-                <div key={stop.place_id} className="bg-white rounded-2xl p-4 border border-[#DCE1DD] shadow-2xs">
-                  <h4 className="font-heading font-bold text-sm text-[#14202B] mb-2">
-                    {lang === "kn" ? stop.place.name_kn : stop.place.name_en}
-                  </h4>
-                  {stop.phrases && stop.phrases.length > 0 ? (
-                    <PhraseCard phrases={stop.phrases} />
-                  ) : (
-                    <p className="text-xs text-[#586673] italic">No specific phrases for this stop.</p>
-                  )}
+            {currentDayData?.stops.map((stop) => (
+              <div key={`phrase-group-${stop.place_id}`} className="space-y-2">
+                <div className="text-sm font-bold text-[#14202B] flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#8E1F2F]" />
+                  <span>{lang === "kn" ? stop.place.name_kn : stop.place.name_en}</span>
                 </div>
-              ))}
-            </div>
+                {stop.phrases && stop.phrases.length > 0 ? (
+                  <PhraseCard phrases={stop.phrases} />
+                ) : (
+                  <div className="text-xs text-[#586673] p-3 rounded-xl bg-gray-50 border border-[#DCE1DD]">
+                    {lang === "kn" ? "ಈ ಸ್ಥಳಕ್ಕೆ ವಾಕ್ಯಗಳಿಲ್ಲ" : "No phrases for this stop."}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         )}
+
+        {/* Sticky Mobile Bottom Navigation Bar */}
+        <div className="fixed bottom-0 left-0 right-0 z-[1100] bg-white border-t border-[#DCE1DD] shadow-lg flex items-center justify-around py-2 px-3">
+          <button
+            type="button"
+            onClick={() => setActiveMobileTab("plan")}
+            className={`flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-xs font-semibold cursor-pointer transition-all ${
+              activeMobileTab === "plan" ? "text-[#8E1F2F]" : "text-[#586673]"
+            }`}
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+            <span>{t("nav.plan", "Plan")}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveMobileTab("map")}
+            className={`flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-xs font-semibold cursor-pointer transition-all ${
+              activeMobileTab === "map" ? "text-[#8E1F2F]" : "text-[#586673]"
+            }`}
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+              <line x1="8" y1="2" x2="8" y2="18" />
+              <line x1="16" y1="6" x2="16" y2="22" />
+            </svg>
+            <span>{t("nav.map", "Map")}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveMobileTab("phrases")}
+            className={`flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-xs font-semibold cursor-pointer transition-all ${
+              activeMobileTab === "phrases" ? "text-[#8E1F2F]" : "text-[#586673]"
+            }`}
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span>{t("nav.phrases", "Phrases")}</span>
+          </button>
+        </div>
       </div>
-
-      {/* MOBILE FIXED BOTTOM NAVIGATION BAR matching mockup 07 */}
-      <nav
-        aria-label="Mobile Navigation"
-        className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#DCE1DD] flex items-center justify-around h-16 lg:hidden shadow-lg"
-      >
-        <button
-          type="button"
-          onClick={() => setActiveMobileTab("plan")}
-          className={`flex-1 h-full flex flex-col items-center justify-center relative text-xs font-semibold cursor-pointer transition-colors ${
-            activeMobileTab === "plan" ? "text-[#8E1F2F]" : "text-[#586673] hover:text-[#14202B]"
-          }`}
-        >
-          {activeMobileTab === "plan" && (
-            <span className="absolute top-0 left-6 right-6 h-0.5 bg-[#8E1F2F]" />
-          )}
-          <span>{lang === "kn" ? "ಯೋಜನೆ" : "Plan"}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveMobileTab("map")}
-          className={`flex-1 h-full flex flex-col items-center justify-center relative text-xs font-semibold cursor-pointer transition-colors ${
-            activeMobileTab === "map" ? "text-[#8E1F2F]" : "text-[#586673] hover:text-[#14202B]"
-          }`}
-        >
-          {activeMobileTab === "map" && (
-            <span className="absolute top-0 left-6 right-6 h-0.5 bg-[#8E1F2F]" />
-          )}
-          <span>{lang === "kn" ? "ನಕ್ಷೆ" : "Map"}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveMobileTab("phrases")}
-          className={`flex-1 h-full flex flex-col items-center justify-center relative text-xs font-semibold cursor-pointer transition-colors ${
-            activeMobileTab === "phrases" ? "text-[#8E1F2F]" : "text-[#586673] hover:text-[#14202B]"
-          }`}
-        >
-          {activeMobileTab === "phrases" && (
-            <span className="absolute top-0 left-6 right-6 h-0.5 bg-[#8E1F2F]" />
-          )}
-          <span>{lang === "kn" ? "ನುಡಿಗಟ್ಟುಗಳು" : "Phrases"}</span>
-        </button>
-      </nav>
     </div>
   );
 }
@@ -772,7 +1134,7 @@ export default function TripPage() {
     <Suspense
       fallback={
         <div className="flex-1 flex items-center justify-center p-12 text-[#586673]">
-          Loading trip planner...
+          Loading Karnataka Travel Planner...
         </div>
       }
     >

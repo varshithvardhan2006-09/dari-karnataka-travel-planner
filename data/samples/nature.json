@@ -77,7 +77,7 @@
         },
         {
           "place_id": "devaraja-market",
-          "start": "11:00",
+          "start": "11:10",
           "duration_min": 75,
           "note_en": "Vibrant 130-year-old traditional bazaar packed with fragrant flowers, Mysore betel leaves, and perfumes.",
           "travel_from_prev": {
@@ -156,7 +156,7 @@
         },
         {
           "place_id": "mylari-dosa",
-          "start": "12:25",
+          "start": "12:35",
           "duration_min": 45,
           "note_en": "Legendary eatery renowned for melt-in-your-mouth butter benne dosas served with fresh coconut chutney.",
           "travel_from_prev": {
@@ -311,7 +311,7 @@
         },
         {
           "place_id": "chamundi-hill",
-          "start": "11:30",
+          "start": "11:45",
           "duration_min": 90,
           "note_en": "Prominent hill overlooking Mysuru with the historic Chamundeshwari Temple and massive monolith Nandi.",
           "travel_from_prev": {
@@ -387,7 +387,7 @@
         },
         {
           "place_id": "vidyarthi-bhavan",
-          "start": "13:15",
+          "start": "17:25",
           "duration_min": 45,
           "note_en": "Iconic 1943 heritage eatery famous for thick crispy golden benne masala dosas and filter coffee.",
           "travel_from_prev": {
@@ -548,7 +548,7 @@
         },
         {
           "place_id": "lalbagh-gardens",
-          "start": "10:15",
+          "start": "10:25",
           "duration_min": 90,
           "note_en": "Historical 240-acre botanical garden commissioned by Hyder Ali featuring the Victorian Glass House and ancient rock.",
           "travel_from_prev": {
@@ -623,7 +623,7 @@
         },
         {
           "place_id": "brindavan-gardens",
-          "start": "11:55",
+          "start": "16:10",
           "duration_min": 120,
           "note_en": "Terraced botanical gardens laid across the KRS Dam with synchronized musical fountains at dusk.",
           "travel_from_prev": {

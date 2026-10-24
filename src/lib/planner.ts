@@ -124,6 +124,7 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
 
   const unusedPlaces = [...pool];
   const startCoords = getStartCityCoordinates(request.start_city);
+  const seenPlaceIds = new Set<string>();
 
   const rawDays: {
     day: number;
@@ -157,14 +158,24 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
       const clockMin = currH * 60 + currM;
       if (clockMin >= 12 * 60 && clockMin <= 14 * 60) {
         const mealIndex = unusedPlaces.findIndex(
-          (p, idx) => idx < 6 && (p.is_meal || p.categories.includes("food"))
+          (p, idx) => idx < 6 && (p.is_meal || p.categories.includes("food")) && !seenPlaceIds.has(p.id)
         );
         if (mealIndex !== -1) {
           chosenIndex = mealIndex;
         }
       }
 
+      // Purge any seen places from chosen index
+      while (unusedPlaces.length > 0 && seenPlaceIds.has(unusedPlaces[chosenIndex]?.id)) {
+        unusedPlaces.splice(chosenIndex, 1);
+        if (chosenIndex >= unusedPlaces.length) chosenIndex = 0;
+      }
+      if (unusedPlaces.length === 0) break;
+
       const place = unusedPlaces.splice(chosenIndex, 1)[0];
+      if (!place || seenPlaceIds.has(place.id)) continue;
+      seenPlaceIds.add(place.id);
+
       dayStops.push({
         place_id: place.id,
         start: dayClock,

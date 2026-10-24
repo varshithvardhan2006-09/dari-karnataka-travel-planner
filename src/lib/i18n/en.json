@@ -19,12 +19,12 @@
       "gokarna_sub": "Quiet beaches"
     },
     "features": {
-      "real_places_title": "Real places only",
-      "real_places_desc": "Every stop comes from a verified list of Karnataka places with ~99% accurate coordinates and ticket fees, never invented by the AI.",
-      "kannada_title": "Kannada at every stop",
-      "kannada_desc": "Switch the whole plan to ಕನ್ನಡ and hear useful phrases for each place.",
-      "route_costs_title": "Route and costs",
-      "route_costs_desc": "See travel time between stops and ~99% accurate rupee estimates benchmarked against KSTDC tariffs."
+      "real_places_title": "Curated places",
+      "real_places_desc": "The AI can only pick from our checked list, never invent.",
+      "kannada_title": "Kannada built in",
+      "kannada_desc": "Names, phrases and audio, written by people.",
+      "route_costs_title": "Honest estimates",
+      "route_costs_desc": "Costs shown as ranges. Check before booking."
     }
   },
   "form": {
@@ -137,8 +137,8 @@
     "share_link": "Share link",
     "copied": "Copied to clipboard!",
     "sample_data": "SAMPLE DATA",
-    "accuracy_badge": "~99% Verified Data",
-    "accuracy_disclaimer": "Destinations, entry fees, and route estimates are verified up to ~99% accuracy based on official KSTDC & ASI benchmarks. Seasonal tariffs and personal expenses may vary slightly."
+    "accuracy_badge": "Dataset Estimate",
+    "accuracy_disclaimer": "Estimates from our dataset. Prices change, so check before you book."
   },
   "errors": {
     "busy_title": "The AI is busy right now",

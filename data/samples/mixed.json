@@ -78,7 +78,7 @@
         },
         {
           "place_id": "vv-puram-food-street",
-          "start": "10:30",
+          "start": "10:40",
           "duration_min": 75,
           "note_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
           "travel_from_prev": {
@@ -158,7 +158,7 @@
         },
         {
           "place_id": "bangalore-palace",
-          "start": "11:55",
+          "start": "12:15",
           "duration_min": 90,
           "note_en": "Tudor-style royal estate with fortified towers, wood carvings, and paintings of the Mysore royal family.",
           "travel_from_prev": {
@@ -230,7 +230,7 @@
         },
         {
           "place_id": "vidyarthi-bhavan",
-          "start": "13:45",
+          "start": "14:10",
           "duration_min": 45,
           "note_en": "Iconic 1943 heritage eatery famous for thick crispy golden benne masala dosas and filter coffee.",
           "travel_from_prev": {
@@ -385,7 +385,7 @@
         },
         {
           "place_id": "tipu-summer-palace",
-          "start": "10:15",
+          "start": "11:15",
           "duration_min": 60,
           "note_en": "Ornate teakwood palace set amidst landscaped lawns displaying intricate battle murals and relics.",
           "travel_from_prev": {
@@ -458,7 +458,7 @@
         },
         {
           "place_id": "mylari-dosa",
-          "start": "12:15",
+          "start": "12:50",
           "duration_min": 45,
           "note_en": "Legendary eatery renowned for melt-in-your-mouth butter benne dosas served with fresh coconut chutney.",
           "travel_from_prev": {
@@ -537,7 +537,7 @@
         },
         {
           "place_id": "devaraja-market",
-          "start": "13:35",
+          "start": "13:45",
           "duration_min": 75,
           "note_en": "Vibrant 130-year-old traditional bazaar packed with fragrant flowers, Mysore betel leaves, and perfumes.",
           "travel_from_prev": {
@@ -692,7 +692,7 @@
         },
         {
           "place_id": "mysore-zoo",
-          "start": "11:00",
+          "start": "11:10",
           "duration_min": 150,
           "note_en": "One of India's oldest and best maintained zoological gardens with spacious enclosures and exotic species.",
           "travel_from_prev": {
@@ -766,7 +766,7 @@
         },
         {
           "place_id": "chamundi-hill",
-          "start": "13:40",
+          "start": "13:55",
           "duration_min": 90,
           "note_en": "Prominent hill overlooking Mysuru with the historic Chamundeshwari Temple and massive monolith Nandi.",
           "travel_from_prev": {
@@ -842,7 +842,7 @@
         },
         {
           "place_id": "srirangapatna-temple",
-          "start": "15:25",
+          "start": "16:10",
           "duration_min": 75,
           "note_en": "Majestic river island shrine on the Kaveri dedicated to Lord Ranganatha, dating to the 9th-century Ganga dynasty.",
           "travel_from_prev": {
@@ -990,7 +990,7 @@
         },
         {
           "place_id": "shravanabelagola",
-          "start": "11:00",
+          "start": "12:45",
           "duration_min": 120,
           "note_en": "Colossal 57-foot monolithic statue of Lord Bahubali atop Vindhyagiri hill carved in 981 CE.",
           "travel_from_prev": {
@@ -1062,7 +1062,7 @@
         },
         {
           "place_id": "bandipur-safari",
-          "start": "14:45",
+          "start": "19:15",
           "duration_min": 150,
           "note_en": "Premier Project Tiger sanctuary spanning deciduous forests home to wild elephants, gaurs, and leopards.",
           "travel_from_prev": {

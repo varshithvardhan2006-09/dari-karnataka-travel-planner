@@ -78,7 +78,7 @@
         },
         {
           "place_id": "vv-puram-food-street",
-          "start": "10:30",
+          "start": "10:40",
           "duration_min": 75,
           "note_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
           "travel_from_prev": {
@@ -158,7 +158,7 @@
         },
         {
           "place_id": "bangalore-palace",
-          "start": "11:55",
+          "start": "12:15",
           "duration_min": 90,
           "note_en": "Tudor-style royal estate with fortified towers, wood carvings, and paintings of the Mysore royal family.",
           "travel_from_prev": {
@@ -306,7 +306,7 @@
         },
         {
           "place_id": "tipu-summer-palace",
-          "start": "10:15",
+          "start": "11:15",
           "duration_min": 60,
           "note_en": "Ornate teakwood palace set amidst landscaped lawns displaying intricate battle murals and relics.",
           "travel_from_prev": {
@@ -379,7 +379,7 @@
         },
         {
           "place_id": "devaraja-market",
-          "start": "12:15",
+          "start": "12:50",
           "duration_min": 75,
           "note_en": "Vibrant 130-year-old traditional bazaar packed with fragrant flowers, Mysore betel leaves, and perfumes.",
           "travel_from_prev": {
@@ -534,7 +534,7 @@
         },
         {
           "place_id": "srirangapatna-temple",
-          "start": "11:00",
+          "start": "11:35",
           "duration_min": 75,
           "note_en": "Majestic river island shrine on the Kaveri dedicated to Lord Ranganatha, dating to the 9th-century Ganga dynasty.",
           "travel_from_prev": {
@@ -609,7 +609,7 @@
         },
         {
           "place_id": "udupi-krishna-temple",
-          "start": "12:50",
+          "start": "20:35",
           "duration_min": 90,
           "note_en": "13th-century Vaishnavite temple founded by Saint Madhvacharya where Lord Krishna is viewed through the Kanakana Kindi window.",
           "travel_from_prev": {
