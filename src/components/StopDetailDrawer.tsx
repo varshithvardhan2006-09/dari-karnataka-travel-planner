@@ -4,6 +4,7 @@ import React, { useEffect, useMemo } from "react";
 import { Stop, Place } from "@/lib/schema";
 import { useLang } from "@/lib/i18n/useLang";
 import PlaceImage from "./PlaceImage";
+import { playKannadaSpeech } from "@/lib/speech";
 import placesData from "../../data/places.json";
 
 const allPlaces = placesData as Place[];
@@ -51,15 +52,7 @@ export default function StopDetailDrawer({
   }, [place]);
 
   const playPhraseAudio = (text: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    try {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "kn-IN";
-      window.speechSynthesis.speak(utterance);
-    } catch {
-      // ignore
-    }
+    playKannadaSpeech(text);
   };
 
   if (!isOpen || !stop || !place) return null;

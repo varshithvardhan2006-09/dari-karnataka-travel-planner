@@ -121,8 +121,14 @@ export default function TripMap({
       map.invalidateSize();
     }, 150);
 
+    const handleResize = () => {
+      map.invalidateSize();
+    };
+    window.addEventListener("resize", handleResize);
+
     return () => {
       clearTimeout(timer);
+      window.removeEventListener("resize", handleResize);
       if (layerGroupRef.current) {
         try {
           layerGroupRef.current.clearLayers();
@@ -150,6 +156,9 @@ export default function TripMap({
     const map = mapRef.current;
     const layerGroup = layerGroupRef.current;
     if (!map || !layerGroup) return;
+
+    // Invalidate size on state updates to ensure smooth rendering on tab/container changes
+    map.invalidateSize();
 
     layerGroup.clearLayers();
     markersRef.current.clear();
@@ -285,9 +294,9 @@ export default function TripMap({
   };
 
   return (
-    <div className="relative w-full h-[450px] lg:h-full min-h-[450px] rounded-2xl overflow-hidden border border-[#DCE1DD] shadow-xs">
+    <div className="relative w-full h-full min-h-[450px] rounded-2xl overflow-hidden border border-[#DCE1DD] shadow-xs">
       {/* Day Chips on the Map (matching mockup 04: Day 1 / 2 / 3 / 4 / All) */}
-      <div className="absolute top-3 left-3 z-[1000] flex items-center gap-1.5 bg-white/95 backdrop-blur-xs p-1.5 rounded-xl shadow-sm border border-[#DCE1DD] text-xs font-semibold text-[#14202B]">
+      <div className="absolute top-3 left-3 z-[1000] max-w-[calc(100%-1.5rem)] overflow-x-auto flex items-center gap-1.5 bg-white/95 backdrop-blur-xs p-1.5 rounded-xl shadow-sm border border-[#DCE1DD] text-xs font-semibold text-[#14202B]">
         {days.map((d) => (
           <button
             key={d.day}

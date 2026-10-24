@@ -23,9 +23,9 @@ function projectToSvg(lat: number, lng: number): [number, number] {
   return [Math.round(x), Math.round(y)];
 }
 
-// Approximate simplified Karnataka state border polygon
+// Approximate simplified Karnataka state border polygon with accurate coastal boundary
 const KARNATAKA_BORDER_PATH =
-  "M 60,75 L 105,40 L 160,25 L 210,45 L 225,95 L 205,140 L 235,175 L 255,230 L 230,270 L 210,310 L 160,355 L 115,340 L 85,295 L 60,240 L 45,180 L 40,120 Z";
+  "M 60,75 L 105,40 L 160,25 L 210,45 L 225,95 L 205,140 L 235,175 L 255,230 L 230,270 L 210,310 L 160,355 L 115,340 L 75,295 L 45,245 L 25,185 L 38,125 Z";
 
 export default function KarnatakaMapSvg({
   selectedRegion = "all",

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLang } from "@/lib/i18n/useLang";
+import { playKannadaSpeech } from "@/lib/speech";
 import KarnatakaMapSvg from "./KarnatakaMapSvg";
 
 interface ProgressStepsProps {
@@ -118,15 +119,7 @@ export default function ProgressSteps({
   };
 
   const playKannadaWord = (text: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    try {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "kn-IN";
-      window.speechSynthesis.speak(utterance);
-    } catch {
-      // ignore
-    }
+    playKannadaSpeech(text);
   };
 
   const progressPercent = Math.min(100, Math.round(((currentStepIndex + 1) / STEPS.length) * 100));

@@ -1,15 +1,25 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLang } from "@/lib/i18n/useLang";
 import PalaceScene from "@/components/illustrations/PalaceScene";
 import HampiScene from "@/components/illustrations/HampiScene";
 import CoastScene from "@/components/illustrations/CoastScene";
-import KarnatakaMapSvg from "@/components/KarnatakaMapSvg";
+import { playKannadaSpeech } from "@/lib/speech";
 import phrasesData from "../../data/phrases.json";
 import { Phrase } from "@/lib/schema";
+
+const RegionMap = dynamic(() => import("@/components/RegionMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[360px] sm:h-[400px] bg-[#F1F3F0] rounded-2xl border border-[#DCE1DD] flex items-center justify-center text-xs text-[#586673] animate-pulse">
+      Loading interactive Karnataka map...
+    </div>
+  ),
+});
 
 const phrases = phrasesData as Phrase[];
 
@@ -53,19 +63,11 @@ export default function LandingPage() {
   }, []);
 
   const playKannadaAudio = (text: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    try {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "kn-IN";
-      utterance.rate = isSlowAudio ? 0.7 : 1.0;
-      utterance.onstart = () => setIsPlayingAudio(true);
-      utterance.onend = () => setIsPlayingAudio(false);
-      utterance.onerror = () => setIsPlayingAudio(false);
-      window.speechSynthesis.speak(utterance);
-    } catch {
-      setIsPlayingAudio(false);
-    }
+    playKannadaSpeech(text, {
+      isSlow: isSlowAudio,
+      onStart: () => setIsPlayingAudio(true),
+      onEnd: () => setIsPlayingAudio(false),
+    });
   };
 
   const toggleSavePhrase = () => {
@@ -566,8 +568,8 @@ export default function LandingPage() {
             ))}
           </div>
 
-          {/* SVG Map of Karnataka with place dots */}
-          <KarnatakaMapSvg
+          {/* Real-time interactive Leaflet OpenStreetMap */}
+          <RegionMap
             selectedRegion={selectedRegion}
             onSelectPlace={(place) => router.push(`/plan?interests=${place.categories[0]}`)}
           />
@@ -632,26 +634,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      {/* 7. INK FOOTER BAR (mockup 01 Part 3) */}
-      <footer className="mt-8 rounded-2xl bg-[#14202B] text-white/80 p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-        <div className="flex items-center gap-2">
-          <span className="font-heading font-extrabold text-[#F2B705] text-base">
-            ದಾರಿ Dari
-          </span>
-          <span className="text-white/40">·</span>
-          <span>Built for the Kannada Digital Innovation Hackathon 2026</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link href="/credits" className="text-white/60 hover:text-white transition-colors underline">
-            Photo Credits
-          </Link>
-          <span className="text-white/40">·</span>
-          <span className="text-white/60 tracking-wide font-medium">
-            Code. Create. Celebrate Kannada.
-          </span>
-        </div>
-      </footer>
     </div>
   );
 }

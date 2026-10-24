@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Place } from "@/lib/schema";
+import { playKannadaSpeech } from "@/lib/speech";
 
 interface ShowToLocalModalProps {
   place: Place | null;
@@ -33,19 +34,11 @@ export default function ShowToLocalModal({
   const phraseText = `ದಯವಿಟ್ಟು ನನ್ನನ್ನು ${place.name_kn}ಗೆ ಕರೆದುಕೊಂಡು ಹೋಗಿ`;
 
   const playAudio = () => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    try {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(phraseText);
-      utterance.lang = "kn-IN";
-      utterance.rate = isSlow ? 0.7 : 1.0;
-      utterance.onstart = () => setIsPlaying(true);
-      utterance.onend = () => setIsPlaying(false);
-      utterance.onerror = () => setIsPlaying(false);
-      window.speechSynthesis.speak(utterance);
-    } catch {
-      setIsPlaying(false);
-    }
+    playKannadaSpeech(phraseText, {
+      isSlow,
+      onStart: () => setIsPlaying(true),
+      onEnd: () => setIsPlaying(false),
+    });
   };
 
   return (
