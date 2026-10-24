@@ -15,6 +15,7 @@ import {
   Travellers,
   TravelMode,
   Place,
+  Stop,
 } from "@/lib/schema";
 import { useLang } from "@/lib/i18n/useLang";
 import StopCard from "@/components/StopCard";
@@ -22,6 +23,7 @@ import PhraseCard from "@/components/PhraseCard";
 import CostSummary from "@/components/CostSummary";
 import ProgressSteps from "@/components/ProgressSteps";
 import ErrorState from "@/components/ErrorState";
+import StopDetailDrawer from "@/components/StopDetailDrawer";
 import { buildDeterministicPlan } from "@/lib/planner";
 import { getSamplePlan, getSamplePlanForInterests } from "@/lib/samples";
 import { computeTravelLeg, addMinutesToTime, roundTimeTo5Min, getPinNumber } from "@/lib/geo";
@@ -123,6 +125,8 @@ function TripViewContent() {
     retryAfterS?: number;
   } | null>(null);
   const [refreshKey, setRefreshKey] = useState<number>(0);
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [drawerStop, setDrawerStop] = useState<Stop | null>(null);
 
   // Extract query parameters
   const dParam = searchParams.get("d");
@@ -472,10 +476,17 @@ function TripViewContent() {
     }
   };
 
-  const handlePinClick = (placeId: string) => {
+  const handlePinClick = (placeId: string, openDrawer: boolean = false) => {
     setSelectedStopPlaceId(placeId);
     setIsSheetClosed(false);
     setIsSheetMinimized(false);
+    const targetStop = plan?.days.flatMap((d) => d.stops).find((s) => s.place_id === placeId);
+    if (targetStop) {
+      setDrawerStop(targetStop);
+      if (openDrawer) {
+        setIsDrawerOpen(true);
+      }
+    }
     const el = document.getElementById(`stop-card-${placeId}`);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -832,7 +843,7 @@ function TripViewContent() {
                   isFirst={idx === 0}
                   pinNumber={pinNumber}
                   dayNum={currentDayData.day}
-                  onCardClick={handlePinClick}
+                  onCardClick={(placeId) => handlePinClick(placeId, true)}
                   onSwap={handleSwapStop}
                   onRemove={handleRemoveStop}
                 />
@@ -895,7 +906,7 @@ function TripViewContent() {
                     isFirst={idx === 0}
                     pinNumber={pinNumber}
                     dayNum={currentDayData.day}
-                    onCardClick={handlePinClick}
+                    onCardClick={(placeId) => handlePinClick(placeId, true)}
                     onSwap={handleSwapStop}
                     onRemove={handleRemoveStop}
                   />
@@ -973,7 +984,10 @@ function TripViewContent() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setIsSheetMinimized(false)}
+                      onClick={() => {
+                        setDrawerStop(currentActiveStop);
+                        setIsDrawerOpen(true);
+                      }}
                       className="px-2 py-1 rounded-lg bg-[#8E1F2F] text-white font-semibold text-[11px] cursor-pointer active:scale-95 ml-1"
                     >
                       {lang === "kn" ? "ವಿವರ" : "Details"}
@@ -1134,6 +1148,23 @@ function TripViewContent() {
           </button>
         </div>
       </div>
+
+      {/* Stop Detail Drawer (U5) */}
+      <StopDetailDrawer
+        stop={drawerStop}
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onSwapWith={(alt) => {
+          if (drawerStop) {
+            handleSwapStop(drawerStop.place_id);
+            setIsDrawerOpen(false);
+          }
+        }}
+        onRemoveStop={(placeId) => {
+          handleRemoveStop(placeId);
+          setIsDrawerOpen(false);
+        }}
+      />
     </div>
   );
 }
