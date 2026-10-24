@@ -37,6 +37,8 @@ function TripViewContent() {
   const [copied, setCopied] = useState<boolean>(false);
   const [activeMobileTab, setActiveMobileTab] = useState<"plan" | "map" | "phrases">("plan");
   const [selectedStopPlaceId, setSelectedStopPlaceId] = useState<string | null>(null);
+  const [isSheetMinimized, setIsSheetMinimized] = useState<boolean>(false);
+  const [isSheetClosed, setIsSheetClosed] = useState<boolean>(false);
   const [errorState, setErrorState] = useState<{
     type: "busy" | "few_matches" | "fallback_sample";
     matchCount?: number;
@@ -258,6 +260,9 @@ function TripViewContent() {
 
   // Handle Map Pin Click
   const handlePinClick = (placeId: string) => {
+    setSelectedStopPlaceId(placeId);
+    setIsSheetClosed(false);
+    setIsSheetMinimized(false);
     const el = document.getElementById(`stop-card-${placeId}`);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -523,7 +528,7 @@ function TripViewContent() {
 
         {/* 2. Mobile Map Tab with Interactive Bottom Sheet matching mockup 07 */}
         {activeMobileTab === "map" && (
-          <div className="relative w-full h-[calc(100vh-220px)] min-h-[460px] rounded-2xl overflow-hidden border border-[#DCE1DD] shadow-sm">
+          <div className="relative w-full h-[calc(100dvh-200px)] min-h-[460px] rounded-2xl overflow-hidden border border-[#DCE1DD] shadow-sm">
             <TripMap
               days={plan.days}
               selectedDay={selectedDay}
@@ -531,20 +536,27 @@ function TripViewContent() {
             />
 
             {/* Bottom Sheet for Selected Stop */}
-            {currentActiveStop && (
-              <div className="absolute bottom-2 left-2 right-2 z-[1000] bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-[#DCE1DD] shadow-2xl animate-in slide-in-from-bottom duration-200">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-bold text-[#8E1F2F] tracking-wide">
-                    {lang === "kn"
-                      ? `ನಿಲುಗಡೆ ${currentStopIdx + 1} / ${activeDayStops.length}`
-                      : `Stop ${currentStopIdx + 1} of ${activeDayStops.length}`}
-                  </span>
-                  <div className="flex items-center gap-1.5">
+            {currentActiveStop && !isSheetClosed && (
+              isSheetMinimized ? (
+                /* Minimized Sleek Bar */
+                <div className="absolute bottom-3 left-3 right-3 z-[1000] bg-white/95 backdrop-blur-md rounded-xl px-3.5 py-2.5 border border-[#DCE1DD] shadow-lg flex items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-2 truncate">
+                    <span className="font-bold text-[#8E1F2F]">
+                      #{currentStopIdx + 1}
+                    </span>
+                    <span className="font-semibold text-[#14202B] truncate">
+                      {lang === "kn" ? currentActiveStop.place.name_kn : currentActiveStop.place.name_en}
+                    </span>
+                    <span className="text-[#586673] shrink-0">
+                      {currentActiveStop.start}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <button
                       type="button"
                       disabled={currentStopIdx === 0}
                       onClick={() => setSelectedStopPlaceId(activeDayStops[currentStopIdx - 1]?.place_id)}
-                      className="px-2.5 py-1 rounded-md text-xs font-bold bg-[#F2F4F1] border border-[#DCE1DD] text-[#14202B] disabled:opacity-30 cursor-pointer active:scale-95"
+                      className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F2F4F1] border border-[#DCE1DD] text-[#14202B] disabled:opacity-30 cursor-pointer active:scale-95"
                       aria-label="Previous stop"
                     >
                       ←
@@ -553,25 +565,118 @@ function TripViewContent() {
                       type="button"
                       disabled={currentStopIdx >= activeDayStops.length - 1}
                       onClick={() => setSelectedStopPlaceId(activeDayStops[currentStopIdx + 1]?.place_id)}
-                      className="px-2.5 py-1 rounded-md text-xs font-bold bg-[#F2F4F1] border border-[#DCE1DD] text-[#14202B] disabled:opacity-30 cursor-pointer active:scale-95"
+                      className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#F2F4F1] border border-[#DCE1DD] text-[#14202B] disabled:opacity-30 cursor-pointer active:scale-95"
                       aria-label="Next stop"
                     >
                       →
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsSheetMinimized(false)}
+                      className="px-2 py-1 rounded-lg bg-[#8E1F2F] text-white font-semibold text-[11px] cursor-pointer active:scale-95 ml-1"
+                    >
+                      {lang === "kn" ? "ವಿವರ" : "Details"}
+                    </button>
                   </div>
                 </div>
+              ) : (
+                /* Compact Floating Card (Leaves 75%+ of map clear and visible) */
+                <div className="absolute bottom-3 left-3 right-3 z-[1000] bg-white/95 backdrop-blur-md rounded-2xl p-3.5 border border-[#DCE1DD] shadow-2xl animate-in slide-in-from-bottom duration-200">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-[#8E1F2F] tracking-wide">
+                        {lang === "kn"
+                          ? `ನಿಲುಗಡೆ ${currentStopIdx + 1} / ${activeDayStops.length}`
+                          : `Stop ${currentStopIdx + 1} of ${activeDayStops.length}`}
+                      </span>
+                      <span className="text-xs text-[#586673]">
+                        {currentActiveStop.start}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        disabled={currentStopIdx === 0}
+                        onClick={() => setSelectedStopPlaceId(activeDayStops[currentStopIdx - 1]?.place_id)}
+                        className="w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold bg-[#F2F4F1] border border-[#DCE1DD] text-[#14202B] disabled:opacity-30 cursor-pointer active:scale-95"
+                        aria-label="Previous stop"
+                      >
+                        ←
+                      </button>
+                      <button
+                        type="button"
+                        disabled={currentStopIdx >= activeDayStops.length - 1}
+                        onClick={() => setSelectedStopPlaceId(activeDayStops[currentStopIdx + 1]?.place_id)}
+                        className="w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold bg-[#F2F4F1] border border-[#DCE1DD] text-[#14202B] disabled:opacity-30 cursor-pointer active:scale-95"
+                        aria-label="Next stop"
+                      >
+                        →
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsSheetMinimized(true)}
+                        className="w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold bg-[#F2F4F1] border border-[#DCE1DD] text-[#586673] hover:text-[#14202B] cursor-pointer active:scale-95 ml-1"
+                        aria-label="Minimize"
+                        title={lang === "kn" ? "ಕನಿಷ್ಠಗೊಳಿಸಿ" : "Minimize"}
+                      >
+                        _
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsSheetClosed(true)}
+                        className="w-7 h-7 flex items-center justify-center rounded-lg text-xs font-bold bg-[#F2F4F1] border border-[#DCE1DD] text-[#586673] hover:text-[#14202B] cursor-pointer active:scale-95"
+                        aria-label="Close"
+                        title={lang === "kn" ? "ಮುಚ್ಚಿ" : "Close"}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
 
-                <h3 className="font-heading font-bold text-base text-[#14202B]">
-                  {lang === "kn" ? currentActiveStop.place.name_kn : currentActiveStop.place.name_en}
-                </h3>
-                <p className="text-xs text-[#586673] mt-0.5 mb-2.5">
-                  {currentActiveStop.start} · {Math.round(currentActiveStop.duration_min / 60)} {t("common.hours")} · {currentActiveStop.place.entry_inr === 0 ? t("common.free") : `₹${currentActiveStop.place.entry_inr}`}
-                </p>
+                  <h3 className="font-heading font-bold text-base text-[#14202B] truncate">
+                    {lang === "kn" ? currentActiveStop.place.name_kn : currentActiveStop.place.name_en}
+                  </h3>
+                  <p className="text-xs text-[#586673] mt-0.5">
+                    {Math.round(currentActiveStop.duration_min / 60)} {t("common.hours")} {t("common.stay").toLowerCase()} · {currentActiveStop.place.entry_inr === 0 ? t("common.free") : `₹${currentActiveStop.place.entry_inr} ${t("common.entry").toLowerCase()}`}
+                  </p>
 
-                {currentActiveStop.phrases && currentActiveStop.phrases.length > 0 && (
-                  <PhraseCard phrases={currentActiveStop.phrases} />
-                )}
-              </div>
+                  {/* Clean CTA to dedicated Phrases tab instead of exploding map sheet height */}
+                  {currentActiveStop.phrases && currentActiveStop.phrases.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveMobileTab("phrases")}
+                      className="mt-2.5 w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#FDF2CC] border border-[#F2B705]/50 text-xs font-semibold text-[#8C6D05] hover:bg-[#faebba] active:scale-[0.99] transition-all cursor-pointer"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <span>🗣️</span>
+                        <span>
+                          {lang === "kn"
+                            ? `${currentActiveStop.phrases.length} ಕನ್ನಡ ನುಡಿಗಟ್ಟುಗಳು ಲಭ್ಯವಿದೆ`
+                            : `${currentActiveStop.phrases.length} Kannada phrases available`}
+                        </span>
+                      </span>
+                      <span className="font-bold underline">
+                        {lang === "kn" ? "ನುಡಿಗಟ್ಟುಗಳ ಟ್ಯಾಬ್ ತೆರೆಯಿರಿ →" : "View in Phrases tab →"}
+                      </span>
+                    </button>
+                  )}
+                </div>
+              )
+            )}
+
+            {/* When closed, show subtle floating pill to reopen */}
+            {isSheetClosed && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSheetClosed(false);
+                  setIsSheetMinimized(false);
+                }}
+                className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[1000] bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-[#DCE1DD] shadow-md text-xs font-semibold text-[#14202B] hover:bg-gray-50 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <span>📍</span>
+                <span>{lang === "kn" ? "ವಿವರಗಳನ್ನು ತೋರಿಸಿ" : "Show stop details"}</span>
+              </button>
             )}
           </div>
         )}
