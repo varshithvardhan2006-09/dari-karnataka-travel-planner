@@ -116,7 +116,7 @@ function TripViewContent() {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedDay, setSelectedDay] = useState<number>(1);
   const [copied, setCopied] = useState<boolean>(false);
-  const [activeMobileTab, setActiveMobileTab] = useState<"plan" | "map" | "phrases">("plan");
+  const [activeMobileTab, setActiveMobileTab] = useState<"plan" | "map" | "phrases" | "saved">("plan");
   const [selectedStopPlaceId, setSelectedStopPlaceId] = useState<string | null>(null);
   const [isSheetMinimized, setIsSheetMinimized] = useState<boolean>(false);
   const [isSheetClosed, setIsSheetClosed] = useState<boolean>(false);
@@ -129,6 +129,7 @@ function TripViewContent() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [drawerStop, setDrawerStop] = useState<Stop | null>(null);
   const [isShowToLocalOpen, setIsShowToLocalOpen] = useState<boolean>(false);
+  const [savedTrips, setSavedTrips] = useState<any[]>([]);
 
   // Extract query parameters
   const dParam = searchParams.get("d");
@@ -295,6 +296,47 @@ function TripViewContent() {
     lang,
     refreshKey,
   ]);
+
+  // Load and auto-save trips to localStorage (U7 My Trips)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = localStorage.getItem("dari_saved_trips");
+      if (raw) setSavedTrips(JSON.parse(raw));
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!plan || typeof window === "undefined") return;
+    try {
+      const raw = localStorage.getItem("dari_saved_trips");
+      const list = raw ? JSON.parse(raw) : [];
+      const firstCity = plan.days[0]?.stops[0]?.place.city || "Bengaluru";
+      const region = plan.days[0]?.stops[0]?.place.region || "Mysuru";
+      const tripId = `${plan.days.length}d-${firstCity.toLowerCase()}`;
+      const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(plan));
+      const record = {
+        id: tripId,
+        title: plan.title,
+        days: plan.days.length,
+        month: currentMonth,
+        costText: `Rs ${Math.round((plan.cost.total * 0.9) / 1000)}k to ${Math.round((plan.cost.total * 1.15) / 1000)}k`,
+        firstCity,
+        region,
+        savedAt: Date.now(),
+        compressed,
+      };
+
+      const filtered = list.filter((item: any) => item.id !== tripId);
+      const updated = [record, ...filtered].slice(0, 10);
+      localStorage.setItem("dari_saved_trips", JSON.stringify(updated));
+      setSavedTrips(updated);
+    } catch {
+      // ignore
+    }
+  }, [plan, currentMonth]);
 
   // Recalculate plan travel legs, times, and costs after local edits
   const recomputePlanLocally = (updatedDays: Plan["days"]) => {
@@ -1112,6 +1154,62 @@ function TripViewContent() {
           </div>
         )}
 
+        {/* 4. Mobile Saved Tab (mockup 06 & 08) */}
+        {activeMobileTab === "saved" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-[10px] font-bold text-[#586673] uppercase tracking-wider">
+                  MY TRIPS
+                </span>
+                <h3 className="font-heading font-extrabold text-lg text-[#14202B]">
+                  Saved on this device
+                </h3>
+              </div>
+              <span className="text-[11px] text-[#586673]">No account needed</span>
+            </div>
+
+            {savedTrips.length === 0 ? (
+              <div className="p-6 text-center text-xs text-[#586673] bg-white rounded-2xl border border-[#DCE1DD]">
+                No saved trips yet. Plans you create will automatically appear here.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {savedTrips.map((st) => (
+                  <div
+                    key={st.id}
+                    className="p-4 rounded-2xl bg-white border border-[#DCE1DD] shadow-2xs flex items-center justify-between gap-3"
+                  >
+                    <div
+                      className="cursor-pointer flex-1"
+                      onClick={() => router.push(`/trip?d=${st.compressed}`)}
+                    >
+                      <h4 className="font-heading font-bold text-sm text-[#14202B] hover:text-[#8E1F2F]">
+                        {st.title}
+                      </h4>
+                      <p className="text-xs text-[#586673] mt-0.5">
+                        {st.days} days · {st.costText}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const url = `${window.location.origin}/trip?d=${st.compressed}`;
+                        navigator.clipboard?.writeText(url);
+                        alert("Link copied!");
+                      }}
+                      className="w-8 h-8 rounded-lg bg-[#F1F3F0] text-[#14202B] flex items-center justify-center shrink-0 cursor-pointer"
+                      title="Share trip"
+                    >
+                      ↗
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Sticky Mobile Bottom Navigation Bar */}
         <div className="fixed bottom-0 left-0 right-0 z-[1100] bg-white border-t border-[#DCE1DD] shadow-lg flex items-center justify-around py-2 px-3">
           <button
@@ -1157,6 +1255,19 @@ function TripViewContent() {
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
             <span>{t("nav.phrases", "Phrases")}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveMobileTab("saved")}
+            className={`flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-xs font-semibold cursor-pointer transition-all ${
+              activeMobileTab === "saved" ? "text-[#8E1F2F]" : "text-[#586673]"
+            }`}
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+            </svg>
+            <span>{lang === "kn" ? "ಉಳಿಸಲಾಗಿದೆ" : "Saved"}</span>
           </button>
         </div>
       </div>
