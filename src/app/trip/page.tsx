@@ -24,6 +24,7 @@ import CostSummary from "@/components/CostSummary";
 import ProgressSteps from "@/components/ProgressSteps";
 import ErrorState from "@/components/ErrorState";
 import StopDetailDrawer from "@/components/StopDetailDrawer";
+import ShowToLocalModal from "@/components/ShowToLocalModal";
 import { buildDeterministicPlan } from "@/lib/planner";
 import { getSamplePlan, getSamplePlanForInterests } from "@/lib/samples";
 import { computeTravelLeg, addMinutesToTime, roundTimeTo5Min, getPinNumber } from "@/lib/geo";
@@ -127,6 +128,7 @@ function TripViewContent() {
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [drawerStop, setDrawerStop] = useState<Stop | null>(null);
+  const [isShowToLocalOpen, setIsShowToLocalOpen] = useState<boolean>(false);
 
   // Extract query parameters
   const dParam = searchParams.get("d");
@@ -667,6 +669,16 @@ function TripViewContent() {
 
             <button
               type="button"
+              onClick={() => setIsShowToLocalOpen(true)}
+              title="Show to local driver"
+              className="px-3 py-2 rounded-xl text-xs font-bold bg-[#F9EBEB] text-[#8E1F2F] hover:bg-[#F2D6D6] transition-all cursor-pointer shadow-2xs active:scale-95 flex items-center gap-1.5"
+            >
+              <span>🌐</span>
+              <span>{lang === "kn" ? "ಸ್ಥಳೀಯರಿಗೆ ತೋರಿಸಿ" : "Show to local"}</span>
+            </button>
+
+            <button
+              type="button"
               onClick={handleShareLink}
               className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#8E1F2F] hover:bg-[#781926] text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
             >
@@ -1164,6 +1176,13 @@ function TripViewContent() {
           handleRemoveStop(placeId);
           setIsDrawerOpen(false);
         }}
+      />
+
+      {/* Show To Local Full-Screen View (U6) */}
+      <ShowToLocalModal
+        place={currentActiveStop?.place || null}
+        isOpen={isShowToLocalOpen}
+        onClose={() => setIsShowToLocalOpen(false)}
       />
     </div>
   );
