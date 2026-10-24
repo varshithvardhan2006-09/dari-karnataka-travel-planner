@@ -8,49 +8,52 @@
 
 > **Problem Statement 06:** AI-powered travel planner that creates personalized Karnataka itineraries based on interests, available time, budget, and preferred type of experience.
 >
-> Built for the **Kannada Digital Innovation Hackathon 2026** ("Code. Create. Celebrate Kannada.").
+> Built for the **Kannada Digital Innovation Hackathon 2026** (*"Code. Create. Celebrate Kannada."*).
 >
-> **Live URL:** [https://dari-karnataka.vercel.app](https://dari-karnataka.vercel.app)
+> 🌐 **Live URL:** [https://dari-karnataka-travel-planner.vercel.app](https://dari-karnataka-travel-planner.vercel.app)  
+> 📁 **GitHub Repository:** [https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner](https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner)
 
 ---
 
-## 📸 Screenshots
+## 📸 Interface Tour & Mockup Compliance
 
-| 1. Landing & Bento Discovery | 2. Planner Form & Live Brief |
+| 1. Landing & Destination Discovery | 2. Planner Form & Live Brief |
 |:---:|:---:|
 | ![Landing Screen](docs/mockups/01-landing.png) | ![Planner Form](docs/mockups/02-planner-form.png) |
+| *Bento SVG scene art, quick-start bar, trust cards, region explorer* | *8 live interest tiles, presets, days slider, sticky brief panel* |
 
-| 3. Generating State | 4. Itinerary & Leaflet Route Map |
+| 3. Generating Screen | 4. Itinerary & Interactive Map |
 |:---:|:---:|
 | ![Generating State](docs/mockups/03-generating.png) | ![Itinerary and Map](docs/mockups/04-itinerary-map.png) |
+| *5-stage real progress, candidate route preview, "learn a word"* | *5 stat cards, day tabs, double-polyline map, donut cost chart* |
 
-| 5. Kannada Mode (ಕನ್ನಡ) & Phrases | 6. Mobile Experience (360px) |
+| 5. Kannada Mode & Stop Details | 6. Mobile Experience (360px) |
 |:---:|:---:|
 | ![Kannada Mode](docs/mockups/05-kannada-mode.png) | ![Mobile View](docs/mockups/07-mobile.png) |
+| *Full Kannada UI, stop drawer, "Show to Local" driver screen* | *4 bottom tabs (Plan, Map, Phrases, Saved), compact cards* |
 
 ---
 
 ## 🌟 What Makes Dari Different
 
-Generic AI planners (like ChatGPT or Google Gemini prompts) suffer from severe hallucinations: they invent non-existent monuments, combine sights in different cities on the same morning, estimate absurd driving times, output garbled machine-translated Kannada, and break completely when rate-limited.
+Generic AI planners (like raw ChatGPT or Gemini prompts) hallucinate non-existent monuments, combine sights in different cities on the same morning, estimate absurd driving times, output broken machine-translated Kannada, and fail completely when rate-limited.
 
-**Dari solves this with 5 architectural innovations:**
+**Dari solves this with 6 core architectural principles:**
 
-1. **Constrained Place-ID Architecture (Zero Hallucinations):**
-   The AI model is **never allowed to generate free-text place names, coordinates, or prices**. It is given candidate IDs from `data/places.json` and may only return an ordered list of valid IDs. If any ID is unrecognized, the server rejects the response, triggers one retry, and falls back to our deterministic planner.
-2. **First-Class Kannada (ಕನ್ನಡ) without Runtime LLM Translation:**
-   One toggle instantly switches the entire interface, place names, descriptions, tips, and phrases to verified Kannada. Every Kannada string is pre-curated in `data/places.json`, `data/phrases.json`, or `src/lib/i18n/kn.json` — zero garbled machine translation.
-3. **Contextual Phrases with Native Audio at Every Stop:**
-   Every stop card includes 2 to 3 practical Kannada phrases with script, English transliteration, English meaning, and browser Web Speech (`speechSynthesis`, `lang="kn-IN"`) audio.
-4. **100% Offline & Deterministic Fallback:**
-   Even if both Groq and Gemini are completely down or no API keys are provided, Dari builds a complete, geographically clustered, realistic itinerary using `lib/planner.ts` with no raw provider error ever reaching the user.
-5. **Beyond the Golden Triangle:**
-   Our dataset covers 36 hand-curated places across all regions of Karnataka:
-   - **Kalyana-Karnataka:** Bidar Fort, Kalaburagi Fort & Jami Masjid
-   - **Badami-Bagalkot:** Badami Cave Temples, Pattadakal, Aihole, Gol Gumbaz
-   - **Karavali Coast:** Mangaluru, Udupi Sri Krishna Matha, Gokarna, Murudeshwar, Malpe
-   - **Malenadu:** Chikkamagaluru Coffee Estates, Mullayanagiri, Jog Falls, Abbey Falls
-   - **Southern Heritage:** Mysuru, Belur, Halebidu, Somanathapura, Shravanabelagola, Bandipur
+1. **Constrained Place-ID Architecture (Zero Hallucinations):**  
+   The AI model is **strictly prohibited from generating free-text place names, coordinates, or fees**. The prompt receives only valid candidate IDs from [`data/places.json`](data/places.json) and must return valid IDs. Any unknown ID is automatically rejected, retried once, and backed by our deterministic fallback planner.
+2. **Honesty & Transparency Rule:**  
+   We reject deceptive claims like `~99% verified` or `benchmarked against KSTDC`. Dari labels all numbers honestly:
+   > *"Estimates from our dataset. Prices change, so check before you book."*  
+   > Unverified facts are marked `verified: false` and cataloged in [`docs/TODO-VERIFY.md`](docs/TODO-VERIFY.md).
+3. **First-Class Kannada (ಕನ್ನಡ) without Runtime LLM Translation:**  
+   A single toggle instantly switches the entire interface, place names, descriptions, tips, and phrases to verified Kannada. Every Kannada string is pre-curated in [`data/places.json`](data/places.json), [`data/phrases.json`](data/phrases.json), or [`src/lib/i18n/kn.json`](src/lib/i18n/kn.json) — zero garbled translation.
+4. **Contextual Phrases & Audio at Every Stop:**  
+   Every stop includes 2 to 3 practical Kannada phrases with script, English transliteration, English meaning, and browser Web Speech (`speechSynthesis`, `lang="kn-IN"`) audio.
+5. **"Show to Local" Full-Screen View:**  
+   A dedicated high-contrast red card displaying *"ದಯವಿಟ್ಟು ನನ್ನನ್ನು ಇಲ್ಲಿಗೆ ಕರೆದುಕೊಂಡು ಹೋಗಿ"* (*Please take me here*) with destination details and audio designed for auto drivers, bus conductors, and shopkeepers.
+6. **100% Offline & Deterministic Fallback:**  
+   Even if both Groq and Gemini APIs are down, rate-limited, or if zero API keys are provided, Dari generates a complete, geographically clustered itinerary using [`src/lib/planner.ts`](src/lib/planner.ts) with zero user-facing errors.
 
 ---
 
@@ -71,7 +74,7 @@ Generic AI planners (like ChatGPT or Google Gemini prompts) suffer from severe h
    ├── Distance from start city (Haversine km)
    ├── Best travel month bonus
    ├── Budget tier compatibility
-   └── Keeps ~2.5x stops needed
+   └── Keeps ~2.5x stops needed for requested pace
                                │
                                ▼
 [ 3. Cascading AI Execution (lib/ai.ts) ]
@@ -81,40 +84,57 @@ Generic AI planners (like ChatGPT or Google Gemini prompts) suffer from severe h
                                │
                                ▼ (on AI failure, timeout, or missing keys)
 [ 4. Deterministic Planner Fallback (lib/planner.ts) ]
-   ├── Greedy nearest-neighbour clustering
-   ├── Pace stop limit enforcement
-   └── Meal stop insertion at lunch hours
+   ├── Greedy nearest-neighbour geographic clustering
+   ├── Pace stop limit enforcement & meal stop insertion
+   └── Zero duplicate places guaranteed across multi-day trips
                                │
                                ▼
 [ 5. Plan Enrichment Engine (lib/enrich.ts) ]
    ├── Road distance (Haversine × 1.3 factor)
    ├── Realistic drive times (40 km/h + 10 min buffer, rounded to 5 min)
-   ├── Transport mode selection (Auto < 15km, Cab < 120km, Bus >= 120km)
+   ├── Transport mode selection (Auto, Cab, Walk)
    ├── Itemized rupee cost calculation (Stay + Food + Transport + Entry === Total)
    └── Attaches localized Kannada text and audio phrases
                                │
                                ▼
-[ Final JSON Plan returned to Client with source: "ai-groq" | "ai-gemini" | "planner" | "sample" ]
+[ Final JSON Plan returned to Client with source badge: "ai-groq" | "ai-gemini" | "planner" | "sample" ]
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## 🗺️ Beyond the Golden Triangle: 39 Curated Places
 
-| Layer | Technology | Rationale |
+Our dataset covers 39 hand-curated places spanning all regions of Karnataka:
+
+- **Kalyana-Karnataka:** Bidar Fort, Mahmud Gawan Madrasa, Kalaburagi Fort & Jami Masjid.
+- **Badami-Bagalkot:** Badami Cave Temples, Pattadakal Monument Complex, Aihole Durga Temple, Gol Gumbaz (Vijayapura).
+- **Karavali Coast:** Mangaluru Beaches & Food, Udupi Sri Krishna Matha, Malpe Beach & St. Mary's Island, Murudeshwar Temple & Shiva Statue, Gokarna Om Beach & Mahabaleshwar.
+- **Malenadu & Western Ghats:** Chikkamagaluru Coffee Estates, Mullayanagiri Peak, Baba Budangiri, Jog Falls, Abbey Falls, Raja's Seat, Dubare Elephant Camp, Dandeli River Rafting.
+- **Southern Heritage & Mysuru:** Mysore Palace, Chamundi Hill & Monolithic Nandi, Mysore Zoo, Devaraja Market, Ranganathaswamy Temple (Srirangapatna), Brindavan Gardens, Somanathapura Keshava Temple.
+- **Hoysala Trail:** Belur Chennakeshava Temple, Halebidu Hoysaleswara Temple, Shravanabelagola Gommateshwara.
+- **Hampi & Ballari:** Virupaksha Temple, Vittala Temple & Stone Chariot, Lotus Mahal & Elephant Stables, Matanga Hill Sunrise.
+- **Bengaluru Hub:** Lalbagh Botanical Garden & Glass House, Bangalore Palace, Tipu Sultan's Summer Palace, Vidyarthi Bhavan, VV Puram Food Street.
+
+---
+
+## 🛠️ Tech Stack & Key Libraries
+
+| Layer | Technology | Details |
 |---|---|---|
-| **Framework** | Next.js 16.4.2 (App Router) + React 19 | Server & client routing in unified deployment |
+| **Framework** | Next.js 16.4.2 (App Router) + React 19 | Server & client routing with Turbopack |
 | **Language** | TypeScript 5.0 (Strict mode) | Compile-time safety and self-documenting code |
-| **Styling** | Tailwind CSS v4 | Rapid responsive UI with Karnataka flag tokens (`#8E1F2F` crimson, `#F2B705` gold) |
-| **Typography** | Bricolage Grotesque, Hanken Grotesk, Noto Sans Kannada | Correct native Kannada rendering across all platforms |
-| **Map Engine** | Leaflet 1.9 + React-Leaflet 5 + OpenStreetMap | Zero API key required, free open-source map tiles |
-| **Primary AI** | Groq API (`llama-3.3-70b-versatile`) | Blazing fast inference (< 1.5s), JSON mode |
-| **Fallback AI** | Google Gemini API (`gemini-2.5-flash`) | High reliability secondary cloud provider |
-| **Validation** | Zod 4 | Runtime input validation and AI output schema guarantees |
-| **URL Compression** | LZ-String 1.5 | Compresses entire JSON itinerary into URL `?d=...` for instant database-free sharing |
-| **Speech** | Web Speech API (`speechSynthesis`, `lang="kn-IN"`) | Native on-device Kannada audio without paid TTS APIs |
-| **Testing** | Vitest 5.0 (9 test suites, 37 tests) | Ultra-fast unit & integration testing |
-| **Deployment** | Vercel (Edge & Serverless) | Global CDN with zero infrastructure management |
+| **Styling** | Tailwind CSS v4 | Karnataka flag tokens (`#8E1F2F` crimson, `#F2B705` gold, `#1E6B52` green) |
+| **Typography** | Bricolage Grotesque, Hanken Grotesk, Noto Sans Kannada | Correct native Kannada rendering with `line-height: 1.55` |
+| **Map Engine** | Leaflet 1.9 + OpenStreetMap | Native Leaflet container (no SSR memory leaks), custom numbered pin markers, double polyline route |
+| **Primary AI** | Groq API (`llama-3.3-70b-versatile` / `openai/gpt-oss-120b`) | Rapid inference (< 1.5s) in structured JSON mode |
+| **Fallback AI** | Google Gemini API (`gemini-2.5-flash`) | Secondary fallback provider |
+| **Validation** | Zod 4 (`.issues` syntax) | Runtime input validation and AI output schema checks |
+| **URL Compression**| LZ-String 1.5 | Compresses entire JSON itinerary into URL `?d=...` for database-free sharing |
+| **Local Storage** | Web Storage API | Auto-saves last 10 trips on device ("My Trips") without login |
+| **Calendar Export**| iCalendar (`.ics`) RFC 5545 | Generates downloadable calendar schedule client-side |
+| **Speech** | Web Speech API (`speechSynthesis`, `lang="kn-IN"`) | Native on-device Kannada audio with normal/slow rate controls |
+| **Testing** | Vitest 5.0 (12 test suites, 45 tests) | Fast automated unit & integration testing |
+| **Deployment** | Vercel | Production edge deployment with automatic CI/CD |
 
 ---
 
@@ -137,18 +157,18 @@ Copy `.env.example` to `.env.local`:
 cp .env.example .env.local
 ```
 
-Fill in your API keys (optional — Dari runs in deterministic mode if keys are omitted):
+Fill in your API keys (optional — Dari runs automatically in deterministic planner mode if keys are omitted):
 ```env
 # Primary AI Provider (Groq)
 GROQ_API_KEY=your_groq_api_key_here
-GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_MODEL=openai/gpt-oss-120b
 
 # Fallback AI Provider (Google Gemini)
 GEMINI_API_KEY=your_gemini_api_key_here
 GEMINI_MODEL=gemini-2.5-flash
 
-# Base URL for Open Graph Social Sharing
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+# Base URL for Open Graph & Social Sharing
+NEXT_PUBLIC_APP_URL=https://dari-karnataka-travel-planner.vercel.app
 ```
 
 ### 4. Running the Development Server
@@ -161,9 +181,10 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ```bash
 npm run test
 ```
-Runs 37 automated tests across 9 test suites:
-- Candidate scoring and geographic distance tests
-- Cost math invariant tests (`stay + food + transport + entry === total`)
+Executes 45 tests across 12 test suites:
+- Candidate scoring and multi-factor filtering tests
+- Cost calculation math invariants (`stay + food + transport + entry === total`)
+- Cost range estimation helper tests
 - Deterministic fallback planner tests
 - AI cascade error rejection & retry tests
 - Zod schema validator tests
@@ -171,6 +192,8 @@ Runs 37 automated tests across 9 test suites:
 - Kannada language and audio phrase tests
 - Sample itinerary schema conformity tests
 - Error recovery & 429 rate limit tests
+- Stop start time 5-minute rounding and non-overlap tests
+- Wikimedia Commons photo licensing and credit compliance tests
 
 ### 6. Building for Production
 ```bash
@@ -180,15 +203,15 @@ npm run start
 
 ---
 
-## 📱 Mobile-First Design (Tested at 360px)
+## 📱 Mobile-First Features (Tested at 360px & 390px)
 
-Dari is engineered mobile-first:
 - **Bottom Navigation Bar:** Mobile users get fixed bottom tabs:
-  - **Plan:** Day tabs, stop cards, itemized cost bar
-  - **Map:** Fullscreen interactive map with animated pins and colored route lines
-  - **Phrases:** Full Kannada phrasebook for the day's stops with audio playback
-- **Interactive Map Bottom Sheet:** Clicking any pin surfaces a bottom sheet with the place name, timings, entry fee, and embedded Kannada audio phrase card.
-- **Zero Horizontal Scroll:** Form chips, segmented controls, and tables adapt gracefully to 360px viewport widths.
+  - **Plan:** Day tabs, stop cards, add-a-stop suggestions, and donut cost chart.
+  - **Map:** Fullscreen interactive map with animated numbered pins, double-polyline route, and a compact, minimizable bottom sheet.
+  - **Phrases:** Full Kannada phrasebook for the day's stops with audio playback.
+  - **Saved:** "My Trips" saved on this device (up to 10 plans) without login.
+- **Show to Local Mode:** One-tap crimson full-screen card for auto drivers and conductors.
+- **Touch Targets:** All interactive elements designed with minimum 44px hit areas and safe-area inset padding.
 
 ---
 
@@ -200,56 +223,69 @@ dari-karnataka/
 │   ├── favicon.ico            # 32x32 Karnataka-branded icon
 │   └── og-image.png           # 1200x630 social share preview
 ├── data/
-│   ├── places.json            # 36 hand-curated Karnataka places
+│   ├── places.json            # 39 hand-curated Karnataka places
 │   ├── phrases.json           # 15 contextual Kannada phrases
 │   └── samples/               # 4 pre-computed verified itineraries
-│       ├── heritage.json      # Royal Mysuru & Hoysala Trail (3 days)
-│       ├── nature.json        # Western Ghats & Wildlife (3 days)
-│       ├── food.json          # Karavali Coast & Culinary (3 days)
-│       └── mixed.json         # Karnataka Grand Panorama (4 days)
+│       ├── heritage.json      # Royal Mysuru & Hoysala Trail (4 days)
+│       ├── nature.json        # Western Ghats & Wildlife (4 days)
+│       ├── food.json          # Karavali Coast & Culinary (4 days)
+│       └── mixed.json         # Karnataka Grand Panorama (5 days)
+├── scripts/
+│   └── fetch-images.mjs       # Wikimedia Commons API image fetch script
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx         # Fonts, metadataBase, LangProvider
-│   │   ├── globals.css        # Tailwind theme & colour tokens
-│   │   ├── page.tsx           # Landing page with bento destination cards
-│   │   ├── opengraph-image.tsx# Dynamic Edge Open Graph image
-│   │   ├── plan/page.tsx      # Planner form & trip brief
-│   │   ├── trip/page.tsx      # Results screen, tabs, Leaflet map, mobile view
+│   │   ├── globals.css        # Tailwind theme, Kannada line-height, print CSS
+│   │   ├── page.tsx           # Redesigned landing page (U1)
+│   │   ├── credits/page.tsx   # Wikimedia Commons photo attribution page (U10)
+│   │   ├── not-found.tsx      # Branded 404 page (U7)
+│   │   ├── error.tsx          # Branded error boundary (U7)
+│   │   ├── plan/page.tsx      # Planner form & trip brief (U2)
+│   │   ├── trip/page.tsx      # Results screen, tabs, Leaflet map, mobile view (U4)
 │   │   └── api/plan/route.ts  # Next.js API route with rate limiting
 │   ├── components/
-│   │   ├── PlannerForm.tsx    # Interactive form with live match counter
-│   │   ├── ProgressSteps.tsx  # 5-step animated generation progress
+│   │   ├── illustrations/     # Pure inline SVG scene components (U1)
+│   │   │   ├── PalaceScene.tsx
+│   │   │   ├── HampiScene.tsx
+│   │   │   └── CoastScene.tsx
+│   │   ├── KarnatakaMapSvg.tsx# Pure SVG interactive Karnataka state map
+│   │   ├── PlaceImage.tsx     # Wikimedia photo loader with SVG scene fallback
+│   │   ├── StopDetailDrawer.tsx # Slide-out stop facts grid & swap drawer (U5)
+│   │   ├── ShowToLocalModal.tsx # Full-screen red driver communication modal (U6)
+│   │   ├── PlannerForm.tsx    # Form with interest tiles & live brief (U2)
+│   │   ├── ProgressSteps.tsx  # 5-step animated generation progress (U3)
 │   │   ├── DayTabs.tsx        # Day switcher with city badges
-│   │   ├── StopCard.tsx       # Timing, duration, entry fee, travel chip
+│   │   ├── StopCard.tsx       # Stop card with swap, lock time, remove (U4)
 │   │   ├── PhraseCard.tsx     # Kannada audio phrase with kn-IN speech
-│   │   ├── TripMap.tsx        # Leaflet map (SSR: false), day pins, polylines
-│   │   ├── CostSummary.tsx    # Itemized dark ink cost bar
+│   │   ├── TripMap.tsx        # Leaflet map, numbered day pins, double polyline
+│   │   ├── CostSummary.tsx    # Donut chart with honest estimate disclaimer (U4)
 │   │   ├── LangToggle.tsx     # EN / ಕನ್ನಡ toggle with persistence
-│   │   ├── ErrorState.tsx     # 429 busy, few matches, fallback cards
-│   │   └── Navbar.tsx         # Responsive header
+│   │   ├── ErrorState.tsx     # 429 busy, few matches, fallback cards (U7)
+│   │   └── Navbar.tsx         # Responsive header with credits link
 │   └── lib/
 │       ├── schema.ts          # Complete Zod schemas & TypeScript types
-│       ├── candidates.ts      # Multi-factor scoring algorithm
-│       ├── geo.ts             # Haversine distance, road factor, travel times
-│       ├── cost.ts            # Deterministic rupee budget estimation
+│       ├── candidates.ts      # Multi-factor candidate scoring & match counter
+│       ├── geo.ts             # Haversine distance, 5-min rounding, pin numbering
+│       ├── cost.ts            # Rupee budget estimation & range calculation
 │       ├── planner.ts         # Greedy nearest-neighbour fallback planner
 │       ├── ai.ts              # Groq -> Gemini -> Fallback cascade client
-│       ├── enrich.ts          # Plan enrichment engine
+│       ├── enrich.ts          # Plan enrichment engine & non-overlapping times
 │       ├── samples.ts         # Pre-computed sample loader
 │       ├── speech.ts          # Web Speech API wrapper for kn-IN voice
 │       └── i18n/
 │           ├── en.json        # Complete English dictionary
 │           ├── kn.json        # Complete Kannada dictionary
-│           └── useLang.tsx    # useSyncExternalStore language hook
-├── tests/                     # 9 Vitest test suites (37 tests)
+│           └── useLang.tsx    # Language provider and hook
+├── tests/                     # 12 Vitest test suites (45 tests)
 ├── docs/
 │   ├── BUILD_SPEC.md          # Official hackathon specification
 │   ├── PPT-CONTENT.md         # 8-slide presentation script & deck
 │   ├── VIDEO-SCRIPT.md        # 4:30 minute timed demo video script
 │   ├── TODO-VERIFY.md         # Data verification log
 │   ├── DECISIONS.md           # Engineering architectural decision records
-│   └── mockups/               # 8 UI mockup PNGs
+│   └── mockups/               # UI mockup PNGs
 ├── .env.example               # Clean environment variable template
+├── vercel.json                # Vercel legacy-peer-deps build config
 ├── package.json
 └── README.md
 ```
@@ -258,24 +294,10 @@ dari-karnataka/
 
 ## 🔒 Security & Data Integrity
 
-- **Zero Secrets in Git History:** Verified via `git log -p | grep -i key` — API keys live only in `.env.local` (git-ignored).
-- **No Raw Provider Errors:** If an LLM throws rate limits, quota exhaustion, or invalid keys, the API route intercepts it and returns clean fallback data with status 200 or friendly error status 429.
-- **Data Verification:** Place entry fees, timings, and Kannada descriptions are tracked in `docs/TODO-VERIFY.md` to ensure zero fabricated facts.
-
----
-
-## ⚖️ Limitations & Future Scope
-
-### Current Limitations:
-- Fixed dataset of 36 curated Karnataka places (chosen for high quality and regional breadth).
-- Browser Web Speech relies on device support for `kn-IN` voice (gracefully hides audio button when unavailable).
-- Does not currently book tickets or hotel reservations directly.
-
-### Future Roadmap:
-1. **Live Booking Integration:** Direct deep-links to KSTDC, KSRTC, and Karnataka Forest Department safari bookings.
-2. **Offline Progressive Web App (PWA):** Service workers and IndexedDB caching for zero-network use during travel in remote Western Ghats areas.
-3. **Voice Input in Kannada:** Speech-to-text allowing rural and elderly travelers to plan trips by speaking in Kannada.
-4. **Crowdsourced Place Submissions:** Community review portal for local guides and tourism officers across Karnataka's 31 districts.
+- **Zero Secrets in Git History:** All API keys live strictly in `.env.local` (git-ignored) and were never checked into git.
+- **No Raw Provider Errors:** If an LLM throws rate limits, quota exhaustion, or invalid keys, the API route intercepts it and returns clean fallback data or a friendly error state.
+- **Data Verification:** Place entry fees, timings, and Kannada descriptions are tracked in [`docs/TODO-VERIFY.md`](docs/TODO-VERIFY.md) to ensure zero fabricated facts.
+- **Open Photo Licensing:** All destination images are sourced from Wikimedia Commons under free licenses (CC0, CC BY, CC BY-SA, Public Domain) and attributed at [`/credits`](https://dari-karnataka-travel-planner.vercel.app/credits).
 
 ---
 
@@ -283,9 +305,9 @@ dari-karnataka/
 
 - **Deliverable 1 (Public Repo):** This repository with clean commit history, `.env.example`, and zero secrets.
 - **Deliverable 2 (Presentation):** [`docs/PPT-CONTENT.md`](docs/PPT-CONTENT.md) (8-slide presentation with speaker notes).
-- **Deliverable 3 (Live URL):** [https://dari-karnataka.vercel.app](https://dari-karnataka.vercel.app)
+- **Deliverable 3 (Live URL):** [https://dari-karnataka-travel-planner.vercel.app](https://dari-karnataka-travel-planner.vercel.app)
 - **Deliverable 4 (Demo Video):** [`docs/VIDEO-SCRIPT.md`](docs/VIDEO-SCRIPT.md) (4:30 minute timed video script).
-- **Deliverable 5 (Photo Credits & Licensing):** [`/credits`](https://dari-karnataka.vercel.app/credits) — Complete Wikimedia Commons attribution list and free license compliance.
+- **Deliverable 5 (Photo Credits & Licensing):** [`/credits`](https://dari-karnataka-travel-planner.vercel.app/credits) — Complete Wikimedia Commons attribution list and free license compliance.
 
 ---
 
