@@ -6,7 +6,7 @@ import { useLang } from "@/lib/i18n/useLang";
 import LangToggle from "./LangToggle";
 
 export default function Navbar() {
-  const { t } = useLang();
+  const { lang, t } = useLang();
 
   return (
     <header className="w-full bg-[#F2F4F1] border-b border-[#DCE1DD]/60">
@@ -39,6 +39,12 @@ export default function Navbar() {
               className="text-sm font-medium text-[#14202B]/80 hover:text-[#8E1F2F] transition-colors"
             >
               {t("nav.sample_trips")}
+            </Link>
+            <Link
+              href="/credits"
+              className="text-sm font-medium text-[#14202B]/80 hover:text-[#8E1F2F] transition-colors"
+            >
+              {lang === "kn" ? "ಚಿತ್ರ ಕೃಪೆ" : "Credits"}
             </Link>
             <Link
               href="/#about"

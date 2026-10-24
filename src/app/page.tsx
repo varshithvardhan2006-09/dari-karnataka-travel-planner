@@ -642,8 +642,14 @@ export default function LandingPage() {
           <span className="text-white/40">·</span>
           <span>Built for the Kannada Digital Innovation Hackathon 2026</span>
         </div>
-        <div className="text-white/60 tracking-wide font-medium">
-          Code. Create. Celebrate Kannada.
+        <div className="flex items-center gap-4">
+          <Link href="/credits" className="text-white/60 hover:text-white transition-colors underline">
+            Photo Credits
+          </Link>
+          <span className="text-white/40">·</span>
+          <span className="text-white/60 tracking-wide font-medium">
+            Code. Create. Celebrate Kannada.
+          </span>
         </div>
       </footer>
     </div>

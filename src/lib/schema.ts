@@ -55,6 +55,17 @@ export const PhraseSchema = z.object({
 });
 export type Phrase = z.infer<typeof PhraseSchema>;
 
+export const PlaceImageSchema = z.object({
+  file: z.string(),
+  thumb: z.string().optional(),
+  alt_en: z.string(),
+  alt_kn: z.string(),
+  credit: z.string(),
+  license: z.string(),
+  source_url: z.string(),
+});
+export type PlaceImage = z.infer<typeof PlaceImageSchema>;
+
 export const PlaceSchema = z.object({
   id: z.string(),
   name_en: z.string(),
@@ -79,6 +90,7 @@ export const PlaceSchema = z.object({
   best_time_en: z.string().optional(),
   crowd: z.enum(["low", "medium", "high"]).optional(),
   opening_hours: z.string().optional(),
+  image: PlaceImageSchema.optional(),
 });
 export type Place = z.infer<typeof PlaceSchema>;
 
