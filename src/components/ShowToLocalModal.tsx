@@ -48,7 +48,7 @@ export default function ShowToLocalModal({
       role="dialog"
       aria-modal="true"
       aria-label="Show to local driver"
-      className="fixed inset-0 z-[1300] bg-[#6B1421] text-white flex flex-col justify-between p-6 sm:p-10 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[1300] bg-[#6B1421] text-white flex flex-col justify-between pt-[calc(1.5rem+env(safe-area-inset-top,0px))] pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] px-5 sm:p-10 overflow-y-auto animate-in fade-in duration-200"
     >
       {/* Top Header */}
       <div className="flex items-center justify-between">
@@ -90,21 +90,21 @@ export default function ShowToLocalModal({
       </div>
 
       {/* Bottom Controls */}
-      <div className="max-w-2xl mx-auto w-full space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+      <div className="max-w-2xl mx-auto w-full space-y-3 pt-4">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
           <button
             type="button"
             onClick={playAudio}
-            className="py-4 px-6 rounded-2xl bg-[#F2B705] text-[#14202B] font-heading font-extrabold text-base flex items-center justify-center gap-2 hover:bg-[#e0a800] active:scale-95 transition-all shadow-lg cursor-pointer"
+            className="py-3.5 sm:py-4 px-3 sm:px-6 rounded-2xl bg-[#F2B705] text-[#14202B] font-heading font-extrabold text-sm sm:text-base flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-[#e0a800] active:scale-95 transition-all shadow-lg cursor-pointer"
           >
-            <span>{isPlaying ? "⏹️" : "🔊"}</span>
-            <span>{isPlaying ? "ಆಲಿಸಲಾಗುತ್ತಿದೆ..." : "ಧ್ವನಿ ಪ್ಲೇ ಮಾಡಿ (Play)"}</span>
+            <span className="shrink-0">{isPlaying ? "⏹️" : "🔊"}</span>
+            <span className="truncate">{isPlaying ? "ಆಲಿಸಲಾಗುತ್ತಿದೆ..." : "ಪ್ಲೇ ಮಾಡಿ (Play)"}</span>
           </button>
 
           <button
             type="button"
             onClick={() => setIsSlow(!isSlow)}
-            className={`py-4 px-6 rounded-2xl font-heading font-extrabold text-base border transition-all cursor-pointer ${
+            className={`py-3.5 sm:py-4 px-3 sm:px-6 rounded-2xl font-heading font-extrabold text-sm sm:text-base border transition-all cursor-pointer ${
               isSlow
                 ? "bg-white text-[#8E1F2F] border-white"
                 : "bg-white/10 text-white border-white/20 hover:bg-white/20"

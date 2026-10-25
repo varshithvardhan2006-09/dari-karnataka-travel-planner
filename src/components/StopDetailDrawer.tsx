@@ -83,7 +83,7 @@ export default function StopDetailDrawer({
         className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col z-10 overflow-hidden animate-in slide-in-from-right duration-300"
       >
         {/* 1. Header Bar with Close Button (Fixed at top) */}
-        <div className="shrink-0 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-[#DCE1DD] flex items-center justify-between z-10">
+        <div className="shrink-0 bg-white/95 backdrop-blur-md px-5 sm:px-6 pt-[calc(1rem+env(safe-area-inset-top,0px))] pb-4 border-b border-[#DCE1DD] flex items-center justify-between z-10">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-[#8E1F2F] bg-[#F9EBEB] px-2.5 py-1 rounded-md">
               {stop.start}
@@ -299,7 +299,7 @@ export default function StopDetailDrawer({
         </div>
 
         {/* 3. Sticky Action Footer (Always 100% visible, fully padded, never cut off!) */}
-        <div className="shrink-0 bg-white/95 backdrop-blur-md px-6 py-4 border-t border-[#DCE1DD] shadow-lg z-20 flex flex-col gap-2.5">
+        <div className="shrink-0 bg-white/95 backdrop-blur-md px-5 sm:px-6 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] border-t border-[#DCE1DD] shadow-lg z-20 flex flex-col gap-2.5">
           <button
             type="button"
             onClick={() => {

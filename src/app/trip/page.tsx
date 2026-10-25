@@ -725,8 +725,13 @@ function TripViewContent() {
   const currentStopIdx = stopIndex !== -1 ? stopIndex : 0;
   const currentActiveStop = activeDayStops[currentStopIdx] || activeDayStops[0];
 
+  const handleTabSwitch = (tab: "plan" | "map" | "phrases" | "saved") => {
+    setActiveMobileTab(tab);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex flex-col gap-6 pb-24 lg:pb-8">
+    <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex flex-col gap-6 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] lg:pb-8">
       {/* Top Header matching mockup 04 */}
       <div className="flex flex-col gap-4">
         {/* Tag pills */}
@@ -757,7 +762,7 @@ function TripViewContent() {
           </div>
 
           {/* Action buttons: Regenerate, Calendar .ics, PDF print, Share */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={handleRegenerate}
@@ -1032,6 +1037,7 @@ function TripViewContent() {
             selectedPlaceId={selectedStopPlaceId}
             onSelectDay={(dayNum) => setSelectedDay(dayNum)}
             onPinClick={handlePinClick}
+            activeTab="desktop"
           />
         </div>
       </div>
@@ -1101,6 +1107,7 @@ function TripViewContent() {
               selectedPlaceId={selectedStopPlaceId}
               onSelectDay={(dayNum) => setSelectedDay(dayNum)}
               onPinClick={handlePinClick}
+              activeTab={activeMobileTab}
             />
 
             {/* Bottom Sheet for Selected Stop */}
@@ -1244,7 +1251,7 @@ function TripViewContent() {
                   <span>{lang === "kn" ? stop.place.name_kn : stop.place.name_en}</span>
                 </div>
                 {stop.phrases && stop.phrases.length > 0 ? (
-                  <PhraseCard phrases={stop.phrases} />
+                  <PhraseCard phrases={stop.phrases} noMargin={true} />
                 ) : (
                   <div className="text-xs text-[#586673] p-3 rounded-xl bg-gray-50 border border-[#DCE1DD]">
                     {lang === "kn" ? "ಈ ಸ್ಥಳಕ್ಕೆ ವಾಕ್ಯಗಳಿಲ್ಲ" : "No phrases for this stop."}
@@ -1312,10 +1319,10 @@ function TripViewContent() {
         )}
 
         {/* Sticky Mobile Bottom Navigation Bar */}
-        <div className="fixed bottom-0 left-0 right-0 z-[1100] bg-white border-t border-[#DCE1DD] shadow-lg flex items-center justify-around py-2 px-3">
+        <div className="fixed bottom-0 left-0 right-0 z-[1100] bg-white border-t border-[#DCE1DD] shadow-lg flex items-center justify-around py-2 px-3 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))]">
           <button
             type="button"
-            onClick={() => setActiveMobileTab("plan")}
+            onClick={() => handleTabSwitch("plan")}
             className={`flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-xs font-semibold cursor-pointer transition-all ${
               activeMobileTab === "plan" ? "text-[#8E1F2F]" : "text-[#586673]"
             }`}
@@ -1332,7 +1339,7 @@ function TripViewContent() {
 
           <button
             type="button"
-            onClick={() => setActiveMobileTab("map")}
+            onClick={() => handleTabSwitch("map")}
             className={`flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-xs font-semibold cursor-pointer transition-all ${
               activeMobileTab === "map" ? "text-[#8E1F2F]" : "text-[#586673]"
             }`}
@@ -1347,7 +1354,7 @@ function TripViewContent() {
 
           <button
             type="button"
-            onClick={() => setActiveMobileTab("phrases")}
+            onClick={() => handleTabSwitch("phrases")}
             className={`flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-xs font-semibold cursor-pointer transition-all ${
               activeMobileTab === "phrases" ? "text-[#8E1F2F]" : "text-[#586673]"
             }`}
@@ -1360,7 +1367,7 @@ function TripViewContent() {
 
           <button
             type="button"
-            onClick={() => setActiveMobileTab("saved")}
+            onClick={() => handleTabSwitch("saved")}
             className={`flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-xs font-semibold cursor-pointer transition-all ${
               activeMobileTab === "saved" ? "text-[#8E1F2F]" : "text-[#586673]"
             }`}

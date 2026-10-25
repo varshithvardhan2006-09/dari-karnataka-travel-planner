@@ -536,22 +536,34 @@ export default function PlannerForm() {
             </div>
           </div>
 
+          {/* Mobile Match Count Badge (visible only on < lg screens where the right column is hidden) */}
+          <div className="block lg:hidden pt-2">
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8E1F2F] bg-[#F9EBEB] px-3 py-1.5 rounded-lg border border-[#F2D6D6]">
+              <span>📍</span>
+              <span>
+                {lang === "kn"
+                  ? `${totalMatchingPlacesCount} ಸ್ಥಳಗಳು ನಿಮ್ಮ ಆಸಕ್ತಿಗಳಿಗೆ ಹೊಂದುತ್ತವೆ`
+                  : `${totalMatchingPlacesCount} Karnataka places match your interests`}
+              </span>
+            </span>
+          </div>
+
           {/* Submit Action */}
-          <div className="pt-4 flex items-center gap-4">
+          <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <button
               type="submit"
               disabled={interests.length === 0 || submitting}
-              className="px-8 py-3.5 rounded-xl font-bold text-sm bg-[#8E1F2F] hover:bg-[#781926] text-white shadow-sm transition-all active:scale-95 cursor-pointer disabled:opacity-50 flex items-center gap-2"
+              className="w-full sm:w-auto justify-center px-8 py-3.5 rounded-xl font-bold text-sm bg-[#8E1F2F] hover:bg-[#781926] text-white shadow-sm transition-all active:scale-95 cursor-pointer disabled:opacity-50 flex items-center gap-2"
             >
               <span>✦</span>
-              <span>Generate my itinerary</span>
+              <span>{submitting ? (lang === "kn" ? "ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ..." : "Generating...") : (lang === "kn" ? "ನನ್ನ ಪ್ರವಾಸ ಯೋಜನೆ ರಚಿಸಿ" : "Generate my itinerary")}</span>
             </button>
             <button
               type="button"
               onClick={() => router.push("/trip?sample=heritage")}
-              className="px-5 py-3.5 rounded-xl font-semibold text-sm bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 transition-all cursor-pointer shadow-2xs"
+              className="w-full sm:w-auto text-center px-5 py-3.5 rounded-xl font-semibold text-sm bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 transition-all cursor-pointer shadow-2xs"
             >
-              Surprise me
+              {lang === "kn" ? "ಮಾದರಿ ಪ್ರವಾಸ ನೋಡಿ" : "Surprise me"}
             </button>
           </div>
         </form>

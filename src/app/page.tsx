@@ -195,8 +195,8 @@ export default function LandingPage() {
             ₹ Rs 14,800 <span className="font-normal text-[#586673] text-[10px]">for 2</span>
           </div>
 
-          {/* Floating Info Card 3: Kannada Greeting (bottom right) */}
-          <div className="absolute bottom-6 right-6 z-10 bg-white/95 backdrop-blur-md rounded-xl px-3 py-1.5 shadow-md border border-[#DCE1DD] text-xs font-bold text-[#14202B] flex items-center gap-1.5">
+          {/* Floating Info Card 3: Kannada Greeting (bottom right, visible on tablet/desktop to avoid mobile overlap) */}
+          <div className="hidden sm:flex absolute bottom-6 right-6 z-10 bg-white/95 backdrop-blur-md rounded-xl px-3 py-1.5 shadow-md border border-[#DCE1DD] text-xs font-bold text-[#14202B] items-center gap-1.5">
             <span className="text-[#8E1F2F]">ನಮಸ್ಕಾರ</span>
             <span className="font-normal text-[#586673] text-[10px]">Namaskara</span>
           </div>

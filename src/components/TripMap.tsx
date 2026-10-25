@@ -15,6 +15,7 @@ interface TripMapProps {
   selectedPlaceId?: string | null;
   onSelectDay?: (day: number) => void;
   onPinClick?: (placeId: string) => void;
+  activeTab?: string;
 }
 
 export default function TripMap({
@@ -23,6 +24,7 @@ export default function TripMap({
   selectedPlaceId,
   onSelectDay,
   onPinClick,
+  activeTab,
 }: TripMapProps) {
   const { lang, t } = useLang();
   const [wholeTrip, setWholeTrip] = useState<boolean>(false);
@@ -31,6 +33,7 @@ export default function TripMap({
   const mapRef = useRef<L.Map | null>(null);
   const layerGroupRef = useRef<L.LayerGroup | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
+  const fitBoundsRef = useRef<(() => void) | null>(null);
 
   // Create custom HTML divIcon for a stop with pin numbering
   const createDayPinIcon = (pinNumber: number, dayNum: number, isSelected: boolean) => {
@@ -119,16 +122,33 @@ export default function TripMap({
 
     const timer = setTimeout(() => {
       map.invalidateSize();
+      fitBoundsRef.current?.();
     }, 150);
 
     const handleResize = () => {
       map.invalidateSize();
+      fitBoundsRef.current?.();
     };
     window.addEventListener("resize", handleResize);
+
+    // ResizeObserver watches for display:none -> block or tab switches
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+            map.invalidateSize();
+            fitBoundsRef.current?.();
+          }
+        }
+      });
+      resizeObserver.observe(container);
+    }
 
     return () => {
       clearTimeout(timer);
       window.removeEventListener("resize", handleResize);
+      resizeObserver?.disconnect();
       if (layerGroupRef.current) {
         try {
           layerGroupRef.current.clearLayers();
@@ -150,6 +170,16 @@ export default function TripMap({
       }
     };
   }, []);
+
+  // Invalidate and refit map whenever tab changes (especially mobile tab switch)
+  useEffect(() => {
+    if (!mapRef.current) return;
+    const timer = setTimeout(() => {
+      mapRef.current?.invalidateSize();
+      fitBoundsRef.current?.();
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [activeTab]);
 
   // 2. Update Map Layers (Routes, Markers, Bounds) on state change
   useEffect(() => {
@@ -234,37 +264,46 @@ export default function TripMap({
     });
 
     // 2c. Fit bounds smoothly (guard against 0x0 container size on mobile/hidden tabs)
-    const size = map.getSize();
-    if (!size.x || !size.y) return;
+    const fitCurrentBounds = () => {
+      const currentMap = mapRef.current;
+      if (!currentMap) return;
+      const size = currentMap.getSize();
+      if (!size.x || !size.y) return;
 
-    if (wholeTrip) {
-      const allLatLngs = days.flatMap((d) =>
-        d.stops.map((s) => [s.place.lat, s.place.lng] as [number, number])
-      );
-      if (allLatLngs.length > 0) {
-        map.fitBounds(L.latLngBounds(allLatLngs), {
-          padding: [60, 60],
-          maxZoom: 14,
-          animate: true,
-        });
-      }
-    } else {
-      const currentDayPlan = days.find((d) => d.day === selectedDay) || days[0];
-      if (currentDayPlan && currentDayPlan.stops.length > 0) {
-        const latLngs = currentDayPlan.stops.map(
-          (s) => [s.place.lat, s.place.lng] as [number, number]
+      const pad: [number, number] = size.x < 500 ? [24, 24] : [60, 60];
+
+      if (wholeTrip) {
+        const allLatLngs = days.flatMap((d) =>
+          d.stops.map((s) => [s.place.lat, s.place.lng] as [number, number])
         );
-        if (latLngs.length === 1) {
-          map.setView(latLngs[0], 13, { animate: true });
-        } else if (latLngs.length > 1) {
-          map.fitBounds(L.latLngBounds(latLngs), {
-            padding: [60, 60],
+        if (allLatLngs.length > 0) {
+          currentMap.fitBounds(L.latLngBounds(allLatLngs), {
+            padding: pad,
             maxZoom: 14,
             animate: true,
           });
         }
+      } else {
+        const currentDayPlan = days.find((d) => d.day === selectedDay) || days[0];
+        if (currentDayPlan && currentDayPlan.stops.length > 0) {
+          const latLngs = currentDayPlan.stops.map(
+            (s) => [s.place.lat, s.place.lng] as [number, number]
+          );
+          if (latLngs.length === 1) {
+            currentMap.setView(latLngs[0], 13, { animate: true });
+          } else if (latLngs.length > 1) {
+            currentMap.fitBounds(L.latLngBounds(latLngs), {
+              padding: pad,
+              maxZoom: 14,
+              animate: true,
+            });
+          }
+        }
       }
-    }
+    };
+
+    fitBoundsRef.current = fitCurrentBounds;
+    fitCurrentBounds();
   }, [days, selectedDay, wholeTrip, selectedPlaceId, lang, handleMarkerClick]);
 
   // Center on selected stop when selectedPlaceId changes
@@ -279,32 +318,13 @@ export default function TripMap({
   }, [selectedPlaceId]);
 
   const handleLocateMe = () => {
-    const map = mapRef.current;
-    if (!map) return;
-    if (wholeTrip) {
-      const allLatLngs = days.flatMap((d) =>
-        d.stops.map((s) => [s.place.lat, s.place.lng] as [number, number])
-      );
-      if (allLatLngs.length > 0) {
-        map.fitBounds(L.latLngBounds(allLatLngs), { padding: [60, 60], maxZoom: 14 });
-      }
-    } else {
-      const currentDayPlan = days.find((d) => d.day === selectedDay) || days[0];
-      if (currentDayPlan && currentDayPlan.stops.length > 0) {
-        const latLngs = currentDayPlan.stops.map(
-          (s) => [s.place.lat, s.place.lng] as [number, number]
-        );
-        if (latLngs.length > 0) {
-          map.fitBounds(L.latLngBounds(latLngs), { padding: [60, 60], maxZoom: 14 });
-        }
-      }
-    }
+    fitBoundsRef.current?.();
   };
 
   return (
     <div className="relative w-full h-full min-h-[450px] rounded-2xl overflow-hidden border border-[#DCE1DD] shadow-xs">
       {/* Day Chips on the Map (matching mockup 04: Day 1 / 2 / 3 / 4 / All) */}
-      <div className="absolute top-3 left-3 z-[1000] max-w-[calc(100%-1.5rem)] overflow-x-auto flex items-center gap-1.5 bg-white/95 backdrop-blur-xs p-1.5 rounded-xl shadow-sm border border-[#DCE1DD] text-xs font-semibold text-[#14202B]">
+      <div className="absolute top-3 left-3 z-[1000] max-w-[calc(100%-3.5rem)] overflow-x-auto scrollbar-none flex items-center gap-1.5 bg-white/95 backdrop-blur-xs p-1.5 rounded-xl shadow-sm border border-[#DCE1DD] text-xs font-semibold text-[#14202B]">
         {days.map((d) => (
           <button
             key={d.day}
@@ -313,7 +333,7 @@ export default function TripMap({
               setWholeTrip(false);
               onSelectDay?.(d.day);
             }}
-            className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer shrink-0 ${
               !wholeTrip && selectedDay === d.day
                 ? "bg-[#14202B] text-white shadow-2xs"
                 : "text-[#586673] hover:text-[#14202B] hover:bg-gray-100"
@@ -332,7 +352,7 @@ export default function TripMap({
         <button
           type="button"
           onClick={() => setWholeTrip(true)}
-          className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+          className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer shrink-0 ${
             wholeTrip
               ? "bg-[#14202B] text-white shadow-2xs"
               : "text-[#586673] hover:text-[#14202B] hover:bg-gray-100"
@@ -342,13 +362,13 @@ export default function TripMap({
         </button>
       </div>
 
-      {/* Locate/Reset View Button */}
+      {/* Locate/Reset View Button placed safely at top-right */}
       <button
         type="button"
         onClick={handleLocateMe}
         title="Reset map view"
         aria-label="Reset map view"
-        className="absolute bottom-20 right-3 z-[1000] w-8 h-8 bg-white/95 backdrop-blur-xs rounded-lg shadow-sm border border-[#DCE1DD] flex items-center justify-center text-[#14202B] hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+        className="absolute top-3 right-3 z-[1000] w-8 h-8 bg-white/95 backdrop-blur-xs rounded-xl shadow-sm border border-[#DCE1DD] flex items-center justify-center text-[#14202B] hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
       >
         <svg
           className="w-4 h-4 text-[#14202B]"
