@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { POST } from "@/app/api/plan/route";
+import { POST, GET as GET_PLAN } from "@/app/api/plan/route";
+import { GET as GET_TTS } from "@/app/api/tts/route";
 import { NextRequest } from "next/server";
 import { getSamplePlan, getSamplePlanForInterests } from "@/lib/samples";
 import { PlanSchema } from "@/lib/schema";
@@ -122,5 +123,24 @@ describe("Stage 6: Error, Empty, and Fallback States", () => {
     expect(getSamplePlanForInterests(["nature"]).key).toBe("nature");
     expect(getSamplePlanForInterests(["food"]).key).toBe("food");
     expect(getSamplePlanForInterests(["adventure", "coffee"]).key).toBe("nature");
+  });
+
+  it("handles GET /api/plan health check correctly", async () => {
+    const res = await GET_PLAN();
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.status).toBe("ok");
+    expect(data.service).toBe("dari-karnataka-planner");
+    expect(data.places_count).toBeGreaterThan(30);
+  });
+
+  it("rejects GET /api/tts when text parameter is missing or empty", async () => {
+    const reqMissing = new NextRequest("http://localhost:3000/api/tts");
+    const resMissing = await GET_TTS(reqMissing);
+    expect(resMissing.status).toBe(400);
+
+    const reqEmpty = new NextRequest("http://localhost:3000/api/tts?text=%20%20");
+    const resEmpty = await GET_TTS(reqEmpty);
+    expect(resEmpty.status).toBe(400);
   });
 });

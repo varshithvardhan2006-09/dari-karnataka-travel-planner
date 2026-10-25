@@ -46,11 +46,11 @@ export default function CostSummary({ cost, days, source }: CostSummaryProps) {
   const sourceLabels: Record<string, { label: string; tooltip: string }> = {
     "ai-groq": {
       label: "AI (Groq)",
-      tooltip: "Generated via Groq LLaMA 3.3 model using curated Karnataka places.",
+      tooltip: "Generated via Groq fast inference using curated Karnataka places.",
     },
     "ai-gemini": {
       label: "AI (Gemini)",
-      tooltip: "Generated via Google Gemini fallback using curated places.",
+      tooltip: "Generated via Google Gemini using curated Karnataka places.",
     },
     planner: {
       label: "Ready-made planner",

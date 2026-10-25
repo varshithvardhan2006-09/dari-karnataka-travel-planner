@@ -37,4 +37,30 @@ describe("Trip URL Share with lz-string", () => {
       originalPlan.days[0].stops[0].place_id
     );
   });
+
+  it("safely handles corrupted or invalid share parameter strings", () => {
+    const invalidInputs = [
+      "not-valid-lz-data",
+      "",
+      "12345",
+      "null",
+      "undefined",
+    ];
+
+    invalidInputs.forEach((input) => {
+      const decompressed = LZString.decompressFromEncodedURIComponent(input);
+      let isValid = false;
+      try {
+        if (decompressed) {
+          const parsed = JSON.parse(decompressed) as Plan;
+          if (parsed && Array.isArray(parsed.days) && parsed.days.length > 0) {
+            isValid = true;
+          }
+        }
+      } catch {
+        isValid = false;
+      }
+      expect(isValid).toBe(false);
+    });
+  });
 });

@@ -42,6 +42,19 @@ function checkRateLimit(ip: string): { allowed: boolean; retryAfterS: number } {
   return { allowed: true, retryAfterS: 0 };
 }
 
+export async function GET() {
+  return NextResponse.json(
+    {
+      status: "ok",
+      service: "dari-karnataka-planner",
+      version: "0.1.0",
+      places_count: allPlaces.length,
+      timestamp: Date.now(),
+    },
+    { status: 200 }
+  );
+}
+
 export async function POST(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;

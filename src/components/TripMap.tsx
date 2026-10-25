@@ -233,7 +233,10 @@ export default function TripMap({
       });
     });
 
-    // 2c. Fit bounds smoothly
+    // 2c. Fit bounds smoothly (guard against 0x0 container size on mobile/hidden tabs)
+    const size = map.getSize();
+    if (!size.x || !size.y) return;
+
     if (wholeTrip) {
       const allLatLngs = days.flatMap((d) =>
         d.stops.map((s) => [s.place.lat, s.place.lng] as [number, number])

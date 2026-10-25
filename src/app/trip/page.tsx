@@ -140,15 +140,23 @@ function TripViewContent() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [drawerStop, setDrawerStop] = useState<Stop | null>(null);
   const [isShowToLocalOpen, setIsShowToLocalOpen] = useState<boolean>(false);
-  const [savedTrips, setSavedTrips] = useState<SavedTripRecord[]>(() => {
-    if (typeof window === "undefined") return [];
+  const [savedTrips, setSavedTrips] = useState<SavedTripRecord[]>([]);
+
+  useEffect(() => {
     try {
       const raw = localStorage.getItem("dari_saved_trips");
-      return raw ? JSON.parse(raw) : [];
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          queueMicrotask(() => {
+            setSavedTrips(parsed);
+          });
+        }
+      }
     } catch {
-      return [];
+      // ignore
     }
-  });
+  }, []);
 
   // Extract query parameters
   const dParam = searchParams.get("d");
@@ -620,7 +628,12 @@ function TripViewContent() {
     );
   }
 
-  if (errorState && (errorState.type === "busy" || errorState.type === "few_matches")) {
+  if (
+    errorState &&
+    (errorState.type === "busy" ||
+      errorState.type === "few_matches" ||
+      errorState.type === "invalid_link")
+  ) {
     return (
       <div className="flex-1 flex items-center justify-center px-4 py-16">
         <ErrorState
