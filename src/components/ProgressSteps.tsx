@@ -1,10 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useLang } from "@/lib/i18n/useLang";
 import { playKannadaSpeech } from "@/lib/speech";
-import KarnatakaMapSvg from "./KarnatakaMapSvg";
+
+const RegionMap = dynamic(() => import("./RegionMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[280px] bg-[#F1F3F0] rounded-2xl border border-[#DCE1DD] flex items-center justify-center text-xs text-[#586673] animate-pulse">
+      Loading interactive Karnataka map...
+    </div>
+  ),
+});
 
 interface ProgressStepsProps {
   days: number;
@@ -233,13 +242,18 @@ export default function ProgressSteps({
 
       {/* Right Column: Map Preview, While You Wait Card, Chips, Skeleton */}
       <div className="lg:col-span-6 space-y-4">
-        {/* Karnataka SVG Map preview with Placing Stops badge */}
-        <div className="relative rounded-2xl overflow-hidden border border-[#DCE1DD] bg-white p-3">
-          <div className="absolute top-4 left-4 z-10 bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-lg text-xs font-bold text-[#8E1F2F] border border-[#DCE1DD] shadow-xs">
-            {lang === "kn" ? `${placeCount} ಸ್ಥಳಗಳನ್ನು ಜೋಡಿಸಲಾಗುತ್ತಿದೆ` : `Placing ${placeCount} stops`}
+        {/* Real-time interactive Karnataka Leaflet Map preview */}
+        <div className="relative rounded-2xl overflow-hidden border border-[#DCE1DD] bg-white p-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="bg-white/95 px-2.5 py-1 rounded-lg text-xs font-bold text-[#8E1F2F] border border-[#DCE1DD] shadow-2xs">
+              {lang === "kn" ? `${placeCount} ಸ್ಥಳಗಳನ್ನು ಜೋಡಿಸಲಾಗುತ್ತಿದೆ` : `Placing ${placeCount} stops`}
+            </span>
+            <span className="text-[11px] text-[#586673] font-medium">
+              Live Environment Map
+            </span>
           </div>
-          <div className="max-w-[280px] mx-auto py-2">
-            <KarnatakaMapSvg selectedRegion="all" />
+          <div className="w-full">
+            <RegionMap selectedRegion="all" />
           </div>
         </div>
 

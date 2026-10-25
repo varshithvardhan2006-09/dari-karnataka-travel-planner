@@ -210,9 +210,14 @@ export default function TripMap({
 
         // Bind popup only for selected pin or when clicked (no permanent overlapping labels)
         marker.bindPopup(
-          `<div style="font-family: inherit; font-size: 13px; line-height: 1.4; padding: 2px;">
+          `<div style="font-family: inherit; font-size: 13px; line-height: 1.4; padding: 2px; min-width: 140px;">
             <div style="font-weight: 800; color: #14202B; margin-bottom: 2px;">${placeLabel}</div>
-            <div style="color: #586673; font-size: 11px;">${stop.start} · ${stop.duration_min} min</div>
+            <div style="color: #586673; font-size: 11px;">${stop.place.city} · ${stop.start} (${stop.duration_min} min)</div>
+            <div style="margin-top: 4px;">
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                `${stop.place.name_en}, ${stop.place.city}, Karnataka`
+              )}" target="_blank" rel="noopener noreferrer" style="color: #8E1F2F; font-size: 11px; font-weight: 700; text-decoration: underline;">Open in Google Maps ↗</a>
+            </div>
           </div>`,
           { closeButton: false, offset: [0, -14] }
         );

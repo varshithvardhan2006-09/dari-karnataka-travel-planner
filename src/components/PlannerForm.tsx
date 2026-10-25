@@ -12,10 +12,19 @@ import {
   PlanRequest,
   Place,
 } from "@/lib/schema";
+import dynamic from "next/dynamic";
 import { getCandidates, countMatchingPlaces } from "@/lib/candidates";
 import { estimateCostRange, PEOPLE_COUNT_MAP } from "@/lib/cost";
-import KarnatakaMapSvg from "./KarnatakaMapSvg";
 import placesData from "../../data/places.json";
+
+const PlannerMap = dynamic(() => import("./PlannerMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[320px] bg-[#F1F3F0] rounded-2xl border border-[#DCE1DD] flex items-center justify-center text-xs text-[#586673] animate-pulse">
+      Loading interactive Karnataka map...
+    </div>
+  ),
+});
 
 const allPlaces = placesData as Place[];
 
@@ -530,13 +539,16 @@ export default function PlannerForm() {
       {/* RIGHT COLUMN: Sticky Brief & Top Matches Panel (5 cols) */}
       <div className="hidden lg:block lg:col-span-5 lg:sticky lg:top-8 space-y-5">
         {/* Live Karnataka Map preview */}
-        <div className="bg-white rounded-2xl p-4 border border-[#DCE1DD] shadow-xs">
-          <div className="flex items-center justify-between mb-2">
+        <div className="bg-white rounded-2xl p-4 border border-[#DCE1DD] shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#8E1F2F] bg-[#F9EBEB] px-2.5 py-1 rounded-md">
               {totalMatchingPlacesCount} places match
             </span>
+            <span className="text-[11px] text-[#586673] font-medium">
+              Real-time Map
+            </span>
           </div>
-          <KarnatakaMapSvg selectedRegion="all" />
+          <PlannerMap selectedCategories={interests} height="h-[320px]" />
         </div>
 
         {/* Your Trip Brief Summary */}
