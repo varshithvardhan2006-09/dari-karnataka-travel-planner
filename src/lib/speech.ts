@@ -146,6 +146,28 @@ function speakWithWebSpeech(
 }
 
 /**
+ * Halts any active Kannada audio playback or Web Speech synthesis immediately.
+ */
+export function stopKannadaSpeech(): void {
+  if (currentAudio) {
+    try {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+    } catch {
+      // ignore
+    }
+    currentAudio = null;
+  }
+  if (typeof window !== "undefined" && "speechSynthesis" in window) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch {
+      // ignore
+    }
+  }
+}
+
+/**
  * Backward compatible wrapper for legacy calls.
  */
 export function speakKannadaText(text: string, onEnd?: () => void): boolean {
@@ -154,48 +176,52 @@ export function speakKannadaText(text: string, onEnd?: () => void): boolean {
 }
 
 /**
- * React hook to manage Kannada speech playback.
+ * React hook to manage Kannada speech playback with Play, Stop, and Replay controls.
  */
 export function useKannadaSpeech() {
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const [lastText, setLastText] = useState<string>("");
+  const [lastTranslit, setLastTranslit] = useState<string | undefined>(undefined);
+  const [hasPlayed, setHasPlayed] = useState<boolean>(false);
 
   const speak = useCallback(
     (text: string, translit?: string, isSlow: boolean = false) => {
+      if (!text || !text.trim()) return;
+      setLastText(text);
+      setLastTranslit(translit);
       setIsSpeaking(true);
       playKannadaSpeech(text, {
         translit,
         isSlow,
         onStart: () => setIsSpeaking(true),
-        onEnd: () => setIsSpeaking(false),
+        onEnd: () => {
+          setIsSpeaking(false);
+          setHasPlayed(true);
+        },
       });
     },
     []
   );
 
   const stop = useCallback(() => {
-    if (currentAudio) {
-      try {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-      } catch {
-        // ignore
-      }
-      currentAudio = null;
-    }
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      try {
-        window.speechSynthesis.cancel();
-      } catch {
-        // ignore
-      }
-    }
+    stopKannadaSpeech();
     setIsSpeaking(false);
   }, []);
+
+  const replay = useCallback(
+    (isSlow: boolean = false) => {
+      if (!lastText) return;
+      speak(lastText, lastTranslit, isSlow);
+    },
+    [lastText, lastTranslit, speak]
+  );
 
   return {
     hasVoice: true, // Universally available across all modern devices
     isSpeaking,
+    hasPlayed,
     speak,
     stop,
+    replay,
   };
 }

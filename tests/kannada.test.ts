@@ -4,6 +4,7 @@ import phrasesData from "../data/phrases.json";
 import { SYSTEM_PROMPT_TEMPLATE } from "../src/lib/ai";
 import { buildDeterministicPlan } from "../src/lib/planner";
 import { Place, Phrase } from "../src/lib/schema";
+import { stopKannadaSpeech, getKannadaVoice } from "../src/lib/speech";
 
 describe("Kannada mode and zero-AI-generated Kannada verification", () => {
   const places = placesData as Place[];
@@ -56,5 +57,13 @@ describe("Kannada mode and zero-AI-generated Kannada verification", () => {
         });
       });
     });
+  });
+
+  it("handles stopKannadaSpeech cleanly without throwing in non-browser/SSR environment", () => {
+    expect(() => stopKannadaSpeech()).not.toThrow();
+  });
+
+  it("handles getKannadaVoice safely in SSR environment returning null", () => {
+    expect(getKannadaVoice()).toBeNull();
   });
 });

@@ -5,6 +5,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import placesData from "../../data/places.json";
 import { Place, Category } from "@/lib/schema";
+import { getGoogleMapsSearchUrl } from "@/lib/maps";
 
 const allPlaces = placesData as Place[];
 
@@ -169,9 +170,7 @@ export default function PlannerMap({
             ${place.city} · ${place.entry_inr === 0 ? "Free entry" : `Entry ₹${place.entry_inr}`}
           </div>
           <div style="margin-top: 4px;">
-            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-              `${place.name_en}, ${place.city}, Karnataka`
-            )}" target="_blank" rel="noopener noreferrer" style="color: #8E1F2F; font-size: 11px; font-weight: 700; text-decoration: underline;">Open in Google Maps ↗</a>
+            <a href="${getGoogleMapsSearchUrl(place)}" target="_blank" rel="noopener noreferrer" style="color: #8E1F2F; font-size: 11px; font-weight: 700; text-decoration: underline;">Open in Google Maps ↗</a>
           </div>
         </div>`,
         { closeButton: true, offset: [0, -10] }

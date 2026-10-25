@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Stop, TravelMode, Place } from "@/lib/schema";
 import { useLang } from "@/lib/i18n/useLang";
 import { DAY_PIN_COLORS } from "@/lib/geo";
+import { getGoogleMapsSearchUrl } from "@/lib/maps";
 
 interface StopCardProps {
   stop: Stop;
@@ -238,9 +239,7 @@ export default function StopCard({
               </button>
 
               <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  `${stop.place.name_en}, ${stop.place.city}, Karnataka`
-                )}`}
+                href={getGoogleMapsSearchUrl(stop.place)}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
@@ -257,7 +256,7 @@ export default function StopCard({
                   <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
                   <circle cx="12" cy="9" r="2.5" />
                 </svg>
-                <span>Maps ↗</span>
+                <span>{lang === "kn" ? "ನಕ್ಷೆ ↗" : "Google Maps ↗"}</span>
               </a>
 
               <button

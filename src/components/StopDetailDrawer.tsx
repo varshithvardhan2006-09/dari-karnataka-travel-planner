@@ -5,6 +5,7 @@ import { Stop, Place } from "@/lib/schema";
 import { useLang } from "@/lib/i18n/useLang";
 import PlaceImage from "./PlaceImage";
 import { playKannadaSpeech } from "@/lib/speech";
+import { getGoogleMapsSearchUrl, getGoogleMapsDirectionsUrl } from "@/lib/maps";
 import placesData from "../../data/places.json";
 
 const allPlaces = placesData as Place[];
@@ -59,13 +60,9 @@ export default function StopDetailDrawer({
 
   if (!isOpen || !stop || !place) return null;
 
-  // Accurate & precise Google Maps Search URL (place name + city + Karnataka)
-  const googleMapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    `${place.name_en}, ${place.city}, Karnataka`
-  )}`;
-
-  // Direct turn-by-turn driving directions URL
-  const googleMapsDirectionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${place.lat},${place.lng}`;
+  // Accurate & precise Google Maps Search & Directions URLs using shared maps utility
+  const googleMapsSearchUrl = getGoogleMapsSearchUrl(place);
+  const googleMapsDirectionsUrl = getGoogleMapsDirectionsUrl(place);
 
   return (
     <div className="fixed inset-0 z-[1200] flex justify-end">
@@ -272,9 +269,7 @@ export default function StopDetailDrawer({
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
                         <a
-                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                            `${alt.name_en}, ${alt.city}, Karnataka`
-                          )}`}
+                          href={getGoogleMapsSearchUrl(alt)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="px-2 py-1.5 rounded-lg border border-[#DCE1DD] hover:bg-gray-100 text-[#586673] hover:text-[#14202B] text-[11px] font-semibold transition-colors"

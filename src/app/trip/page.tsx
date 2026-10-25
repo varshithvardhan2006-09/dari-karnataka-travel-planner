@@ -27,6 +27,7 @@ import ProgressSteps from "@/components/ProgressSteps";
 import ErrorState from "@/components/ErrorState";
 import StopDetailDrawer from "@/components/StopDetailDrawer";
 import ShowToLocalModal from "@/components/ShowToLocalModal";
+import { PrintItinerary } from "@/components/PrintItinerary";
 import { buildDeterministicPlan } from "@/lib/planner";
 import { getSamplePlan, getCustomizedSamplePlan } from "@/lib/samples";
 import { computeTravelLeg, addMinutesToTime, roundTimeTo5Min, getPinNumber } from "@/lib/geo";
@@ -731,9 +732,11 @@ function TripViewContent() {
   };
 
   return (
-    <div className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 flex flex-col gap-5 sm:gap-6 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] lg:pb-8 min-w-0 max-w-full overflow-x-hidden">
-      {/* Top Header matching mockup 04 */}
-      <div className="flex flex-col gap-3.5 sm:gap-4 w-full min-w-0 max-w-full">
+    <div className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 flex flex-col gap-5 sm:gap-6 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] lg:pb-8 min-w-0 max-w-full overflow-x-hidden print:p-0 print:m-0 print:max-w-none">
+      {/* Interactive On-Screen UI (Hidden on Print / PDF export) */}
+      <div className="print:hidden flex flex-col gap-5 sm:gap-6 w-full min-w-0 max-w-full">
+        {/* Top Header matching mockup 04 */}
+        <div className="flex flex-col gap-3.5 sm:gap-4 w-full min-w-0 max-w-full">
         {/* Tag pills and Action buttons */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 w-full min-w-0">
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 min-w-0">
@@ -1382,6 +1385,18 @@ function TripViewContent() {
           </button>
         </div>
       </div>
+      </div>
+
+      {/* Dedicated Print & PDF Export Document (Visible ONLY during print/PDF export) */}
+      <PrintItinerary
+        plan={plan}
+        tripStats={tripStats}
+        budgetParam={budgetParam}
+        travellersParam={travellersParam}
+        paceParam={paceParam}
+        interestsParam={interestsParam}
+        lang={lang}
+      />
 
       {/* Stop Detail Drawer (U5) */}
       <StopDetailDrawer

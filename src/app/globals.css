@@ -89,11 +89,39 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Print styling for PDF export (U4) */
 @media print {
-  header, footer, nav, button, .leaflet-control-zoom, .fixed {
-    display: none !important;
+  @page {
+    margin: 12mm 15mm 15mm 15mm;
+    size: A4 portrait;
   }
+
+  html,
   body {
     background: #ffffff !important;
     color: #14202B !important;
+    font-size: 10.5pt !important;
+    line-height: 1.4 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  header,
+  footer,
+  nav,
+  button,
+  .leaflet-container,
+  .leaflet-control-zoom,
+  .fixed,
+  [role="dialog"] {
+    display: none !important;
+  }
+
+  .print-avoid-break {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .print-page-break {
+    page-break-before: always !important;
+    break-before: page !important;
   }
 }
