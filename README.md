@@ -48,10 +48,10 @@ Generic AI planners (like raw ChatGPT or Gemini prompts) hallucinate non-existen
    > Unverified facts are marked `verified: false` and cataloged in [`docs/TODO-VERIFY.md`](docs/TODO-VERIFY.md).
 3. **First-Class Kannada (ಕನ್ನಡ) without Runtime LLM Translation:**  
    A single toggle instantly switches the entire interface, place names, descriptions, tips, and phrases to verified Kannada. Every Kannada string is pre-curated in [`data/places.json`](data/places.json), [`data/phrases.json`](data/phrases.json), or [`src/lib/i18n/kn.json`](src/lib/i18n/kn.json) — zero garbled translation.
-4. **Contextual Phrases & Audio at Every Stop:**  
-   Every stop includes 2 to 3 practical Kannada phrases with script, English transliteration, English meaning, and browser Web Speech (`speechSynthesis`, `lang="kn-IN"`) audio.
+4. **Contextual Phrases & Native Kannada Audio Stream:**  
+   Every stop includes 2 to 3 practical Kannada phrases with script, English transliteration, English meaning, and high-fidelity native Kannada speech streaming (`/api/tts`) with browser Web Speech fallback.
 5. **"Show to Local" Full-Screen View:**  
-   A dedicated high-contrast red card displaying *"ದಯವಿಟ್ಟು ನನ್ನನ್ನು ಇಲ್ಲಿಗೆ ಕರೆದುಕೊಂಡು ಹೋಗಿ"* (*Please take me here*) with destination details and audio designed for auto drivers, bus conductors, and shopkeepers.
+   A dedicated high-contrast red card displaying *"ದಯವಿಟ್ಟು ನನ್ನನ್ನು ಇಲ್ಲಿಗೆ ಕರೆದುಕೊಂಡು ಹೋಗಿ"* (*Please take me here*) with destination details and native audio designed for auto drivers, bus conductors, and shopkeepers.
 6. **100% Offline & Deterministic Fallback:**  
    Even if both Groq and Gemini APIs are down, rate-limited, or if zero API keys are provided, Dari generates a complete, geographically clustered itinerary using [`src/lib/planner.ts`](src/lib/planner.ts) with zero user-facing errors.
 
