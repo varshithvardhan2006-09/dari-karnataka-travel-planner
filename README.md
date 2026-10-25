@@ -311,6 +311,22 @@ Streams authentic native Kannada speech audio.
 
 ---
 
+## 🚀 Roadmap & Future Enhancements
+
+To expand Dari from a hackathon-winning application into a state-wide Karnataka tourism platform, the following engineering enhancements are planned:
+
+| Area | Feature | Description & Technical Approach |
+|---|---|---|
+| 🚌 **Public Transit** | **Live KSRTC & KSTDC Integration** | Direct integration with Karnataka State Road Transport Corporation (KSRTC) schedules, Airavat bus bookings, and KSTDC guided package tours for inter-city travel. |
+| 📶 **Offline Resilience** | **Progressive Web App (PWA) with Offline Maps** | Service worker caching of Leaflet map tiles, audio phrase streams, and generated itineraries for 100% offline reliability in deep Western Ghats valleys and remote heritage areas. |
+| 🌦️ **Smart Telemetry** | **Monsoon & Temple Darshan Predictive Engine** | Real-time crowd wait-time telemetry for major sanctums (e.g., Kukke Subramanya, Dharmasthala, Chamundi Hill) and weather-aware route re-routing during heavy monsoon landslides. |
+| 🎙️ **Voice Co-Pilot** | **Hands-Free Driving Companion** | Voice-driven itinerary adjustments allowing drivers to query stops hands-free (*"Hey Dari, find an authentic Benne Dosa stop within 15 km"*). |
+| 🏛️ **Heritage AR** | **Camera AR Monument Narrator** | WebXR-based augmented reality lens that recognizes Hoysala stone carvings and Vijayanagara ruins to deliver rich historical commentary in spoken Kannada. |
+| 🌐 **Distributed Infra** | **Multi-Region Edge Rate Limiting** | Distributed Upstash Redis / Vercel KV rate limiting with global edge synchronization to complement container-level sliding windows. |
+| 🤝 **Local Ecosystem** | **Certified Homestays & Local Artisans** | Direct directory links to certified Malenadu coffee homestays and traditional GI-tagged artisan craft clusters (Channapatna toys, Ilkal sarees, Mysuru silk). |
+
+---
+
 ## 👨‍💻 Author & Project Credits
 
 - **Developer:** [Varshith Vardhan](https://github.com/varshithvardhan2006-09)
