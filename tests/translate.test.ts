@@ -48,4 +48,17 @@ describe("POST /api/translate", () => {
     expect(data.translatedText).toBe("Namaskara");
     expect(data.provider).toBe("noop");
   });
+
+  it("translates English to Kannada using the fallback translation pipeline", async () => {
+    const req = new NextRequest("http://localhost:3000/api/translate", {
+      method: "POST",
+      body: JSON.stringify({ text: "Thank you", sourceLang: "en", targetLang: "kn" }),
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.translatedText).toBeDefined();
+    expect(data.targetLang).toBe("kn");
+    expect(data.sourceLang).toBe("en");
+  });
 });

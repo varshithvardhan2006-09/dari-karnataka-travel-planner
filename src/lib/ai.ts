@@ -60,7 +60,7 @@ async function callGroqAPI(
   systemPrompt: string,
   userPrompt: string,
   apiKey: string,
-  model: string = "openai/gpt-oss-120b",
+  model: string = "llama-3.3-70b-versatile",
   timeoutMs: number = 8000
 ): Promise<string> {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -257,7 +257,7 @@ CANDIDATE PLACES (Use ONLY these place IDs):
 ${buildCandidatesPromptPayload(candidates)}`;
 
   const groqKey = process.env.GROQ_API_KEY;
-  const groqModel = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+  const groqModel = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 
   const geminiKey = process.env.GEMINI_API_KEY;
   const geminiModel = process.env.GEMINI_MODEL || "gemini-flash-latest";

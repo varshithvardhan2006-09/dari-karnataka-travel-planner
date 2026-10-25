@@ -43,8 +43,8 @@ export default function CreditsPage() {
           <div className="p-8 text-center text-sm text-[#586673]">
             <p>
               {lang === "kn"
-                ? "ದಾರಿ ಪ್ರಸ್ತುತ ಹ್ಯಾಕಥಾನ್‌ಗಾಗಿ ರಚಿಸಲಾದ ಕಸ್ಟಮ್ ಇನ್‌ಲೈನ್ SVG ಚಿತ್ರಣಗಳನ್ನು ಬಳಸುತ್ತಿದೆ (ಅರಮನೆ, ಹಂಪಿ, ಕರಾವಳಿ), ಇವುಗಳಿಗೆ ಯಾವುದೇ ಬಾಹ್ಯ ಕೃತಿಸ್ವಾಮ್ಯ ಅವಲಂಬನೆಗಳಿಲ್ಲ."
-                : "Places in Dari currently use custom inline SVG scene illustrations (Palace, Hampi, Coast) created for the hackathon with zero external copyright dependencies."}
+                ? "ದಾರಿ ಪ್ರಸ್ತುತ ಕಸ್ಟಮ್ ಇನ್‌ಲೈನ್ SVG ಚಿತ್ರಣಗಳನ್ನು ಬಳಸುತ್ತಿದೆ (ಅರಮನೆ, ಹಂಪಿ, ಕರಾವಳಿ), ಇವುಗಳಿಗೆ ಯಾವುದೇ ಬಾಹ್ಯ ಕೃತಿಸ್ವಾಮ್ಯ ಅವಲಂಬನೆಗಳಿಲ್ಲ."
+                : "Places in Dari currently use custom inline SVG scene illustrations (Palace, Hampi, Coast) with zero external copyright dependencies."}
             </p>
             <p className="mt-2 text-xs text-[#8A99A8]">
               {lang === "kn" ? (

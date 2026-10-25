@@ -24,7 +24,7 @@
 
 ## 🧭 Overview
 
-**Dari (ದಾರಿ — *The Way / The Path*)** was engineered for the **Kannada Digital Innovation Hackathon 2026** (*Problem Statement 06*).
+**Dari (ದಾರಿ — *The Way / The Path*)** is an intelligent, culture-first AI travel planner built with pride for Karnataka and the Kannada language.
 
 Most generic AI planners (such as raw ChatGPT or Gemini prompts) suffer from severe practical deficiencies: they hallucinate non-existent monuments, combine sights in different districts on the same morning, invent arbitrary driving times, emit broken machine-translated Kannada, and fail completely when rate-limited.
 
@@ -330,6 +330,6 @@ The following engineering enhancements are planned for upcoming releases:
 ## 👨‍💻 Author & Project Credits
 
 - **Developer:** [Varshith Vardhan](https://github.com/varshithvardhan2006-09)
-- **Event:** Kannada Digital Innovation Hackathon 2026
-- **Problem Statement:** 06 — AI-Powered Karnataka Travel Planner
+- **Project:** Dari (ದಾರಿ) — AI Travel Planner for Karnataka
+- **Live Deployment:** [dari-karnataka-travel-planner.vercel.app](https://dari-karnataka-travel-planner.vercel.app)
 - **License:** [MIT License](LICENSE) — Open source and built with pride for Karnataka and the Kannada language.
