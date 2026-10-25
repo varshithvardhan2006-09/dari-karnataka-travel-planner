@@ -56,9 +56,9 @@ export function playKannadaSpeech(
 
     onStart?.();
 
-    // High-fidelity native Google Kannada TTS stream
+    // High-fidelity native Google Kannada TTS stream via same-origin server proxy (bypasses browser Referer blocks)
     const encoded = encodeURIComponent(text.trim());
-    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=kn&client=tw-ob&q=${encoded}`;
+    const audioUrl = `/api/tts?text=${encoded}`;
 
     const audio = new Audio(audioUrl);
     currentAudio = audio;

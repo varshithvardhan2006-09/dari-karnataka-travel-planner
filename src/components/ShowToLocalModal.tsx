@@ -88,11 +88,10 @@ export default function ShowToLocalModal({
           <button
             type="button"
             onClick={playAudio}
-            disabled={isPlaying}
-            className="py-4 px-6 rounded-2xl bg-[#F2B705] text-[#14202B] font-heading font-extrabold text-base flex items-center justify-center gap-2 hover:bg-[#e0a800] active:scale-95 transition-all shadow-lg cursor-pointer disabled:opacity-50"
+            className="py-4 px-6 rounded-2xl bg-[#F2B705] text-[#14202B] font-heading font-extrabold text-base flex items-center justify-center gap-2 hover:bg-[#e0a800] active:scale-95 transition-all shadow-lg cursor-pointer"
           >
-            <span>🔊</span>
-            <span>{isPlaying ? "ಆಲಿಸುತ್ತಿದೆ..." : "Play"}</span>
+            <span>{isPlaying ? "⏹️" : "🔊"}</span>
+            <span>{isPlaying ? "ಆಲಿಸಲಾಗುತ್ತಿದೆ..." : "ಧ್ವನಿ ಪ್ಲೇ ಮಾಡಿ (Play)"}</span>
           </button>
 
           <button
