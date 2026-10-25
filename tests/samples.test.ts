@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { PlanSchema, Category, StartCity, BudgetFit, Pace, Travellers } from "@/lib/schema";
+import { PlanSchema, Category, StartCity, BudgetFit, Pace, Travellers, PlanRequest } from "@/lib/schema";
 import { buildDeterministicPlan } from "@/lib/planner";
+import { getCustomizedSamplePlan } from "@/lib/samples";
 import fs from "fs";
 import path from "path";
 
@@ -103,5 +104,60 @@ describe("Sample Itineraries Schema Validation", () => {
           readContent.cost.entry
       );
     });
+  });
+
+  it("customizes emergency sample plans to match requested days, people count, and budget", () => {
+    const singleDayRequest: PlanRequest = {
+      interests: ["heritage"],
+      days: 1,
+      start_city: "Bengaluru",
+      budget: "budget",
+      pace: "relaxed",
+      travellers: "solo",
+      month: 11,
+      lang: "en",
+      people_count: 5,
+    };
+
+    const { plan: customized1Day } = getCustomizedSamplePlan(singleDayRequest);
+
+    // Must be sliced to 1 day exactly
+    expect(customized1Day.days.length).toBe(1);
+    expect(customized1Day.days[0].day).toBe(1);
+    expect(customized1Day.cost.people).toBe(5);
+    // 1-day trip has 0 lodging stay cost
+    expect(customized1Day.cost.stay).toBe(0);
+    expect(customized1Day.cost.total).toBe(
+      customized1Day.cost.stay +
+        customized1Day.cost.food +
+        customized1Day.cost.transport +
+        customized1Day.cost.entry
+    );
+    expect(customized1Day.source).toBe("sample");
+
+    const multiDayRequest: PlanRequest = {
+      interests: ["nature", "wildlife"],
+      days: 5,
+      start_city: "Mysuru",
+      budget: "premium",
+      pace: "packed",
+      travellers: "friends",
+      month: 12,
+      lang: "en",
+      people_count: 4,
+      transport_mode: "own_car",
+    };
+
+    const { plan: customized5Day } = getCustomizedSamplePlan(multiDayRequest);
+    expect(customized5Day.days.length).toBe(5);
+    // Days must be sequentially numbered 1 to 5
+    expect(customized5Day.days.map((d) => d.day)).toEqual([1, 2, 3, 4, 5]);
+    expect(customized5Day.cost.people).toBe(4);
+    expect(customized5Day.cost.total).toBe(
+      customized5Day.cost.stay +
+        customized5Day.cost.food +
+        customized5Day.cost.transport +
+        customized5Day.cost.entry
+    );
   });
 });

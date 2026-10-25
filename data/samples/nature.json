@@ -76,87 +76,8 @@
           ]
         },
         {
-          "place_id": "devaraja-market",
-          "start": "11:10",
-          "duration_min": 75,
-          "note_en": "Vibrant 130-year-old traditional bazaar packed with fragrant flowers, Mysore betel leaves, and perfumes.",
-          "travel_from_prev": {
-            "km": 1,
-            "min": 10,
-            "mode": "cab"
-          },
-          "place": {
-            "id": "devaraja-market",
-            "name_en": "Devaraja Market",
-            "name_kn": "ದೇವರಾಜ ಮಾರುಕಟ್ಟೆ",
-            "region": "Mysuru",
-            "city": "Mysuru",
-            "lat": 12.3113,
-            "lng": 76.6508,
-            "categories": [
-              "culture",
-              "food"
-            ],
-            "duration_min": 75,
-            "entry_inr": 0,
-            "best_months": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7,
-              8,
-              9,
-              10,
-              11,
-              12
-            ],
-            "budget_fit": [
-              "budget",
-              "mid",
-              "premium"
-            ],
-            "desc_en": "Vibrant 130-year-old traditional bazaar packed with fragrant flowers, Mysore betel leaves, and perfumes.",
-            "desc_kn": "ಸುಗಂಧಭರಿತ ಮಲ್ಲಿಗೆ ಹೂವುಗಳು, ಮೈಸೂರು ವೀಳೆಯದೆಲೆ ಮತ್ತು ಸುಗಂಧ ದ್ರವ್ಯಗಳಿಂದ ಕೂಡಿದ ೧೩೦ ವರ್ಷ ಹಳೆಯ ಸಾಂಪ್ರದಾಯಿಕ ಮಾರುಕಟ್ಟೆ.",
-            "tip_en": "Flowers, kumkum and sandalwood. Good spot for practicing basic Kannada greetings with vendors.",
-            "tip_kn": "ಹೂವು ಮತ್ತು ಗಂಧದ ಅಂಗಡಿಗಳ ವ್ಯಾಪಾರಿಗಳೊಂದಿಗೆ ಕನ್ನಡ ನುಡಿಗಟ್ಟುಗಳನ್ನು ಬಳಸಲು ಉತ್ತಮ ಸ್ಥಳ.",
-            "phrase_ids": [
-              "phrase-how-much",
-              "phrase-take-photo",
-              "phrase-thanks"
-            ],
-            "verified": true,
-            "source_url": "https://karnatakatourism.org"
-          },
-          "phrases": [
-            {
-              "id": "phrase-how-much",
-              "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು?",
-              "translit": "Idakke eshtu?",
-              "en": "How much for this?",
-              "context": "shopping"
-            },
-            {
-              "id": "phrase-take-photo",
-              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
-              "translit": "Ondu photo tegeyiri, dayavittu",
-              "en": "Please take one photo",
-              "context": "greeting"
-            },
-            {
-              "id": "phrase-thanks",
-              "kn": "ಧನ್ಯವಾದಗಳು",
-              "translit": "Dhanyavadagalu",
-              "en": "Thank you very much",
-              "context": "thanks"
-            }
-          ]
-        },
-        {
           "place_id": "mylari-dosa",
-          "start": "12:35",
+          "start": "11:10",
           "duration_min": 45,
           "note_en": "Legendary eatery renowned for melt-in-your-mouth butter benne dosas served with fresh coconut chutney.",
           "travel_from_prev": {
@@ -232,19 +153,17 @@
               "context": "food"
             }
           ]
-        }
-      ],
-      "travel_total_min": 20
-    },
-    {
-      "day": 2,
-      "theme": "Mysuru Highlights",
-      "stops": [
+        },
         {
           "place_id": "mysore-zoo",
-          "start": "09:00",
+          "start": "12:10",
           "duration_min": 150,
           "note_en": "One of India's oldest and best maintained zoological gardens with spacious enclosures and exotic species.",
+          "travel_from_prev": {
+            "km": 1.7,
+            "min": 15,
+            "mode": "cab"
+          },
           "place": {
             "id": "mysore-zoo",
             "name_en": "Mysore Zoo",
@@ -308,17 +227,19 @@
               "context": "thanks"
             }
           ]
-        },
+        }
+      ],
+      "travel_total_min": 25
+    },
+    {
+      "day": 2,
+      "theme": "Mysuru Highlights",
+      "stops": [
         {
           "place_id": "chamundi-hill",
-          "start": "11:45",
+          "start": "09:00",
           "duration_min": 90,
           "note_en": "Prominent hill overlooking Mysuru with the historic Chamundeshwari Temple and massive monolith Nandi.",
-          "travel_from_prev": {
-            "km": 4.4,
-            "min": 15,
-            "mode": "cab"
-          },
           "place": {
             "id": "chamundi-hill",
             "name_en": "Chamundi Hill",
@@ -387,7 +308,7 @@
         },
         {
           "place_id": "brindavan-gardens",
-          "start": "14:05",
+          "start": "11:20",
           "duration_min": 120,
           "note_en": "Terraced botanical gardens laid across the KRS Dam with synchronized musical fountains at dusk.",
           "travel_from_prev": {
@@ -457,7 +378,7 @@
           ]
         }
       ],
-      "travel_total_min": 65
+      "travel_total_min": 50
     },
     {
       "day": 3,
@@ -684,9 +605,9 @@
   "cost": {
     "stay": 17600,
     "food": 14400,
-    "transport": 3692,
+    "transport": 6316,
     "entry": 2140,
-    "total": 37832,
+    "total": 40456,
     "people": 4
   },
   "tips": [

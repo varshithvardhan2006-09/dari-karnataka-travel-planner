@@ -146,6 +146,19 @@ export function enrichPlan(
     };
   });
 
+  // Return journey leg back to starting hub from the final visited place
+  const finalPlace = allVisitedPlaces[allVisitedPlaces.length - 1];
+  if (finalPlace) {
+    const returnLeg = computeTravelLeg(
+      finalPlace.lat,
+      finalPlace.lng,
+      startCoords.lat,
+      startCoords.lng,
+      people
+    );
+    totalTripKm += returnLeg.km;
+  }
+
   // Calculate comprehensive cost
   const cost = calculateTripCost({
     days: request.days,

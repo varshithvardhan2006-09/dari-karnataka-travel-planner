@@ -686,9 +686,9 @@
   "cost": {
     "stay": 8800,
     "food": 7200,
-    "transport": 6332,
+    "transport": 9472,
     "entry": 1250,
-    "total": 23582,
+    "total": 26722,
     "people": 2
   },
   "tips": [

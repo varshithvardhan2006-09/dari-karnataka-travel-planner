@@ -28,7 +28,7 @@ import ErrorState from "@/components/ErrorState";
 import StopDetailDrawer from "@/components/StopDetailDrawer";
 import ShowToLocalModal from "@/components/ShowToLocalModal";
 import { buildDeterministicPlan } from "@/lib/planner";
-import { getSamplePlan, getSamplePlanForInterests } from "@/lib/samples";
+import { getSamplePlan, getCustomizedSamplePlan } from "@/lib/samples";
 import { computeTravelLeg, addMinutesToTime, roundTimeTo5Min, getPinNumber } from "@/lib/geo";
 import { calculateTripCost } from "@/lib/cost";
 import placesData from "../../../data/places.json";
@@ -347,7 +347,7 @@ function TripViewContent() {
           const fallback = buildDeterministicPlan(request);
           setPlan(fallback);
         } catch {
-          const { plan: samplePlan } = getSamplePlanForInterests(interests);
+          const { plan: samplePlan } = getCustomizedSamplePlan(request);
           setPlan(samplePlan);
           setErrorState({ type: "fallback_sample" });
         }

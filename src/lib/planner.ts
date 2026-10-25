@@ -5,7 +5,7 @@ import {
   Place,
   AIModelOutput,
 } from "./schema";
-import { getCandidates, calculateHaversineKm, getStartCityCoordinates } from "./candidates";
+import { getCandidates, calculateHaversineKm, getStartCityCoordinates, scoreCandidate } from "./candidates";
 import { enrichPlan } from "./enrich";
 import { estimateRoadDistanceKm, estimateTravelTimeMin, addMinutesToTime } from "./geo";
 
@@ -49,8 +49,15 @@ export function validateAIOutput(
   const seenPlaceIds = new Set<string>();
   const limits = PACE_STOP_LIMITS[request.pace] || PACE_STOP_LIMITS.balanced;
 
-  (rawPlan.days || []).forEach((dayItem) => {
-    // 2. Stop count per day check
+  (rawPlan.days || []).forEach((dayItem, dayIdx) => {
+    // 2. Sequential day numbering check
+    if (dayItem.day !== dayIdx + 1) {
+      errors.push(
+        `Day index ${dayIdx} has invalid day number ${dayItem.day}; expected sequential day ${dayIdx + 1}.`
+      );
+    }
+
+    // 3. Stop count per day check
     if (dayItem.stops.length < limits.min || dayItem.stops.length > limits.max) {
       errors.push(
         `Day ${dayItem.day} has ${dayItem.stops.length} stops; expected between ${limits.min} and ${limits.max} for ${request.pace} pace.`
@@ -58,10 +65,11 @@ export function validateAIOutput(
     }
 
     let previousPlace: Place | null = null;
+    let prevStopStartMin = -1;
     let dayDrivingMin = 0;
 
     dayItem.stops.forEach((stop, stopIdx) => {
-      // 3. Place ID must exist in candidate whitelist (or dataset fallback)
+      // 4. Place ID must exist in candidate whitelist (or dataset fallback)
       const allowedSet = candidateSet || validPlaceIdSet;
       if (!allowedSet.has(stop.place_id)) {
         const errorMsg = candidateSet
@@ -71,7 +79,7 @@ export function validateAIOutput(
         return;
       }
 
-      // 4. No duplicate places across the entire trip
+      // 5. No duplicate places across the entire trip
       if (seenPlaceIds.has(stop.place_id)) {
         errors.push(
           `Place "${stop.place_id}" is duplicated. Every stop across the entire trip must be unique.`
@@ -91,19 +99,41 @@ export function validateAIOutput(
       }
       if (place) previousPlace = place;
 
-      // 5. Start time check
+      // 6. Start time & scheduling rules
       if (stop.start) {
         const [h, m] = stop.start.split(":").map(Number);
         const startMinutes = h * 60 + m;
-        if (startMinutes < 8 * 60 + 30) {
+
+        // First stop of the day must start between 08:30 and 10:00
+        if (stopIdx === 0) {
+          if (startMinutes < 8 * 60 + 30 || startMinutes > 10 * 60) {
+            errors.push(
+              `Day ${dayItem.day} first stop starts at ${stop.start}; expected start between 08:30 and 10:00.`
+            );
+          }
+        } else {
+          // Chronological order check
+          if (startMinutes < prevStopStartMin) {
+            errors.push(
+              `Day ${dayItem.day} stop ${stopIdx + 1} starts at ${stop.start}, which is earlier than previous stop start time.`
+            );
+          }
+        }
+
+        prevStopStartMin = startMinutes;
+
+        // Day must conclude before 19:30
+        const durationMin = place?.duration_min ?? 60;
+        const stopEndMin = startMinutes + durationMin;
+        if (stopEndMin > DAY_END_MIN) {
           errors.push(
-            `Stop "${stop.place_id}" on Day ${dayItem.day} starts at ${stop.start}, which is earlier than 08:30.`
+            `Day ${dayItem.day} stop ${stopIdx + 1} ends at ${Math.floor(stopEndMin / 60)}:${String(stopEndMin % 60).padStart(2, "0")}, exceeding the 19:30 evening cutoff.`
           );
         }
       }
     });
 
-    // 6. Max driving limit per day (4 hours = 240 mins)
+    // 7. Max driving limit per day (4 hours = 240 mins)
     if (dayDrivingMin > 240) {
       errors.push(
         `Day ${dayItem.day} has ${dayDrivingMin} minutes of driving, exceeding the 240 minute daily driving limit.`
@@ -127,11 +157,15 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
 
   // Retrieve candidate pool
   let pool = getCandidates(request, allPlaces);
+  let broadenedPool = false;
 
   // If pool is small, backfill with remaining best-scored places
   if (pool.length < request.days * stopsPerDay) {
+    broadenedPool = true;
     const poolIds = new Set(pool.map((p) => p.id));
-    const extra = allPlaces.filter((p) => !poolIds.has(p.id));
+    const extra = allPlaces
+      .filter((p) => !poolIds.has(p.id))
+      .sort((a, b) => scoreCandidate(b, request) - scoreCandidate(a, request));
     pool = [...pool, ...extra];
   }
 
@@ -214,6 +248,13 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
       if (!place || seenPlaceIds.has(place.id)) continue;
       seenPlaceIds.add(place.id);
 
+      // Advance clock by travel time from previous stop BEFORE recording stop arrival
+      if (lastPlace) {
+        const roadKm = estimateRoadDistanceKm(lastPlace.lat, lastPlace.lng, place.lat, place.lng);
+        const travelMin = estimateTravelTimeMin(roadKm);
+        dayClock = addMinutesToTime(dayClock, travelMin);
+      }
+
       dayStops.push({
         place_id: place.id,
         start: dayClock,
@@ -222,13 +263,6 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
 
       if (!dayRegions.includes(place.region)) {
         dayRegions.push(place.region);
-      }
-
-      // Compute travel time to advance the clock
-      if (lastPlace) {
-        const roadKm = estimateRoadDistanceKm(lastPlace.lat, lastPlace.lng, place.lat, place.lng);
-        const travelMin = estimateTravelTimeMin(roadKm);
-        dayClock = addMinutesToTime(dayClock, travelMin);
       }
 
       // Add visit duration
@@ -249,15 +283,29 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
     });
   }
 
+  const tips = [
+    "Start mornings by 08:30 to enjoy peaceful monuments before peak tourist traffic.",
+    "Dress respectfully when entering active sanctums and historic temples.",
+    "Sample local Karnataka breakfast specialities including Tatte Idli and Benne Dosa.",
+  ];
+
+  if (!startCoords.isRecognized) {
+    tips.push(
+      `Note: Starting location "${request.start_city}" was mapped to Karnataka's central hub (${startCoords.resolvedCity}) for route clustering.`
+    );
+  }
+
+  if (broadenedPool) {
+    tips.push(
+      "Note: Route selections were broadened with premier Karnataka highlights to complete a balanced multi-day schedule."
+    );
+  }
+
   const rawOutput: AIModelOutput = {
     title: `${request.days} Days ${request.interests.join(" & ")} Journey`,
     summary: `Curated ${request.pace} route covering ${request.start_city} and premier Karnataka cultural sights.`,
     days: rawDays,
-    tips: [
-      "Start mornings by 08:30 to enjoy peaceful monuments before peak tourist traffic.",
-      "Dress respectfully when entering active sanctums and historic temples.",
-      "Sample local Karnataka breakfast specialities including Tatte Idli and Benne Dosa.",
-    ],
+    tips,
   };
 
   return enrichPlan(rawOutput, request, "planner");

@@ -142,4 +142,95 @@ describe("Deterministic Planner and Pipeline Validation", () => {
     });
     expect(customPeoplePlan.cost.entry).toBe(couplePlan.cost.entry * 3);
   });
+
+  it("records stop start times correctly including inter-stop travel time", () => {
+    const plan = buildDeterministicPlan(sampleRequest);
+    const day1 = plan.days[0];
+    expect(day1.stops.length).toBeGreaterThanOrEqual(2);
+
+    const stop1 = day1.stops[0];
+    const stop2 = day1.stops[1];
+
+    const [h1, m1] = stop1.start.split(":").map(Number);
+    const [h2, m2] = stop2.start.split(":").map(Number);
+
+    const stop1DepartureMin = h1 * 60 + m1 + stop1.duration_min;
+    const stop2StartMin = h2 * 60 + m2;
+
+    // Stop 2 must start AFTER stop 1 departure (accounting for travel time)
+    expect(stop2StartMin).toBeGreaterThanOrEqual(stop1DepartureMin);
+  });
+
+  it("strictly rejects non-sequential day numbers in validateAIOutput", () => {
+    const invalidDaysOutput: AIModelOutput = {
+      title: "Non-sequential Days",
+      summary: "Skipping day 2",
+      days: [
+        {
+          day: 1,
+          theme: "Day 1",
+          stops: [{ place_id: "mysore-palace", start: "09:00", note_en: "Note" }],
+        },
+        {
+          day: 3, // Skipped day 2
+          theme: "Day 3",
+          stops: [{ place_id: "chamundi-hill", start: "09:00", note_en: "Note" }],
+        },
+      ],
+      tips: [],
+    };
+
+    const validation = validateAIOutput(invalidDaysOutput, { ...sampleRequest, days: 2 });
+    expect(validation.valid).toBe(false);
+    expect(validation.errors.some((err) => err.includes("expected sequential day 2"))).toBe(true);
+  });
+
+  it("strictly rejects itineraries starting too late or too early", () => {
+    const lateStartOutput: AIModelOutput = {
+      title: "Late start",
+      summary: "Starts at noon",
+      days: [
+        {
+          day: 1,
+          theme: "Day 1",
+          stops: [{ place_id: "mysore-palace", start: "11:00", note_en: "Too late" }],
+        },
+      ],
+      tips: [],
+    };
+    const validation = validateAIOutput(lateStartOutput, { ...sampleRequest, days: 1 });
+    expect(validation.valid).toBe(false);
+    expect(validation.errors.some((err) => err.includes("between 08:30 and 10:00"))).toBe(true);
+  });
+
+  it("strictly rejects itineraries concluding after 19:30 cutoff", () => {
+    const lateFinishOutput: AIModelOutput = {
+      title: "Late Finish",
+      summary: "Stops past 19:30",
+      days: [
+        {
+          day: 1,
+          theme: "Day 1",
+          stops: [
+            { place_id: "mysore-palace", start: "09:00", note_en: "Day stop" },
+            { place_id: "chamundi-hill", start: "19:00", note_en: "Chamundi duration is 90 min" },
+          ],
+        },
+      ],
+      tips: [],
+    };
+    const validation = validateAIOutput(lateFinishOutput, { ...sampleRequest, days: 1 });
+    expect(validation.valid).toBe(false);
+    expect(validation.errors.some((err) => err.includes("19:30"))).toBe(true);
+  });
+
+  it("includes transparency note in tips when starting location is unmapped", () => {
+    const unknownCityPlan = buildDeterministicPlan({
+      ...sampleRequest,
+      start_city: "RandomUnknownHamletXYZ",
+    });
+    expect(
+      unknownCityPlan.tips.some((tip) => tip.includes("RandomUnknownHamletXYZ"))
+    ).toBe(true);
+  });
 });

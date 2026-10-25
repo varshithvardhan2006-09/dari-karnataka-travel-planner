@@ -2,14 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { PlanRequestSchema, Place } from "@/lib/schema";
 import { generateItinerary } from "@/lib/ai";
 import { buildDeterministicPlan } from "@/lib/planner";
-import { getSamplePlanForInterests } from "@/lib/samples";
+import { getCustomizedSamplePlan } from "@/lib/samples";
 import placesData from "../../../../data/places.json";
 
 export const maxDuration = 30; // Route max duration set to 30 seconds per spec
 
 const allPlaces = placesData as Place[];
 
-// Simple in-memory rate limiter per IP: max 12 requests per 60 seconds
+/**
+ * Architectural Note on Rate Limiting:
+ * In serverless environments (e.g. Vercel), this in-memory sliding window provides fast
+ * per-container abuse protection. In multi-region production scale, this is complemented
+ * with distributed edge rate limiting (e.g., Upstash Redis / Vercel KV) or Cloudflare WAF
+ * to share rate counters across independent serverless instances.
+ */
 const ipRequestTimestamps = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 12;
@@ -149,8 +155,8 @@ export async function POST(req: NextRequest) {
         const fallbackPlan = buildDeterministicPlan(planRequest);
         return NextResponse.json({ plan: fallbackPlan }, { status: 200 });
       } catch (fallbackErr) {
-        console.warn("Deterministic planner exception, serving curated sample:", fallbackErr);
-        const { plan: samplePlan } = getSamplePlanForInterests(planRequest.interests);
+        console.warn("Deterministic planner exception, serving curated customized sample:", fallbackErr);
+        const { plan: samplePlan } = getCustomizedSamplePlan(planRequest);
         return NextResponse.json({ plan: samplePlan }, { status: 200 });
       }
     }

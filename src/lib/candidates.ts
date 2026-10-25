@@ -33,10 +33,16 @@ export const START_CITY_COORDINATES: Record<string, { lat: number; lng: number }
 
 /**
  * Resolves geographic coordinates for any specified starting city, town, or place in Karnataka.
+ * Transparently indicates whether the location was recognized or mapped to central hub.
  */
-export function getStartCityCoordinates(cityName: string): { lat: number; lng: number } {
+export function getStartCityCoordinates(cityName: string): {
+  lat: number;
+  lng: number;
+  isRecognized: boolean;
+  resolvedCity: string;
+} {
   if (!cityName || typeof cityName !== "string") {
-    return START_CITY_COORDINATES.Bengaluru;
+    return { ...START_CITY_COORDINATES.Bengaluru, isRecognized: false, resolvedCity: "Bengaluru" };
   }
 
   const normalized = cityName.trim().toLowerCase();
@@ -44,11 +50,11 @@ export function getStartCityCoordinates(cityName: string): { lat: number; lng: n
   // 1. Direct dictionary match
   for (const [key, coords] of Object.entries(START_CITY_COORDINATES)) {
     if (key.toLowerCase() === normalized) {
-      return coords;
+      return { ...coords, isRecognized: true, resolvedCity: key };
     }
   }
 
-  // 2. Fuzzy match against curated places dataset
+  // 2. Match against curated places dataset (city, region, or name)
   const matchingPlace = (placesData as Place[]).find(
     (p) =>
       p.city.toLowerCase() === normalized ||
@@ -56,11 +62,20 @@ export function getStartCityCoordinates(cityName: string): { lat: number; lng: n
       p.name_en.toLowerCase().includes(normalized)
   );
   if (matchingPlace) {
-    return { lat: matchingPlace.lat, lng: matchingPlace.lng };
+    return {
+      lat: matchingPlace.lat,
+      lng: matchingPlace.lng,
+      isRecognized: true,
+      resolvedCity: matchingPlace.city,
+    };
   }
 
-  // 3. Fallback to Bengaluru capital hub
-  return START_CITY_COORDINATES.Bengaluru;
+  // 3. Fallback to Bengaluru capital hub with transparent isRecognized: false flag
+  return {
+    ...START_CITY_COORDINATES.Bengaluru,
+    isRecognized: false,
+    resolvedCity: "Bengaluru",
+  };
 }
 
 /**
@@ -102,7 +117,7 @@ export function scoreCandidate(
     request.interests.includes(cat)
   );
   if (matchingCategories.length > 0) {
-    score += matchingCategories.length * 40;
+    score += matchingCategories.length * 50;
   }
 
   // 2. Best travel month
@@ -157,6 +172,7 @@ export function scoreCandidate(
 
 /**
  * Filters and ranks candidate places from data/places.json.
+ * Prioritizes matching interests and meals; non-matching places never displace matching ones.
  * Keeps about 2.5 times the target stops needed for the specified duration and pace.
  */
 export function getCandidates(
@@ -172,17 +188,36 @@ export function getCandidates(
   const stopsNeeded = Math.ceil(request.days * stopsPerDay);
   const targetCandidatesCount = Math.max(8, Math.min(allPlaces.length, Math.ceil(stopsNeeded * 2.5)));
 
-  // Score each place
-  const scoredPlaces = allPlaces.map((place) => ({
-    place,
-    score: scoreCandidate(place, request),
-  }));
+  // Separate places into matching/meal and non-matching places
+  const matchingPlaces: { place: Place; score: number }[] = [];
+  const nonMatchingPlaces: { place: Place; score: number }[] = [];
 
-  // Sort descending by score
-  scoredPlaces.sort((a, b) => b.score - a.score);
+  for (const place of allPlaces) {
+    const matches = place.categories.some((cat) => request.interests.includes(cat));
+    const score = scoreCandidate(place, request);
+    if (matches || place.is_meal) {
+      matchingPlaces.push({ place, score });
+    } else {
+      nonMatchingPlaces.push({ place, score });
+    }
+  }
 
-  // Select top candidates
-  return scoredPlaces.slice(0, targetCandidatesCount).map((item) => item.place);
+  // Sort descending by score within each cohort
+  matchingPlaces.sort((a, b) => b.score - a.score);
+  nonMatchingPlaces.sort((a, b) => b.score - a.score);
+
+  // Interest matches always take priority; non-matching places never displace them
+  if (matchingPlaces.length >= targetCandidatesCount) {
+    return matchingPlaces.slice(0, targetCandidatesCount).map((item) => item.place);
+  }
+
+  // Backfill with top-scored non-matching places if matching places are insufficient
+  const needed = targetCandidatesCount - matchingPlaces.length;
+  const combined = [
+    ...matchingPlaces,
+    ...nonMatchingPlaces.slice(0, needed),
+  ];
+  return combined.map((item) => item.place);
 }
 
 /**
