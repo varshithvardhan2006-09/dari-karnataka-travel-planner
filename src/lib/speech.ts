@@ -7,32 +7,40 @@ let currentAudio: HTMLAudioElement | null = null;
 export interface KannadaSpeechOptions {
   translit?: string;
   isSlow?: boolean;
+  lang?: string;
   onStart?: () => void;
   onEnd?: () => void;
 }
 
 /**
- * Checks if browser has native Kannada voice in SpeechSynthesis.
+ * Checks if browser has native voice in SpeechSynthesis for specified language.
  */
-export function getKannadaVoice(): SpeechSynthesisVoice | null {
+export function getLanguageVoice(langCode: string = "kn"): SpeechSynthesisVoice | null {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     return null;
   }
   const voices = window.speechSynthesis.getVoices();
+  const normalized = langCode.toLowerCase();
   return (
     voices.find(
       (v) =>
-        v.lang === "kn-IN" ||
-        v.lang === "kn_IN" ||
-        v.lang.toLowerCase().startsWith("kn")
+        v.lang.toLowerCase().replace(/_/g, "-") === `${normalized}-in` ||
+        v.lang.toLowerCase().startsWith(normalized)
     ) || null
   );
 }
 
 /**
- * Plays authentic, high-fidelity Kannada speech.
- * 1. Primary: Native Google Kannada TTS endpoint (works universally on all browsers with crystal-clear native pronunciation).
- * 2. Fallback: Browser Web Speech API (with kn-IN native voice or phonetic transliteration).
+ * Legacy alias for backwards compatibility.
+ */
+export function getKannadaVoice(): SpeechSynthesisVoice | null {
+  return getLanguageVoice("kn");
+}
+
+/**
+ * Plays authentic, high-fidelity speech.
+ * 1. Primary: Native Google TTS endpoint via same-origin server proxy (supports kn, hi, te, ta, ml, en).
+ * 2. Fallback: Browser Web Speech API (with native voice or phonetic transliteration).
  */
 export function playKannadaSpeech(
   text: string,
@@ -40,7 +48,7 @@ export function playKannadaSpeech(
 ): void {
   if (typeof window === "undefined" || !text) return;
 
-  const { translit, isSlow = false, onStart, onEnd } = options || {};
+  const { translit, isSlow = false, lang = "kn", onStart, onEnd } = options || {};
 
   try {
     // Cancel any currently playing audio stream
@@ -63,9 +71,9 @@ export function playKannadaSpeech(
 
     onStart?.();
 
-    // High-fidelity native Google Kannada TTS stream via same-origin server proxy
+    // High-fidelity native Google TTS stream via same-origin server proxy
     const encoded = encodeURIComponent(text.trim());
-    const audioUrl = `/api/tts?text=${encoded}`;
+    const audioUrl = `/api/tts?text=${encoded}&lang=${encodeURIComponent(lang)}`;
 
     const audio = new Audio(audioUrl);
     audio.preload = "auto";
@@ -90,18 +98,18 @@ export function playKannadaSpeech(
 
     audio.onerror = () => {
       // Fallback to browser Web Speech API
-      speakWithWebSpeech(text, translit, isSlow, onEnd);
+      speakWithWebSpeech(text, translit, isSlow, lang, onEnd);
     };
 
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.catch(() => {
         // Fallback to Web Speech API if autoplay restriction or network failure
-        speakWithWebSpeech(text, translit, isSlow, onEnd);
+        speakWithWebSpeech(text, translit, isSlow, lang, onEnd);
       });
     }
   } catch {
-    speakWithWebSpeech(text, translit, isSlow, onEnd);
+    speakWithWebSpeech(text, translit, isSlow, lang, onEnd);
   }
 }
 
@@ -109,6 +117,7 @@ function speakWithWebSpeech(
   text: string,
   translit?: string,
   isSlow: boolean = false,
+  langCode: string = "kn",
   onEnd?: () => void
 ) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
@@ -121,15 +130,15 @@ function speakWithWebSpeech(
       window.speechSynthesis.resume();
     }
 
-    const knVoice = getKannadaVoice();
-    // If no Kannada voice exists on this OS, speak phonetic transliteration
-    // so the auto driver and user actually hear the Kannada words out loud!
-    const spokenText = knVoice ? text : translit || text;
+    const nativeVoice = getLanguageVoice(langCode);
+    // If no native voice exists on this OS, speak phonetic transliteration
+    // so the listener actually hears the intended words out loud!
+    const spokenText = nativeVoice ? text : translit || text;
     const utterance = new SpeechSynthesisUtterance(spokenText);
 
-    if (knVoice) {
-      utterance.voice = knVoice;
-      utterance.lang = "kn-IN";
+    if (nativeVoice) {
+      utterance.voice = nativeVoice;
+      utterance.lang = nativeVoice.lang || `${langCode}-IN`;
     } else {
       utterance.lang = "en-IN";
     }
@@ -182,17 +191,20 @@ export function useKannadaSpeech() {
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [lastText, setLastText] = useState<string>("");
   const [lastTranslit, setLastTranslit] = useState<string | undefined>(undefined);
+  const [lastLang, setLastLang] = useState<string>("kn");
   const [hasPlayed, setHasPlayed] = useState<boolean>(false);
 
   const speak = useCallback(
-    (text: string, translit?: string, isSlow: boolean = false) => {
+    (text: string, translit?: string, isSlow: boolean = false, lang: string = "kn") => {
       if (!text || !text.trim()) return;
       setLastText(text);
       setLastTranslit(translit);
+      setLastLang(lang);
       setIsSpeaking(true);
       playKannadaSpeech(text, {
         translit,
         isSlow,
+        lang,
         onStart: () => setIsSpeaking(true),
         onEnd: () => {
           setIsSpeaking(false);
@@ -211,9 +223,9 @@ export function useKannadaSpeech() {
   const replay = useCallback(
     (isSlow: boolean = false) => {
       if (!lastText) return;
-      speak(lastText, lastTranslit, isSlow);
+      speak(lastText, lastTranslit, isSlow, lastLang);
     },
-    [lastText, lastTranslit, speak]
+    [lastText, lastTranslit, lastLang, speak]
   );
 
   return {

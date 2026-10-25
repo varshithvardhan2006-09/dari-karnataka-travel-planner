@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useMemo, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLang } from "@/lib/i18n/useLang";
 import {
   Category,
@@ -130,16 +130,48 @@ const BEST_SEASON_MONTHS = [10, 11, 12, 1, 2]; // Oct to Feb in Karnataka
 export default function PlannerForm() {
   const { lang } = useLang();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Primary state
-  const [interests, setInterests] = useState<Category[]>(["heritage", "food"]);
-  const [days, setDays] = useState<number>(4);
-  const [startCity, setStartCity] = useState<StartCity>("Bengaluru");
-  const [budget, setBudget] = useState<BudgetFit>("mid");
+  // Primary state initialized from URL searchParams if present
+  const [interests, setInterests] = useState<Category[]>(() => {
+    if (!searchParams) return ["heritage", "food"];
+    const qInterests = searchParams.get("interests");
+    if (qInterests) {
+      const parsed = qInterests
+        .split(",")
+        .filter((c) => CATEGORY_TILES.some((tile) => tile.id === c)) as Category[];
+      if (parsed.length > 0) return parsed.slice(0, 4);
+    }
+    return ["heritage", "food"];
+  });
+
+  const [days, setDays] = useState<number>(() => {
+    if (!searchParams) return 4;
+    const qDays = parseInt(searchParams.get("days") || "", 10);
+    return !isNaN(qDays) && qDays >= 1 && qDays <= 7 ? qDays : 4;
+  });
+
+  const [startCity, setStartCity] = useState<StartCity>(() => {
+    if (!searchParams) return "Bengaluru";
+    const qCity = searchParams.get("city") || searchParams.get("start_city");
+    return qCity && qCity.trim().length > 0 ? (qCity.trim() as StartCity) : "Bengaluru";
+  });
+
+  const [budget, setBudget] = useState<BudgetFit>(() => {
+    if (!searchParams) return "mid";
+    const qBudget = searchParams.get("budget") as BudgetFit;
+    return qBudget && BUDGET_TIERS.some((b) => b.id === qBudget) ? qBudget : "mid";
+  });
+
   const [pace, setPace] = useState<Pace>("relaxed");
   const [travellers, setTravellers] = useState<Travellers>("couple");
   const [peopleCount, setPeopleCount] = useState<number>(2);
-  const [month, setMonth] = useState<number>(11);
+
+  const [month, setMonth] = useState<number>(() => {
+    if (!searchParams) return 11;
+    const qMonth = parseInt(searchParams.get("month") || "", 10);
+    return !isNaN(qMonth) && qMonth >= 1 && qMonth <= 12 ? qMonth : 11;
+  });
 
   // Optional filters (safe & backwards compatible)
   const [foodPref, setFoodPref] = useState<"any" | "veg" | "nonveg">("any");
@@ -147,6 +179,15 @@ export default function PlannerForm() {
   const [lowWalking, setLowWalking] = useState<boolean>(false);
   const [showAllMatches, setShowAllMatches] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState(false);
+
+  // Prefetch trip route to ensure instantaneous navigation when clicking Generate
+  useEffect(() => {
+    try {
+      router.prefetch("/trip");
+    } catch {
+      // ignore
+    }
+  }, [router]);
 
   // Toggle category tiles (max 4)
   const toggleInterest = (category: Category) => {
@@ -209,13 +250,15 @@ export default function PlannerForm() {
     return estimateCostRange(days, budget, peopleCount, transportMode);
   }, [days, budget, peopleCount, transportMode]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent | React.MouseEvent) => {
+    if (e && typeof e.preventDefault === "function") {
+      e.preventDefault();
+    }
     if (interests.length === 0 || submitting) return;
 
     setSubmitting(true);
     const params = new URLSearchParams({
-      interests: interests.join(","),
+      interests: interests.slice(0, 4).join(","),
       days: days.toString(),
       start_city: startCity,
       budget,
@@ -229,7 +272,38 @@ export default function PlannerForm() {
       low_walking: lowWalking ? "1" : "0",
     });
 
-    router.push(`/trip?${params.toString()}`);
+    const targetUrl = `/trip?${params.toString()}`;
+
+    // 1. Immediately attempt Next.js client transition
+    try {
+      router.push(targetUrl);
+    } catch (err) {
+      console.warn("Client router navigation failed, using direct location:", err);
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = targetUrl;
+      return;
+    }
+
+    // 2. Fallback timer: If Next.js App Router client transition does not
+    // navigate within 600ms (e.g. RSC prefetch stall or connection lag),
+    // immediately perform a direct browser navigation so the user is NEVER stuck on "Generating...".
+    const fallbackTimer = setTimeout(() => {
+      if (typeof window !== "undefined" && !window.location.pathname.startsWith("/trip")) {
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        window.location.href = targetUrl;
+      }
+    }, 600);
+
+    // 3. Safety reset timer: If browser stays or user aborts, restore button state
+    // so it is never permanently frozen.
+    const safetyTimer = setTimeout(() => {
+      setSubmitting(false);
+    }, 4000);
+
+    return () => {
+      clearTimeout(fallbackTimer);
+      clearTimeout(safetyTimer);
+    };
   };
 
   return (
@@ -599,7 +673,15 @@ export default function PlannerForm() {
             </button>
             <button
               type="button"
-              onClick={() => router.push("/trip?sample=heritage")}
+              onClick={() => {
+                const sampleUrl = "/trip?sample=heritage";
+                try {
+                  router.push(sampleUrl);
+                } catch {
+                  // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+                  window.location.href = sampleUrl;
+                }
+              }}
               className="w-full sm:w-auto text-center px-5 py-3.5 rounded-xl font-semibold text-sm bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 transition-all cursor-pointer shadow-2xs"
             >
               {lang === "kn" ? "ಮಾದರಿ ಪ್ರವಾಸ ನೋಡಿ" : "Surprise me"}
@@ -727,7 +809,9 @@ export default function PlannerForm() {
           disabled={interests.length === 0 || submitting}
           className="px-5 py-2.5 rounded-xl font-bold text-xs bg-[#8E1F2F] text-white shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
         >
-          {lang === "kn" ? "ರಚಿಸಿ" : "Generate"}
+          {submitting
+            ? (lang === "kn" ? "ಸಿದ್ಧವಾಗುತ್ತಿದೆ..." : "Generating...")
+            : (lang === "kn" ? "ರಚಿಸಿ" : "Generate")}
         </button>
       </div>
     </div>

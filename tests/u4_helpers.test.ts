@@ -1,7 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { roundTimeTo5Min, getPinNumber, getBoundsForStops } from "../src/lib/geo";
 import { buildDeterministicPlan } from "../src/lib/planner";
-import { PlanRequest } from "../src/lib/schema";
+import { PlanRequest, Place } from "../src/lib/schema";
+import { calculateTripCost } from "../src/lib/cost";
+import placesData from "../data/places.json";
 
 describe("U4 Helpers & Guarantees", () => {
   it("rounds stop start times cleanly to the nearest 5 minutes", () => {
@@ -86,5 +88,53 @@ describe("U4 Helpers & Guarantees", () => {
       const uniqueIds = new Set(visitedIds);
       expect(uniqueIds.size).toBe(visitedIds.length);
     });
+  });
+
+  it("verifies cost calculation respects custom group sizes and transport modes", () => {
+    const places = placesData as Place[];
+    const costFor6 = calculateTripCost({
+      days: 3,
+      budget: "mid",
+      travellers: "couple",
+      totalKm: 250,
+      visitedPlaces: places.slice(0, 6),
+      peopleCount: 6,
+      transportPreference: "own_car",
+    });
+
+    expect(costFor6.people).toBe(6);
+    expect(costFor6.stay + costFor6.food + costFor6.transport + costFor6.entry).toBe(costFor6.total);
+    // 6 people stay and food should be 3x that of 2 people
+    const costFor2 = calculateTripCost({
+      days: 3,
+      budget: "mid",
+      travellers: "couple",
+      totalKm: 250,
+      visitedPlaces: places.slice(0, 6),
+      peopleCount: 2,
+      transportPreference: "own_car",
+    });
+    expect(costFor6.stay).toBe(costFor2.stay * 3);
+    expect(costFor6.food).toBe(costFor2.food * 3);
+  });
+
+  it("handles edge cases (negative or NaN km/days) safely without crashing", () => {
+    const places = placesData as Place[];
+    const safeCost = calculateTripCost({
+      days: -2,
+      budget: "mid",
+      travellers: "couple",
+      totalKm: NaN,
+      visitedPlaces: places.slice(0, 2),
+      peopleCount: 0,
+    });
+
+    expect(safeCost.people).toBe(2);
+    expect(safeCost.stay).toBeGreaterThanOrEqual(0);
+    expect(safeCost.food).toBeGreaterThanOrEqual(0);
+    expect(safeCost.transport).toBeGreaterThanOrEqual(0);
+    expect(safeCost.entry).toBeGreaterThanOrEqual(0);
+    expect(safeCost.stay + safeCost.food + safeCost.transport + safeCost.entry).toBe(safeCost.total);
+    expect(isNaN(safeCost.total)).toBe(false);
   });
 });

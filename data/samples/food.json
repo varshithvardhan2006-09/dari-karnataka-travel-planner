@@ -4,7 +4,7 @@
   "days": [
     {
       "day": 1,
-      "theme": "Coast Highlights",
+      "theme": "Coast & Chikkamagaluru Highlights",
       "stops": [
         {
           "place_id": "udupi-krishna-temple",
@@ -150,131 +150,55 @@
               "context": "thanks"
             }
           ]
-        }
-      ],
-      "travel_total_min": 20
-    },
-    {
-      "day": 2,
-      "theme": "North Kannada & Coast Highlights",
-      "stops": [
-        {
-          "place_id": "murudeshwar-temple",
-          "start": "09:00",
-          "duration_min": 105,
-          "note_en": "Giant 123-foot Lord Shiva statue towering over the Arabian Sea alongside a 20-storey Raja Gopura with elevator.",
-          "place": {
-            "id": "murudeshwar-temple",
-            "name_en": "Murudeshwar Shiva Statue & Beach",
-            "name_kn": "ಮುರುಡೇಶ್ವರ ಶಿವನ ಪ್ರತಿಮೆ",
-            "region": "North Kannada",
-            "city": "Bhatkal",
-            "lat": 14.0941,
-            "lng": 74.4849,
-            "categories": [
-              "spiritual",
-              "beach",
-              "heritage"
-            ],
-            "duration_min": 105,
-            "entry_inr": 20,
-            "best_months": [
-              10,
-              11,
-              12,
-              1,
-              2,
-              3
-            ],
-            "budget_fit": [
-              "budget",
-              "mid",
-              "premium"
-            ],
-            "desc_en": "Giant 123-foot Lord Shiva statue towering over the Arabian Sea alongside a 20-storey Raja Gopura with elevator.",
-            "desc_kn": "ಅರಬ್ಬಿ ಸಮುದ್ರದ ತೀರದಲ್ಲಿ ಕಂಗೊಳಿಸುವ ೧೨೩ ಅಡಿ ಎತ್ತರದ ಬೃಹತ್ ಶಿವನ ಪ್ರತಿಮೆ ಮತ್ತು ರಾಜಗೋಪುರ.",
-            "tip_en": "Take the lift to the 18th floor of the Raja Gopuram for an incredible aerial view of the Shiva statue and coastline.",
-            "tip_kn": "ರಾಜಗೋಪುರದ ಲಿಫ್ಟ್ ಮೂಲಕ ೧೮ನೇ ಮಹಡಿಗೆ ತೆರಳಿ ಕರಾವಳಿ ಮತ್ತು ಶಿವನ ವಿಗ್ರಹದ ಅದ್ಭುತ ನೋಟ ಕಣ್ತುಂಬಿಕೊಳ್ಳಿ.",
-            "phrase_ids": [
-              "phrase-ticket-cost",
-              "phrase-take-photo",
-              "phrase-very-nice"
-            ],
-            "verified": false,
-            "source_url": "https://karnatakatourism.org"
-          },
-          "phrases": [
-            {
-              "id": "phrase-ticket-cost",
-              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
-              "translit": "Ticket elli siguttade?",
-              "en": "Where do I get tickets?",
-              "context": "ticket"
-            },
-            {
-              "id": "phrase-take-photo",
-              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
-              "translit": "Ondu photo tegeyiri, dayavittu",
-              "en": "Please take one photo",
-              "context": "greeting"
-            },
-            {
-              "id": "phrase-very-nice",
-              "kn": "ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ!",
-              "translit": "Tumba chennagide!",
-              "en": "It is very beautiful!",
-              "context": "thanks"
-            }
-          ]
         },
         {
-          "place_id": "om-beach",
-          "start": "12:35",
+          "place_id": "mullayanagiri",
+          "start": "17:05",
           "duration_min": 120,
-          "note_en": "Naturally shaped like the sacred Hindu symbol 'Om', featuring twin crescent sandy bays bordered by rocky bluffs.",
+          "note_en": "Highest peak in Karnataka (1,930 m) featuring breathtaking panoramas of the Western Ghats and Baba Budan range.",
           "travel_from_prev": {
-            "km": 65.9,
-            "min": 110,
+            "km": 143.1,
+            "min": 225,
             "mode": "cab"
           },
           "place": {
-            "id": "om-beach",
-            "name_en": "Om Beach Gokarna",
-            "name_kn": "ಓಂ ಬೀಚ್ ಗೋಕರ್ಣ",
-            "region": "Coast",
-            "city": "Gokarna",
-            "lat": 14.5198,
-            "lng": 74.3168,
+            "id": "mullayanagiri",
+            "name_en": "Mullayanagiri Peak",
+            "name_kn": "ಮುಳ್ಳಯ್ಯನಗಿರಿ ಶಿಖರ",
+            "region": "Chikkamagaluru",
+            "city": "Chikkamagaluru",
+            "lat": 13.3912,
+            "lng": 75.7214,
             "categories": [
-              "beach",
+              "adventure",
               "nature"
             ],
             "duration_min": 120,
             "entry_inr": 0,
             "best_months": [
+              9,
               10,
               11,
               12,
               1,
-              2,
-              3
+              2
             ],
             "budget_fit": [
               "budget",
               "mid",
               "premium"
             ],
-            "desc_en": "Naturally shaped like the sacred Hindu symbol 'Om', featuring twin crescent sandy bays bordered by rocky bluffs.",
-            "desc_kn": "ಪವಿತ್ರ 'ಓಂ' ಆಕಾರದಲ್ಲಿರುವ ಎರಡು ಸುಂದರ ಅರ್ಧಚಂದ್ರಾಕಾರದ ಕರಾವಳಿ ತೀರಗಳು ಮತ್ತು ಬಂಡೆಗಳು.",
-            "tip_en": "Start a coastal cliff walk towards Half Moon and Paradise beaches in the morning.",
-            "tip_kn": "ಬೆಳಿಗ್ಗೆ ಹಾಫ್ ಮೂನ್ ಮತ್ತು ಪ್ಯಾರಡೈಸ್ ಬೀಚ್‌ಗಳ ಕಡೆಗೆ ಟ್ರೆಕ್ಕಿಂಗ್ ಮಾಡುವುದು ಅದ್ಭುತ ಅನುಭವ.",
+            "desc_en": "Highest peak in Karnataka (1,930 m) featuring breathtaking panoramas of the Western Ghats and Baba Budan range.",
+            "desc_kn": "ಕರ್ನಾಟಕದ ಅತ್ಯುನ್ನತ ಶಿಖರ (೧,೯೩೦ ಮೀ), ಪಶ್ಚಿಮ ಘಟ್ಟಗಳ ಮೈನವಿರೇಳಿಸುವ ಹಸಿರು ನೋಟಗಳನ್ನು ನೀಡುತ್ತದೆ.",
+            "tip_en": "Wind speeds can be high; carry a light jacket even on sunny mornings.",
+            "tip_kn": "ಬೆಟ್ಟದ ಮೇಲೆ ತಂಪಾದ ಬಲವಾದ ಗಾಳಿ ಇರುತ್ತದೆ; ಲಘು ಸ್ವೆಟರ್ ಅಥವಾ ಜಾಕೆಟ್ ತೆಗೆದುಕೊಂಡು ಹೋಗಿ.",
             "phrase_ids": [
               "phrase-which-way",
               "phrase-take-photo",
               "phrase-very-nice"
             ],
             "verified": true,
-            "source_url": "https://karnatakatourism.org"
+            "source_url": "https://chikkamagaluru.nic.in"
           },
           "phrases": [
             {
@@ -299,32 +223,109 @@
               "context": "thanks"
             }
           ]
+        }
+      ],
+      "travel_total_min": 245
+    },
+    {
+      "day": 2,
+      "theme": "Chikkamagaluru & Hassan Highlights",
+      "stops": [
+        {
+          "place_id": "chikkamagaluru-coffee-estate",
+          "start": "09:00",
+          "duration_min": 90,
+          "note_en": "Guided stroll through Arabica and Robusta plantations learning the bean harvesting and roasting process.",
+          "place": {
+            "id": "chikkamagaluru-coffee-estate",
+            "name_en": "Coffee Estate Walk & Tasting",
+            "name_kn": "ಕಾಫಿ ತೋಟದ ನಡಿಗೆ",
+            "region": "Chikkamagaluru",
+            "city": "Chikkamagaluru",
+            "lat": 13.3218,
+            "lng": 75.7725,
+            "categories": [
+              "coffee",
+              "nature",
+              "food"
+            ],
+            "duration_min": 90,
+            "entry_inr": 200,
+            "best_months": [
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "budget_fit": [
+              "mid",
+              "premium"
+            ],
+            "is_meal": "snack",
+            "desc_en": "Guided stroll through Arabica and Robusta plantations learning the bean harvesting and roasting process.",
+            "desc_kn": "ಅರೇಬಿಕಾ ಮತ್ತು ರೋಬಸ್ಟಾ ಕಾಫಿ ಗಿಡಗಳ ನಡುವೆ ನಡಿಗೆ ಹಾಗೂ ಹೊಸದಾಗಿ ಹುರಿದ ಕಾಫಿ ರುಚಿ ನೋಡುವ ಅನುಭವ.",
+            "tip_en": "Buy freshly roasted and ground estate filter coffee directly from the planter.",
+            "tip_kn": "ತೋಟದಲ್ಲೇ ಹೊಸದಾಗಿ ಪುಡಿ ಮಾಡಿದ ಶುದ್ಧ ಫಿಲ್ಟರ್ ಕಾಫಿ ಪುಡಿಯನ್ನು ಖರೀದಿಸಿ.",
+            "phrase_ids": [
+              "phrase-how-much",
+              "phrase-water",
+              "phrase-thanks"
+            ],
+            "verified": false,
+            "source_url": "https://chikkamagaluru.nic.in"
+          },
+          "phrases": [
+            {
+              "id": "phrase-how-much",
+              "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು?",
+              "translit": "Idakke eshtu?",
+              "en": "How much for this?",
+              "context": "shopping"
+            },
+            {
+              "id": "phrase-water",
+              "kn": "ನೀರು ಕೊಡಿ",
+              "translit": "Neeru kodi",
+              "en": "Please give water",
+              "context": "food"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
         },
         {
-          "place_id": "gokarna-mahabaleshwar",
-          "start": "14:50",
-          "duration_min": 75,
-          "note_en": "Sacred coastal pilgrimage site housing the celebrated Atmalinga of Lord Shiva revered since the classical era.",
+          "place_id": "belur-temple",
+          "start": "11:20",
+          "duration_min": 105,
+          "note_en": "Masterpiece of 12th-century Hoysala architecture with celebrated bracket figures and stone filigree.",
           "travel_from_prev": {
-            "km": 3.4,
-            "min": 15,
+            "km": 26,
+            "min": 50,
             "mode": "cab"
           },
           "place": {
-            "id": "gokarna-mahabaleshwar",
-            "name_en": "Gokarna Mahabaleshwar Temple",
-            "name_kn": "ಗೋಕರ್ಣ ಮಹಾಬಲೇಶ್ವರ ದೇವಾಲಯ",
-            "region": "Coast",
-            "city": "Gokarna",
-            "lat": 14.5428,
-            "lng": 74.3182,
+            "id": "belur-temple",
+            "name_en": "Belur Chennakeshava Temple",
+            "name_kn": "ಬೇಲೂರು ಚನ್ನಕೇಶವ ದೇವಾಲಯ",
+            "region": "Hassan",
+            "city": "Belur",
+            "lat": 13.1627,
+            "lng": 75.8596,
             "categories": [
-              "spiritual",
-              "heritage"
+              "heritage",
+              "spiritual"
             ],
-            "duration_min": 75,
+            "duration_min": 105,
             "entry_inr": 0,
             "best_months": [
+              9,
               10,
               11,
               12,
@@ -337,10 +338,304 @@
               "mid",
               "premium"
             ],
-            "desc_en": "Sacred coastal pilgrimage site housing the celebrated Atmalinga of Lord Shiva revered since the classical era.",
-            "desc_kn": "ರಾವಣನಿಂದ ಪ್ರತಿಷ್ಠಾಪಿಸಲ್ಪಟ್ಟ ಪವಿತ್ರ ಆತ್ಮಲಿಂಗವಿರುವ ಕರಾವಳಿಯ ಪ್ರಸಿದ್ಧ ಮುಕ್ತಿ ಕ್ಷೇತ್ರ.",
-            "tip_en": "Traditional dress is strictly required: men remove shirts and wear dhotis.",
-            "tip_kn": "ದೇವಸ್ಥಾನ ಪ್ರವೇಶಿಸಲು ಸಾಂಪ್ರದಾಯಿಕ ಧೋತಿ ಉಡುಪು ಕಡ್ಡಾಯವಾಗಿದೆ.",
+            "desc_en": "Masterpiece of 12th-century Hoysala architecture with celebrated bracket figures and stone filigree.",
+            "desc_kn": "೧೨ನೇ ಶತಮಾನದ ಹೊಯ್ಸಳ ವಾಸ್ತುಶಿಲ್ಪದ ಮೇರುಕೃತಿ, ಸುಪ್ರಸಿದ್ಧ ಶಿಲಾಬಾಲಿಕೆಯರು ಮತ್ತು ಸೂಕ್ಷ್ಮ ಕೆತ್ತನೆಗಳ ತಾಣ.",
+            "tip_en": "Look up at the angled bracket figures (Madanikas) supporting the outer ceiling eaves.",
+            "tip_kn": "ಹೊರಗಿನ ಮೇಲ್ಛಾವಣಿಯ ಮದನಿಕಾ ಶಿಲಾಬಾಲಿಕೆಯರ ಸೂಕ್ಷ್ಮ ಸೌಂದರ್ಯವನ್ನು ತಪ್ಪದೇ ವೀಕ್ಷಿಸಿ.",
+            "phrase_ids": [
+              "phrase-temple-darshan",
+              "phrase-take-photo",
+              "phrase-very-nice"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-temple-darshan",
+              "kn": "ದೇವಸ್ಥಾನದ ದರ್ಶನ ಸಮಯ ಯಾವಾಗ?",
+              "translit": "Devasthanada darshana samaya yavaga?",
+              "en": "When is the temple darshan time?",
+              "context": "temple"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-very-nice",
+              "kn": "ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ!",
+              "translit": "Tumba chennagide!",
+              "en": "It is very beautiful!",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "halebidu-temple",
+          "start": "13:45",
+          "duration_min": 90,
+          "note_en": "Twin temple dedicated to Lord Shiva featuring hundreds of intricate friezes of deities, battles, and wildlife.",
+          "travel_from_prev": {
+            "km": 20.3,
+            "min": 40,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "halebidu-temple",
+            "name_en": "Halebidu Hoysaleswara Temple",
+            "name_kn": "ಹಳೇಬೀಡು ಹೊಯ್ಸಳೇಶ್ವರ ದೇವಾಲಯ",
+            "region": "Hassan",
+            "city": "Halebidu",
+            "lat": 13.2132,
+            "lng": 75.9939,
+            "categories": [
+              "heritage",
+              "spiritual"
+            ],
+            "duration_min": 90,
+            "entry_inr": 0,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Twin temple dedicated to Lord Shiva featuring hundreds of intricate friezes of deities, battles, and wildlife.",
+            "desc_kn": "ನೂರಾರು ಅದ್ಭುತ ಶಿಲಾ ಕೆತ್ತನೆಗಳು ಮತ್ತು ಆನೆಗಳ ಪಟ್ಟಿಕೆಗಳಿಂದ ಅಲಂಕೃತವಾದ ಅವಳಿ ಶಿವ ದೇವಾಲಯ.",
+            "tip_en": "Walk the outer perimeter wall clockwise to follow the continuous relief storylines.",
+            "tip_kn": "ದೇವಾಲಯದ ಕಥಾ ಚಿತ್ರಣಗಳನ್ನು ಕ್ರಮಬದ್ಧವಾಗಿ ವೀಕ್ಷಿಸಲು ಪ್ರದಕ್ಷಿಣೆ ರೂಪದಲ್ಲಿ ನಡೆಯಿರಿ.",
+            "phrase_ids": [
+              "phrase-temple-darshan",
+              "phrase-take-photo",
+              "phrase-thanks"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-temple-darshan",
+              "kn": "ದೇವಸ್ಥಾನದ ದರ್ಶನ ಸಮಯ ಯಾವಾಗ?",
+              "translit": "Devasthanada darshana samaya yavaga?",
+              "en": "When is the temple darshan time?",
+              "context": "temple"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
+        }
+      ],
+      "travel_total_min": 90
+    },
+    {
+      "day": 3,
+      "theme": "Hassan & Mysuru Highlights",
+      "stops": [
+        {
+          "place_id": "shravanabelagola",
+          "start": "09:00",
+          "duration_min": 120,
+          "note_en": "Colossal 57-foot monolithic statue of Lord Bahubali atop Vindhyagiri hill carved in 981 CE.",
+          "place": {
+            "id": "shravanabelagola",
+            "name_en": "Shravanabelagola Gommateshwara",
+            "name_kn": "ಶ್ರವಣಬೆಳಗೊಳ ಗೊಮ್ಮಟೇಶ್ವರ",
+            "region": "Hassan",
+            "city": "Shravanabelagola",
+            "lat": 12.8576,
+            "lng": 76.4862,
+            "categories": [
+              "heritage",
+              "spiritual"
+            ],
+            "duration_min": 120,
+            "entry_inr": 0,
+            "best_months": [
+              10,
+              11,
+              12,
+              1,
+              2
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Colossal 57-foot monolithic statue of Lord Bahubali atop Vindhyagiri hill carved in 981 CE.",
+            "desc_kn": "ವಿಂಧ್ಯಗಿರಿ ಬೆಟ್ಟದ ಮೇಲಿರುವ ೫೭ ಅಡಿ ಎತ್ತರದ ಏಕಶಿಲಾ ಬಾಹುಬಲಿ ಸ್ವಾಮಿಯ ಪವಿತ್ರ ಗೊಮ್ಮಟೇಶ್ವರ ಕ್ಷೇತ್ರ.",
+            "tip_en": "Climb early morning to avoid hot rock steps; wearing thick socks protects feet from afternoon stone heat.",
+            "tip_kn": "ಬೆಟ್ಟದ ಬಂಡೆಗಳು ಬಿಸಿಯಾಗುವ ಮುನ್ನ ಬೆಳಿಗ್ಗೆಯೇ ಹತ್ತಿ; ಕಾಲ್ನಡಿಗೆಗೆ ಸಾಕ್ಸ್ ಧರಿಸುವುದು ಉತ್ತಮ.",
+            "phrase_ids": [
+              "phrase-water",
+              "phrase-temple-darshan",
+              "phrase-thanks"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-water",
+              "kn": "ನೀರು ಕೊಡಿ",
+              "translit": "Neeru kodi",
+              "en": "Please give water",
+              "context": "food"
+            },
+            {
+              "id": "phrase-temple-darshan",
+              "kn": "ದೇವಸ್ಥಾನದ ದರ್ಶನ ಸಮಯ ಯಾವಾಗ?",
+              "translit": "Devasthanada darshana samaya yavaga?",
+              "en": "When is the temple darshan time?",
+              "context": "temple"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "brindavan-gardens",
+          "start": "12:45",
+          "duration_min": 120,
+          "note_en": "Terraced botanical gardens laid across the KRS Dam with synchronized musical fountains at dusk.",
+          "travel_from_prev": {
+            "km": 63.8,
+            "min": 105,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "brindavan-gardens",
+            "name_en": "Brindavan Gardens",
+            "name_kn": "ಬೃಂದಾವನ ಉದ್ಯಾನವನ",
+            "region": "Mysuru",
+            "city": "Mandya",
+            "lat": 12.4244,
+            "lng": 76.5728,
+            "categories": [
+              "nature"
+            ],
+            "duration_min": 120,
+            "entry_inr": 50,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2
+            ],
+            "budget_fit": [
+              "budget",
+              "mid"
+            ],
+            "desc_en": "Terraced botanical gardens laid across the KRS Dam with synchronized musical fountains at dusk.",
+            "desc_kn": "ಕೆಆರ್‌ಎಸ್ ಅಣೆಕಟ್ಟಿನ ಹಿಂಭಾಗದಲ್ಲಿರುವ ಹಂತ ಹಂತದ ಸುಂದರ ಉದ್ಯಾನವನ ಮತ್ತು ಸಂಜೆಯ ಸಂಗೀತ ಕಾರಂಜಿ.",
+            "tip_en": "Arrive around 17:30 to walk the gardens before musical fountain show starts at dusk.",
+            "tip_kn": "ಸಂಜೆಯ ಸಂಗೀತ ಕಾರಂಜಿ ಪ್ರದರ್ಶನ ವೀಕ್ಷಿಸಲು ಸಂಜೆ ೫:೩೦ಕ್ಕೆ ತಲುಪಿ.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-which-way",
+              "phrase-take-photo"
+            ],
+            "verified": false,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-which-way",
+              "kn": "ಈ ರಸ್ತೆ ಎಲ್ಲಿಗೆ ಹೋಗುತ್ತೆ?",
+              "translit": "Ee raste ellige hogutte?",
+              "en": "Where does this road lead to?",
+              "context": "directions"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            }
+          ]
+        },
+        {
+          "place_id": "srirangapatna-temple",
+          "start": "15:20",
+          "duration_min": 75,
+          "note_en": "Majestic river island shrine on the Kaveri dedicated to Lord Ranganatha, dating to the 9th-century Ganga dynasty.",
+          "travel_from_prev": {
+            "km": 17.2,
+            "min": 35,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "srirangapatna-temple",
+            "name_en": "Sri Ranganathaswamy Temple",
+            "name_kn": "ಶ್ರೀ ರಂಗನಾಥಸ್ವಾಮಿ ದೇವಾಲಯ",
+            "region": "Mysuru",
+            "city": "Srirangapatna",
+            "lat": 12.4239,
+            "lng": 76.6946,
+            "categories": [
+              "spiritual",
+              "heritage"
+            ],
+            "duration_min": 75,
+            "entry_inr": 0,
+            "best_months": [
+              1,
+              2,
+              3,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Majestic river island shrine on the Kaveri dedicated to Lord Ranganatha, dating to the 9th-century Ganga dynasty.",
+            "desc_kn": "ಕಾವೇರಿ ನದಿ ದ್ವೀಪದಲ್ಲಿರುವ ೯ನೇ ಶತಮಾನದ ಗಂಗರ ಕಾಲದ ಭವ್ಯ ರಂಗನಾಥಸ್ವಾಮಿ ಕ್ಷೇತ್ರ.",
+            "tip_en": "Dress modestly in traditional Indian clothing for darshan inside the inner sanctum.",
+            "tip_kn": "ಗರ್ಭಗುಡಿಯ ದರ್ಶನಕ್ಕಾಗಿ ಸಾಂಪ್ರದಾಯಿಕ ಉಡುಪನ್ನು ಧರಿಸಿ.",
             "phrase_ids": [
               "phrase-temple-darshan",
               "phrase-water",
@@ -372,79 +667,70 @@
               "context": "thanks"
             }
           ]
-        }
-      ],
-      "travel_total_min": 125
-    },
-    {
-      "day": 3,
-      "theme": "Dharwad-Hubballi Highlights",
-      "stops": [
+        },
         {
-          "place_id": "dharwad-line-bazaar-peda",
-          "start": "09:00",
-          "duration_min": 45,
-          "note_en": "Iconic GI-tagged caramelized milk sweet made using local Dharwadi buffalo milk and castor sugar dusting.",
+          "place_id": "tipu-summer-palace",
+          "start": "16:45",
+          "duration_min": 60,
+          "note_en": "Ornate teakwood palace set amidst landscaped lawns displaying intricate battle murals and relics.",
+          "travel_from_prev": {
+            "km": 1.6,
+            "min": 10,
+            "mode": "cab"
+          },
           "place": {
-            "id": "dharwad-line-bazaar-peda",
-            "name_en": "Dharwad Peda Tasting (Line Bazaar)",
-            "name_kn": "ಧಾರವಾಡ ಪೇಡ (ಲೈನ್ ಬಜಾರ್)",
-            "region": "Dharwad-Hubballi",
-            "city": "Dharwad",
-            "lat": 15.4589,
-            "lng": 75.0078,
+            "id": "tipu-summer-palace",
+            "name_en": "Tipu Sultan Summer Palace (Dariya Daulat)",
+            "name_kn": "ದರಿಯಾ ದೌಲತ್ ಬಾಗ್",
+            "region": "Mysuru",
+            "city": "Srirangapatna",
+            "lat": 12.4172,
+            "lng": 76.7031,
             "categories": [
-              "food",
-              "culture"
+              "heritage"
             ],
-            "duration_min": 45,
-            "entry_inr": 120,
+            "duration_min": 60,
+            "entry_inr": 25,
             "best_months": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7,
-              8,
               9,
               10,
               11,
-              12
+              12,
+              1,
+              2,
+              3
             ],
             "budget_fit": [
               "budget",
               "mid",
               "premium"
             ],
-            "is_meal": "snack",
-            "desc_en": "Iconic GI-tagged caramelized milk sweet made using local Dharwadi buffalo milk and castor sugar dusting.",
-            "desc_kn": "ಧಾರವಾಡದ ಸುಪ್ರಸಿದ್ಧ ಭೌಗೋಳಿಕ ಸೂಚ್ಯಂಕ (GI) ಮಾನ್ಯತೆ ಪಡೆದ ರುಚಿಕರ ಲೈನ್ ಬಜಾರ್ ಪೇಡ.",
-            "tip_en": "Visit the original century-old Mishra or Babusingh Thakur shops along Line Bazaar.",
-            "tip_kn": "ಲೈನ್ ಬಜಾರ್‌ನ ಮೂಲ ಠಾಕೂರ್ ಅಥವಾ ಮಿಶ್ರಾ ಪೇಡ ಅಂಗಡಿಗೆ ಭೇಟಿ ನೀಡಿ.",
+            "desc_en": "Ornate teakwood palace set amidst landscaped lawns displaying intricate battle murals and relics.",
+            "desc_kn": "ಸುಂದರ ತೇಗದ ಮರದ ಕೆತ್ತನೆಗಳು ಮತ್ತು ಐತಿಹಾಸಿಕ ಯುದ್ಧ ವರ್ಣಚಿತ್ರಗಳನ್ನು ಹೊಂದಿರುವ ಬೇಸಿಗೆ ಅರಮನೆ.",
+            "tip_en": "Inspect the intricate western wall fresco illustrating the 1780 Battle of Pollilur.",
+            "tip_kn": "ಗೋಡೆಗಳ ಮೇಲಿನ ಐತಿಹಾಸಿಕ ವರ್ಣಚಿತ್ರಗಳನ್ನು ಗಮನವಿಟ್ಟು ನೋಡಿ.",
             "phrase_ids": [
-              "phrase-how-much",
-              "phrase-delicious-food",
+              "phrase-ticket-cost",
+              "phrase-which-way",
               "phrase-thanks"
             ],
-            "verified": true,
-            "source_url": "https://karnatakatourism.org"
+            "verified": false,
+            "source_url": "https://asi.nic.in"
           },
           "phrases": [
             {
-              "id": "phrase-how-much",
-              "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು?",
-              "translit": "Idakke eshtu?",
-              "en": "How much for this?",
-              "context": "shopping"
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
             },
             {
-              "id": "phrase-delicious-food",
-              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
-              "translit": "Oota tumba ruchi aagide",
-              "en": "The food is very tasty",
-              "context": "food"
+              "id": "phrase-which-way",
+              "kn": "ಈ ರಸ್ತೆ ಎಲ್ಲಿಗೆ ಹೋಗುತ್ತೆ?",
+              "translit": "Ee raste ellige hogutte?",
+              "en": "Where does this road lead to?",
+              "context": "directions"
             },
             {
               "id": "phrase-thanks",
@@ -456,15 +742,15 @@
           ]
         }
       ],
-      "travel_total_min": 0
+      "travel_total_min": 150
     }
   ],
   "cost": {
     "stay": 8000,
     "food": 7200,
-    "transport": 16112,
-    "entry": 1760,
-    "total": 33072,
+    "transport": 14678,
+    "entry": 2300,
+    "total": 32178,
     "people": 4
   },
   "tips": [

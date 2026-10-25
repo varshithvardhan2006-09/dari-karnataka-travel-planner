@@ -13,21 +13,18 @@ export const viewport: Viewport = {
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
   variable: "--font-bricolage",
   display: "swap",
 });
 
 const hanken = Hanken_Grotesk({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   variable: "--font-hanken",
   display: "swap",
 });
 
 const notoSansKannada = Noto_Sans_Kannada({
   subsets: ["kannada"],
-  weight: ["400", "500", "600", "700"],
   variable: "--font-noto-kannada",
   display: "swap",
 });

@@ -1,18 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useLang } from "@/lib/i18n/useLang";
 import LangToggle from "./LangToggle";
 
-export default function Navbar() {
+function NavbarContent() {
   const { lang, t } = useLang();
   const pathname = usePathname() || "";
+  const searchParams = useSearchParams();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isPlan = pathname === "/plan";
-  const isTrip = pathname.startsWith("/trip");
+  const isSample = pathname.startsWith("/trip") && Boolean(searchParams?.get("sample"));
   const isCredits = pathname === "/credits";
 
   return (
@@ -57,7 +58,7 @@ export default function Navbar() {
             <Link
               href="/trip?sample=heritage"
               className={`text-sm font-medium px-3.5 py-1.5 rounded-xl transition-all ${
-                isTrip
+                isSample
                   ? "bg-white/15 text-white font-semibold"
                   : "text-white/80 hover:text-white hover:bg-white/10"
               }`}
@@ -130,7 +131,7 @@ export default function Navbar() {
             href="/trip?sample=heritage"
             onClick={() => setMobileMenuOpen(false)}
             className={`block px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-              isTrip
+              isSample
                 ? "bg-white/15 text-white"
                 : "text-white/90 hover:bg-white/10"
             }`}
@@ -158,5 +159,19 @@ export default function Navbar() {
         </div>
       )}
     </header>
+  );
+}
+
+export default function Navbar() {
+  return (
+    <Suspense
+      fallback={
+        <header className="w-full bg-[#14202B] text-white sticky top-0 z-[1000] shadow-md border-b border-black/40 h-18">
+          <div className="h-[3px] w-full bg-gradient-to-r from-[#8E1F2F] via-[#F2B705] to-[#8E1F2F]" />
+        </header>
+      }
+    >
+      <NavbarContent />
+    </Suspense>
   );
 }

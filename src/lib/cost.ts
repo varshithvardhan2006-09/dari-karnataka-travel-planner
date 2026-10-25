@@ -45,35 +45,38 @@ export function calculateTripCost(params: {
   transportPreference?: TransportPreference;
 }): CostSummary {
   const { days, budget, travellers, totalKm, visitedPlaces, peopleCount, transportPreference } = params;
+  const safeDays = Math.max(1, typeof days === "number" && !isNaN(days) ? days : 1);
+  const safeKm = Math.max(0, typeof totalKm === "number" && !isNaN(totalKm) ? totalKm : 0);
   const people = (peopleCount && peopleCount >= 1 && peopleCount <= 10)
     ? peopleCount
     : PEOPLE_COUNT_MAP[travellers] || 2;
   const rates = TIER_DAILY_RATES[budget] || TIER_DAILY_RATES.mid;
 
   // 1. Stay cost: people * stayPerPerson * (days - 1 for nights, min 1 for multi-day, 0 for 1-day day trip)
-  const nights = days > 1 ? days - 1 : 0;
+  const nights = safeDays > 1 ? safeDays - 1 : 0;
   const stay = Math.round(people * rates.stayPerPerson * nights);
 
   // 2. Food cost: people * foodPerPerson * days
-  const food = Math.round(people * rates.foodPerPerson * days);
+  const food = Math.round(people * rates.foodPerPerson * safeDays);
 
   // 3. Transport cost: based on total road km and selected transport mode
   let transport = 0;
   if (transportPreference === "own_car") {
     // Fuel + toll estimation (~₹13/km + ₹100 daily parking/toll)
-    transport = Math.round(totalKm * 13 + days * 100);
+    transport = Math.round(safeKm * 13 + safeDays * 100);
   } else if (transportPreference === "bus_train") {
     // KSRTC / train public transit (~₹4/km per person + ₹100 daily local auto)
-    transport = Math.round(totalKm * 4 * people + days * 100);
+    transport = Math.round(safeKm * 4 * people + safeDays * 100);
   } else {
     // Cab or Auto
-    const isAutoSolo = people === 1 && totalKm < 40;
+    const isAutoSolo = people === 1 && safeKm < 40;
     const perKmRate = isAutoSolo ? TRANSPORT_RATES.autoPerKm : TRANSPORT_RATES.cabPerKm;
-    transport = Math.round(totalKm * perKmRate + days * TRANSPORT_RATES.baseBookingFee);
+    transport = Math.round(safeKm * perKmRate + safeDays * TRANSPORT_RATES.baseBookingFee);
   }
 
   // 4. Entry fees: sum of entry_inr * people
-  const entryTotalPerPerson = visitedPlaces.reduce((sum, p) => sum + (p.entry_inr || 0), 0);
+  const safePlaces = Array.isArray(visitedPlaces) ? visitedPlaces : [];
+  const entryTotalPerPerson = safePlaces.reduce((sum, p) => sum + (p.entry_inr || 0), 0);
   const entry = Math.round(entryTotalPerPerson * people);
 
   // Total must exactly equal the sum of all itemized categories
@@ -98,22 +101,24 @@ export function estimateCostRange(
   people: number,
   transportPreference?: TransportPreference
 ): { min: number; max: number; text: string } {
+  const safeDays = Math.max(1, typeof days === "number" && !isNaN(days) ? days : 1);
+  const safePeople = Math.max(1, typeof people === "number" && !isNaN(people) ? people : 2);
   const rates = TIER_DAILY_RATES[budget] || TIER_DAILY_RATES.mid;
-  const nights = days > 1 ? days - 1 : 0;
-  const stay = people * rates.stayPerPerson * nights;
-  const food = people * rates.foodPerPerson * days;
+  const nights = safeDays > 1 ? safeDays - 1 : 0;
+  const stay = safePeople * rates.stayPerPerson * nights;
+  const food = safePeople * rates.foodPerPerson * safeDays;
   const avgKmPerDay = 80;
 
   let transport = 0;
   if (transportPreference === "own_car") {
-    transport = days * avgKmPerDay * 13 + days * 100;
+    transport = safeDays * avgKmPerDay * 13 + safeDays * 100;
   } else if (transportPreference === "bus_train") {
-    transport = days * avgKmPerDay * 4 * people + days * 100;
+    transport = safeDays * avgKmPerDay * 4 * safePeople + safeDays * 100;
   } else {
-    transport = days * avgKmPerDay * 20 + days * TRANSPORT_RATES.baseBookingFee;
+    transport = safeDays * avgKmPerDay * 20 + safeDays * TRANSPORT_RATES.baseBookingFee;
   }
 
-  const avgEntry = days * 3 * 50 * people;
+  const avgEntry = safeDays * 3 * 50 * safePeople;
   const baseTotal = stay + food + transport + avgEntry;
 
   const min = Math.round((baseTotal * 0.85) / 1000) * 1000;

@@ -17,6 +17,7 @@ interface StopDetailDrawerProps {
   onSwapWith?: (alternative: Place) => void;
   onRemoveStop?: (placeId: string) => void;
   onShowToLocal?: (place: Place) => void;
+  visitedPlaceIds?: Set<string>;
 }
 
 export default function StopDetailDrawer({
@@ -26,6 +27,7 @@ export default function StopDetailDrawer({
   onSwapWith,
   onRemoveStop,
   onShowToLocal,
+  visitedPlaceIds,
 }: StopDetailDrawerProps) {
   const { lang } = useLang();
 
@@ -42,17 +44,18 @@ export default function StopDetailDrawer({
 
   const place = stop?.place;
 
-  // Find 2 to 3 similar alternatives from the same area or category
+  // Find 2 to 3 similar alternatives from the same area or category (strictly omitting already visited stops)
   const alternatives = useMemo(() => {
     if (!place) return [];
     return allPlaces
       .filter(
         (p) =>
           p.id !== place.id &&
+          (!visitedPlaceIds || !visitedPlaceIds.has(p.id)) &&
           (p.region === place.region || p.categories.some((c) => place.categories.includes(c)))
       )
       .slice(0, 3);
-  }, [place]);
+  }, [place, visitedPlaceIds]);
 
   const playPhraseAudio = (text: string, translit?: string) => {
     playKannadaSpeech(text, { translit });
@@ -201,9 +204,22 @@ export default function StopDetailDrawer({
                 </div>
               </div>
 
-              <div className="text-[11px] text-[#586673] pt-1 flex items-center gap-1.5">
-                <span className="text-[#1E6B52] font-bold">✓</span>
-                <span>Estimates from our dataset. Prices change, so check before you book.</span>
+              <div className="text-[11px] text-[#586673] pt-1 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-t border-[#E2E7E2]/60 mt-1">
+                <span className="flex items-center gap-1.5">
+                  <span className="text-[#1E6B52] font-bold">✓</span>
+                  <span>Estimates from verified Karnataka dataset</span>
+                </span>
+                {place.source_url && (
+                  <a
+                    href={place.source_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#8E1F2F] hover:underline font-semibold flex items-center gap-1 text-[11px]"
+                  >
+                    <span>Source: {new URL(place.source_url).hostname.replace(/^www\./, "")}</span>
+                    <span>↗</span>
+                  </a>
+                )}
               </div>
             </div>
 

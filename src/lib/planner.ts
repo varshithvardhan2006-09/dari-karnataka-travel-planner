@@ -153,7 +153,9 @@ export function validateAIOutput(
  */
 export function buildDeterministicPlan(request: PlanRequest): Plan {
   const limits = PACE_STOP_LIMITS[request.pace] || PACE_STOP_LIMITS.balanced;
-  const stopsPerDay = limits.target;
+  // For multi-day trips (5-7 days), target limits.min to preserve candidate density
+  // across all regions and prevent stop starvation on later days.
+  const stopsPerDay = request.days >= 5 ? limits.min : limits.target;
 
   // Retrieve candidate pool
   let pool = getCandidates(request, allPlaces);
@@ -184,7 +186,10 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
 
   for (let dayNum = 1; dayNum <= request.days; dayNum++) {
     const dayStops: { place_id: string; start: string; note_en: string }[] = [];
-    const countForToday = Math.min(stopsPerDay, Math.max(limits.min, unusedPlaces.length));
+    const remainingDays = request.days - dayNum + 1;
+    const maxEvenStops = Math.max(limits.min, Math.floor(unusedPlaces.length / remainingDays));
+    const targetForDay = Math.min(stopsPerDay, maxEvenStops);
+    const countForToday = Math.min(targetForDay, Math.max(limits.min, unusedPlaces.length));
 
     // Sort unused places by distance to current anchor
     unusedPlaces.sort((a, b) => {
@@ -205,9 +210,10 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
       // finish before DAY_END. If nothing qualifies, end the day early.
       if (lastPlace) {
         const lp: Place = lastPlace;
-        const eligible = unusedPlaces.findIndex((p) => {
+        let maxLeg = MAX_LEG_KM;
+        let eligible = unusedPlaces.findIndex((p) => {
           const roadKm = estimateRoadDistanceKm(lp.lat, lp.lng, p.lat, p.lng);
-          if (roadKm > MAX_LEG_KM) return false;
+          if (roadKm > maxLeg) return false;
           const [h, m] = addMinutesToTime(
             dayClock,
             estimateTravelTimeMin(roadKm) + p.duration_min
@@ -216,6 +222,23 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
             .map(Number);
           return h * 60 + m <= DAY_END_MIN;
         });
+
+        // If minimum stops for the day haven't been met, relax distance threshold up to 160km
+        if (eligible === -1 && dayStops.length < limits.min) {
+          maxLeg = 160;
+          eligible = unusedPlaces.findIndex((p) => {
+            const roadKm = estimateRoadDistanceKm(lp.lat, lp.lng, p.lat, p.lng);
+            if (roadKm > maxLeg) return false;
+            const [h, m] = addMinutesToTime(
+              dayClock,
+              estimateTravelTimeMin(roadKm) + p.duration_min
+            )
+              .split(":")
+              .map(Number);
+            return h * 60 + m <= DAY_END_MIN;
+          });
+        }
+
         if (eligible === -1) break;
         chosenIndex = eligible;
       }

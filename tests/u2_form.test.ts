@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { countMatchingPlaces } from "../src/lib/candidates";
 import { estimateCostRange } from "../src/lib/cost";
+import { buildDeterministicPlan } from "../src/lib/planner";
 import placesData from "../data/places.json";
 import { Place } from "../src/lib/schema";
 
@@ -36,5 +37,38 @@ describe("U2 Match counter & cost range tests", () => {
     // 7 days premium family (4 people)
     const range7d = estimateCostRange(7, "premium", 4);
     expect(range7d.min).toBeGreaterThan(70000);
+
+    // 4 days mid couple with bus_train transport preference (matching user scenario)
+    const range4dBus = estimateCostRange(4, "mid", 2, "bus_train");
+    expect(range4dBus.min).toBeGreaterThan(10000);
+    expect(range4dBus.max).toBeLessThan(35000);
+    expect(range4dBus.text).toMatch(/^Rs \d+k to \d+k$/);
+  });
+
+  it("verifies candidate matches and deterministic plan for user screenshot preferences", () => {
+    // Exact categories matching screenshot showing 35 matches:
+    const screenshotInterests = ["heritage", "nature", "wildlife", "coffee"] as const;
+    const matchCount = countMatchingPlaces([...screenshotInterests], places);
+    expect(matchCount).toBeGreaterThanOrEqual(30);
+
+    // Verify buildDeterministicPlan successfully handles bus_train, any food, and November travel
+    const plan = buildDeterministicPlan({
+      interests: [...screenshotInterests],
+      days: 4,
+      start_city: "Bengaluru",
+      budget: "mid",
+      pace: "relaxed",
+      travellers: "couple",
+      month: 11,
+      lang: "en",
+      people_count: 2,
+      food_preference: "any",
+      transport_mode: "bus_train",
+      low_walking: false,
+    });
+
+    expect(plan).toBeDefined();
+    expect(plan.days.length).toBe(4);
+    expect(plan.days[0].stops.length).toBeGreaterThanOrEqual(2);
   });
 });

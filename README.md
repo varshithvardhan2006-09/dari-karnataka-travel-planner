@@ -9,7 +9,8 @@
   <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19.3.0-61DAFB?style=for-the-badge&logo=react" alt="React" /></a>
   <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript" /></a>
   <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind-v4-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS" /></a>
-  <a href="https://vitest.dev/"><img src="https://img.shields.io/badge/Tests-67%20Passed-brightgreen?style=for-the-badge&logo=vitest" alt="Vitest" /></a>
+  <a href="https://vitest.dev/"><img src="https://img.shields.io/badge/Tests-91%20Passed-brightgreen?style=for-the-badge&logo=vitest" alt="Vitest" /></a>
+  <a href="https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/varshithvardhan2006-09/dari-karnataka-travel-planner/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=CI" alt="Dari CI Status" /></a>
   <a href="https://dari-karnataka-travel-planner.vercel.app"><img src="https://img.shields.io/badge/Deployment-Live-success?style=for-the-badge&logo=vercel" alt="Vercel" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License" /></a>
 </p>
@@ -29,6 +30,38 @@
 Most generic AI planners (such as raw ChatGPT or Gemini prompts) suffer from severe practical deficiencies: they hallucinate non-existent monuments, combine sights in different districts on the same morning, invent arbitrary driving times, emit broken machine-translated Kannada, and fail completely when rate-limited.
 
 **Dari solves this at the architectural layer** with a constrained candidate whitelist, deterministic geographic clustering, true multilingual separation, and a zero-downtime offline fallback engine that runs reliably even without API keys.
+
+---
+
+## 📑 Table of Contents
+
+- [🧭 Overview](#-overview)
+- [📸 Application Preview & Interface](#-application-preview--interface)
+- [🌟 Key Highlights & Engineering Features](#-key-highlights--engineering-features)
+  - [1. Constrained Place-ID Architecture (Zero Hallucination)](#1-constrained-place-id-architecture-zero-hallucination)
+  - [2. High-Fidelity Kannada Audio & "Show to Local" Driver Cards](#2-high-fidelity-kannada-audio--show-to-local-driver-cards)
+  - [3. Comprehensive Deterministic Geographic Engine](#3-comprehensive-deterministic-geographic-engine)
+  - [4. Transparent Itemized Budget Engine](#4-transparent-itemized-budget-engine)
+  - [5. URL Sharing & Calendar Integration (Zero Database Dependency)](#5-url-sharing--calendar-integration-zero-database-dependency)
+- [🏛️ System Architecture & Request Flow](#️-system-architecture--request-flow)
+- [🗺️ Curated Karnataka Dataset (39 Destinations)](#️-curated-karnataka-dataset-39-destinations)
+  - [🏛️ Primary Data Sources & Provenance](#️-primary-data-sources--provenance)
+- [🛠️ Technology Stack](#️-technology-stack)
+- [⚡ Quick Start & Local Setup](#-quick-start--local-setup)
+  - [1. Prerequisites](#1-prerequisites)
+  - [2. Clone & Install](#2-clone--install)
+  - [3. Environment Variables](#3-environment-variables)
+  - [4. Development Server](#4-development-server)
+  - [5. Running Tests & Quality Checks](#5-running-tests--quality-checks)
+- [🧪 Test Suite & Quality Assurance](#-test-suite--quality-assurance)
+- [📡 API Reference](#-api-reference)
+  - [`POST /api/plan`](#post-apiplan)
+  - [`GET /api/plan`](#get-apiplan)
+  - [`POST /api/translate`](#post-apitranslate)
+  - [`GET /api/tts`](#get-apitts)
+- [🔒 Security & Data Integrity](#-security--data-integrity)
+- [🚀 Roadmap & Future Enhancements](#-roadmap--future-enhancements)
+- [👨‍💻 Author & Project Credits](#-author--project-credits)
 
 ---
 
@@ -67,9 +100,11 @@ Most generic AI planners (such as raw ChatGPT or Gemini prompts) suffer from sev
 The AI model is **strictly prohibited from generating free-text destination names, coordinates, or fees**. The prompt receives only scored candidate IDs from [`data/places.json`](data/places.json) and must return valid IDs. Any unknown ID or candidate not in the whitelist is automatically rejected and retried with actionable diagnostic feedback.
 
 ### 2. High-Fidelity Kannada Audio & "Show to Local" Driver Cards
-- **Audio Stream (`/api/tts`):** Native Kannada pronunciation streamed with `Accept-Ranges: bytes` support across desktop and mobile browsers.
+- **Audio Stream (`/api/tts`):** Native pronunciation streamed with `Accept-Ranges: bytes` support across desktop and mobile browsers, supporting Kannada, Hindi, Telugu, Tamil, Malayalam, and English.
+- **Dynamic Multi-Language AI Translator (`/api/translate`):** Instant conversational translation tailored for local interactions, powered by Groq and Gemini with an offline emergency travel dictionary.
 - **Phonetic Fallback:** On operating systems lacking native `kn-IN` voice packs, the engine automatically speaks phonetically transliterated English so drivers and travelers can clearly hear the words out loud.
 - **Driver Communication Cards:** Full-screen, high-contrast modal displaying *"ದಯವಿಟ್ಟು ನನ್ನನ್ನು ಇಲ್ಲಿಗೆ ಕರೆದುಕೊಂಡು ಹೋಗಿ"* (*Please take me here*) with destination Kannada script, English title, district, and one-tap voice pronunciation.
+- **Verified Google Maps Integration:** Direct coordinate-based deep links (`query=lat,lng`) and turn-by-turn navigation links with contextual search fallbacks across all 39 destinations.
 
 ### 3. Comprehensive Deterministic Geographic Engine
 - **Accurate Travel Times:** Uses Haversine distance with a 1.3 road curvature factor, 40 km/h baseline speed, and a 10-minute traffic buffer rounded to 5-minute windows.
@@ -81,7 +116,7 @@ The AI model is **strictly prohibited from generating free-text destination name
 Calculates honest, mathematical costs:
 $$\text{Total} = \text{Lodging} + \text{Food} + \text{Transport} + \text{Entry Fees}$$
 - **Lodging:** ₹0 for single-day trips; tier-based room scaling for solo, couples, families, and custom party sizes (1–10 people).
-- **Transport:** Customized per transport preference (Cab at ₹14–18/km, Own Car at ₹8.5/km, or Public Bus/Train transit).
+- **Transport:** Customized per transport preference (Cab at ₹16–20/km, Own Car at ₹13/km + tolls, or Public Bus/Train transit at ₹4/km per person).
 - **Entry Fees:** Exact sum of verified ticket prices scaled per person.
 
 ### 5. URL Sharing & Calendar Integration (Zero Database Dependency)
@@ -155,6 +190,19 @@ Our dataset spans all 6 geographical zones of Karnataka without biasing solely t
 | **Badami & Northern Karnataka** | Badami Cave Temples, Pattadakal UNESCO Monument Complex, Aihole Durga Temple, Gol Gumbaz (Vijayapura), Bidar Fort, Mahmud Gawan Madrasa, Kalaburagi Fort |
 | **Karavali Coast & Western Ghats** | Mangaluru Panambur Beach, Udupi Sri Krishna Matha, Malpe Beach & St. Mary's Island, Murudeshwar Temple & Shiva Statue, Gokarna Om Beach, Jog Falls, Mullayanagiri Peak, Baba Budangiri, Abbey Falls, Dubare Elephant Camp, Dandeli River Rafting |
 
+### 🏛️ Primary Data Sources & Provenance
+
+To guarantee 99%+ factual accuracy and eliminate AI hallucinations, all data points in Dari are anchored to verified public and government authorities:
+
+| Domain | Primary Authority Source | What It Powers |
+|---|---|---|
+| **Heritage & Monuments** | [Archaeological Survey of India (ASI)](https://asi.nic.in) & [UNESCO](https://whc.unesco.org) | Exact entry tariffs, opening hours, and historical notes for Hampi, Pattadakal, Badami, Belur, and Halebidu |
+| **Karnataka Tourism** | [Department of Tourism, Govt of Karnataka](https://karnatakatourism.org) & [KSTDC](https://kstdc.co) | Regional travel circuits, verified highlights, and seasonal travel windows |
+| **Palaces & Temples** | [Mysore Palace Board](https://mysorepalace.karnataka.gov.in) & Official Temple Trusts | Royal palace entry ticketing and sacred sanctum darshan timings |
+| **GPS & Route Routing** | [OpenStreetMap (OSM)](https://www.openstreetmap.org) & [Google Maps](https://maps.google.com) | Exact coordinates, road distance calculations, and turn-by-turn navigation deep links |
+| **Weather & Monsoons** | [India Meteorological Department (IMD)](https://mausam.imd.gov.in) | Seasonal month recommendations (monsoon windows in the Ghats vs dry winter in the plains) |
+| **Language & Audio** | Native Kannada Curators & [Google Speech](https://cloud.google.com/text-to-speech) | 100% human-verified Kannada phrases, phonetic transliterations, and native voice audio |
+
 ---
 
 ## 🛠️ Technology Stack
@@ -171,7 +219,7 @@ Our dataset spans all 6 geographical zones of Karnataka without biasing solely t
 | **Audio & Speech** | **Google Neural TTS Proxy** + **Web Speech API** | Authentic native Kannada speech streaming with phonetic transliteration |
 | **URL Compression**| **LZ-String 1.5** | High-ratio compression for stateless itinerary sharing |
 | **Calendar** | **iCalendar RFC 5545** | Standard calendar event file generation client-side |
-| **Testing** | **Vitest 5.0** (12 suites, 67 tests) | Fast unit, schema, geographic, and API integration testing |
+| **Testing** | **Vitest 5.0** (15 suites, 91 tests) | Fast unit, schema, geographic, and API integration testing |
 | **CI / CD** | **GitHub Actions** + **Vercel** | Automated linting, test suite execution, and production deployment |
 
 ---
@@ -203,7 +251,7 @@ GROQ_MODEL=openai/gpt-oss-120b
 
 # Secondary Fallback AI Provider (Google Gemini)
 GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-flash-latest
 
 # Base App URL
 NEXT_PUBLIC_APP_URL=https://dari-karnataka-travel-planner.vercel.app
@@ -217,7 +265,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ### 5. Running Tests & Quality Checks
 ```bash
-# Run unit & integration test suite (67 tests)
+# Run unit & integration test suite (91 tests)
 npm run test
 
 # Run ESLint validation
@@ -231,26 +279,10 @@ npm run build
 
 ## 🧪 Test Suite & Quality Assurance
 
-Dari maintains strict test coverage across 12 automated test suites:
+Dari maintains comprehensive automated test coverage across **15 test suites (91 tests)** verifying geographic route clustering, schedule constraints, itemized cost invariants, multi-language speech, and offline translation fallbacks. Run the full suite locally:
 
-```text
- RUN  v5.0.5 C:/Projects/dari-karnataka
-
- ✓ tests/candidates.test.ts (7 tests) — Distance scoring, cohort segregation, unmapped city handling
- ✓ tests/cost.test.ts       (7 tests) — Math invariants, party size scaling, transport mode rates
- ✓ tests/planner.test.ts   (12 tests) — Deterministic clustering, travel buffers, prompt schedule rules
- ✓ tests/validate.test.ts   (9 tests) — Zod dataset schemas, coordinate bounds, integer constraints
- ✓ tests/kannada.test.ts    (4 tests) — Kannada text completeness, zero AI Kannada generation proof
- ✓ tests/errors.test.ts    (12 tests) — 32KB payload guard, rate limits, 429 headers, streaming TTS
- ✓ tests/share.test.ts      (3 tests) — LZ-String compression/decompression, corruption resilience
- ✓ tests/samples.test.ts    (2 tests) — Sample schema conformity & dynamic emergency customization
- ✓ tests/smoke.test.ts      (3 tests) — i18n leaf key parity between English and Kannada
- ✓ tests/u2_form.test.ts    (2 tests) — Form validation & query parameter serialization
- ✓ tests/u4_helpers.test.ts (4 tests) — Time rounding, travel time buffers, pin number mapping
- ✓ tests/u10_photos.test.ts (2 tests) — Wikimedia attribution metadata & licensing compliance
-
- Test Files  12 passed (12)
-      Tests  67 passed (67)
+```bash
+npm test
 ```
 
 ---
@@ -294,8 +326,31 @@ Healthcheck and dataset telemetry endpoint.
 }
 ```
 
-### `GET /api/tts?text=...`
-Streams authentic native Kannada speech audio.
+### `POST /api/translate`
+Instant conversational travel translation across South Indian languages.
+
+- **Supported Languages:** `kn` (Kannada), `hi` (Hindi), `te` (Telugu), `ta` (Tamil), `ml` (Malayalam), `en` (English).
+- **Request Body:**
+```json
+{
+  "text": "Where is the bus stand?",
+  "sourceLang": "en",
+  "targetLang": "kn"
+}
+```
+- **Response (200 OK):**
+```json
+{
+  "translatedText": "ಬಸ್ ನಿಲ್ದಾಣ ಎಲ್ಲಿದೆ?",
+  "transliteration": "Bus nildana ellide?",
+  "sourceLang": "en",
+  "targetLang": "kn",
+  "provider": "ai-groq"
+}
+```
+
+### `GET /api/tts?text=...&lang=kn`
+Streams authentic native speech audio for Kannada (`kn`), Hindi (`hi`), Telugu (`te`), Tamil (`ta`), Malayalam (`ml`), or English (`en`).
 
 - **Response:** `200 OK`
 - **Headers:** `Content-Type: audio/mpeg`, `Accept-Ranges: bytes`, `Cache-Control: public, max-age=604800, immutable`.

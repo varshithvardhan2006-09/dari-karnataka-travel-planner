@@ -91,6 +91,46 @@ export default function CreditsPage() {
         )}
       </div>
 
+      {/* Primary Data Sources & Provenance */}
+      <div className="bg-white rounded-2xl border border-[#DCE1DD] shadow-xs p-6 space-y-4">
+        <div>
+          <h2 className="font-heading font-bold text-lg text-[#14202B]">
+            {lang === "kn" ? "ಅಧಿಕೃತ ಡೇಟಾ ಮೂಲಗಳು (Primary Data Sources)" : "Primary Data Sources & Authority"}
+          </h2>
+          <p className="text-xs text-[#586673] mt-1 leading-relaxed">
+            {lang === "kn"
+              ? "ದಾರಿ ಕೃತಕ ಬುದ್ಧಿಮತ್ತೆಗೆ ಸ್ಥಳಗಳ ಹೆಸರುಗಳು ಅಥವಾ ಶುಲ್ಕಗಳನ್ನು ಊಹಿಸಲು ಅವಕಾಶ ನೀಡುವುದಿಲ್ಲ. ನಮ್ಮ ಡೇಟಾಸೆಟ್ ಈ ಕೆಳಗಿನ ಅಧಿಕೃತ ಸರ್ಕಾರಿ ಮತ್ತು ಮುಕ್ತ ಮೂಲಗಳಿಂದ ದೃಢೀಕರಿಸಲ್ಪಟ್ಟಿದೆ:"
+              : "Dari does not allow AI to hallucinate or invent places or fees. All 39 destinations and route metadata are grounded in verified government and open authoritative sources:"}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="p-3.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2]">
+            <div className="font-bold text-[#8E1F2F]">Karnataka Tourism (KSTDC)</div>
+            <div className="text-[#586673] mt-1">Official tourism circuits, regional zoning, and visiting hour guidelines.</div>
+            <a href="https://karnatakatourism.org" target="_blank" rel="noopener noreferrer" className="text-[#8E1F2F] hover:underline font-semibold mt-2 inline-block">karnatakatourism.org ↗</a>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2]">
+            <div className="font-bold text-[#8E1F2F]">Archaeological Survey of India (ASI)</div>
+            <div className="text-[#586673] mt-1">UNESCO World Heritage ticket tariffs and monument regulations for Hampi, Pattadakal, and Hoysala monuments.</div>
+            <a href="https://asi.nic.in" target="_blank" rel="noopener noreferrer" className="text-[#8E1F2F] hover:underline font-semibold mt-2 inline-block">asi.nic.in ↗</a>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2]">
+            <div className="font-bold text-[#8E1F2F]">Mysore Palace Board & Temple Trusts</div>
+            <div className="text-[#586673] mt-1">Verified palace entry fees and temple sanctum darshan hours.</div>
+            <a href="https://mysorepalace.karnataka.gov.in" target="_blank" rel="noopener noreferrer" className="text-[#8E1F2F] hover:underline font-semibold mt-2 inline-block">mysorepalace.karnataka.gov.in ↗</a>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2]">
+            <div className="font-bold text-[#8E1F2F]">OpenStreetMap (OSM) & IMD Weather</div>
+            <div className="text-[#586673] mt-1">Geocoded GPS coordinates and regional seasonal climate data.</div>
+            <a href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer" className="text-[#8E1F2F] hover:underline font-semibold mt-2 inline-block">openstreetmap.org ↗</a>
+          </div>
+        </div>
+      </div>
+
       <div className="p-4 rounded-xl bg-[#F7F9F6] border border-[#DCE1DD] text-xs text-[#586673] leading-relaxed">
         <strong>{lang === "kn" ? "ಮುಕ್ತ ಮೂಲ ಮತ್ತು ಡೇಟಾಸೆಟ್ ಪ್ರಾಮಾಣಿಕತೆಯ ಟಿಪ್ಪಣಿ:" : "Open Source & Dataset Honesty Note:"}</strong>{" "}
         {lang === "kn"

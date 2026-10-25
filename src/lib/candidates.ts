@@ -29,6 +29,21 @@ export const START_CITY_COORDINATES: Record<string, { lat: number; lng: number }
   Mandya: { lat: 12.5234, lng: 76.8973 },
   Kushalnagar: { lat: 12.4583, lng: 75.9614 },
   Gundlupete: { lat: 11.8080, lng: 76.6890 },
+  Murudeshwar: { lat: 14.0940, lng: 74.4899 },
+  Karwar: { lat: 14.8136, lng: 74.1298 },
+  Dandeli: { lat: 15.2427, lng: 74.6230 },
+  Davangere: { lat: 14.4644, lng: 75.9218 },
+  Tumakuru: { lat: 13.3409, lng: 77.1006 },
+  Ballari: { lat: 15.1394, lng: 76.9214 },
+  Chitradurga: { lat: 14.2251, lng: 76.3980 },
+  Bagalkot: { lat: 16.1817, lng: 75.6958 },
+  Kolar: { lat: 13.1367, lng: 78.1291 },
+  Ramanagara: { lat: 12.7150, lng: 77.2813 },
+  Chamarajanagar: { lat: 11.9261, lng: 76.9437 },
+  Sirsi: { lat: 14.6195, lng: 74.8354 },
+  Koppal: { lat: 15.3533, lng: 76.1553 },
+  Pattadakal: { lat: 15.9485, lng: 75.8160 },
+  Aihole: { lat: 16.0189, lng: 75.8814 },
 };
 
 /**

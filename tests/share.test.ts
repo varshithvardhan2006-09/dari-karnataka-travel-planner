@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import fs from "fs";
 import LZString from "lz-string";
 import { buildDeterministicPlan } from "../src/lib/planner";
 import { PlanRequest, Plan, PlanSchema } from "../src/lib/schema";
@@ -75,5 +76,19 @@ describe("Trip URL Share with lz-string", () => {
     const parsed = JSON.parse(decompressed!);
     const validation = PlanSchema.safeParse(parsed);
     expect(validation.success).toBe(false);
+  });
+
+  it("successfully validates all 4 curated samples when compressed and decompressed", () => {
+    const samples = ["heritage", "nature", "mixed", "food"];
+    samples.forEach((key) => {
+      const sample = JSON.parse(fs.readFileSync(`data/samples/${key}.json`, "utf8"));
+      const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(sample));
+      expect(compressed.length).toBeGreaterThan(5000);
+      const decompressed = LZString.decompressFromEncodedURIComponent(compressed);
+      expect(decompressed).toBeDefined();
+      const parsed = JSON.parse(decompressed!);
+      const validation = PlanSchema.safeParse(parsed);
+      expect(validation.success).toBe(true);
+    });
   });
 });

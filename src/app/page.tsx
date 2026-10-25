@@ -67,6 +67,7 @@ export default function LandingPage() {
 
   const playKannadaAudio = (text: string) => {
     playKannadaSpeech(text, {
+      translit: phraseOfDay.translit,
       isSlow: isSlowAudio,
       onStart: () => setIsPlayingAudio(true),
       onEnd: () => setIsPlayingAudio(false),
@@ -365,7 +366,7 @@ export default function LandingPage() {
       </section>
 
       {/* 4. HOW IT WORKS (mockup 01 Part 2) */}
-      <section className="space-y-4">
+      <section id="about" className="space-y-4 scroll-mt-24">
         <div>
           <span className="text-[11px] font-bold text-[#586673] uppercase tracking-wider">
             {lang === "kn" ? "ಇದು ಹೇಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ" : "HOW IT WORKS"}

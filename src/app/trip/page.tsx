@@ -16,8 +16,10 @@ import {
   Travellers,
   Place,
   Stop,
+  TravelMode,
   FoodPreference,
   TransportPreference,
+  Phrase,
 } from "@/lib/schema";
 import { useLang } from "@/lib/i18n/useLang";
 import StopCard from "@/components/StopCard";
@@ -32,9 +34,12 @@ import { buildDeterministicPlan } from "@/lib/planner";
 import { getSamplePlan, getCustomizedSamplePlan } from "@/lib/samples";
 import { computeTravelLeg, addMinutesToTime, roundTimeTo5Min, getPinNumber } from "@/lib/geo";
 import { calculateTripCost } from "@/lib/cost";
+import { getStartCityCoordinates } from "@/lib/candidates";
 import placesData from "../../../data/places.json";
+import phrasesData from "../../../data/phrases.json";
 
 const allPlaces = placesData as Place[];
+const phrasesMap = new Map<string, Phrase>((phrasesData as Phrase[]).map((ph) => [ph.id, ph]));
 
 interface SavedTripRecord {
   id: string;
@@ -194,8 +199,11 @@ function TripViewContent() {
   const transportModeParam = searchParams.get("transport_mode");
   const lowWalkingParam = searchParams.get("low_walking");
 
-  const parsedDays = daysParam ? parseInt(daysParam, 10) : 4;
-  const currentMonth = monthParam ? parseInt(monthParam, 10) : 11;
+  const rawDays = daysParam ? parseInt(daysParam, 10) : 4;
+  const parsedDays = !isNaN(rawDays) && rawDays >= 1 && rawDays <= 7 ? rawDays : 4;
+
+  const rawMonth = monthParam ? parseInt(monthParam, 10) : 11;
+  const currentMonth = !isNaN(rawMonth) && rawMonth >= 1 && rawMonth <= 12 ? rawMonth : 11;
 
   useEffect(() => {
     let isCancelled = false;
@@ -236,9 +244,9 @@ function TripViewContent() {
       }
 
       // Case 2: Decompress from lz-string
-      if (dParam !== null) {
-        // Enforce max string length to protect against oversized payload abuse
-        if (dParam.length > 10000) {
+      if (dParam && dParam.trim().length > 0) {
+        // Enforce max string length (100KB) to protect against oversized payload abuse
+        if (dParam.length > 100000) {
           if (!isCancelled) {
             setErrorState({ type: "invalid_link" });
             setLoading(false);
@@ -247,7 +255,7 @@ function TripViewContent() {
         }
 
         try {
-          const decompressed = LZString.decompressFromEncodedURIComponent(dParam);
+          const decompressed = LZString.decompressFromEncodedURIComponent(dParam.trim());
           if (decompressed) {
             const rawParsed = JSON.parse(decompressed);
             // Strict runtime schema validation using PlanSchema
@@ -255,6 +263,15 @@ function TripViewContent() {
             if (validation.success) {
               if (!isCancelled) {
                 setPlan(validation.data);
+                setSelectedDay(1);
+                setLoading(false);
+              }
+              return;
+            } else if (rawParsed && Array.isArray(rawParsed.days) && rawParsed.days.length > 0) {
+              // Resilient fallback for minor schema discrepancies in stored/shared payloads
+              console.warn("Shared plan had minor schema variances; recovering plan structure:", validation.error.format());
+              if (!isCancelled) {
+                setPlan(rawParsed as Plan);
                 setSelectedDay(1);
                 setLoading(false);
               }
@@ -276,16 +293,29 @@ function TripViewContent() {
       }
 
       // Case 3: API call with fallback
-      const interests: Category[] = interestsParam
-        ? (interestsParam.split(",") as Category[])
+      const rawInterests = interestsParam
+        ? (interestsParam.split(",").filter(Boolean) as Category[])
+        : (["heritage", "food"] as Category[]);
+      // Ensure at least 1 and at most 4 valid interests for PlanRequestSchema
+      const validCategories: Category[] = [
+        "heritage", "nature", "food", "spiritual", "adventure",
+        "beach", "wildlife", "coffee", "culture"
+      ];
+      const filteredInterests = rawInterests.filter((cat) => validCategories.includes(cat));
+      const interests: Category[] = filteredInterests.length > 0
+        ? filteredInterests.slice(0, 4)
         : ["heritage", "food"];
+
       const start_city: StartCity = (startCityParam as StartCity) || "Bengaluru";
       const budget: BudgetFit = (budgetParam as BudgetFit) || "mid";
       const pace: Pace = (paceParam as Pace) || "relaxed";
       const travellers: Travellers = (travellersParam as Travellers) || "couple";
 
-      // Parse user-selected extended preferences
-      const people_count = peopleCountParam ? parseInt(peopleCountParam, 10) : undefined;
+      // Parse user-selected extended preferences safely
+      const parsedPeopleCount = peopleCountParam ? parseInt(peopleCountParam, 10) : undefined;
+      const people_count = parsedPeopleCount && !isNaN(parsedPeopleCount) && parsedPeopleCount >= 1 && parsedPeopleCount <= 10
+        ? parsedPeopleCount
+        : undefined;
       const food_preference = (foodPrefParam as FoodPreference) || undefined;
       const transport_mode = (transportModeParam as TransportPreference) || undefined;
       const low_walking = lowWalkingParam === "1" ? true : lowWalkingParam === "0" ? false : undefined;
@@ -424,7 +454,10 @@ function TripViewContent() {
     let totalTripKm = 0;
     const allVisitedPlaces: Place[] = [];
 
-    const computedDays = updatedDays.map((d) => {
+    const startCoords = getStartCityCoordinates(startCityParam || "Bengaluru");
+    let previousDayLastPlace: Place | null = null;
+
+    const computedDays = updatedDays.map((d, dayIdx) => {
       let dayTravelMin = 0;
       let clock = "09:00";
 
@@ -434,9 +467,26 @@ function TripViewContent() {
         if (sIdx > 0) {
           const prev = d.stops[sIdx - 1].place;
           leg = computeTravelLeg(prev.lat, prev.lng, stop.place.lat, stop.place.lng, people);
+          if (stop.travel_from_prev?.mode) {
+            leg.mode = stop.travel_from_prev.mode;
+            if (leg.mode === "walk") {
+              leg.min = Math.max(5, Math.round(((leg.km / 4.5) * 60) / 5) * 5);
+            } else if (leg.mode === "auto") {
+              leg.min = Math.max(5, Math.round(((leg.km / 30) * 60 + 10) / 5) * 5);
+            }
+          }
           dayTravelMin += leg.min;
           totalTripKm += leg.km;
           clock = addMinutesToTime(clock, leg.min);
+        } else {
+          // Stop 0 of the day: transfer from starting city hub or previous overnight stop
+          if (dayIdx === 0) {
+            const hubLeg = computeTravelLeg(startCoords.lat, startCoords.lng, stop.place.lat, stop.place.lng, people);
+            totalTripKm += hubLeg.km;
+          } else if (previousDayLastPlace) {
+            const interDayLeg = computeTravelLeg(previousDayLastPlace.lat, previousDayLastPlace.lng, stop.place.lat, stop.place.lng, people);
+            totalTripKm += interDayLeg.km;
+          }
         }
         clock = roundTimeTo5Min(clock);
         const startTime = clock;
@@ -449,12 +499,23 @@ function TripViewContent() {
         };
       });
 
+      if (d.stops.length > 0) {
+        previousDayLastPlace = d.stops[d.stops.length - 1].place;
+      }
+
       return {
         ...d,
         stops: recomputedStops,
         travel_total_min: dayTravelMin,
       };
     });
+
+    // Return journey back to starting hub
+    const finalPlace = allVisitedPlaces[allVisitedPlaces.length - 1];
+    if (finalPlace) {
+      const returnLeg = computeTravelLeg(finalPlace.lat, finalPlace.lng, startCoords.lat, startCoords.lng, people);
+      totalTripKm += returnLeg.km;
+    }
 
     const travellersVal = (travellersParam as Travellers) || "couple";
     const budgetVal = (budgetParam as BudgetFit) || "mid";
@@ -465,6 +526,8 @@ function TripViewContent() {
       travellers: travellersVal,
       totalKm: totalTripKm,
       visitedPlaces: allVisitedPlaces,
+      peopleCount: plan.cost.people,
+      transportPreference: (transportModeParam as TransportPreference) || undefined,
     });
 
     const newPlan: Plan = {
@@ -500,14 +563,19 @@ function TripViewContent() {
 
     const visitedSet = new Set(plan.days.flatMap((d) => d.stops.map((s) => s.place_id)));
     const alternative =
-      specificAlternative ||
-      allPlaces.find(
-        (p) =>
-          !visitedSet.has(p.id) &&
-          (p.region === stopToSwap.place.region || p.city === stopToSwap.place.city)
-      );
+      (specificAlternative && (!visitedSet.has(specificAlternative.id) || specificAlternative.id === placeId))
+        ? specificAlternative
+        : allPlaces.find(
+            (p) =>
+              !visitedSet.has(p.id) &&
+              (p.region === stopToSwap.place.region || p.city === stopToSwap.place.city)
+          );
 
     if (!alternative) return;
+
+    const stopPhrases: Phrase[] = (alternative.phrase_ids || [])
+      .map((pid) => phrasesMap.get(pid))
+      .filter((ph): ph is Phrase => Boolean(ph));
 
     const updatedDays = plan.days.map((d) => {
       if (d.day !== selectedDay) return d;
@@ -521,7 +589,7 @@ function TripViewContent() {
             duration_min: alternative.duration_min,
             note_en: alternative.desc_en,
             place: alternative,
-            phrases: [],
+            phrases: stopPhrases,
           };
         }),
       };
@@ -533,6 +601,10 @@ function TripViewContent() {
   // Add a suggested stop
   const handleAddStop = (place: Place) => {
     if (!plan) return;
+    const stopPhrases: Phrase[] = (place.phrase_ids || [])
+      .map((pid) => phrasesMap.get(pid))
+      .filter((ph): ph is Phrase => Boolean(ph));
+
     const updatedDays = plan.days.map((d) => {
       if (d.day !== selectedDay) return d;
       return {
@@ -545,9 +617,31 @@ function TripViewContent() {
             duration_min: place.duration_min,
             note_en: place.desc_en,
             place,
-            phrases: [],
+            phrases: stopPhrases,
           },
         ],
+      };
+    });
+    recomputePlanLocally(updatedDays);
+  };
+
+  // Toggle travel mode between Auto, Cab, and Walk
+  const handleToggleTravelMode = (placeId: string, mode: TravelMode) => {
+    if (!plan) return;
+    const updatedDays = plan.days.map((d) => {
+      if (d.day !== selectedDay) return d;
+      return {
+        ...d,
+        stops: d.stops.map((s) => {
+          if (s.place_id !== placeId || !s.travel_from_prev) return s;
+          return {
+            ...s,
+            travel_from_prev: {
+              ...s.travel_from_prev,
+              mode,
+            },
+          };
+        }),
       };
     });
     recomputePlanLocally(updatedDays);
@@ -649,18 +743,22 @@ function TripViewContent() {
     };
   }, [plan, currentMonth, lang]);
 
+  const visitedPlaceIds = useMemo(() => {
+    if (!plan) return new Set<string>();
+    return new Set(plan.days.flatMap((d) => d.stops.map((s) => s.place_id)));
+  }, [plan]);
+
   // Suggested places nearby for "+ Add a stop"
   const suggestedPlaces = useMemo(() => {
     if (!plan) return [];
     const currentDay = plan.days.find((d) => d.day === selectedDay);
     if (!currentDay) return [];
-    const visitedIds = new Set(plan.days.flatMap((d) => d.stops.map((s) => s.place_id)));
     const targetRegion = currentDay.stops[0]?.place.region;
 
     return allPlaces
-      .filter((p) => !visitedIds.has(p.id) && (!targetRegion || p.region === targetRegion))
+      .filter((p) => !visitedPlaceIds.has(p.id) && (!targetRegion || p.region === targetRegion))
       .slice(0, 3);
-  }, [plan, selectedDay]);
+  }, [plan, selectedDay, visitedPlaceIds]);
 
   if (loading) {
     return (
@@ -1008,6 +1106,7 @@ function TripViewContent() {
                     setShowToLocalPlace(place);
                     setIsShowToLocalOpen(true);
                   }}
+                  onToggleTravelMode={handleToggleTravelMode}
                 />
               );
             })}
@@ -1076,6 +1175,7 @@ function TripViewContent() {
                       setShowToLocalPlace(place);
                       setIsShowToLocalOpen(true);
                     }}
+                    onToggleTravelMode={handleToggleTravelMode}
                   />
                 );
               })}
@@ -1309,13 +1409,22 @@ function TripViewContent() {
                       type="button"
                       onClick={() => {
                         const url = `${window.location.origin}/trip?d=${st.compressed}`;
-                        navigator.clipboard?.writeText(url);
-                        alert("Link copied!");
+                        if (navigator.clipboard?.writeText) {
+                          navigator.clipboard
+                            .writeText(url)
+                            .then(() => {
+                              setCopied(true);
+                              setTimeout(() => setCopied(false), 3000);
+                            })
+                            .catch(() => fallbackCopy(url));
+                        } else {
+                          fallbackCopy(url);
+                        }
                       }}
-                      className="w-8 h-8 rounded-lg bg-[#F1F3F0] text-[#14202B] flex items-center justify-center shrink-0 cursor-pointer"
-                      title="Share trip"
+                      className="px-2.5 py-1.5 rounded-lg bg-[#F1F3F0] hover:bg-[#8E1F2F] hover:text-white text-[#14202B] text-xs font-semibold flex items-center gap-1 shrink-0 transition-colors cursor-pointer active:scale-95"
+                      title="Share trip link"
                     >
-                      ↗
+                      <span>{copied ? "✓ Copied" : "↗ Share"}</span>
                     </button>
                   </div>
                 ))}
@@ -1403,6 +1512,7 @@ function TripViewContent() {
         stop={drawerStop}
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
+        visitedPlaceIds={visitedPlaceIds}
         onSwapWith={(alt) => {
           if (drawerStop) {
             handleSwapStop(drawerStop.place_id, alt);

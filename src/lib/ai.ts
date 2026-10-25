@@ -97,7 +97,7 @@ async function callGeminiAPI(
   systemPrompt: string,
   userPrompt: string,
   apiKey: string,
-  model: string = "gemini-flash-latest",
+  model: string = "gemini-1.5-flash",
   timeoutMs: number = 8000
 ): Promise<string> {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -260,7 +260,7 @@ ${buildCandidatesPromptPayload(candidates)}`;
   const groqModel = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 
   const geminiKey = process.env.GEMINI_API_KEY;
-  const geminiModel = process.env.GEMINI_MODEL || "gemini-flash-latest";
+  const geminiModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
 
   const startTime = Date.now();
   const DEADLINE_MS = 24000; // 24 seconds total budget, safely within Vercel's 30s limit

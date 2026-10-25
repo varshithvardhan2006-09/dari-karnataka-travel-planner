@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import PlannerForm from "@/components/PlannerForm";
 import { useLang } from "@/lib/i18n/useLang";
 
@@ -20,7 +20,15 @@ export default function PlanPage() {
       </div>
 
       {/* Main Interactive Form with Live Brief Panel */}
-      <PlannerForm />
+      <Suspense
+        fallback={
+          <div className="flex-1 flex items-center justify-center p-12 text-[#586673] animate-pulse">
+            Loading planner...
+          </div>
+        }
+      >
+        <PlannerForm />
+      </Suspense>
     </div>
   );
 }
