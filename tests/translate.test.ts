@@ -61,4 +61,22 @@ describe("POST /api/translate", () => {
     expect(data.targetLang).toBe("kn");
     expect(data.sourceLang).toBe("en");
   });
+
+  it("translates offline travel phrases reliably even if upstream endpoints fail", async () => {
+    const originalFetch = globalThis.fetch;
+    // Simulate cloud endpoint failure / network offline
+    globalThis.fetch = vi.fn().mockRejectedValue(new Error("Network unreachable"));
+
+    const req = new NextRequest("http://localhost:3000/api/translate", {
+      method: "POST",
+      body: JSON.stringify({ text: "Please", sourceLang: "en", targetLang: "kn" }),
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.translatedText).toBe("ದಯವಿಟ್ಟು");
+    expect(data.provider).toBe("offline-dictionary");
+
+    globalThis.fetch = originalFetch;
+  });
 });
