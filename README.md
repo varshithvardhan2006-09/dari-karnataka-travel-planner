@@ -32,6 +32,25 @@ Most generic AI planners (such as raw ChatGPT or Gemini prompts) suffer from sev
 
 ---
 
+## 📸 Application Preview & Interface
+
+| 1. Landing & Destination Discovery | 2. Planner Form & Preference Brief |
+|:---:|:---:|
+| ![Landing Screen](assets/screenshots/01-landing.png) | ![Planner Form](assets/screenshots/02-planner-form.png) |
+| *Bento SVG scene illustrations, search bar, and Karnataka region explorer* | *8 live interest categories, party size, transport mode, and sticky brief* |
+
+| 3. Cascading AI Progress | 4. Interactive Itinerary & Route Map |
+|:---:|:---:|
+| ![Generating State](assets/screenshots/03-generating.png) | ![Itinerary and Map](assets/screenshots/04-itinerary-map.png) |
+| *5-stage real-time progress indicator with candidate previews* | *Multi-day schedule, Leaflet map with custom numbered pins, and donut cost chart* |
+
+| 5. Kannada Mode & Stop Details | 6. Mobile Experience (360px) |
+|:---:|:---:|
+| ![Kannada Mode](assets/screenshots/05-kannada-mode.png) | ![Mobile View](assets/screenshots/07-mobile.png) |
+| *100% pre-curated Kannada UI, stop drawer facts, and "Show to Local" driver screen* | *Mobile-optimized view with bottom navigation (Plan, Map, Phrases, Saved)* |
+
+---
+
 ## 🌟 Key Highlights & Engineering Features
 
 ```
@@ -73,6 +92,10 @@ $$\text{Total} = \text{Lodging} + \text{Food} + \text{Transport} + \text{Entry F
 ---
 
 ## 🏛️ System Architecture & Request Flow
+
+<p align="center">
+  <img src="assets/screenshots/00-architecture.png" alt="System Architecture Diagram" width="100%" style="border-radius: 12px; max-width: 800px;" />
+</p>
 
 ```
 [ User Input: Interests, Days (1-7), Start City, Budget, Pace, Group Size, Food & Transport ]
