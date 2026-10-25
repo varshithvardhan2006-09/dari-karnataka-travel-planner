@@ -157,63 +157,63 @@ export default function CostSummary({ cost, days, source }: CostSummaryProps) {
         </div>
 
         {/* Breakdown Items */}
-        <div className="flex-1 w-full grid grid-cols-2 gap-3 text-xs">
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2]">
-            <div className="flex items-center gap-2">
+        <div className="flex-1 w-full grid grid-cols-2 gap-2 sm:gap-3 text-[11px] sm:text-xs min-w-0">
+          <div className="flex items-center justify-between p-2 sm:p-2.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2] min-w-0">
+            <div className="flex items-center gap-1.5 min-w-0 truncate">
               <span
                 className="w-2.5 h-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: CATEGORY_COLORS.stay }}
               />
-              <span className="text-[#586673] font-medium">
+              <span className="text-[#586673] font-medium truncate">
                 {t("common.stay", "Stay")}
               </span>
             </div>
-            <span className="font-bold text-[#14202B]">
+            <span className="font-bold text-[#14202B] shrink-0 ml-1">
               ₹{cost.stay.toLocaleString("en-IN")}
             </span>
           </div>
 
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2]">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between p-2 sm:p-2.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2] min-w-0">
+            <div className="flex items-center gap-1.5 min-w-0 truncate">
               <span
                 className="w-2.5 h-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: CATEGORY_COLORS.food }}
               />
-              <span className="text-[#586673] font-medium">
+              <span className="text-[#586673] font-medium truncate">
                 {t("common.food", "Food")}
               </span>
             </div>
-            <span className="font-bold text-[#14202B]">
+            <span className="font-bold text-[#14202B] shrink-0 ml-1">
               ₹{cost.food.toLocaleString("en-IN")}
             </span>
           </div>
 
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2]">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between p-2 sm:p-2.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2] min-w-0">
+            <div className="flex items-center gap-1.5 min-w-0 truncate">
               <span
                 className="w-2.5 h-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: CATEGORY_COLORS.transport }}
               />
-              <span className="text-[#586673] font-medium">
+              <span className="text-[#586673] font-medium truncate">
                 {t("common.transport", "Transport")}
               </span>
             </div>
-            <span className="font-bold text-[#14202B]">
+            <span className="font-bold text-[#14202B] shrink-0 ml-1">
               ₹{cost.transport.toLocaleString("en-IN")}
             </span>
           </div>
 
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2]">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between p-2 sm:p-2.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2] min-w-0">
+            <div className="flex items-center gap-1.5 min-w-0 truncate">
               <span
                 className="w-2.5 h-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: CATEGORY_COLORS.entry }}
               />
-              <span className="text-[#586673] font-medium">
+              <span className="text-[#586673] font-medium truncate">
                 {t("common.entry", "Entry fees")}
               </span>
             </div>
-            <span className="font-bold text-[#14202B]">
+            <span className="font-bold text-[#14202B] shrink-0 ml-1">
               ₹{cost.entry.toLocaleString("en-IN")}
             </span>
           </div>

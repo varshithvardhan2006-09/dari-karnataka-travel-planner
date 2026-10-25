@@ -19,11 +19,11 @@ export default function PhraseCard({
 
   if (!phrases || phrases.length === 0) return null;
 
-  const marginClass = noMargin ? "ml-0" : "ml-12 sm:ml-16";
+  const marginClass = noMargin ? "ml-0" : "ml-8 sm:ml-14";
 
   return (
     <div
-      className={`mt-3 ${marginClass} bg-[#FDF2CC] rounded-2xl p-4 sm:p-5 border border-[#F2B705]/60 shadow-2xs ${className}`}
+      className={`mt-3 ${marginClass} bg-[#FDF2CC] rounded-2xl p-3.5 sm:p-5 border border-[#F2B705]/60 shadow-2xs min-w-0 max-w-full ${className}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3.5">

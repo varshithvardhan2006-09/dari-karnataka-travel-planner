@@ -81,11 +81,11 @@ export default function StopCard({
     >
       {/* Travel Connector Chip between stops with Auto / Cab / Walk toggle */}
       {!isFirst && stop.travel_from_prev && (
-        <div className="flex items-center gap-2 sm:gap-3 py-2.5 pl-12 sm:pl-16">
-          <div className="h-6 w-0.5 bg-[#DCE1DD] ml-3 shrink-0" />
-          <div className="inline-flex flex-wrap items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full text-xs font-medium bg-[#F7F9F6] border border-[#DCE1DD] text-[#586673]">
+        <div className="flex items-center gap-2 sm:gap-3 py-1.5 pl-8 sm:pl-14">
+          <div className="h-5 w-0.5 bg-[#DCE1DD] ml-2 sm:ml-3 shrink-0" />
+          <div className="inline-flex flex-wrap items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-[#F7F9F6] border border-[#DCE1DD] text-[#586673] max-w-full">
             <svg
-              className="w-3.5 h-3.5 text-[#586673] shrink-0"
+              className="w-3 h-3 text-[#586673] shrink-0"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -104,7 +104,7 @@ export default function StopCard({
                   key={mode}
                   type="button"
                   onClick={(e) => handleModeChange(mode, e)}
-                  className={`px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase cursor-pointer transition-colors ${
+                  className={`px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-semibold uppercase cursor-pointer transition-colors ${
                     currentMode === mode
                       ? "bg-[#14202B] text-white"
                       : "text-[#586673] hover:text-[#14202B] hover:bg-gray-200"
@@ -120,33 +120,31 @@ export default function StopCard({
 
       {/* Main Stop Card Row */}
       <div
-        className="flex items-start gap-3 sm:gap-4 cursor-pointer"
+        className="flex items-start gap-2.5 sm:gap-4 cursor-pointer w-full min-w-0"
         onClick={() => onCardClick?.(stop.place_id)}
       >
         {/* Left Timing and Pin Number Column */}
-        <div className="w-12 sm:w-16 pt-3 flex flex-col items-center shrink-0">
-          <span className="text-xs font-bold text-[#14202B]">{stop.start}</span>
+        <div className="w-9 sm:w-14 pt-2.5 flex flex-col items-center shrink-0">
+          <span className="text-[11px] sm:text-xs font-bold text-[#14202B]">{stop.start}</span>
           <div
-            className="w-6 h-6 rounded-full text-white text-[11px] font-bold flex items-center justify-center my-1.5 shadow-2xs"
+            className="w-5 h-5 sm:w-6 sm:h-6 rounded-full text-white text-[10px] sm:text-[11px] font-bold flex items-center justify-center my-1 shadow-2xs shrink-0"
             style={{ backgroundColor: pinBg }}
           >
             {pinDisplay}
           </div>
-          <span className="text-[10px] text-[#586673] font-medium">{durationText}</span>
+          <span className="text-[9px] sm:text-[10px] text-[#586673] font-medium leading-none">{durationText}</span>
         </div>
 
         {/* Card Body matching mockup 04 */}
-        <div className="flex-1 bg-white rounded-2xl p-4 sm:p-5 border border-[#DCE1DD] shadow-2xs hover:shadow-xs transition-shadow">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-heading font-bold text-base sm:text-lg text-[#14202B]">
-                  {placeName}
-                </h3>
-              </div>
+        <div className="flex-1 min-w-0 bg-white rounded-2xl p-3.5 sm:p-5 border border-[#DCE1DD] shadow-2xs hover:shadow-xs transition-shadow">
+          <div className="flex items-start justify-between gap-2 min-w-0">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-heading font-bold text-sm sm:text-lg text-[#14202B] leading-snug break-words">
+                {placeName}
+              </h3>
 
               {/* Subline: Entry cost, best time, crowd */}
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#586673] mt-1">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] sm:text-xs text-[#586673] mt-1">
                 <span>{feeText}</span>
                 {stop.place.best_time_en && (
                   <>
@@ -174,27 +172,27 @@ export default function StopCard({
 
             {/* Category Pill */}
             <span
-              className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold capitalize whitespace-nowrap shrink-0 ${catStyle.bg} ${catStyle.text}`}
+              className={`inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[10px] sm:text-xs font-semibold capitalize whitespace-nowrap shrink-0 ${catStyle.bg} ${catStyle.text}`}
             >
               {t(`form.categories.${primaryCategory}`, primaryCategory)}
             </span>
           </div>
 
           {/* Description */}
-          <p className="text-sm text-[#14202B]/85 mt-2.5 leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#14202B]/85 mt-2 leading-relaxed break-words">
             {description}
           </p>
 
           {/* Card Actions: Swap / Lock time / Remove / Drag handle */}
-          <div className="mt-3 pt-3 border-t border-[#F1F3F0] flex flex-wrap items-center justify-between gap-y-2 text-xs">
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <div className="mt-3 pt-2.5 border-t border-[#F1F3F0] flex flex-wrap items-center justify-between gap-y-1.5 text-[11px] sm:text-xs">
+            <div className="flex flex-wrap items-center gap-x-2.5 sm:gap-x-3 gap-y-1.5 min-w-0">
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   onSwap?.(stop.place_id);
                 }}
-                className="inline-flex items-center gap-1 text-[#586673] hover:text-[#8E1F2F] cursor-pointer transition-colors font-medium py-1"
+                className="inline-flex items-center gap-1 text-[#586673] hover:text-[#8E1F2F] cursor-pointer transition-colors font-medium py-0.5"
               >
                 <svg
                   className="w-3.5 h-3.5"
@@ -214,7 +212,7 @@ export default function StopCard({
                   e.stopPropagation();
                   setIsLocked(!isLocked);
                 }}
-                className={`inline-flex items-center gap-1 cursor-pointer transition-colors font-medium py-1 ${
+                className={`inline-flex items-center gap-1 cursor-pointer transition-colors font-medium py-0.5 ${
                   isLocked ? "text-[#1E6B52]" : "text-[#586673] hover:text-[#14202B]"
                 }`}
               >
@@ -231,7 +229,7 @@ export default function StopCard({
                 <span>
                   {isLocked
                     ? lang === "kn"
-                      ? "ಲಾಕ್ ಆಗಿದೆ"
+                      ? "ಲಾಕ್"
                       : "Locked"
                     : lang === "kn"
                     ? "ಸಮಯ ಲಾಕ್"
@@ -246,7 +244,7 @@ export default function StopCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 text-[#586673] hover:text-[#8E1F2F] cursor-pointer transition-colors font-medium py-1"
+                className="inline-flex items-center gap-1 text-[#586673] hover:text-[#8E1F2F] cursor-pointer transition-colors font-medium py-0.5"
                 title={`Open ${stop.place.name_en} in Google Maps`}
               >
                 <svg
@@ -268,7 +266,7 @@ export default function StopCard({
                   e.stopPropagation();
                   onShowToLocal?.(stop.place);
                 }}
-                className="inline-flex items-center gap-1 text-[#8E1F2F] hover:text-[#6B1421] cursor-pointer transition-colors font-medium py-1"
+                className="inline-flex items-center gap-1 text-[#8E1F2F] hover:text-[#6B1421] cursor-pointer transition-colors font-semibold py-0.5"
                 title="Show to local driver (ಸ್ಥಳೀಯರಿಗೆ ತೋರಿಸಿ)"
               >
                 <span>🌐</span>
@@ -281,7 +279,7 @@ export default function StopCard({
                   e.stopPropagation();
                   onRemove?.(stop.place_id);
                 }}
-                className="inline-flex items-center gap-1 text-[#586673] hover:text-red-700 cursor-pointer transition-colors font-medium py-1"
+                className="inline-flex items-center gap-1 text-[#586673] hover:text-red-700 cursor-pointer transition-colors font-medium py-0.5"
               >
                 <svg
                   className="w-3.5 h-3.5"
@@ -299,7 +297,7 @@ export default function StopCard({
 
             {/* Drag Handle Indicator */}
             <div
-              className="text-[#DCE1DD] hover:text-[#586673] cursor-grab select-none font-mono text-sm tracking-tighter"
+              className="text-[#DCE1DD] hover:text-[#586673] cursor-grab select-none font-mono text-xs tracking-tighter shrink-0 hidden sm:block"
               title="Drag to reorder"
             >
               ⠿⠿

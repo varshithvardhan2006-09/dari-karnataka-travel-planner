@@ -731,13 +731,13 @@ function TripViewContent() {
   };
 
   return (
-    <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex flex-col gap-6 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] lg:pb-8">
+    <div className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 flex flex-col gap-5 sm:gap-6 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] lg:pb-8 min-w-0 max-w-full overflow-x-hidden">
       {/* Top Header matching mockup 04 */}
-      <div className="flex flex-col gap-4">
-        {/* Tag pills */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-[#F9EBEB] text-[#8E1F2F]">
+      <div className="flex flex-col gap-3.5 sm:gap-4 w-full min-w-0 max-w-full">
+        {/* Tag pills and Action buttons */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 w-full min-w-0">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 min-w-0">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#F9EBEB] text-[#8E1F2F]">
               {interestsParam
                 ? interestsParam
                     .split(",")
@@ -745,32 +745,32 @@ function TripViewContent() {
                     .join(" & ")
                 : "Heritage & Food"}
             </span>
-            <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-[#FDF2CC] text-[#8C6D05]">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#FDF2CC] text-[#8C6D05]">
               {t(`form.budget_tiers.${budgetParam || "mid"}`, "Mid-range")}
             </span>
-            <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-[#E1ECF5] text-[#2B5F8A]">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#E1ECF5] text-[#2B5F8A]">
               {t(`form.pace_tiers.${paceParam || "relaxed"}`, "Relaxed")}
             </span>
-            <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-[#DDEFE7] text-[#1E6B52]">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#DDEFE7] text-[#1E6B52]">
               Cab
             </span>
             {plan.source === "sample" && (
-              <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#F2B705] text-[#14202B]">
+              <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-bold bg-[#F2B705] text-[#14202B]">
                 {t("common.sample_data", "SAMPLE DATA")}
               </span>
             )}
           </div>
 
           {/* Action buttons: Regenerate, Calendar .ics, PDF print, Share */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               type="button"
               onClick={handleRegenerate}
               title="Regenerate"
               aria-label="Regenerate plan"
-              className="w-9 h-9 rounded-xl bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19" />
               </svg>
             </button>
@@ -780,9 +780,9 @@ function TripViewContent() {
               onClick={() => downloadIcsFile(plan, currentMonth)}
               title="Add to calendar .ics"
               aria-label="Download calendar file"
-              className="w-9 h-9 rounded-xl bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                 <line x1="16" y1="2" x2="16" y2="6" />
                 <line x1="8" y1="2" x2="8" y2="6" />
@@ -794,7 +794,7 @@ function TripViewContent() {
               type="button"
               onClick={() => window.print()}
               title="PDF Print View"
-              className="px-3 py-2 rounded-xl text-xs font-bold bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 transition-all cursor-pointer shadow-2xs active:scale-95"
+              className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-bold bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 transition-all cursor-pointer shadow-2xs active:scale-95"
             >
               PDF
             </button>
@@ -806,16 +806,16 @@ function TripViewContent() {
                 setIsShowToLocalOpen(true);
               }}
               title="Show to local driver"
-              className="px-3 py-2 rounded-xl text-xs font-bold bg-[#F9EBEB] text-[#8E1F2F] hover:bg-[#F2D6D6] transition-all cursor-pointer shadow-2xs active:scale-95 flex items-center gap-1.5"
+              className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-bold bg-[#F9EBEB] text-[#8E1F2F] hover:bg-[#F2D6D6] transition-all cursor-pointer shadow-2xs active:scale-95 flex items-center gap-1.5"
             >
               <span>🌐</span>
-              <span>{lang === "kn" ? "ಸ್ಥಳೀಯರಿಗೆ ತೋರಿಸಿ" : "Show to local"}</span>
+              <span>{lang === "kn" ? "ಸ್ಥಳೀಯರಿಗೆ" : "Show to local"}</span>
             </button>
 
             <button
               type="button"
               onClick={handleShareLink}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#8E1F2F] hover:bg-[#781926] text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
+              className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold bg-[#8E1F2F] hover:bg-[#781926] text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
             >
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
@@ -828,83 +828,83 @@ function TripViewContent() {
         </div>
 
         {/* Title and Short Summary */}
-        <div>
-          <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-[#14202B] tracking-tight">
+        <div className="w-full min-w-0">
+          <h1 className="font-heading font-extrabold text-xl sm:text-2xl md:text-3xl text-[#14202B] tracking-tight leading-snug break-words">
             {plan.title}
           </h1>
-          <p className="text-sm text-[#586673] mt-1 max-w-3xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#586673] mt-1 max-w-3xl leading-relaxed break-words">
             {plan.summary}
           </p>
         </div>
 
         {/* 5 Stat Cards Row matching mockup 04 */}
         {tripStats && (
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-2">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 pt-1 w-full min-w-0 max-w-full">
             {/* Stat 1: Days */}
-            <div className="bg-white p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center shrink-0">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="bg-white p-2.5 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center shrink-0">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                   <line x1="16" y1="2" x2="16" y2="6" />
                   <line x1="8" y1="2" x2="8" y2="6" />
                   <line x1="3" y1="10" x2="21" y2="10" />
                 </svg>
               </div>
-              <div className="truncate">
-                <div className="font-heading font-bold text-sm text-[#14202B]">
+              <div className="min-w-0 flex-1">
+                <div className="font-heading font-bold text-xs sm:text-sm text-[#14202B] truncate">
                   {plan.days.length} {t("common.days", "days")}
                 </div>
-                <div className="text-[11px] text-[#586673] truncate">
+                <div className="text-[10px] sm:text-[11px] text-[#586673] truncate">
                   {lang === "kn" ? tripStats.weather.descKn.split(",")[0] : tripStats.weather.descEn.split(",")[0]}
                 </div>
               </div>
             </div>
 
             {/* Stat 2: Stops */}
-            <div className="bg-white p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-[#E1ECF5] text-[#2B5F8A] flex items-center justify-center shrink-0">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="bg-white p-2.5 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#E1ECF5] text-[#2B5F8A] flex items-center justify-center shrink-0">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                   <circle cx="12" cy="10" r="3" />
                 </svg>
               </div>
-              <div className="truncate">
-                <div className="font-heading font-bold text-sm text-[#14202B]">
+              <div className="min-w-0 flex-1">
+                <div className="font-heading font-bold text-xs sm:text-sm text-[#14202B] truncate">
                   {tripStats.totalStops} stops
                 </div>
-                <div className="text-[11px] text-[#586673] truncate">
+                <div className="text-[10px] sm:text-[11px] text-[#586673] truncate">
                   {tripStats.uniqueTowns} towns
                 </div>
               </div>
             </div>
 
             {/* Stat 3: Distance */}
-            <div className="bg-white p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-[#DDEFE7] text-[#1E6B52] flex items-center justify-center shrink-0">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <div className="bg-white p-2.5 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#DDEFE7] text-[#1E6B52] flex items-center justify-center shrink-0">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </div>
-              <div className="truncate">
-                <div className="font-heading font-bold text-sm text-[#14202B]">
+              <div className="min-w-0 flex-1">
+                <div className="font-heading font-bold text-xs sm:text-sm text-[#14202B] truncate">
                   {tripStats.totalKm} km
                 </div>
-                <div className="text-[11px] text-[#586673] truncate">
-                  about {tripStats.totalDriveHours} h driving
+                <div className="text-[10px] sm:text-[11px] text-[#586673] truncate">
+                  about {tripStats.totalDriveHours}h drive
                 </div>
               </div>
             </div>
 
             {/* Stat 4: Estimated Cost Range */}
-            <div className="bg-white p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-[#FDF2CC] text-[#8C6D05] flex items-center justify-center font-bold text-sm shrink-0">
+            <div className="bg-white p-2.5 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#FDF2CC] text-[#8C6D05] flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
                 ₹
               </div>
-              <div className="truncate">
-                <div className="font-heading font-bold text-sm text-[#14202B] truncate">
+              <div className="min-w-0 flex-1">
+                <div className="font-heading font-bold text-xs sm:text-sm text-[#14202B] truncate" title={tripStats.costRangeText}>
                   {tripStats.costRangeText}
                 </div>
-                <div className="text-[11px] text-[#586673] truncate">
+                <div className="text-[10px] sm:text-[11px] text-[#586673] truncate">
                   for {plan.cost.people}, estimate
                 </div>
               </div>
@@ -912,11 +912,11 @@ function TripViewContent() {
 
             {/* Stat 5: Season & Weather */}
             <div
-              className="col-span-2 sm:col-span-1 bg-white p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-3"
+              className="col-span-2 sm:col-span-1 bg-white p-2.5 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-2 sm:gap-3 min-w-0"
               title={lang === "kn" ? "ವಿಶಿಷ್ಟ ಹವಾಮಾನ (ಮಾಸಿಕ ಸರಾಸರಿ)" : "Typical Weather (Monthly Average)"}
             >
-              <div className="w-8 h-8 rounded-xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center shrink-0">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center shrink-0">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="5" />
                   <line x1="12" y1="1" x2="12" y2="3" />
                   <line x1="12" y1="21" x2="12" y2="23" />
@@ -928,11 +928,11 @@ function TripViewContent() {
                   <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
                 </svg>
               </div>
-              <div className="truncate">
-                <div className="font-heading font-bold text-sm text-[#14202B]">
+              <div className="min-w-0 flex-1">
+                <div className="font-heading font-bold text-xs sm:text-sm text-[#14202B] truncate">
                   {tripStats.weather.temp}
                 </div>
-                <div className="text-[11px] text-[#586673] truncate">
+                <div className="text-[10px] sm:text-[11px] text-[#586673] truncate">
                   {lang === "kn"
                     ? `${tripStats.weather.descKn} · ಮಾಸಿಕ ಸರಾಸರಿ`
                     : `${tripStats.weather.descEn} · Monthly avg`}
@@ -943,7 +943,7 @@ function TripViewContent() {
         )}
 
         {/* Day Cards Row Acting as Tabs matching mockup 04 */}
-        <div className="flex items-center gap-3 overflow-x-auto scrollbar-none py-1">
+        <div className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto scrollbar-none py-1 w-full max-w-full min-w-0 touch-pan-x">
           {plan.days.map((day) => {
             const isSelected = day.day === selectedDay;
             const dayCity = day.stops[0]?.place.city || day.theme;
@@ -957,16 +957,16 @@ function TripViewContent() {
                 key={day.day}
                 type="button"
                 onClick={() => setSelectedDay(day.day)}
-                className={`flex flex-col text-left px-4 py-2.5 rounded-2xl border transition-all cursor-pointer shrink-0 min-w-[140px] ${
+                className={`flex flex-col text-left px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl border transition-all cursor-pointer shrink-0 min-w-[125px] sm:min-w-[140px] ${
                   isSelected
                     ? "bg-[#14202B] text-white border-[#14202B] shadow-sm"
                     : "bg-white text-[#14202B] border-[#DCE1DD] hover:bg-gray-50"
                 }`}
               >
-                <div className="font-heading font-bold text-sm">
+                <div className="font-heading font-bold text-xs sm:text-sm">
                   {t("common.day", "Day")} {day.day}
                 </div>
-                <div className={`text-[11px] mt-0.5 truncate ${isSelected ? "text-white/80" : "text-[#586673]"}`}>
+                <div className={`text-[10px] sm:text-[11px] mt-0.5 truncate ${isSelected ? "text-white/80" : "text-[#586673]"}`}>
                   {dayCity} · {stopCount} stops {dayKm > 0 ? `· ${dayKm} km` : ""}
                 </div>
               </button>
