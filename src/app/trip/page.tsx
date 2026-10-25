@@ -643,10 +643,10 @@ function TripViewContent() {
       uniqueTowns,
       totalKm,
       totalDriveHours,
-      costRangeText: `Rs ${lowCostK}k to ${highCostK}k`,
+      costRangeText: lang === "kn" ? `₹${lowCostK}k - ${highCostK}k` : `Rs ${lowCostK}k to ${highCostK}k`,
       weather,
     };
-  }, [plan, currentMonth]);
+  }, [plan, currentMonth, lang]);
 
   // Suggested places nearby for "+ Add a stop"
   const suggestedPlaces = useMemo(() => {
@@ -841,8 +841,8 @@ function TripViewContent() {
         {tripStats && (
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 pt-1 w-full min-w-0 max-w-full">
             {/* Stat 1: Days */}
-            <div className="bg-white p-2.5 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-2 sm:gap-3 min-w-0">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center shrink-0">
+            <div className="bg-white p-2 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-1.5 sm:gap-3 min-w-0">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center shrink-0">
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                   <line x1="16" y1="2" x2="16" y2="6" />
@@ -851,71 +851,74 @@ function TripViewContent() {
                 </svg>
               </div>
               <div className="min-w-0 flex-1">
-                <div className="font-heading font-bold text-xs sm:text-sm text-[#14202B] truncate">
+                <div className="font-heading font-bold text-[11px] sm:text-xs md:text-sm text-[#14202B] leading-tight truncate">
                   {plan.days.length} {t("common.days", "days")}
                 </div>
-                <div className="text-[10px] sm:text-[11px] text-[#586673] truncate">
+                <div className="text-[10px] sm:text-[11px] text-[#586673] leading-tight truncate">
                   {lang === "kn" ? tripStats.weather.descKn.split(",")[0] : tripStats.weather.descEn.split(",")[0]}
                 </div>
               </div>
             </div>
 
             {/* Stat 2: Stops */}
-            <div className="bg-white p-2.5 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-2 sm:gap-3 min-w-0">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#E1ECF5] text-[#2B5F8A] flex items-center justify-center shrink-0">
+            <div className="bg-white p-2 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-1.5 sm:gap-3 min-w-0">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-xl bg-[#E1ECF5] text-[#2B5F8A] flex items-center justify-center shrink-0">
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                   <circle cx="12" cy="10" r="3" />
                 </svg>
               </div>
               <div className="min-w-0 flex-1">
-                <div className="font-heading font-bold text-xs sm:text-sm text-[#14202B] truncate">
-                  {tripStats.totalStops} stops
+                <div className="font-heading font-bold text-[11px] sm:text-xs md:text-sm text-[#14202B] leading-tight truncate">
+                  {tripStats.totalStops} {lang === "kn" ? "ನಿಲುಗಡೆಗಳು" : "stops"}
                 </div>
-                <div className="text-[10px] sm:text-[11px] text-[#586673] truncate">
-                  {tripStats.uniqueTowns} towns
+                <div className="text-[10px] sm:text-[11px] text-[#586673] leading-tight truncate">
+                  {tripStats.uniqueTowns} {lang === "kn" ? "ಪಟ್ಟಣಗಳು" : "towns"}
                 </div>
               </div>
             </div>
 
             {/* Stat 3: Distance */}
-            <div className="bg-white p-2.5 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-2 sm:gap-3 min-w-0">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#DDEFE7] text-[#1E6B52] flex items-center justify-center shrink-0">
+            <div className="bg-white p-2 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-1.5 sm:gap-3 min-w-0">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-xl bg-[#DDEFE7] text-[#1E6B52] flex items-center justify-center shrink-0">
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M18 6L6 18M6 6l12 12" />
+                  <polygon points="3 11 22 2 13 21 11 13 3 11" fill="currentColor" fillOpacity="0.2" />
                 </svg>
               </div>
               <div className="min-w-0 flex-1">
-                <div className="font-heading font-bold text-xs sm:text-sm text-[#14202B] truncate">
+                <div className="font-heading font-bold text-[11px] sm:text-xs md:text-sm text-[#14202B] leading-tight truncate">
                   {tripStats.totalKm} km
                 </div>
-                <div className="text-[10px] sm:text-[11px] text-[#586673] truncate">
-                  about {tripStats.totalDriveHours}h drive
+                <div className="text-[10px] sm:text-[11px] text-[#586673] leading-tight truncate">
+                  {lang === "kn" ? `ಸುಮಾರು ${tripStats.totalDriveHours} ಗಂ ಪ್ರಯಾಣ` : `about ${tripStats.totalDriveHours}h drive`}
                 </div>
               </div>
             </div>
 
             {/* Stat 4: Estimated Cost Range */}
-            <div className="bg-white p-2.5 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-2 sm:gap-3 min-w-0">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#FDF2CC] text-[#8C6D05] flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
+            <div className="bg-white p-2 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-1.5 sm:gap-3 min-w-0">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-xl bg-[#FDF2CC] text-[#8C6D05] flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
                 ₹
               </div>
               <div className="min-w-0 flex-1">
-                <div className="font-heading font-bold text-xs sm:text-sm text-[#14202B] truncate" title={tripStats.costRangeText}>
+                <div
+                  className="font-heading font-bold text-[11px] sm:text-xs md:text-sm text-[#14202B] leading-tight whitespace-nowrap overflow-visible"
+                  title={tripStats.costRangeText}
+                >
                   {tripStats.costRangeText}
                 </div>
-                <div className="text-[10px] sm:text-[11px] text-[#586673] truncate">
-                  for {plan.cost.people}, estimate
+                <div className="text-[10px] sm:text-[11px] text-[#586673] leading-tight truncate">
+                  {lang === "kn" ? `${plan.cost.people} ಜನರಿಗೆ, ಅಂದಾಜು` : `for ${plan.cost.people}, estimate`}
                 </div>
               </div>
             </div>
 
             {/* Stat 5: Season & Weather */}
             <div
-              className="col-span-2 sm:col-span-1 bg-white p-2.5 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-2 sm:gap-3 min-w-0"
+              className="col-span-2 sm:col-span-1 bg-white p-2 sm:p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-1.5 sm:gap-3 min-w-0"
               title={lang === "kn" ? "ವಿಶಿಷ್ಟ ಹವಾಮಾನ (ಮಾಸಿಕ ಸರಾಸರಿ)" : "Typical Weather (Monthly Average)"}
             >
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center shrink-0">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center shrink-0">
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="5" />
                   <line x1="12" y1="1" x2="12" y2="3" />
@@ -929,10 +932,10 @@ function TripViewContent() {
                 </svg>
               </div>
               <div className="min-w-0 flex-1">
-                <div className="font-heading font-bold text-xs sm:text-sm text-[#14202B] truncate">
+                <div className="font-heading font-bold text-[11px] sm:text-xs md:text-sm text-[#14202B] leading-tight truncate">
                   {tripStats.weather.temp}
                 </div>
-                <div className="text-[10px] sm:text-[11px] text-[#586673] truncate">
+                <div className="text-[10px] sm:text-[11px] text-[#586673] leading-tight truncate">
                   {lang === "kn"
                     ? `${tripStats.weather.descKn} · ಮಾಸಿಕ ಸರಾಸರಿ`
                     : `${tripStats.weather.descEn} · Monthly avg`}
