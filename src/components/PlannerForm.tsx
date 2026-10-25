@@ -82,6 +82,49 @@ const MONTH_NAMES = [
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 ];
 
+const MONTH_NAMES_KN = [
+  "ಜನ", "ಫೆಬ್ರ", "ಮಾರ್ಚ್", "ಏಪ್ರಿ", "ಮೇ", "ಜೂನ್",
+  "ಜುಲೈ", "ಆಗ", "ಸೆಪ್ಟೆಂ", "ಅಕ್ಟೋ", "ನವೆಂ", "ಡಿಸೆಂ"
+];
+
+const PRESET_LABELS: Record<string, { en: string; kn: string }> = {
+  "Weekend in Mysuru": { en: "Weekend in Mysuru", kn: "ಮೈಸೂರಿನಲ್ಲಿ ವಾರಾಂತ್ಯ" },
+  "Hampi in 3 days": { en: "Hampi in 3 days", kn: "೩ ದಿನಗಳಲ್ಲಿ ಹಂಪಿ" },
+  "Coastal escape": { en: "Coastal escape", kn: "ಕರಾವಳಿ ಪ್ರವಾಸ" },
+  "Coffee and hills": { en: "Coffee and hills", kn: "ಕಾಫಿ ಮತ್ತು ಗಿರಿಧಾಮಗಳು" },
+};
+
+const TRAVELLER_CONFIG: { id: Travellers; labelEn: string; labelKn: string }[] = [
+  { id: "solo", labelEn: "Solo", labelKn: "ಒಬ್ಬರೇ" },
+  { id: "couple", labelEn: "Couple", labelKn: "ದಂಪತಿ" },
+  { id: "family", labelEn: "Family", labelKn: "ಕುಟುಂಬ" },
+  { id: "friends", labelEn: "Friends", labelKn: "ಸ್ನೇಹಿತರು" },
+];
+
+const BUDGET_TIERS = [
+  { id: "budget" as BudgetFit, sym: "₹", titleEn: "Budget", titleKn: "ಮಿತವ್ಯಯ", subEn: "under 2.5k", subKn: "₹ ೨,೫೦೦ ಕ್ಕಿಂತ ಕಡಿಮೆ" },
+  { id: "mid" as BudgetFit, sym: "₹₹", titleEn: "Mid-range", titleKn: "ಮಧ್ಯಮ", subEn: "2.5k to 5k", subKn: "₹ ೨.೫k ರಿಂದ ೫k" },
+  { id: "premium" as BudgetFit, sym: "₹₹₹", titleEn: "Premium", titleKn: "ಐಷಾರಾಮಿ", subEn: "above 5k", subKn: "₹ ೫,೦೦೦ ಕ್ಕಿಂತ ಹೆಚ್ಚು" },
+];
+
+const PACE_TIERS = [
+  { id: "relaxed" as Pace, titleEn: "Relaxed", titleKn: "ನಿರಾಳ", subEn: "2 to 3", subKn: "೨ ರಿಂದ ೩" },
+  { id: "balanced" as Pace, titleEn: "Balanced", titleKn: "ಸಮತೋಲಿತ", subEn: "3 to 4", subKn: "೩ ರಿಂದ ೪" },
+  { id: "packed" as Pace, titleEn: "Packed", titleKn: "ಚುರುಕಾದ", subEn: "5+", subKn: "೫+" },
+];
+
+const FOOD_OPTIONS = [
+  { id: "any" as const, labelEn: "Any", labelKn: "ಯಾವುದಾದರೂ" },
+  { id: "veg" as const, labelEn: "Veg", labelKn: "ಸಸ್ಯಾಹಾರಿ" },
+  { id: "nonveg" as const, labelEn: "Non-veg", labelKn: "ಮಾಂಸಾಹಾರಿ" },
+];
+
+const TRANSPORT_OPTIONS = [
+  { id: "cab" as const, labelEn: "Cab", labelKn: "ಕ್ಯಾಬ್" },
+  { id: "own_car" as const, labelEn: "Own car", labelKn: "ಸ್ವಂತ ಕಾರು" },
+  { id: "bus_train" as const, labelEn: "Bus & train", labelKn: "ಬಸ್ ಮತ್ತು ರೈಲು" },
+];
+
 const BEST_SEASON_MONTHS = [10, 11, 12, 1, 2]; // Oct to Feb in Karnataka
 
 export default function PlannerForm() {
@@ -207,7 +250,7 @@ export default function PlannerForm() {
                 onClick={() => applyPreset(p)}
                 className="px-3 py-1.5 rounded-full text-xs font-medium bg-[#F1F3F0] hover:bg-gray-200 text-[#14202B] transition-colors cursor-pointer"
               >
-                {p.label}
+                {lang === "kn" ? PRESET_LABELS[p.label]?.kn || p.label : p.label}
               </button>
             ))}
           </div>
@@ -221,7 +264,9 @@ export default function PlannerForm() {
                 {lang === "kn" ? "ನಿಮ್ಮ ಆಸಕ್ತಿಗಳೇನು?" : "What do you enjoy?"}
               </label>
               <span className="text-xs text-[#586673]">
-                {interests.length >= 4 ? "Max 4" : "Pick 1 to 4"}
+                {interests.length >= 4
+                  ? lang === "kn" ? "ಗರಿಷ್ಠ ೪" : "Max 4"
+                  : lang === "kn" ? "೧ ರಿಂದ ೪ ಆರಿಸಿ" : "Pick 1 to 4"}
               </span>
             </div>
             <p className="text-xs text-[#586673] mb-3">
@@ -277,14 +322,16 @@ export default function PlannerForm() {
               <label className="block font-heading font-bold text-sm text-[#14202B] mb-1">
                 {lang === "kn" ? "ಎಷ್ಟು ದಿನಗಳು?" : "How many days?"}
               </label>
-              <p className="text-xs text-[#586673] mb-3">Choose 1 to 7</p>
+              <p className="text-xs text-[#586673] mb-3">
+                {lang === "kn" ? "೧ ರಿಂದ ೭ ದಿನಗಳು" : "Choose 1 to 7"}
+              </p>
 
               <div className="flex items-center gap-3">
                 <span className="font-heading font-extrabold text-3xl text-[#8E1F2F]">
                   {days}
                 </span>
                 <span className="text-xs font-semibold text-[#14202B]">
-                  {days === 1 ? "day" : "days"}
+                  {days === 1 ? (lang === "kn" ? "ದಿನ" : "day") : (lang === "kn" ? "ದಿನಗಳು" : "days")}
                 </span>
               </div>
               <input
@@ -302,24 +349,26 @@ export default function PlannerForm() {
               <label className="block font-heading font-bold text-sm text-[#14202B] mb-1">
                 {lang === "kn" ? "ಯಾರು ಪ್ರಯಾಣಿಸುತ್ತಿದ್ದಾರೆ?" : "Who is travelling?"}
               </label>
-              <p className="text-xs text-[#586673] mb-3">Costs are worked out for the group</p>
+              <p className="text-xs text-[#586673] mb-3">
+                {lang === "kn" ? "ಗುಂಪಿಗೆ ಅನುಗುಣವಾಗಿ ವೆಚ್ಚ ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತದೆ" : "Costs are worked out for the group"}
+              </p>
 
               <div className="flex flex-wrap gap-1.5 mb-3">
-                {(["solo", "couple", "family", "friends"] as Travellers[]).map((tr) => (
+                {TRAVELLER_CONFIG.map((tr) => (
                   <button
-                    key={tr}
+                    key={tr.id}
                     type="button"
                     onClick={() => {
-                      setTravellers(tr);
-                      setPeopleCount(PEOPLE_COUNT_MAP[tr] || 2);
+                      setTravellers(tr.id);
+                      setPeopleCount(PEOPLE_COUNT_MAP[tr.id] || 2);
                     }}
-                    className={`px-3 py-1.5 rounded-full text-xs font-semibold capitalize cursor-pointer transition-colors ${
-                      travellers === tr
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-colors ${
+                      travellers === tr.id
                         ? "bg-[#14202B] text-white"
                         : "bg-[#F1F3F0] text-[#14202B] hover:bg-gray-200"
                     }`}
                   >
-                    {tr}
+                    {lang === "kn" ? tr.labelKn : tr.labelEn}
                   </button>
                 ))}
               </div>
@@ -335,7 +384,7 @@ export default function PlannerForm() {
                   -
                 </button>
                 <span className="text-sm font-bold text-[#14202B] px-2">
-                  {peopleCount} {peopleCount === 1 ? "person" : "people"}
+                  {peopleCount} {peopleCount === 1 ? (lang === "kn" ? "ವ್ಯಕ್ತಿ" : "person") : (lang === "kn" ? "ಜನರು" : "people")}
                 </span>
                 <button
                   type="button"
@@ -354,17 +403,13 @@ export default function PlannerForm() {
             {/* Budget */}
             <div>
               <label className="block font-heading font-bold text-sm text-[#14202B] mb-1">
-                Budget
+                {lang === "kn" ? "ಬಜೆಟ್" : "Budget"}
               </label>
               <p className="text-xs text-[#586673] mb-3">
-                Rs per person per day, stay and food included
+                {lang === "kn" ? "ಪ್ರತಿ ವ್ಯಕ್ತಿಗೆ ದಿನಕ್ಕೆ, ವಾಸ್ತವ್ಯ ಮತ್ತು ಊಟ ಸೇರಿ" : "Rs per person per day, stay and food included"}
               </p>
               <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: "budget" as BudgetFit, sym: "₹", title: "Budget", sub: "under 2.5k" },
-                  { id: "mid" as BudgetFit, sym: "₹₹", title: "Mid-range", sub: "2.5k to 5k" },
-                  { id: "premium" as BudgetFit, sym: "₹₹₹", title: "Premium", sub: "above 5k" },
-                ].map((b) => (
+                {BUDGET_TIERS.map((b) => (
                   <button
                     key={b.id}
                     type="button"
@@ -376,8 +421,8 @@ export default function PlannerForm() {
                     }`}
                   >
                     <div className="text-xs text-[#8C6D05] font-bold">{b.sym}</div>
-                    <div className="text-xs font-bold text-[#14202B] mt-0.5">{b.title}</div>
-                    <div className="text-[10px] text-[#586673]">{b.sub}</div>
+                    <div className="text-xs font-bold text-[#14202B] mt-0.5">{lang === "kn" ? b.titleKn : b.titleEn}</div>
+                    <div className="text-[10px] text-[#586673]">{lang === "kn" ? b.subKn : b.subEn}</div>
                   </button>
                 ))}
               </div>
@@ -386,15 +431,13 @@ export default function PlannerForm() {
             {/* Pace */}
             <div>
               <label className="block font-heading font-bold text-sm text-[#14202B] mb-1">
-                Pace
+                {lang === "kn" ? "ಪ್ರವಾಸದ ವೇಗ" : "Pace"}
               </label>
-              <p className="text-xs text-[#586673] mb-3">Stops per day</p>
+              <p className="text-xs text-[#586673] mb-3">
+                {lang === "kn" ? "ದಿನಕ್ಕೆ ನಿಲುಗಡೆಗಳು" : "Stops per day"}
+              </p>
               <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: "relaxed" as Pace, title: "Relaxed", sub: "2 to 3" },
-                  { id: "balanced" as Pace, title: "Balanced", sub: "3 to 4" },
-                  { id: "packed" as Pace, title: "Packed", sub: "5+" },
-                ].map((p) => (
+                {PACE_TIERS.map((p) => (
                   <button
                     key={p.id}
                     type="button"
@@ -405,8 +448,8 @@ export default function PlannerForm() {
                         : "bg-white border-[#DCE1DD] text-[#586673] hover:border-gray-400"
                     }`}
                   >
-                    <div className="text-xs font-bold text-[#14202B]">{p.title}</div>
-                    <div className="text-[10px] text-[#586673] mt-0.5">{p.sub}</div>
+                    <div className="text-xs font-bold text-[#14202B]">{lang === "kn" ? p.titleKn : p.titleEn}</div>
+                    <div className="text-[10px] text-[#586673] mt-0.5">{lang === "kn" ? p.subKn : p.subEn}</div>
                   </button>
                 ))}
               </div>
@@ -416,10 +459,10 @@ export default function PlannerForm() {
           {/* 4. Month Picker with Best Season Dots */}
           <div className="pt-2">
             <label className="block font-heading font-bold text-sm text-[#14202B] mb-1">
-              When are you travelling?
+              {lang === "kn" ? "ಯಾವ ತಿಂಗಳಲ್ಲಿ ಪ್ರಯಾಣ?" : "When are you travelling?"}
             </label>
             <p className="text-xs text-[#586673] mb-3">
-              A green dot marks the best months for your interests
+              {lang === "kn" ? "ಹಸಿರು ಚುಕ್ಕೆ ನಿಮ್ಮ ಆಸಕ್ತಿಗಳಿಗೆ ಉತ್ತಮ ತಿಂಗಳುಗಳನ್ನು ಸೂಚಿಸುತ್ತದೆ" : "A green dot marks the best months for your interests"}
             </p>
             <div className="grid grid-cols-6 sm:grid-cols-12 gap-1.5">
               {MONTH_NAMES.map((mName, mIdx) => {
@@ -438,7 +481,7 @@ export default function PlannerForm() {
                         : "bg-white border-[#DCE1DD] text-[#14202B] hover:bg-gray-50"
                     }`}
                   >
-                    <span>{mName}</span>
+                    <span>{lang === "kn" ? MONTH_NAMES_KN[mIdx] : mName}</span>
                     <span
                       className={`w-1.5 h-1.5 rounded-full mt-1 ${
                         isBest
@@ -457,27 +500,27 @@ export default function PlannerForm() {
           {/* 5. Optional Filters (mockup 02 Part 2) */}
           <div className="pt-4 border-t border-[#F1F3F0] space-y-4">
             <h4 className="font-heading font-bold text-sm text-[#14202B]">
-              Optional preferences
+              {lang === "kn" ? "ಹೆಚ್ಚುವರಿ ಆದ್ಯತೆಗಳು" : "Optional preferences"}
             </h4>
 
             {/* Food preference */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <span className="text-xs font-medium text-[#14202B]">
-                Food preference (filters meal stops)
+                {lang === "kn" ? "ಆಹಾರ ಆದ್ಯತೆ (ಊಟದ ನಿಲುಗಡೆಗಳು)" : "Food preference (filters meal stops)"}
               </span>
               <div className="flex items-center gap-1.5">
-                {(["any", "veg", "nonveg"] as const).map((pref) => (
+                {FOOD_OPTIONS.map((pref) => (
                   <button
-                    key={pref}
+                    key={pref.id}
                     type="button"
-                    onClick={() => setFoodPref(pref)}
-                    className={`px-3 py-1 rounded-full text-xs font-semibold capitalize cursor-pointer transition-colors ${
-                      foodPref === pref
+                    onClick={() => setFoodPref(pref.id)}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition-colors ${
+                      foodPref === pref.id
                         ? "bg-[#8E1F2F] text-white"
                         : "bg-[#F1F3F0] text-[#14202B] hover:bg-gray-200"
                     }`}
                   >
-                    {pref === "nonveg" ? "Non-veg" : pref}
+                    {lang === "kn" ? pref.labelKn : pref.labelEn}
                   </button>
                 ))}
               </div>
@@ -486,14 +529,10 @@ export default function PlannerForm() {
             {/* Getting around */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <span className="text-xs font-medium text-[#14202B]">
-                Getting around (changes travel time and cost)
+                {lang === "kn" ? "ಸಾರಿಗೆ ವಿಧಾನ (ಪ್ರಯಾಣ ಸಮಯ ಮತ್ತು ವೆಚ್ಚ)" : "Getting around (changes travel time and cost)"}
               </span>
               <div className="flex items-center gap-1.5">
-                {[
-                  { id: "cab" as const, label: "Cab" },
-                  { id: "own_car" as const, label: "Own car" },
-                  { id: "bus_train" as const, label: "Bus & train" },
-                ].map((mode) => (
+                {TRANSPORT_OPTIONS.map((mode) => (
                   <button
                     key={mode.id}
                     type="button"
@@ -504,7 +543,7 @@ export default function PlannerForm() {
                         : "bg-[#F1F3F0] text-[#14202B] hover:bg-gray-200"
                     }`}
                   >
-                    {mode.label}
+                    {lang === "kn" ? mode.labelKn : mode.labelEn}
                   </button>
                 ))}
               </div>
@@ -514,10 +553,10 @@ export default function PlannerForm() {
             <div className="flex items-center justify-between gap-2">
               <div>
                 <div className="text-xs font-medium text-[#14202B]">
-                  Low walking
+                  {lang === "kn" ? "ಕಡಿಮೆ ನಡಿಗೆ" : "Low walking"}
                 </div>
                 <div className="text-[11px] text-[#586673]">
-                  Better for seniors and young children
+                  {lang === "kn" ? "ಹಿರಿಯರು ಮತ್ತು ಮಕ್ಕಳಿಗೆ ಸೂಕ್ತ" : "Better for seniors and young children"}
                 </div>
               </div>
               <button
@@ -580,7 +619,7 @@ export default function PlannerForm() {
                 : `${totalMatchingPlacesCount} ${totalMatchingPlacesCount === 1 ? "place matches" : "places match"}`}
             </span>
             <span className="text-[11px] text-[#586673] font-medium">
-              Real-time Map
+              {lang === "kn" ? "ನೈಜ ನಕ್ಷೆ" : "Real-time Map"}
             </span>
           </div>
           <PlannerMap selectedCategories={interests} height="h-[320px]" />
@@ -589,45 +628,45 @@ export default function PlannerForm() {
         {/* Your Trip Brief Summary */}
         <div className="bg-white rounded-2xl p-5 border border-[#DCE1DD] shadow-xs space-y-3">
           <h3 className="font-heading font-bold text-base text-[#14202B]">
-            Your trip brief
+            {lang === "kn" ? "ನಿಮ್ಮ ಪ್ರವಾಸದ ಸಾರಾಂಶ" : "Your trip brief"}
           </h3>
 
           <div className="space-y-2 text-xs divide-y divide-[#F1F3F0]">
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-[#586673]">Trip</span>
+              <span className="text-[#586673]">{lang === "kn" ? "ಪ್ರವಾಸ" : "Trip"}</span>
               <span className="font-semibold text-[#14202B]">
-                {days} days from {startCity}
+                {lang === "kn" ? `${startCity} ನಿಂದ ${days} ದಿನಗಳು` : `${days} days from ${startCity}`}
               </span>
             </div>
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-[#586673]">Travellers</span>
-              <span className="font-semibold text-[#14202B] capitalize">
-                {travellers} ({peopleCount})
-              </span>
-            </div>
-            <div className="flex items-center justify-between py-1.5">
-              <span className="text-[#586673]">Interests</span>
-              <span className="font-semibold text-[#14202B] capitalize">
-                {interests.join(", ")}
-              </span>
-            </div>
-            <div className="flex items-center justify-between py-1.5">
-              <span className="text-[#586673]">Spend</span>
-              <span className="font-semibold text-[#14202B] capitalize">
-                {budget}, {pace}
-              </span>
-            </div>
-            <div className="flex items-center justify-between py-1.5">
-              <span className="text-[#586673]">Month</span>
+              <span className="text-[#586673]">{lang === "kn" ? "ಪ್ರಯಾಣಿಕರು" : "Travellers"}</span>
               <span className="font-semibold text-[#14202B]">
-                {MONTH_NAMES[month - 1]} {BEST_SEASON_MONTHS.includes(month) && "· Best season"}
+                {lang === "kn" ? (TRAVELLER_CONFIG.find(t => t.id === travellers)?.labelKn || travellers) : travellers} ({peopleCount})
+              </span>
+            </div>
+            <div className="flex items-center justify-between py-1.5">
+              <span className="text-[#586673]">{lang === "kn" ? "ಆಸಕ್ತಿಗಳು" : "Interests"}</span>
+              <span className="font-semibold text-[#14202B]">
+                {interests.map(i => lang === "kn" ? (CATEGORY_TILES.find(c => c.id === i)?.labelKn || i) : i).join(", ")}
+              </span>
+            </div>
+            <div className="flex items-center justify-between py-1.5">
+              <span className="text-[#586673]">{lang === "kn" ? "ವೆಚ್ಚ ಮತ್ತು ವೇಗ" : "Spend"}</span>
+              <span className="font-semibold text-[#14202B]">
+                {lang === "kn" ? (BUDGET_TIERS.find(b => b.id === budget)?.titleKn || budget) : budget}, {lang === "kn" ? (PACE_TIERS.find(p => p.id === pace)?.titleKn || pace) : pace}
+              </span>
+            </div>
+            <div className="flex items-center justify-between py-1.5">
+              <span className="text-[#586673]">{lang === "kn" ? "ತಿಂಗಳು" : "Month"}</span>
+              <span className="font-semibold text-[#14202B]">
+                {lang === "kn" ? MONTH_NAMES_KN[month - 1] : MONTH_NAMES[month - 1]} {BEST_SEASON_MONTHS.includes(month) && (lang === "kn" ? "· ಉತ್ತಮ ಕಾಲ" : "· Best season")}
               </span>
             </div>
           </div>
 
           <div className="pt-3 border-t border-[#DCE1DD]">
             <div className="text-[11px] text-[#586673]">
-              Estimated total for {peopleCount}
+              {lang === "kn" ? `${peopleCount} ಜನರಿಗೆ ಅಂದಾಜು ಒಟ್ಟು` : `Estimated total for ${peopleCount}`}
             </div>
             <div className="font-heading font-extrabold text-2xl text-[#14202B]">
               {costRange.text}
@@ -638,7 +677,7 @@ export default function PlannerForm() {
         {/* Top Matches Panel */}
         <div className="bg-white rounded-2xl p-5 border border-[#DCE1DD] shadow-xs space-y-3">
           <h4 className="font-heading font-bold text-sm text-[#14202B]">
-            Top matches
+            {lang === "kn" ? "ಪ್ರಮುಖ ಹೊಂದಾಣಿಕೆಗಳು" : "Top matches"}
           </h4>
 
           <div className="space-y-2.5">
@@ -648,7 +687,7 @@ export default function PlannerForm() {
                 className="flex items-center justify-between p-2 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2] text-xs"
               >
                 <div>
-                  <div className="font-bold text-[#14202B]">{place.name_en}</div>
+                  <div className="font-bold text-[#14202B]">{lang === "kn" ? (place.name_kn || place.name_en) : place.name_en}</div>
                   <div className="text-[11px] text-[#586673]">{place.city}</div>
                 </div>
                 <span className="text-[#1E6B52] font-bold">✓</span>
@@ -663,8 +702,8 @@ export default function PlannerForm() {
               className="text-xs font-semibold text-[#8E1F2F] hover:underline cursor-pointer"
             >
               {showAllMatches
-                ? "Show fewer"
-                : `+ ${matchedCandidates.length - 5} more places`}
+                ? (lang === "kn" ? "ಕಡಿಮೆ ತೋರಿಸಿ" : "Show fewer")
+                : (lang === "kn" ? `+ ${matchedCandidates.length - 5} ಇತರ ಸ್ಥಳಗಳು` : `+ ${matchedCandidates.length - 5} more places`)}
             </button>
           )}
         </div>
@@ -679,7 +718,7 @@ export default function PlannerForm() {
               : `${totalMatchingPlacesCount} ${totalMatchingPlacesCount === 1 ? "place matches" : "places match"}`}
           </div>
           <div className="text-[11px] text-[#586673]">
-            about {costRange.text}
+            {lang === "kn" ? `ಸುಮಾರು ${costRange.text}` : `about ${costRange.text}`}
           </div>
         </div>
         <button
@@ -688,7 +727,7 @@ export default function PlannerForm() {
           disabled={interests.length === 0 || submitting}
           className="px-5 py-2.5 rounded-xl font-bold text-xs bg-[#8E1F2F] text-white shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
         >
-          Generate
+          {lang === "kn" ? "ರಚಿಸಿ" : "Generate"}
         </button>
       </div>
     </div>
