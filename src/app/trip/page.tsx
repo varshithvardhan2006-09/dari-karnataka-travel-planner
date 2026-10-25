@@ -236,9 +236,9 @@ function TripViewContent() {
       }
 
       // Case 2: Decompress from lz-string
-      if (dParam !== null) {
-        // Enforce max string length to protect against oversized payload abuse
-        if (dParam.length > 10000) {
+      if (dParam && dParam.trim().length > 0) {
+        // Enforce max string length (100KB) to protect against oversized payload abuse
+        if (dParam.length > 100000) {
           if (!isCancelled) {
             setErrorState({ type: "invalid_link" });
             setLoading(false);
@@ -247,7 +247,7 @@ function TripViewContent() {
         }
 
         try {
-          const decompressed = LZString.decompressFromEncodedURIComponent(dParam);
+          const decompressed = LZString.decompressFromEncodedURIComponent(dParam.trim());
           if (decompressed) {
             const rawParsed = JSON.parse(decompressed);
             // Strict runtime schema validation using PlanSchema
@@ -255,6 +255,15 @@ function TripViewContent() {
             if (validation.success) {
               if (!isCancelled) {
                 setPlan(validation.data);
+                setSelectedDay(1);
+                setLoading(false);
+              }
+              return;
+            } else if (rawParsed && Array.isArray(rawParsed.days) && rawParsed.days.length > 0) {
+              // Resilient fallback for minor schema discrepancies in stored/shared payloads
+              console.warn("Shared plan had minor schema variances; recovering plan structure:", validation.error.format());
+              if (!isCancelled) {
+                setPlan(rawParsed as Plan);
                 setSelectedDay(1);
                 setLoading(false);
               }

@@ -76,4 +76,19 @@ describe("Trip URL Share with lz-string", () => {
     const validation = PlanSchema.safeParse(parsed);
     expect(validation.success).toBe(false);
   });
+
+  it("successfully validates all 4 curated samples when compressed and decompressed", () => {
+    const samples = ["heritage", "nature", "mixed", "food"];
+    const fs = require("fs");
+    samples.forEach((key) => {
+      const sample = JSON.parse(fs.readFileSync(`data/samples/${key}.json`, "utf8"));
+      const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(sample));
+      expect(compressed.length).toBeGreaterThan(5000);
+      const decompressed = LZString.decompressFromEncodedURIComponent(compressed);
+      expect(decompressed).toBeDefined();
+      const parsed = JSON.parse(decompressed!);
+      const validation = PlanSchema.safeParse(parsed);
+      expect(validation.success).toBe(true);
+    });
+  });
 });
