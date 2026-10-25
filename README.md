@@ -313,7 +313,7 @@ Streams authentic native Kannada speech audio.
 
 ## 🚀 Roadmap & Future Enhancements
 
-To expand Dari from a hackathon-winning application into a state-wide Karnataka tourism platform, the following engineering enhancements are planned:
+The following engineering enhancements are planned for upcoming releases:
 
 | Area | Feature | Description & Technical Approach |
 |---|---|---|
