@@ -13,7 +13,6 @@ import {
   BudgetFit,
   Pace,
   Travellers,
-  TravelMode,
   Place,
   Stop,
 } from "@/lib/schema";
@@ -28,10 +27,22 @@ import ShowToLocalModal from "@/components/ShowToLocalModal";
 import { buildDeterministicPlan } from "@/lib/planner";
 import { getSamplePlan, getSamplePlanForInterests } from "@/lib/samples";
 import { computeTravelLeg, addMinutesToTime, roundTimeTo5Min, getPinNumber } from "@/lib/geo";
-import { calculateTripCost, PEOPLE_COUNT_MAP } from "@/lib/cost";
+import { calculateTripCost } from "@/lib/cost";
 import placesData from "../../../data/places.json";
 
 const allPlaces = placesData as Place[];
+
+interface SavedTripRecord {
+  id: string;
+  title: string;
+  days: number;
+  month: number;
+  costText: string;
+  firstCity: string;
+  region: string;
+  savedAt: number;
+  compressed: string;
+}
 
 // Dynamic import of Leaflet map with ssr: false to prevent Next.js SSR crashes
 const TripMap = dynamic(() => import("@/components/TripMap"), {
@@ -129,7 +140,15 @@ function TripViewContent() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [drawerStop, setDrawerStop] = useState<Stop | null>(null);
   const [isShowToLocalOpen, setIsShowToLocalOpen] = useState<boolean>(false);
-  const [savedTrips, setSavedTrips] = useState<any[]>([]);
+  const [savedTrips, setSavedTrips] = useState<SavedTripRecord[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const raw = localStorage.getItem("dari_saved_trips");
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
 
   // Extract query parameters
   const dParam = searchParams.get("d");
@@ -297,27 +316,17 @@ function TripViewContent() {
     refreshKey,
   ]);
 
-  // Load and auto-save trips to localStorage (U7 My Trips)
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const raw = localStorage.getItem("dari_saved_trips");
-      if (raw) setSavedTrips(JSON.parse(raw));
-    } catch {
-      // ignore
-    }
-  }, []);
-
+  // Auto-save trips to localStorage (U7 My Trips)
   useEffect(() => {
     if (!plan || typeof window === "undefined") return;
     try {
       const raw = localStorage.getItem("dari_saved_trips");
-      const list = raw ? JSON.parse(raw) : [];
+      const list: SavedTripRecord[] = raw ? JSON.parse(raw) : [];
       const firstCity = plan.days[0]?.stops[0]?.place.city || "Bengaluru";
       const region = plan.days[0]?.stops[0]?.place.region || "Mysuru";
       const tripId = `${plan.days.length}d-${firstCity.toLowerCase()}`;
       const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(plan));
-      const record = {
+      const record: SavedTripRecord = {
         id: tripId,
         title: plan.title,
         days: plan.days.length,
@@ -329,10 +338,12 @@ function TripViewContent() {
         compressed,
       };
 
-      const filtered = list.filter((item: any) => item.id !== tripId);
+      const filtered = list.filter((item) => item.id !== tripId);
       const updated = [record, ...filtered].slice(0, 10);
       localStorage.setItem("dari_saved_trips", JSON.stringify(updated));
-      setSavedTrips(updated);
+      queueMicrotask(() => {
+        setSavedTrips(updated);
+      });
     } catch {
       // ignore
     }
@@ -411,7 +422,7 @@ function TripViewContent() {
   };
 
   // Swap stop with alternative
-  const handleSwapStop = (placeId: string) => {
+  const handleSwapStop = (placeId: string, specificAlternative?: Place) => {
     if (!plan) return;
     const currentDay = plan.days.find((d) => d.day === selectedDay);
     if (!currentDay) return;
@@ -420,11 +431,13 @@ function TripViewContent() {
     if (!stopToSwap) return;
 
     const visitedSet = new Set(plan.days.flatMap((d) => d.stops.map((s) => s.place_id)));
-    const alternative = allPlaces.find(
-      (p) =>
-        !visitedSet.has(p.id) &&
-        (p.region === stopToSwap.place.region || p.city === stopToSwap.place.city)
-    );
+    const alternative =
+      specificAlternative ||
+      allPlaces.find(
+        (p) =>
+          !visitedSet.has(p.id) &&
+          (p.region === stopToSwap.place.region || p.city === stopToSwap.place.city)
+      );
 
     if (!alternative) return;
 
@@ -1279,7 +1292,7 @@ function TripViewContent() {
         onClose={() => setIsDrawerOpen(false)}
         onSwapWith={(alt) => {
           if (drawerStop) {
-            handleSwapStop(drawerStop.place_id);
+            handleSwapStop(drawerStop.place_id, alt);
             setIsDrawerOpen(false);
           }
         }}

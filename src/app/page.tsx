@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useLang } from "@/lib/i18n/useLang";
 import PalaceScene from "@/components/illustrations/PalaceScene";
 import HampiScene from "@/components/illustrations/HampiScene";
 import CoastScene from "@/components/illustrations/CoastScene";
@@ -25,7 +24,6 @@ const phrases = phrasesData as Phrase[];
 
 export default function LandingPage() {
   const router = useRouter();
-  const { lang, t } = useLang();
 
   // Quick-start bar states
   const [qsInterests, setQsInterests] = useState<string>("heritage,food");
@@ -43,23 +41,26 @@ export default function LandingPage() {
   const [isPhraseSaved, setIsPhraseSaved] = useState<boolean>(false);
 
   useEffect(() => {
-    // Pick deterministic phrase by day of the year
     const now = new Date();
     const start = new Date(now.getFullYear(), 0, 0);
     const diff = now.getTime() - start.getTime();
     const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
     const selected = phrases[dayOfYear % phrases.length] || phrases[0];
-    setPhraseOfDay(selected);
 
-    // Check localStorage if already saved
+    let isSaved = false;
     try {
       const savedList = JSON.parse(localStorage.getItem("dari_saved_phrases") || "[]");
-      if (Array.isArray(savedList) && savedList.includes(selected.id)) {
-        setIsPhraseSaved(true);
-      }
+      isSaved = Array.isArray(savedList) && savedList.includes(selected.id);
     } catch {
       // ignore
     }
+
+    queueMicrotask(() => {
+      setPhraseOfDay(selected);
+      if (isSaved) {
+        setIsPhraseSaved(true);
+      }
+    });
   }, []);
 
   const playKannadaAudio = (text: string) => {

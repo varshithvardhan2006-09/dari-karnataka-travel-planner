@@ -150,8 +150,8 @@ export default function CostSummary({ cost, days, source }: CostSummaryProps) {
             </span>
             <span className="text-[10px] text-[#586673] mt-0.5">
               {lang === "kn"
-                ? `${cost.people} ಜನರಿಗೆ`
-                : `for ${cost.people} ${cost.people === 1 ? "person" : "people"}`}
+                ? `${days} ದಿನ, ${cost.people} ಜನರಿಗೆ`
+                : `${days}d · for ${cost.people} ${cost.people === 1 ? "person" : "people"}`}
             </span>
           </div>
         </div>

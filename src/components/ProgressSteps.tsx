@@ -72,6 +72,11 @@ const STEPS: StepItem[] = [
   },
 ];
 
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
 const CANDIDATE_CHIPS = [
   "Lalbagh",
   "Bangalore Palace",
@@ -148,7 +153,7 @@ export default function ProgressSteps({
               : `Arranging ${days} days across ${placeCount} places`}
           </h1>
           <p className="text-xs text-[#586673] mt-1 font-medium">
-            {interests} · {budget} · {pace} · November
+            {interests} · {budget} · {pace} · {MONTH_NAMES[(month - 1 + 12) % 12] || "November"}
           </p>
         </div>
 

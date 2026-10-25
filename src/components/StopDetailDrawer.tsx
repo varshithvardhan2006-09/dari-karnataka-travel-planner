@@ -24,7 +24,7 @@ export default function StopDetailDrawer({
   onSwapWith,
   onRemoveStop,
 }: StopDetailDrawerProps) {
-  const { lang, t } = useLang();
+  const { lang } = useLang();
 
   // Close on Escape key
   useEffect(() => {

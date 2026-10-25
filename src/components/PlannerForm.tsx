@@ -85,7 +85,7 @@ const MONTH_NAMES = [
 const BEST_SEASON_MONTHS = [10, 11, 12, 1, 2]; // Oct to Feb in Karnataka
 
 export default function PlannerForm() {
-  const { t, lang } = useLang();
+  const { lang } = useLang();
   const router = useRouter();
 
   // Primary state
@@ -101,8 +101,6 @@ export default function PlannerForm() {
   // Optional filters (safe & backwards compatible)
   const [foodPref, setFoodPref] = useState<"any" | "veg" | "nonveg">("any");
   const [transportMode, setTransportMode] = useState<"cab" | "own_car" | "bus_train">("cab");
-  const [mustIncludePlaces, setMustIncludePlaces] = useState<string[]>([]);
-  const [placeSearchText, setPlaceSearchText] = useState<string>("");
   const [lowWalking, setLowWalking] = useState<boolean>(false);
   const [showAllMatches, setShowAllMatches] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState(false);
