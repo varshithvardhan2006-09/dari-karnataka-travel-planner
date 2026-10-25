@@ -4,6 +4,13 @@ import { useState, useCallback } from "react";
 
 let currentAudio: HTMLAudioElement | null = null;
 
+export interface KannadaSpeechOptions {
+  translit?: string;
+  isSlow?: boolean;
+  onStart?: () => void;
+  onEnd?: () => void;
+}
+
 /**
  * Checks if browser has native Kannada voice in SpeechSynthesis.
  */
@@ -24,19 +31,19 @@ export function getKannadaVoice(): SpeechSynthesisVoice | null {
 
 /**
  * Plays authentic, high-fidelity Kannada speech.
- * 1. Primary: Native Google Kannada TTS endpoint (works on all devices with crystal-clear native pronunciation).
- * 2. Fallback: Browser Web Speech API (with kn-IN).
+ * 1. Primary: Native Google Kannada TTS endpoint (works universally on all browsers with crystal-clear native pronunciation).
+ * 2. Fallback: Browser Web Speech API (with kn-IN native voice or phonetic transliteration).
  */
 export function playKannadaSpeech(
   text: string,
-  options?: { isSlow?: boolean; onStart?: () => void; onEnd?: () => void }
+  options?: KannadaSpeechOptions
 ): void {
   if (typeof window === "undefined" || !text) return;
 
-  const { isSlow = false, onStart, onEnd } = options || {};
+  const { translit, isSlow = false, onStart, onEnd } = options || {};
 
   try {
-    // Cancel any existing audio
+    // Cancel any currently playing audio stream
     if (currentAudio) {
       try {
         currentAudio.pause();
@@ -56,15 +63,25 @@ export function playKannadaSpeech(
 
     onStart?.();
 
-    // High-fidelity native Google Kannada TTS stream via same-origin server proxy (bypasses browser Referer blocks)
+    // High-fidelity native Google Kannada TTS stream via same-origin server proxy
     const encoded = encodeURIComponent(text.trim());
     const audioUrl = `/api/tts?text=${encoded}`;
 
     const audio = new Audio(audioUrl);
+    audio.preload = "auto";
+    audio.volume = 1.0;
     currentAudio = audio;
-    if (isSlow) {
-      audio.playbackRate = 0.75;
-    }
+
+    // Safely set playback rate once metadata loads (prevents InvalidStateError on iOS Safari)
+    audio.addEventListener("loadedmetadata", () => {
+      try {
+        if (isSlow) {
+          audio.playbackRate = 0.75;
+        }
+      } catch {
+        // ignore
+      }
+    });
 
     audio.onended = () => {
       currentAudio = null;
@@ -73,38 +90,54 @@ export function playKannadaSpeech(
 
     audio.onerror = () => {
       // Fallback to browser Web Speech API
-      speakWithWebSpeech(text, isSlow, onEnd);
+      speakWithWebSpeech(text, translit, isSlow, onEnd);
     };
 
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.catch(() => {
         // Fallback to Web Speech API if autoplay restriction or network failure
-        speakWithWebSpeech(text, isSlow, onEnd);
+        speakWithWebSpeech(text, translit, isSlow, onEnd);
       });
     }
   } catch {
-    speakWithWebSpeech(text, isSlow, onEnd);
+    speakWithWebSpeech(text, translit, isSlow, onEnd);
   }
 }
 
-function speakWithWebSpeech(text: string, isSlow: boolean, onEnd?: () => void) {
+function speakWithWebSpeech(
+  text: string,
+  translit?: string,
+  isSlow: boolean = false,
+  onEnd?: () => void
+) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     onEnd?.();
     return;
   }
   try {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "kn-IN";
-    utterance.rate = isSlow ? 0.7 : 0.95;
+    // Unstick Chromium/Safari speech synthesis if paused
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+
+    const knVoice = getKannadaVoice();
+    // If no Kannada voice exists on this OS, speak phonetic transliteration
+    // so the auto driver and user actually hear the Kannada words out loud!
+    const spokenText = knVoice ? text : translit || text;
+    const utterance = new SpeechSynthesisUtterance(spokenText);
+
+    if (knVoice) {
+      utterance.voice = knVoice;
+      utterance.lang = "kn-IN";
+    } else {
+      utterance.lang = "en-IN";
+    }
+
+    utterance.rate = isSlow ? 0.75 : 0.95;
     utterance.pitch = 1.0;
     utterance.onend = () => onEnd?.();
     utterance.onerror = () => onEnd?.();
-
-    const knVoice = getKannadaVoice();
-    if (knVoice) {
-      utterance.voice = knVoice;
-    }
 
     window.speechSynthesis.speak(utterance);
   } catch {
@@ -126,14 +159,18 @@ export function speakKannadaText(text: string, onEnd?: () => void): boolean {
 export function useKannadaSpeech() {
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
 
-  const speak = useCallback((text: string, isSlow: boolean = false) => {
-    setIsSpeaking(true);
-    playKannadaSpeech(text, {
-      isSlow,
-      onStart: () => setIsSpeaking(true),
-      onEnd: () => setIsSpeaking(false),
-    });
-  }, []);
+  const speak = useCallback(
+    (text: string, translit?: string, isSlow: boolean = false) => {
+      setIsSpeaking(true);
+      playKannadaSpeech(text, {
+        translit,
+        isSlow,
+        onStart: () => setIsSpeaking(true),
+        onEnd: () => setIsSpeaking(false),
+      });
+    },
+    []
+  );
 
   const stop = useCallback(() => {
     if (currentAudio) {

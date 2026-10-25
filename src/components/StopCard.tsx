@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Stop, TravelMode } from "@/lib/schema";
+import { Stop, TravelMode, Place } from "@/lib/schema";
 import { useLang } from "@/lib/i18n/useLang";
 import { DAY_PIN_COLORS } from "@/lib/geo";
 
@@ -15,6 +15,7 @@ interface StopCardProps {
   onSwap?: (placeId: string) => void;
   onRemove?: (placeId: string) => void;
   onToggleTravelMode?: (placeId: string, mode: TravelMode) => void;
+  onShowToLocal?: (place: Place) => void;
 }
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
@@ -39,6 +40,7 @@ export default function StopCard({
   onSwap,
   onRemove,
   onToggleTravelMode,
+  onShowToLocal,
 }: StopCardProps) {
   const { lang, t } = useLang();
   const [isLocked, setIsLocked] = useState<boolean>(false);
@@ -259,6 +261,19 @@ export default function StopCard({
                 </svg>
                 <span>Maps ↗</span>
               </a>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onShowToLocal?.(stop.place);
+                }}
+                className="inline-flex items-center gap-1 text-[#8E1F2F] hover:text-[#6B1421] cursor-pointer transition-colors font-medium"
+                title="Show to local driver (ಸ್ಥಳೀಯರಿಗೆ ತೋರಿಸಿ)"
+              >
+                <span>🌐</span>
+                <span>{lang === "kn" ? "ಸ್ಥಳೀಯರಿಗೆ" : "Driver"}</span>
+              </button>
 
               <button
                 type="button"

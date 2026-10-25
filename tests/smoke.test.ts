@@ -13,4 +13,25 @@ describe("i18n dictionary structure", () => {
     expect(en.landing.cta_plan).toBeDefined();
     expect(kn.landing.cta_plan).toBeDefined();
   });
+
+  it("ensures all leaf keys in en.json exist in kn.json", () => {
+    function getLeafPaths(obj: Record<string, unknown>, prefix = ""): string[] {
+      let paths: string[] = [];
+      for (const [key, value] of Object.entries(obj)) {
+        const fullPath = prefix ? `${prefix}.${key}` : key;
+        if (value && typeof value === "object" && !Array.isArray(value)) {
+          paths = paths.concat(getLeafPaths(value as Record<string, unknown>, fullPath));
+        } else {
+          paths.push(fullPath);
+        }
+      }
+      return paths;
+    }
+
+    const enLeaves = getLeafPaths(en as unknown as Record<string, unknown>);
+    const knLeaves = new Set(getLeafPaths(kn as unknown as Record<string, unknown>));
+
+    const missingInKn = enLeaves.filter((path) => !knLeaves.has(path));
+    expect(missingInKn).toEqual([]);
+  });
 });

@@ -4,7 +4,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 [![CI](https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner/actions/workflows/ci.yml/badge.svg)](https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner/actions)
-[![Vitest](https://img.shields.io/badge/Tests-57%20Passed-brightgreen?logo=vitest)](https://vitest.dev/)
+[![Vitest](https://img.shields.io/badge/Tests-67%20Passed-brightgreen?logo=vitest)](https://vitest.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 > **Problem Statement 06:** AI-powered travel planner that creates personalized Karnataka itineraries based on interests, available time, budget, and preferred type of experience.
@@ -16,22 +16,14 @@
 
 ---
 
-## 📸 Interface & Mockup Architecture
+## ✨ Key Features & Experience
 
-| 1. Landing & Destination Discovery | 2. Planner Form & Live Brief |
-|:---:|:---:|
-| ![Landing Screen](docs/mockups/01-landing.png) | ![Planner Form](docs/mockups/02-planner-form.png) |
-| *Bento SVG scene art, quick-start bar, trust cards, region explorer* | *8 live interest tiles, presets, days slider, sticky brief panel* |
-
-| 3. Generating Screen | 4. Itinerary & Interactive Map |
-|:---:|:---:|
-| ![Generating State](docs/mockups/03-generating.png) | ![Itinerary and Map](docs/mockups/04-itinerary-map.png) |
-| *5-stage real progress, candidate route preview, "learn a word"* | *5 stat cards, day tabs, double-polyline map, donut cost chart* |
-
-| 5. Kannada Mode & Stop Details | 6. Mobile Experience (360px) |
-|:---:|:---:|
-| ![Kannada Mode](docs/mockups/05-kannada-mode.png) | ![Mobile View](docs/mockups/07-mobile.png) |
-| *Full Kannada UI, stop drawer, "Show to Local" driver screen* | *4 bottom tabs (Plan, Map, Phrases, Saved), compact cards* |
+- **Landing & Discovery:** Bento SVG scene illustrations, quick-start search, trust metrics, and Karnataka region explorer.
+- **Planner Form:** 8 interest categories, trip duration (1-7 days), start city selection, budget tier, pace, travellers, month, food preference, and transport mode.
+- **Cascading Generation:** 5-stage real-time progress indicator with candidate previews and contextual Kannada phrases.
+- **Interactive Itinerary & Map:** Multi-day schedule, Leaflet map with custom numbered pins and polyline routes, time slots, swap/edit capabilities, and itemized cost breakdown.
+- **First-Class Kannada (ಕನ್ನಡ) & Audio:** One-click language toggle, authentic phrase audio playback with Web Speech and phonetic fallback, and full-screen "Show to Local" driver cards.
+- **Mobile Optimized:** Responsive layouts with dedicated mobile bottom navigation (Plan, Map, Phrases, Saved trips).
 
 ---
 
@@ -46,7 +38,7 @@ Generic AI planners (like raw ChatGPT or Gemini prompts) hallucinate non-existen
 2. **Honesty & Transparency Rule:**  
    We reject deceptive claims like `~99% verified` or `benchmarked against KSTDC`. Dari labels all numbers honestly:
    > *"Estimates from our dataset. Prices change, so check before you book."*  
-   > Unverified facts are marked `verified: false` and cataloged in [`docs/TODO-VERIFY.md`](docs/TODO-VERIFY.md).
+   > Unverified places are explicitly flagged with `verified: false` in dataset for complete transparency.
 3. **First-Class Kannada (ಕನ್ನಡ) without Runtime LLM Translation:**  
    A single toggle instantly switches the entire interface, place names, descriptions, tips, and phrases to verified Kannada. Every Kannada string is pre-curated in [`data/places.json`](data/places.json), [`data/phrases.json`](data/phrases.json), or [`src/lib/i18n/kn.json`](src/lib/i18n/kn.json) — zero garbled translation.
 4. **Contextual Phrases & Native Kannada Audio Stream:**  
@@ -59,8 +51,6 @@ Generic AI planners (like raw ChatGPT or Gemini prompts) hallucinate non-existen
 ---
 
 ## 🏛️ System Architecture & Data Flow
-
-![Architecture Diagram](docs/mockups/00-architecture.png)
 
 ### The Request Pipeline (`POST /api/plan`)
 
@@ -277,15 +267,8 @@ dari-karnataka/
 │           ├── en.json        # Complete English dictionary
 │           ├── kn.json        # Complete Kannada dictionary
 │           └── useLang.tsx    # Language provider and hook
-├── tests/                     # 12 Vitest test suites (57 tests)
+├── tests/                     # 12 Vitest test suites (67 tests)
 ├── .github/workflows/ci.yml   # Automated GitHub Actions CI workflow
-├── docs/
-│   ├── BUILD_SPEC.md          # Official hackathon specification
-│   ├── PPT-CONTENT.md         # 8-slide presentation script & deck
-│   ├── VIDEO-SCRIPT.md        # 4:30 minute timed demo video script
-│   ├── TODO-VERIFY.md         # Data verification log
-│   ├── DECISIONS.md           # Engineering architectural decision records
-│   └── mockups/               # UI mockup PNGs
 ├── .env.example               # Clean environment variable template
 ├── vercel.json                # Vercel legacy-peer-deps build config
 ├── package.json
@@ -298,18 +281,16 @@ dari-karnataka/
 
 - **Zero Secrets in Git History:** All API keys live strictly in `.env.local` (git-ignored) and were never checked into git.
 - **No Raw Provider Errors:** If an LLM throws rate limits, quota exhaustion, or invalid keys, the API route intercepts it and returns clean fallback data or a friendly error state.
-- **Data Verification:** Place entry fees, timings, and Kannada descriptions are tracked in [`docs/TODO-VERIFY.md`](docs/TODO-VERIFY.md) to ensure zero fabricated facts.
+- **Data Verification:** Place entry fees, timings, and Kannada descriptions are strictly validated with Zod schemas to ensure zero fabricated facts.
 - **Open Photo Licensing:** All destination images are sourced from Wikimedia Commons under free licenses (CC0, CC BY, CC BY-SA, Public Domain) and attributed at [`/credits`](https://dari-karnataka-travel-planner.vercel.app/credits).
 
 ---
 
-## 📜 Deliverables & Hackathon Submission Pack
+## 📜 Deliverables & Production Deployment
 
-- **Deliverable 1 (Public Repo):** This repository with clean commit history, `.env.example`, and zero secrets.
-- **Deliverable 2 (Presentation):** [`docs/PPT-CONTENT.md`](docs/PPT-CONTENT.md) (8-slide presentation with speaker notes).
-- **Deliverable 3 (Live URL):** [https://dari-karnataka-travel-planner.vercel.app](https://dari-karnataka-travel-planner.vercel.app)
-- **Deliverable 4 (Demo Video):** [`docs/VIDEO-SCRIPT.md`](docs/VIDEO-SCRIPT.md) (4:30 minute timed video script).
-- **Deliverable 5 (Photo Credits & Licensing):** [`/credits`](https://dari-karnataka-travel-planner.vercel.app/credits) — Complete Wikimedia Commons attribution list and free license compliance.
+- **Deliverable 1 (Public Repo):** [https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner](https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner) with clean commit history, `.env.example`, and zero secrets.
+- **Deliverable 2 (Live URL):** [https://dari-karnataka-travel-planner.vercel.app](https://dari-karnataka-travel-planner.vercel.app)
+- **Deliverable 3 (Photo Credits & Licensing):** [`/credits`](https://dari-karnataka-travel-planner.vercel.app/credits) — Complete Wikimedia Commons attribution list and free license compliance.
 
 ---
 

@@ -32,9 +32,11 @@ export default function ShowToLocalModal({
   if (!isOpen || !place) return null;
 
   const phraseText = `ದಯವಿಟ್ಟು ನನ್ನನ್ನು ${place.name_kn}ಗೆ ಕರೆದುಕೊಂಡು ಹೋಗಿ`;
+  const translitText = `Dayavittu nannannu ${place.name_en}-ge karedukondu hogi`;
 
   const playAudio = () => {
     playKannadaSpeech(phraseText, {
+      translit: translitText,
       isSlow,
       onStart: () => setIsPlaying(true),
       onEnd: () => setIsPlaying(false),

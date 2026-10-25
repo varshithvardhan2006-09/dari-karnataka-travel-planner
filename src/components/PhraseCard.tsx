@@ -44,7 +44,7 @@ export default function PhraseCard({ phrases }: PhraseCardProps) {
             {hasVoice && (
               <button
                 type="button"
-                onClick={() => speak(phrase.kn)}
+                onClick={() => speak(phrase.kn, phrase.translit)}
                 aria-label={`Listen to Kannada phrase: ${phrase.translit}`}
                 className="w-9 h-9 flex-shrink-0 rounded-full bg-[#8E1F2F] hover:bg-[#781926] active:scale-95 text-white flex items-center justify-center shadow-xs transition-transform cursor-pointer"
               >

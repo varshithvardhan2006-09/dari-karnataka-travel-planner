@@ -144,6 +144,14 @@ describe("Stage 6: Error, Empty, and Fallback States", () => {
     expect(resEmpty.status).toBe(400);
   });
 
+  it("handles valid GET /api/tts streaming audio correctly with Accept-Ranges", async () => {
+    const req = new NextRequest("http://localhost:3000/api/tts?text=Namaskara");
+    const res = await GET_TTS(req);
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Content-Type")).toBe("audio/mpeg");
+    expect(res.headers.get("Accept-Ranges")).toBe("bytes");
+  });
+
   it("returns 413 Payload Too Large when request body exceeds 32KB", async () => {
     const reqLarge = new NextRequest("http://localhost:3000/api/plan", {
       method: "POST",

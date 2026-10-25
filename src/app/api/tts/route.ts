@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
       headers: {
         "Content-Type": "audio/mpeg",
         "Content-Length": audioBuffer.byteLength.toString(),
+        "Accept-Ranges": "bytes",
         "Cache-Control": "public, max-age=604800, s-maxage=604800, immutable",
       },
     });

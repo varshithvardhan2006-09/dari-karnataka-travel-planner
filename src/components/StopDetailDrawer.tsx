@@ -15,6 +15,7 @@ interface StopDetailDrawerProps {
   onClose: () => void;
   onSwapWith?: (alternative: Place) => void;
   onRemoveStop?: (placeId: string) => void;
+  onShowToLocal?: (place: Place) => void;
 }
 
 export default function StopDetailDrawer({
@@ -23,6 +24,7 @@ export default function StopDetailDrawer({
   onClose,
   onSwapWith,
   onRemoveStop,
+  onShowToLocal,
 }: StopDetailDrawerProps) {
   const { lang } = useLang();
 
@@ -51,8 +53,8 @@ export default function StopDetailDrawer({
       .slice(0, 3);
   }, [place]);
 
-  const playPhraseAudio = (text: string) => {
-    playKannadaSpeech(text);
+  const playPhraseAudio = (text: string, translit?: string) => {
+    playKannadaSpeech(text, { translit });
   };
 
   if (!isOpen || !stop || !place) return null;
@@ -233,7 +235,7 @@ export default function StopDetailDrawer({
                       </div>
                       <button
                         type="button"
-                        onClick={() => playPhraseAudio(ph.kn)}
+                        onClick={() => playPhraseAudio(ph.kn, ph.translit)}
                         className="w-8 h-8 rounded-lg bg-[#8E1F2F] text-white flex items-center justify-center shrink-0 hover:bg-[#781926] active:scale-95 cursor-pointer shadow-2xs"
                         title="Play audio"
                       >
@@ -297,43 +299,58 @@ export default function StopDetailDrawer({
         </div>
 
         {/* 3. Sticky Action Footer (Always 100% visible, fully padded, never cut off!) */}
-        <div className="shrink-0 bg-white/95 backdrop-blur-md px-6 py-4 border-t border-[#DCE1DD] shadow-lg z-20 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-          <a
-            href={googleMapsSearchUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 py-3 px-4 rounded-xl bg-[#8E1F2F] hover:bg-[#781926] text-white text-xs font-bold text-center shadow-xs transition-all active:scale-95 flex items-center justify-center gap-1.5"
-          >
-            <svg
-              className="w-4 h-4 fill-current shrink-0"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-            </svg>
-            <span>Open in Google Maps ↗</span>
-          </a>
-
-          <a
-            href={googleMapsDirectionsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="py-3 px-3.5 rounded-xl bg-[#F1F3F0] hover:bg-gray-200 text-[#14202B] text-xs font-bold text-center transition-all active:scale-95 flex items-center justify-center gap-1 shrink-0"
-            title="Get driving directions in Google Maps"
-          >
-            <span>Directions 🧭</span>
-          </a>
-
+        <div className="shrink-0 bg-white/95 backdrop-blur-md px-6 py-4 border-t border-[#DCE1DD] shadow-lg z-20 flex flex-col gap-2.5">
           <button
             type="button"
             onClick={() => {
-              onRemoveStop?.(stop.place_id);
-              onClose();
+              if (place) {
+                onShowToLocal?.(place);
+              }
             }}
-            className="py-3 px-3.5 rounded-xl bg-white border border-[#DCE1DD] text-red-700 hover:bg-red-50 text-xs font-bold transition-all active:scale-95 cursor-pointer shrink-0"
+            className="w-full py-3 px-4 rounded-xl bg-[#6B1421] hover:bg-[#520f19] text-white text-xs font-bold text-center shadow-xs transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
           >
-            Remove
+            <span className="text-sm">🌐</span>
+            <span>{lang === "kn" ? "ಸ್ಥಳೀಯ ಚಾಲಕರಿಗೆ ತೋರಿಸಿ (Show to Local)" : "Show to Local Driver (ಸ್ಥಳೀಯರಿಗೆ ತೋರಿಸಿ)"}</span>
           </button>
+
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+            <a
+              href={googleMapsSearchUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 py-3 px-4 rounded-xl bg-[#8E1F2F] hover:bg-[#781926] text-white text-xs font-bold text-center shadow-xs transition-all active:scale-95 flex items-center justify-center gap-1.5"
+            >
+              <svg
+                className="w-4 h-4 fill-current shrink-0"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+              </svg>
+              <span>Open in Google Maps ↗</span>
+            </a>
+
+            <a
+              href={googleMapsDirectionsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-3 px-3.5 rounded-xl bg-[#F1F3F0] hover:bg-gray-200 text-[#14202B] text-xs font-bold text-center transition-all active:scale-95 flex items-center justify-center gap-1 shrink-0"
+              title="Get driving directions in Google Maps"
+            >
+              <span>Directions 🧭</span>
+            </a>
+
+            <button
+              type="button"
+              onClick={() => {
+                onRemoveStop?.(stop.place_id);
+                onClose();
+              }}
+              className="py-3 px-3.5 rounded-xl bg-white border border-[#DCE1DD] text-red-700 hover:bg-red-50 text-xs font-bold transition-all active:scale-95 cursor-pointer shrink-0"
+            >
+              Remove
+            </button>
+          </div>
         </div>
       </div>
     </div>

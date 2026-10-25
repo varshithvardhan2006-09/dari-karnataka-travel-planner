@@ -158,6 +158,7 @@ function TripViewContent() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [drawerStop, setDrawerStop] = useState<Stop | null>(null);
   const [isShowToLocalOpen, setIsShowToLocalOpen] = useState<boolean>(false);
+  const [showToLocalPlace, setShowToLocalPlace] = useState<Place | null>(null);
   const [savedTrips, setSavedTrips] = useState<SavedTripRecord[]>([]);
 
   useEffect(() => {
@@ -795,7 +796,10 @@ function TripViewContent() {
 
             <button
               type="button"
-              onClick={() => setIsShowToLocalOpen(true)}
+              onClick={() => {
+                setShowToLocalPlace(currentActiveStop?.place || activeDayStops[0]?.place || null);
+                setIsShowToLocalOpen(true);
+              }}
               title="Show to local driver"
               className="px-3 py-2 rounded-xl text-xs font-bold bg-[#F9EBEB] text-[#8E1F2F] hover:bg-[#F2D6D6] transition-all cursor-pointer shadow-2xs active:scale-95 flex items-center gap-1.5"
             >
@@ -989,6 +993,10 @@ function TripViewContent() {
                   onCardClick={(placeId) => handlePinClick(placeId, true)}
                   onSwap={handleSwapStop}
                   onRemove={handleRemoveStop}
+                  onShowToLocal={(place) => {
+                    setShowToLocalPlace(place);
+                    setIsShowToLocalOpen(true);
+                  }}
                 />
               );
             })}
@@ -1052,6 +1060,10 @@ function TripViewContent() {
                     onCardClick={(placeId) => handlePinClick(placeId, true)}
                     onSwap={handleSwapStop}
                     onRemove={handleRemoveStop}
+                    onShowToLocal={(place) => {
+                      setShowToLocalPlace(place);
+                      setIsShowToLocalOpen(true);
+                    }}
                   />
                 );
               })}
@@ -1376,13 +1388,20 @@ function TripViewContent() {
           handleRemoveStop(placeId);
           setIsDrawerOpen(false);
         }}
+        onShowToLocal={(place) => {
+          setShowToLocalPlace(place);
+          setIsShowToLocalOpen(true);
+        }}
       />
 
       {/* Show To Local Full-Screen View (U6) */}
       <ShowToLocalModal
-        place={currentActiveStop?.place || null}
+        place={showToLocalPlace || currentActiveStop?.place || activeDayStops[0]?.place || null}
         isOpen={isShowToLocalOpen}
-        onClose={() => setIsShowToLocalOpen(false)}
+        onClose={() => {
+          setIsShowToLocalOpen(false);
+          setShowToLocalPlace(null);
+        }}
       />
     </div>
   );
