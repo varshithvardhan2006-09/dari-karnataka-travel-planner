@@ -11,7 +11,28 @@ Rules:
 4. Respect each stop's duration_min. Start between 08:30 and 10:00 and finish before 19:30. Include a meal stop around 12:30 to 14:00 when a meal place is available.
 5. Match the traveller's interests and pace. Prefer places whose best_months include the travel month.
 6. Write one short note per stop in plain English (max 18 words): why it fits and one practical tip.
-7. Output valid JSON only, matching the schema. No prose outside the JSON.`;
+7. Output valid JSON only, strictly conforming to this exact structure:
+{
+  "title": "{days} Days Karnataka Discovery",
+  "summary": "Overview of the journey highlighting key sights and culinary stops.",
+  "days": [
+    {
+      "day": 1,
+      "theme": "Theme of the day (e.g. Royal Heritage and Local Cuisine)",
+      "stops": [
+        {
+          "place_id": "exact_candidate_id",
+          "start": "09:30",
+          "note_en": "Why this stop fits and one practical tip."
+        }
+      ]
+    }
+  ],
+  "tips": [
+    "Practical local travel tip 1",
+    "Practical local travel tip 2"
+  ]
+}`;
 
 /**
  * Builds the candidate summary sent to the LLM (keeps token count lean).
@@ -75,7 +96,7 @@ async function callGeminiAPI(
   systemPrompt: string,
   userPrompt: string,
   apiKey: string,
-  model: string = "gemini-2.5-flash"
+  model: string = "gemini-flash-latest"
 ): Promise<string> {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
@@ -130,7 +151,51 @@ function parseAndValidateModelOutput(
     const cleaned = extractJsonPayload(rawText);
     const parsed = JSON.parse(cleaned);
 
-    const schemaResult = AIModelOutputSchema.safeParse(parsed);
+    // Normalize top-level and nested fields gracefully to withstand minor LLM deviations
+    const normalized = {
+      title:
+        typeof parsed.title === "string" && parsed.title.trim()
+          ? parsed.title.trim()
+          : `${request.days} Days Karnataka Discovery`,
+      summary:
+        typeof parsed.summary === "string" && parsed.summary.trim()
+          ? parsed.summary.trim()
+          : `A curated ${request.days}-day journey across Karnataka.`,
+      tips:
+        Array.isArray(parsed.tips) && parsed.tips.length > 0
+          ? parsed.tips.map(String)
+          : [
+              "Book popular monument tickets in advance to skip lines.",
+              "Carry cash for local markets and tender coconut vendors.",
+            ],
+      days: Array.isArray(parsed.days)
+        ? (parsed.days as Array<Record<string, unknown>>).map((d, dayIdx: number) => ({
+            day: typeof d.day === "number" ? d.day : dayIdx + 1,
+            theme:
+              typeof d.theme === "string" && d.theme.trim()
+                ? d.theme.trim()
+                : `Day ${dayIdx + 1} Discovery`,
+            stops: Array.isArray(d.stops)
+              ? (d.stops as Array<Record<string, unknown>>).map((s, stopIdx: number) => ({
+                  place_id:
+                    typeof (s.place_id || s.id) === "string"
+                      ? String(s.place_id || s.id)
+                      : "",
+                  start:
+                    typeof s.start === "string" && /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(s.start)
+                      ? s.start
+                      : `${(9 + stopIdx * 2).toString().padStart(2, "0")}:00`,
+                  note_en:
+                    typeof (s.note_en || s.note) === "string" && String(s.note_en || s.note).trim()
+                      ? String(s.note_en || s.note).trim().slice(0, 200)
+                      : "Handpicked stop tailored to your interests.",
+                }))
+              : [],
+          }))
+        : [],
+    };
+
+    const schemaResult = AIModelOutputSchema.safeParse(normalized);
     if (!schemaResult.success) {
       return {
         success: false,
@@ -191,7 +256,7 @@ ${buildCandidatesPromptPayload(candidates)}`;
   const groqModel = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 
   const geminiKey = process.env.GEMINI_API_KEY;
-  const geminiModel = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  const geminiModel = process.env.GEMINI_MODEL || "gemini-flash-latest";
 
   // Provider cascade: 1) Groq
   if (groqKey && groqKey.trim().length > 0) {
