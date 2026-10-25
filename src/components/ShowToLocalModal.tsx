@@ -62,7 +62,7 @@ export default function ShowToLocalModal({
   const destinationTranslit = `Dayavittu nannannu ${place.name_en}-ge karedukondu hogi`;
   const activeSpokenText = customSpokenText || destinationPhraseKn;
 
-  const playAudio = (text: string, translit?: string) => {
+  const playAudio = (text: string, translit?: string, langCode: string = "kn") => {
     if (isPlaying) {
       stopKannadaSpeech();
       setIsPlaying(false);
@@ -75,6 +75,7 @@ export default function ShowToLocalModal({
     playKannadaSpeech(text, {
       translit,
       isSlow,
+      lang: langCode,
       onStart: () => setIsPlaying(true),
       onEnd: () => {
         setIsPlaying(false);
@@ -87,6 +88,7 @@ export default function ShowToLocalModal({
     setIsPlaying(true);
     playKannadaSpeech(activeSpokenText, {
       isSlow,
+      lang: activeTab === "translator" ? targetLang : "kn",
       onStart: () => setIsPlaying(true),
       onEnd: () => {
         setIsPlaying(false);
@@ -373,9 +375,9 @@ export default function ShowToLocalModal({
             type="button"
             onClick={() => {
               if (activeTab === "destination") {
-                playAudio(destinationPhraseKn, destinationTranslit);
+                playAudio(destinationPhraseKn, destinationTranslit, "kn");
               } else if (translatedText) {
-                playAudio(translatedText, transliteration);
+                playAudio(translatedText, transliteration, targetLang);
               }
             }}
             disabled={activeTab === "translator" && !translatedText}

@@ -73,7 +73,7 @@ export default async function Image() {
               letterSpacing: "0.08em",
             }}
           >
-            Problem Statement 06
+            Karnataka Travel Planner
           </div>
         </div>
 

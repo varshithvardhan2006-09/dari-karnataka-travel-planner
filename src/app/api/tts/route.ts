@@ -2,15 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const maxDuration = 15;
 
+const ALLOWED_LANGUAGES = new Set(["kn", "en", "hi", "te", "ta", "ml"]);
+
 /**
- * Server-side audio proxy for authentic native Kannada speech.
+ * Server-side audio proxy for authentic native speech.
  * Bypasses client-side browser Referer blocks and CORS restrictions,
- * delivering crystal-clear native Kannada MP3 audio across all devices.
+ * delivering crystal-clear native audio across all devices.
  */
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const text = searchParams.get("text");
+    const requestedLang = (searchParams.get("lang") || "kn").toLowerCase().trim();
+    const safeLang = ALLOWED_LANGUAGES.has(requestedLang) ? requestedLang : "kn";
 
     if (!text || text.trim().length === 0) {
       return new NextResponse("Missing text parameter", { status: 400 });
@@ -19,7 +23,7 @@ export async function GET(req: NextRequest) {
     // Limit length to prevent abuse (Google TTS limit is ~200 chars per segment)
     const trimmed = text.trim().slice(0, 250);
     const encoded = encodeURIComponent(trimmed);
-    const googleTtsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=kn&client=tw-ob&q=${encoded}`;
+    const googleTtsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${safeLang}&client=tw-ob&q=${encoded}`;
 
     const ttsRes = await fetch(googleTtsUrl, {
       headers: {

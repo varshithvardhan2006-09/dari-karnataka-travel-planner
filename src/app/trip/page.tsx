@@ -1318,13 +1318,22 @@ function TripViewContent() {
                       type="button"
                       onClick={() => {
                         const url = `${window.location.origin}/trip?d=${st.compressed}`;
-                        navigator.clipboard?.writeText(url);
-                        alert("Link copied!");
+                        if (navigator.clipboard?.writeText) {
+                          navigator.clipboard
+                            .writeText(url)
+                            .then(() => {
+                              setCopied(true);
+                              setTimeout(() => setCopied(false), 3000);
+                            })
+                            .catch(() => fallbackCopy(url));
+                        } else {
+                          fallbackCopy(url);
+                        }
                       }}
-                      className="w-8 h-8 rounded-lg bg-[#F1F3F0] text-[#14202B] flex items-center justify-center shrink-0 cursor-pointer"
-                      title="Share trip"
+                      className="px-2.5 py-1.5 rounded-lg bg-[#F1F3F0] hover:bg-[#8E1F2F] hover:text-white text-[#14202B] text-xs font-semibold flex items-center gap-1 shrink-0 transition-colors cursor-pointer active:scale-95"
+                      title="Share trip link"
                     >
-                      ↗
+                      <span>{copied ? "✓ Copied" : "↗ Share"}</span>
                     </button>
                   </div>
                 ))}

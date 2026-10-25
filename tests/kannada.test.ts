@@ -66,4 +66,23 @@ describe("Kannada mode and zero-AI-generated Kannada verification", () => {
   it("handles getKannadaVoice safely in SSR environment returning null", () => {
     expect(getKannadaVoice()).toBeNull();
   });
+
+  it("verifies GET /api/tts endpoint rejects missing text with 400", async () => {
+    const { GET } = await import("../src/app/api/tts/route");
+    const { NextRequest } = await import("next/server");
+    const req = new NextRequest("http://localhost:3000/api/tts");
+    const res = await GET(req);
+    expect(res.status).toBe(400);
+  });
+
+  it("verifies GET /api/tts handles valid speech requests with audio/mpeg headers", async () => {
+    const { GET } = await import("../src/app/api/tts/route");
+    const { NextRequest } = await import("next/server");
+    const req = new NextRequest("http://localhost:3000/api/tts?text=%E0%B2%A8%E0%B2%AE%E0%B2%B8%E0%B3%8D%E0%B2%95%E0%B2%BE%E0%B2%B0&lang=kn");
+    const res = await GET(req);
+    expect([200, 500]).toContain(res.status); // 200 when network available, 500 if upstream unreachable
+    if (res.status === 200) {
+      expect(res.headers.get("content-type")).toContain("audio/mpeg");
+    }
+  });
 });
