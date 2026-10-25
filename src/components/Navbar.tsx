@@ -2,54 +2,81 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useLang } from "@/lib/i18n/useLang";
 import LangToggle from "./LangToggle";
 
 export default function Navbar() {
   const { lang, t } = useLang();
+  const pathname = usePathname() || "";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const isPlan = pathname === "/plan";
+  const isTrip = pathname.startsWith("/trip");
+  const isCredits = pathname === "/credits";
+
   return (
-    <header className="w-full bg-[#F2F4F1] border-b border-[#DCE1DD]/60 sticky top-0 z-[1000] backdrop-blur-md bg-[#F2F4F1]/95">
+    <header className="w-full bg-[#14202B] text-white sticky top-0 z-[1000] shadow-md border-b border-black/40 backdrop-blur-md bg-[#14202B]/95">
+      {/* Karnataka Red-Gold Brand Top Strip */}
+      <div className="h-[3px] w-full bg-gradient-to-r from-[#8E1F2F] via-[#F2B705] to-[#8E1F2F]" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          {/* Logo */}
+          {/* Logo with Karnataka Emblem Icon */}
           <Link
             href="/"
-            className="flex items-center gap-2 group transition-opacity hover:opacity-90"
+            className="flex items-center gap-2.5 group transition-transform active:scale-95"
             aria-label="Dari - Karnataka Travel Planner"
           >
-            <span className="font-heading font-extrabold text-2xl text-[#8E1F2F] tracking-tight">
-              ದಾರಿ
+            <span className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#8E1F2F] to-[#781926] text-white flex items-center justify-center font-heading font-extrabold text-base shadow-xs border border-white/20">
+              ದ
             </span>
-            <span className="font-heading font-extrabold text-2xl text-[#14202B] tracking-tight">
-              Dari
-            </span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-heading font-extrabold text-2xl text-[#F2B705] tracking-tight">
+                ದಾರಿ
+              </span>
+              <span className="font-heading font-extrabold text-2xl text-white tracking-tight">
+                Dari
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-2">
             <Link
               href="/plan"
-              className="text-sm font-medium text-[#14202B]/80 hover:text-[#8E1F2F] transition-colors"
+              className={`text-sm font-semibold px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                isPlan
+                  ? "bg-[#8E1F2F] text-white shadow-xs"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
+              }`}
             >
-              {t("nav.plan_a_trip")}
+              <span>✦</span>
+              <span>{t("nav.plan_a_trip")}</span>
             </Link>
             <Link
               href="/trip?sample=heritage"
-              className="text-sm font-medium text-[#14202B]/80 hover:text-[#8E1F2F] transition-colors"
+              className={`text-sm font-medium px-3.5 py-1.5 rounded-xl transition-all ${
+                isTrip
+                  ? "bg-white/15 text-white font-semibold"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
+              }`}
             >
               {t("nav.sample_trips")}
             </Link>
             <Link
               href="/credits"
-              className="text-sm font-medium text-[#14202B]/80 hover:text-[#8E1F2F] transition-colors"
+              className={`text-sm font-medium px-3.5 py-1.5 rounded-xl transition-all ${
+                isCredits
+                  ? "bg-white/15 text-white font-semibold"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
+              }`}
             >
               {lang === "kn" ? "ಚಿತ್ರ ಕೃಪೆ" : "Credits"}
             </Link>
             <Link
               href="/#about"
-              className="text-sm font-medium text-[#14202B]/80 hover:text-[#8E1F2F] transition-colors"
+              className="text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 px-3.5 py-1.5 rounded-xl transition-all"
             >
               {t("nav.about")}
             </Link>
@@ -58,13 +85,13 @@ export default function Navbar() {
 
         {/* Right side: Language Toggle + Mobile Hamburger */}
         <div className="flex items-center gap-2.5">
-          <LangToggle />
+          <LangToggle variant="dark" />
 
           {/* Mobile Menu Toggle Button */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden w-9 h-9 rounded-lg bg-white border border-[#DCE1DD] flex items-center justify-center text-[#14202B] hover:bg-gray-50 active:scale-95 transition-all cursor-pointer shadow-2xs"
+            className="md:hidden w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all cursor-pointer shadow-2xs"
             aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={mobileMenuOpen}
           >
@@ -86,32 +113,45 @@ export default function Navbar() {
 
       {/* Mobile Navigation Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white/98 backdrop-blur-md border-b border-[#DCE1DD] px-4 py-3 space-y-1 shadow-md animate-in slide-in-from-top-2 duration-150">
+        <div className="md:hidden bg-[#14202B] border-b border-white/15 px-4 py-3 space-y-1.5 shadow-xl animate-in slide-in-from-top-2 duration-150">
           <Link
             href="/plan"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-[#14202B] hover:bg-[#F2F4F1] hover:text-[#8E1F2F] transition-colors"
+            className={`block px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors flex items-center justify-between ${
+              isPlan
+                ? "bg-[#8E1F2F] text-white"
+                : "text-white/90 hover:bg-white/10"
+            }`}
           >
-            {t("nav.plan_a_trip")}
+            <span>{t("nav.plan_a_trip")}</span>
+            <span>✦</span>
           </Link>
           <Link
             href="/trip?sample=heritage"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-[#14202B] hover:bg-[#F2F4F1] hover:text-[#8E1F2F] transition-colors"
+            className={`block px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+              isTrip
+                ? "bg-white/15 text-white"
+                : "text-white/90 hover:bg-white/10"
+            }`}
           >
             {t("nav.sample_trips")}
           </Link>
           <Link
             href="/credits"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-[#14202B] hover:bg-[#F2F4F1] hover:text-[#8E1F2F] transition-colors"
+            className={`block px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+              isCredits
+                ? "bg-white/15 text-white"
+                : "text-white/90 hover:bg-white/10"
+            }`}
           >
             {lang === "kn" ? "ಚಿತ್ರ ಕೃಪೆ (Credits)" : "Credits"}
           </Link>
           <Link
             href="/#about"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-[#14202B] hover:bg-[#F2F4F1] hover:text-[#8E1F2F] transition-colors"
+            className="block px-3.5 py-2.5 rounded-xl text-sm font-semibold text-white/90 hover:bg-white/10 transition-colors"
           >
             {t("nav.about")}
           </Link>
