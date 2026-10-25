@@ -126,4 +126,56 @@ describe("Trip cost calculations", () => {
     expect(budgetCost.total).toBeLessThan(midCost.total);
     expect(midCost.total).toBeLessThan(premiumCost.total);
   });
+
+  it("calculates transport cost based on transport preferences (cab vs own_car vs bus_train)", () => {
+    const cabCost = calculateTripCost({
+      days: 3,
+      budget: "mid",
+      travellers: "couple",
+      totalKm: 200,
+      visitedPlaces: dummyPlaces,
+      transportPreference: "cab",
+    });
+
+    const carCost = calculateTripCost({
+      days: 3,
+      budget: "mid",
+      travellers: "couple",
+      totalKm: 200,
+      visitedPlaces: dummyPlaces,
+      transportPreference: "own_car",
+    });
+
+    const busCost = calculateTripCost({
+      days: 3,
+      budget: "mid",
+      travellers: "couple",
+      totalKm: 200,
+      visitedPlaces: dummyPlaces,
+      transportPreference: "bus_train",
+    });
+
+    // own_car (~13/km) and bus_train should be less than cab (~20/km) for 200km
+    expect(carCost.transport).toBeLessThan(cabCost.transport);
+    expect(busCost.transport).toBeLessThan(cabCost.transport);
+    // Invariants must hold
+    expect(cabCost.total).toBe(cabCost.stay + cabCost.food + cabCost.transport + cabCost.entry);
+    expect(carCost.total).toBe(carCost.stay + carCost.food + carCost.transport + carCost.entry);
+    expect(busCost.total).toBe(busCost.stay + busCost.food + busCost.transport + busCost.entry);
+  });
+
+  it("accurately applies custom peopleCount when specified", () => {
+    const group5Cost = calculateTripCost({
+      days: 3,
+      budget: "mid",
+      travellers: "couple", // overridden by peopleCount
+      peopleCount: 5,
+      totalKm: 150,
+      visitedPlaces: dummyPlaces,
+    });
+
+    expect(group5Cost.people).toBe(5);
+    expect(group5Cost.entry).toBe(150 * 5); // 150/person * 5 people
+    expect(group5Cost.total).toBe(group5Cost.stay + group5Cost.food + group5Cost.transport + group5Cost.entry);
+  });
 });

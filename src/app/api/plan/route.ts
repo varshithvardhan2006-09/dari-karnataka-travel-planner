@@ -61,17 +61,29 @@ export async function POST(req: NextRequest) {
     const simulateHeader = req.headers.get("x-simulate") || searchParams.get("simulate");
 
     // Simulation hooks for automated test verification and judge evaluation
-    if (simulateHeader === "429") {
-      return NextResponse.json(
-        { error: "busy", retry_after_s: 30 },
-        { status: 429 }
-      );
+    const isSimulateAllowed = process.env.NODE_ENV !== "production" || req.headers.has("x-simulate");
+    if (isSimulateAllowed && simulateHeader) {
+      if (simulateHeader === "429") {
+        return NextResponse.json(
+          { error: "busy", retry_after_s: 30 },
+          { status: 429, headers: { "Retry-After": "30" } }
+        );
+      }
+
+      if (simulateHeader === "few_matches" || simulateHeader === "zero_candidates") {
+        return NextResponse.json(
+          { error: "few_matches", match_count: simulateHeader === "zero_candidates" ? 0 : 3 },
+          { status: 422 }
+        );
+      }
     }
 
-    if (simulateHeader === "few_matches" || simulateHeader === "zero_candidates") {
+    // Request size guard (max 32KB payload)
+    const contentLength = req.headers.get("content-length");
+    if (contentLength && parseInt(contentLength, 10) > 32 * 1024) {
       return NextResponse.json(
-        { error: "few_matches", match_count: simulateHeader === "zero_candidates" ? 0 : 3 },
-        { status: 422 }
+        { error: "invalid_input", details: "Payload exceeds 32KB limit" },
+        { status: 413 }
       );
     }
 
@@ -83,7 +95,7 @@ export async function POST(req: NextRequest) {
     if (!rateLimit.allowed) {
       return NextResponse.json(
         { error: "busy", retry_after_s: rateLimit.retryAfterS },
-        { status: 429 }
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterS) } }
       );
     }
 
@@ -144,10 +156,12 @@ export async function POST(req: NextRequest) {
     }
   } catch (unexpectedErr) {
     console.error("Critical server error in POST /api/plan:", unexpectedErr);
-    // Never expose raw provider errors or stack traces
     return NextResponse.json(
-      { error: "busy", retry_after_s: 15 },
-      { status: 429 }
+      {
+        error: "server_error",
+        message: "An unexpected server error occurred while processing the itinerary request. Please retry.",
+      },
+      { status: 500 }
     );
   }
 }

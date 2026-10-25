@@ -47,6 +47,13 @@ export function LangProvider({ children }: { children: ReactNode }) {
 
   const lang: Lang = localLang ?? storedLang;
 
+  // Dynamically synchronize the root HTML lang attribute for accessibility and screen readers
+  React.useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = lang;
+    }
+  }, [lang]);
+
   const setLang = (newLang: Lang) => {
     setLocalLang(newLang);
     try {

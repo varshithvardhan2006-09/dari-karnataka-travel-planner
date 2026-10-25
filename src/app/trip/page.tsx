@@ -7,6 +7,7 @@ import Link from "next/link";
 import LZString from "lz-string";
 import {
   Plan,
+  PlanSchema,
   PlanRequest,
   Category,
   StartCity,
@@ -15,6 +16,8 @@ import {
   Travellers,
   Place,
   Stop,
+  FoodPreference,
+  TransportPreference,
 } from "@/lib/schema";
 import { useLang } from "@/lib/i18n/useLang";
 import StopCard from "@/components/StopCard";
@@ -69,8 +72,23 @@ const KARNATAKA_WEATHER: Record<number, { temp: string; descEn: string; descKn: 
   12: { temp: "25° / 14°", descEn: "December, cool", descKn: "ಡಿಸೆಂಬರ್, ತಂಪಾದ ಹವೆ" },
 };
 
+function escapeIcsText(str: string): string {
+  return str
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\r?\n/g, "\\n");
+}
+
 function downloadIcsFile(plan: Plan, travelMonth: number = 11) {
-  const year = new Date().getFullYear();
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonthNum = now.getMonth() + 1;
+  const year = travelMonth < currentMonthNum ? currentYear + 1 : currentYear;
+  const pad = (n: number) => String(n).padStart(2, "0");
+
+  const nowStamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}Z`;
+
   const icsLines: string[] = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
@@ -80,26 +98,26 @@ function downloadIcsFile(plan: Plan, travelMonth: number = 11) {
   ];
 
   plan.days.forEach((day, dIdx) => {
-    const dayDate = new Date(year, travelMonth - 1, 10 + dIdx);
-    const dateStr = dayDate.toISOString().slice(0, 10).replace(/-/g, "");
+    const dayNum = 10 + dIdx;
+    const dateStr = `${year}${pad(travelMonth)}${pad(dayNum)}`;
 
     day.stops.forEach((stop) => {
       const [h, m] = (stop.start || "09:00").split(":").map(Number);
-      const startIso = `${dateStr}T${String(h).padStart(2, "0")}${String(m).padStart(2, "0")}00`;
+      const startIso = `${dateStr}T${pad(h)}${pad(m)}00`;
       const endTotalMin = h * 60 + m + stop.duration_min;
       const endH = Math.floor(endTotalMin / 60) % 24;
       const endM = endTotalMin % 60;
-      const endIso = `${dateStr}T${String(endH).padStart(2, "0")}${String(endM).padStart(2, "0")}00`;
+      const endIso = `${dateStr}T${pad(endH)}${pad(endM)}00`;
 
       icsLines.push(
         "BEGIN:VEVENT",
         `UID:dari-${day.day}-${stop.place_id}-${Date.now()}@dari-karnataka-travel-planner.vercel.app`,
-        `DTSTAMP:${dateStr}T000000Z`,
+        `DTSTAMP:${nowStamp}`,
         `DTSTART:${startIso}`,
         `DTEND:${endIso}`,
-        `SUMMARY:${stop.place.name_en}`,
-        `DESCRIPTION:${stop.note_en.replace(/\n/g, " ")}`,
-        `LOCATION:${stop.place.city}, Karnataka`,
+        `SUMMARY:${escapeIcsText(stop.place.name_en)}`,
+        `DESCRIPTION:${escapeIcsText(stop.note_en)}`,
+        `LOCATION:${escapeIcsText(`${stop.place.city}, Karnataka`)}`,
         "END:VEVENT"
       );
     });
@@ -169,6 +187,10 @@ function TripViewContent() {
   const paceParam = searchParams.get("pace");
   const travellersParam = searchParams.get("travellers");
   const monthParam = searchParams.get("month");
+  const peopleCountParam = searchParams.get("people_count");
+  const foodPrefParam = searchParams.get("food_preference");
+  const transportModeParam = searchParams.get("transport_mode");
+  const lowWalkingParam = searchParams.get("low_walking");
 
   const parsedDays = daysParam ? parseInt(daysParam, 10) : 4;
   const currentMonth = monthParam ? parseInt(monthParam, 10) : 11;
@@ -213,17 +235,30 @@ function TripViewContent() {
 
       // Case 2: Decompress from lz-string
       if (dParam !== null) {
+        // Enforce max string length to protect against oversized payload abuse
+        if (dParam.length > 10000) {
+          if (!isCancelled) {
+            setErrorState({ type: "invalid_link" });
+            setLoading(false);
+          }
+          return;
+        }
+
         try {
           const decompressed = LZString.decompressFromEncodedURIComponent(dParam);
           if (decompressed) {
-            const parsedPlan = JSON.parse(decompressed) as Plan;
-            if (parsedPlan && Array.isArray(parsedPlan.days) && parsedPlan.days.length > 0) {
+            const rawParsed = JSON.parse(decompressed);
+            // Strict runtime schema validation using PlanSchema
+            const validation = PlanSchema.safeParse(rawParsed);
+            if (validation.success) {
               if (!isCancelled) {
-                setPlan(parsedPlan);
+                setPlan(validation.data);
                 setSelectedDay(1);
                 setLoading(false);
               }
               return;
+            } else {
+              console.warn("Shared plan failed PlanSchema validation:", validation.error.format());
             }
           }
         } catch (e) {
@@ -247,6 +282,12 @@ function TripViewContent() {
       const pace: Pace = (paceParam as Pace) || "relaxed";
       const travellers: Travellers = (travellersParam as Travellers) || "couple";
 
+      // Parse user-selected extended preferences
+      const people_count = peopleCountParam ? parseInt(peopleCountParam, 10) : undefined;
+      const food_preference = (foodPrefParam as FoodPreference) || undefined;
+      const transport_mode = (transportModeParam as TransportPreference) || undefined;
+      const low_walking = lowWalkingParam === "1" ? true : lowWalkingParam === "0" ? false : undefined;
+
       const request: PlanRequest = {
         interests,
         days: parsedDays,
@@ -256,6 +297,10 @@ function TripViewContent() {
         travellers,
         month: currentMonth,
         lang,
+        people_count,
+        food_preference,
+        transport_mode,
+        low_walking,
       };
 
       try {
@@ -327,6 +372,10 @@ function TripViewContent() {
     paceParam,
     travellersParam,
     monthParam,
+    peopleCountParam,
+    foodPrefParam,
+    transportModeParam,
+    lowWalkingParam,
     parsedDays,
     currentMonth,
     lang,

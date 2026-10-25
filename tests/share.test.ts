@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import LZString from "lz-string";
 import { buildDeterministicPlan } from "../src/lib/planner";
-import { PlanRequest, Plan } from "../src/lib/schema";
+import { PlanRequest, Plan, PlanSchema } from "../src/lib/schema";
 
 describe("Trip URL Share with lz-string", () => {
   const sampleRequest: PlanRequest = {
@@ -62,5 +62,18 @@ describe("Trip URL Share with lz-string", () => {
       }
       expect(isValid).toBe(false);
     });
+  });
+
+  it("strictly rejects JSON payloads that fail PlanSchema runtime validation", () => {
+    const invalidPlanObject = {
+      title: "Broken Structure Plan",
+      days: [{ day: 1, theme: "Theme", stops: "not an array" }], // malformed stops
+      cost: { total: 100 }, // missing required cost fields
+    };
+    const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(invalidPlanObject));
+    const decompressed = LZString.decompressFromEncodedURIComponent(compressed);
+    const parsed = JSON.parse(decompressed!);
+    const validation = PlanSchema.safeParse(parsed);
+    expect(validation.success).toBe(false);
   });
 });

@@ -98,4 +98,48 @@ describe("Deterministic Planner and Pipeline Validation", () => {
       expect(plan.days.length).toBe(numDays);
     });
   });
+
+  it("strictly rejects place IDs not in the allowed candidate set even if they exist in global dataset", () => {
+    const allowedCandidates = new Set(["mysore-palace", "chamundi-hill"]);
+    const modelOutput: AIModelOutput = {
+      title: "Hampi in Mysuru?",
+      summary: "Model returned virupaksha-temple which is in Hampi, not in allowed candidates.",
+      days: [
+        {
+          day: 1,
+          theme: "Day 1",
+          stops: [
+            { place_id: "mysore-palace", start: "09:00", note_en: "Allowed" },
+            { place_id: "virupaksha-temple", start: "12:00", note_en: "Valid place globally but NOT in allowed candidate list" },
+          ],
+        },
+      ],
+      tips: [],
+    };
+
+    const validation = validateAIOutput(
+      modelOutput,
+      { ...sampleRequest, days: 1 },
+      allowedCandidates
+    );
+    expect(validation.valid).toBe(false);
+    expect(
+      validation.errors.some((err) => err.includes("not in the allowed candidate list"))
+    ).toBe(true);
+  });
+
+  it("scales costs and people count correctly when custom people_count is specified", () => {
+    const customPeoplePlan = buildDeterministicPlan({
+      ...sampleRequest,
+      people_count: 6,
+    });
+
+    expect(customPeoplePlan.cost.people).toBe(6);
+    // Entry cost for 6 people must be exactly 3 times that for 2 people
+    const couplePlan = buildDeterministicPlan({
+      ...sampleRequest,
+      people_count: 2,
+    });
+    expect(customPeoplePlan.cost.entry).toBe(couplePlan.cost.entry * 3);
+  });
 });

@@ -143,4 +143,42 @@ describe("Stage 6: Error, Empty, and Fallback States", () => {
     const resEmpty = await GET_TTS(reqEmpty);
     expect(resEmpty.status).toBe(400);
   });
+
+  it("returns 413 Payload Too Large when request body exceeds 32KB", async () => {
+    const reqLarge = new NextRequest("http://localhost:3000/api/plan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": "40000",
+      },
+      body: JSON.stringify({ long_data: "x".repeat(35000) }),
+    });
+
+    const resLarge = await POST(reqLarge);
+    expect(resLarge.status).toBe(413);
+  });
+
+  it("includes Retry-After header on 429 rate limit responses", async () => {
+    const reqSimulate429 = new NextRequest("http://localhost:3000/api/plan?simulate=429", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-simulate": "429",
+      },
+      body: JSON.stringify({
+        interests: ["heritage"],
+        days: 3,
+        start_city: "Bengaluru",
+        budget: "mid",
+        pace: "relaxed",
+        travellers: "couple",
+        month: 11,
+        lang: "en",
+      }),
+    });
+
+    const res429 = await POST(reqSimulate429);
+    expect(res429.status).toBe(429);
+    expect(res429.headers.get("Retry-After")).toBe("30");
+  });
 });

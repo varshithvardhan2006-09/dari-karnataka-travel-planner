@@ -3,7 +3,8 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16.4.2-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
-[![Vitest](https://img.shields.io/badge/Tests-45%20Passed-brightgreen?logo=vitest)](https://vitest.dev/)
+[![CI](https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner/actions/workflows/ci.yml/badge.svg)](https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner/actions)
+[![Vitest](https://img.shields.io/badge/Tests-57%20Passed-brightgreen?logo=vitest)](https://vitest.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 > **Problem Statement 06:** AI-powered travel planner that creates personalized Karnataka itineraries based on interests, available time, budget, and preferred type of experience.
@@ -133,8 +134,8 @@ Our dataset covers 39 hand-curated places spanning all regions of Karnataka:
 | **Local Storage** | Web Storage API | Auto-saves last 10 trips on device ("My Trips") without login |
 | **Calendar Export**| iCalendar (`.ics`) RFC 5545 | Generates downloadable calendar schedule client-side |
 | **Speech** | Native Kannada Audio Stream (`/api/tts`) + Web Speech | Streamed native audio with Web Speech fallback and slow-rate controls |
-| **Testing** | Vitest 5.0 (12 test suites, 45 tests) | Fast automated unit & integration testing |
-| **Deployment** | Vercel | Production edge deployment with automatic CI/CD |
+| **Testing** | Vitest 5.0 (12 test suites, 57 tests) | Automated unit, schema, geo & integration testing |
+| **CI/CD** | GitHub Actions + Vercel | Automated CI matrix (lint, Vitest, Next.js build) & continuous deployment |
 
 ---
 
@@ -276,7 +277,8 @@ dari-karnataka/
 │           ├── en.json        # Complete English dictionary
 │           ├── kn.json        # Complete Kannada dictionary
 │           └── useLang.tsx    # Language provider and hook
-├── tests/                     # 12 Vitest test suites (45 tests)
+├── tests/                     # 12 Vitest test suites (57 tests)
+├── .github/workflows/ci.yml   # Automated GitHub Actions CI workflow
 ├── docs/
 │   ├── BUILD_SPEC.md          # Official hackathon specification
 │   ├── PPT-CONTENT.md         # 8-slide presentation script & deck

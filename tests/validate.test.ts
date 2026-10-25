@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import placesData from "../data/places.json";
 import phrasesData from "../data/phrases.json";
-import { PlaceSchema, PhraseSchema, Place, Phrase } from "../src/lib/schema";
+import { PlaceSchema, PhraseSchema, Place, Phrase, PlanRequestSchema } from "../src/lib/schema";
 
 describe("Dataset validation with Zod", () => {
   const places = placesData as Place[];
@@ -56,5 +56,55 @@ describe("Dataset validation with Zod", () => {
   it("ensures unverified places are properly flagged with verified:false", () => {
     const unverified = places.filter((p) => !p.verified);
     expect(unverified.length).toBeGreaterThan(0);
+  });
+
+  it("strictly requires integer values for days and month in PlanRequestSchema", () => {
+    const fractionalDays = PlanRequestSchema.safeParse({
+      interests: ["heritage"],
+      days: 3.5, // fractional
+      start_city: "Bengaluru",
+      budget: "mid",
+      pace: "relaxed",
+      travellers: "couple",
+      month: 11,
+      lang: "en",
+    });
+    expect(fractionalDays.success).toBe(false);
+
+    const fractionalMonth = PlanRequestSchema.safeParse({
+      interests: ["heritage"],
+      days: 3,
+      start_city: "Bengaluru",
+      budget: "mid",
+      pace: "relaxed",
+      travellers: "couple",
+      month: 10.5, // fractional
+      lang: "en",
+    });
+    expect(fractionalMonth.success).toBe(false);
+  });
+
+  it("validates all optional extended preferences in PlanRequestSchema", () => {
+    const validExtended = PlanRequestSchema.safeParse({
+      interests: ["heritage", "nature"],
+      days: 4,
+      start_city: "Mysuru",
+      budget: "premium",
+      pace: "balanced",
+      travellers: "family",
+      month: 12,
+      lang: "en",
+      people_count: 5,
+      food_preference: "veg",
+      transport_mode: "own_car",
+      low_walking: true,
+    });
+    expect(validExtended.success).toBe(true);
+    if (validExtended.success) {
+      expect(validExtended.data.people_count).toBe(5);
+      expect(validExtended.data.food_preference).toBe("veg");
+      expect(validExtended.data.transport_mode).toBe("own_car");
+      expect(validExtended.data.low_walking).toBe(true);
+    }
   });
 });

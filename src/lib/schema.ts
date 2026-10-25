@@ -108,15 +108,25 @@ export type Pace = z.infer<typeof PaceEnum>;
 export const TravellersEnum = z.enum(["solo", "couple", "family", "friends"]);
 export type Travellers = z.infer<typeof TravellersEnum>;
 
+export const FoodPreferenceEnum = z.enum(["any", "veg", "nonveg"]);
+export type FoodPreference = z.infer<typeof FoodPreferenceEnum>;
+
+export const TransportPreferenceEnum = z.enum(["cab", "own_car", "bus_train"]);
+export type TransportPreference = z.infer<typeof TransportPreferenceEnum>;
+
 export const PlanRequestSchema = z.object({
   interests: z.array(CategoryEnum).min(1, "Pick at least one interest").max(4, "Pick at most 4 interests"),
-  days: z.number().min(1).max(7),
+  days: z.number().int("Days must be an integer").min(1).max(7),
   start_city: StartCityEnum,
   budget: BudgetFitEnum,
   pace: PaceEnum,
   travellers: TravellersEnum,
-  month: z.number().min(1).max(12),
+  month: z.number().int("Month must be an integer").min(1).max(12),
   lang: z.enum(["en", "kn"]),
+  people_count: z.number().int("Group size must be an integer").min(1).max(10).optional(),
+  food_preference: FoodPreferenceEnum.optional(),
+  transport_mode: TransportPreferenceEnum.optional(),
+  low_walking: z.boolean().optional(),
 });
 export type PlanRequest = z.infer<typeof PlanRequestSchema>;
 
@@ -140,7 +150,7 @@ export const AIModelOutputSchema = z.object({
 });
 export type AIModelOutput = z.infer<typeof AIModelOutputSchema>;
 
-export const TravelModeEnum = z.enum(["auto", "cab", "bus"]);
+export const TravelModeEnum = z.enum(["auto", "cab", "bus", "walk"]);
 export type TravelMode = z.infer<typeof TravelModeEnum>;
 
 export const TravelFromPrevSchema = z.object({

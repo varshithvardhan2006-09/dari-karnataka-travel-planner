@@ -88,7 +88,13 @@ export function calculateHaversineKm(
 /**
  * Calculates candidate score based on interests, travel month, budget tier, and geographic distance.
  */
-export function scoreCandidate(place: Place, request: Pick<PlanRequest, "interests" | "month" | "budget" | "start_city" | "days">): number {
+export function scoreCandidate(
+  place: Place,
+  request: Pick<PlanRequest, "interests" | "month" | "budget" | "start_city" | "days"> & {
+    food_preference?: "any" | "veg" | "nonveg";
+    low_walking?: boolean;
+  }
+): number {
   let score = 0;
 
   // 1. Interest match (highest weight)
@@ -130,6 +136,20 @@ export function scoreCandidate(place: Place, request: Pick<PlanRequest, "interes
   // 5. Meal stop bonus (essential for creating balanced itineraries with meal times)
   if (place.is_meal) {
     score += 15;
+  }
+
+  // 6. Food preference compatibility
+  if (request.food_preference === "veg" && place.is_meal) {
+    score += 15;
+  }
+
+  // 7. Low walking preference (favors relaxed stops, softens strenuous multi-hour treks)
+  if (request.low_walking) {
+    if (place.categories.includes("adventure") && place.duration_min > 90) {
+      score -= 20;
+    } else if (place.duration_min <= 60) {
+      score += 10;
+    }
   }
 
   return score;

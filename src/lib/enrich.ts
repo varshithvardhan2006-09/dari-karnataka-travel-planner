@@ -11,6 +11,7 @@ import {
 } from "./schema";
 import { computeTravelLeg, addMinutesToTime, roundTimeTo5Min } from "./geo";
 import { calculateTripCost, PEOPLE_COUNT_MAP } from "./cost";
+import { getStartCityCoordinates } from "./candidates";
 
 const placesMap = new Map<string, Place>(
   (placesData as Place[]).map((p) => [p.id, p])
@@ -22,17 +23,23 @@ const phrasesMap = new Map<string, Phrase>(
 
 /**
  * Enriches raw model or planner schedule with places data, phrases, geo travel legs, and deterministic costs.
+ * Accurately accounts for departure hub legs, inter-day transfers, and user preferences.
  */
 export function enrichPlan(
   rawPlan: AIModelOutput,
   request: PlanRequest,
   source: "ai-groq" | "ai-gemini" | "planner" | "sample" = "planner"
 ): Plan {
-  const people = PEOPLE_COUNT_MAP[request.travellers] || 2;
+  const people = (request.people_count && request.people_count >= 1 && request.people_count <= 10)
+    ? request.people_count
+    : PEOPLE_COUNT_MAP[request.travellers] || 2;
   const allVisitedPlaces: Place[] = [];
   let totalTripKm = 0;
 
-  const days: DayPlan[] = rawPlan.days.map((dayItem) => {
+  const startCoords = getStartCityCoordinates(request.start_city);
+  let previousDayLastPlace: Place | null = null;
+
+  const days: DayPlan[] = rawPlan.days.map((dayItem, dayIdx) => {
     let dayTravelTotalMin = 0;
     const enrichedStops: Stop[] = [];
 
@@ -53,7 +60,7 @@ export function enrichPlan(
         .map((pid) => phrasesMap.get(pid))
         .filter((ph): ph is Phrase => Boolean(ph));
 
-      // Calculate travel from previous stop
+      // Calculate travel from previous stop / starting city
       let travelFromPrev = undefined;
       if (i > 0) {
         const prevPlace = placesMap.get(dayItem.stops[i - 1].place_id);
@@ -71,6 +78,29 @@ export function enrichPlan(
 
           // Advance clock by travel time
           currentClock = addMinutesToTime(currentClock, leg.min);
+        }
+      } else {
+        // Stop 0 of the day: account for departure hub or inter-day leg
+        if (dayIdx === 0) {
+          // Transfer from starting city
+          const hubLeg = computeTravelLeg(
+            startCoords.lat,
+            startCoords.lng,
+            place.lat,
+            place.lng,
+            people
+          );
+          totalTripKm += hubLeg.km;
+        } else if (previousDayLastPlace) {
+          // Transfer from previous overnight destination
+          const interDayLeg = computeTravelLeg(
+            previousDayLastPlace.lat,
+            previousDayLastPlace.lng,
+            place.lat,
+            place.lng,
+            people
+          );
+          totalTripKm += interDayLeg.km;
         }
       }
 
@@ -104,6 +134,10 @@ export function enrichPlan(
       currentClock = roundTimeTo5Min(addMinutesToTime(startTime, place.duration_min));
     }
 
+    if (enrichedStops.length > 0) {
+      previousDayLastPlace = enrichedStops[enrichedStops.length - 1].place;
+    }
+
     return {
       day: dayItem.day,
       theme: dayItem.theme || `Day ${dayItem.day} Exploration`,
@@ -119,6 +153,8 @@ export function enrichPlan(
     travellers: request.travellers,
     totalKm: totalTripKm,
     visitedPlaces: allVisitedPlaces,
+    peopleCount: request.people_count,
+    transportPreference: request.transport_mode,
   });
 
   return {

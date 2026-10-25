@@ -147,7 +147,8 @@ function extractJsonPayload(text: string): string {
  */
 function parseAndValidateModelOutput(
   rawText: string,
-  request: PlanRequest
+  request: PlanRequest,
+  allowedCandidateIds?: Set<string>
 ): { success: true; data: AIModelOutput } | { success: false; errors: string[] } {
   try {
     const cleaned = extractJsonPayload(rawText);
@@ -205,7 +206,7 @@ function parseAndValidateModelOutput(
       };
     }
 
-    const businessValidation = validateAIOutput(schemaResult.data, request);
+    const businessValidation = validateAIOutput(schemaResult.data, request, allowedCandidateIds);
     if (!businessValidation.valid) {
       return {
         success: false,
@@ -235,6 +236,7 @@ export async function generateItinerary(request: PlanRequest): Promise<Plan> {
   if (candidates.length === 0) {
     return buildDeterministicPlan(request);
   }
+  const candidateIdSet = new Set(candidates.map((c) => c.id));
 
   const limits = PACE_STOP_LIMITS[request.pace] || PACE_STOP_LIMITS.balanced;
   const systemPrompt = SYSTEM_PROMPT_TEMPLATE
@@ -274,7 +276,7 @@ ${buildCandidatesPromptPayload(candidates)}`;
         groqModel,
         getRemainingTimeout()
       );
-      const validation = parseAndValidateModelOutput(rawText, request);
+      const validation = parseAndValidateModelOutput(rawText, request, candidateIdSet);
 
       if (validation.success) {
         return enrichPlan(validation.data, request, "ai-groq");
@@ -290,7 +292,7 @@ ${buildCandidatesPromptPayload(candidates)}`;
           groqModel,
           getRemainingTimeout()
         );
-        const retryValidation = parseAndValidateModelOutput(retryText, request);
+        const retryValidation = parseAndValidateModelOutput(retryText, request, candidateIdSet);
 
         if (retryValidation.success) {
           return enrichPlan(retryValidation.data, request, "ai-groq");
@@ -311,7 +313,7 @@ ${buildCandidatesPromptPayload(candidates)}`;
         geminiModel,
         getRemainingTimeout()
       );
-      const validation = parseAndValidateModelOutput(rawText, request);
+      const validation = parseAndValidateModelOutput(rawText, request, candidateIdSet);
 
       if (validation.success) {
         return enrichPlan(validation.data, request, "ai-gemini");
@@ -327,7 +329,7 @@ ${buildCandidatesPromptPayload(candidates)}`;
           geminiModel,
           getRemainingTimeout()
         );
-        const retryValidation = parseAndValidateModelOutput(retryText, request);
+        const retryValidation = parseAndValidateModelOutput(retryText, request, candidateIdSet);
 
         if (retryValidation.success) {
           return enrichPlan(retryValidation.data, request, "ai-gemini");

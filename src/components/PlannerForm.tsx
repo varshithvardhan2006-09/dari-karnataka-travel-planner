@@ -133,8 +133,25 @@ export default function PlannerForm() {
       travellers,
       month,
       lang,
+      people_count: peopleCount,
+      food_preference: foodPref,
+      transport_mode: transportMode,
+      low_walking: lowWalking,
     }),
-    [interests, days, startCity, budget, pace, travellers, month, lang]
+    [
+      interests,
+      days,
+      startCity,
+      budget,
+      pace,
+      travellers,
+      month,
+      lang,
+      peopleCount,
+      foodPref,
+      transportMode,
+      lowWalking,
+    ]
   );
 
   const matchedCandidates = useMemo(() => {
@@ -146,8 +163,8 @@ export default function PlannerForm() {
   }, [interests]);
 
   const costRange = useMemo(() => {
-    return estimateCostRange(days, budget, peopleCount);
-  }, [days, budget, peopleCount]);
+    return estimateCostRange(days, budget, peopleCount, transportMode);
+  }, [days, budget, peopleCount, transportMode]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,6 +180,10 @@ export default function PlannerForm() {
       travellers,
       month: month.toString(),
       lang,
+      people_count: peopleCount.toString(),
+      food_preference: foodPref,
+      transport_mode: transportMode,
+      low_walking: lowWalking ? "1" : "0",
     });
 
     router.push(`/trip?${params.toString()}`);

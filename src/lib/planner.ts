@@ -24,12 +24,20 @@ export const PACE_STOP_LIMITS = {
 /**
  * Validates a raw plan output from the AI model.
  * Returns valid boolean and list of actionable error strings for retry prompting.
+ * When allowedCandidateIds is provided, strictly enforces that all places belong to the candidate whitelist.
  */
 export function validateAIOutput(
   rawPlan: AIModelOutput,
-  request: PlanRequest
+  request: PlanRequest,
+  allowedCandidateIds?: Set<string> | string[]
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
+
+  const candidateSet = allowedCandidateIds
+    ? allowedCandidateIds instanceof Set
+      ? allowedCandidateIds
+      : new Set(allowedCandidateIds)
+    : null;
 
   // 1. Day count check
   if (!rawPlan.days || rawPlan.days.length !== request.days) {
@@ -53,11 +61,13 @@ export function validateAIOutput(
     let dayDrivingMin = 0;
 
     dayItem.stops.forEach((stop, stopIdx) => {
-      // 3. Place ID must exist in data/places.json
-      if (!validPlaceIdSet.has(stop.place_id)) {
-        errors.push(
-          `Day ${dayItem.day} stop ${stopIdx + 1} has unknown place_id "${stop.place_id}". You may ONLY use IDs from the candidate list.`
-        );
+      // 3. Place ID must exist in candidate whitelist (or dataset fallback)
+      const allowedSet = candidateSet || validPlaceIdSet;
+      if (!allowedSet.has(stop.place_id)) {
+        const errorMsg = candidateSet
+          ? `Day ${dayItem.day} stop ${stopIdx + 1} has place_id "${stop.place_id}" which is not in the allowed candidate list for this trip.`
+          : `Day ${dayItem.day} stop ${stopIdx + 1} has unknown place_id "${stop.place_id}". You may ONLY use IDs from the candidate list.`;
+        errors.push(errorMsg);
         return;
       }
 
