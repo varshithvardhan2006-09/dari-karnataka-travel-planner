@@ -1,10 +1,6 @@
 # Dari (ದಾರಿ) — AI Travel Planner for Karnataka
 
 <p align="center">
-  <img src="public/og-image.png" alt="Dari - AI Travel Planner for Karnataka" width="100%" style="border-radius: 12px; max-width: 800px;" />
-</p>
-
-<p align="center">
   <strong>An intelligent, bilingual travel planner combining constrained AI generation, geographic route clustering, itemized budget calculation, and authentic Kannada voice synthesis.</strong>
 </p>
 
