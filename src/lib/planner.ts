@@ -12,6 +12,9 @@ import { estimateRoadDistanceKm, estimateTravelTimeMin, addMinutesToTime } from 
 const allPlaces = placesData as Place[];
 const validPlaceIdSet = new Set(allPlaces.map((p) => p.id));
 
+const MAX_LEG_KM = 90; // about 2 h 15 min by road between two stops on the same day
+const DAY_END_MIN = 19 * 60 + 30;
+
 export const PACE_STOP_LIMITS = {
   relaxed: { min: 2, max: 3, target: 3 },
   balanced: { min: 3, max: 4, target: 4 },
@@ -153,12 +156,37 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
     for (let s = 0; s < countForToday && unusedPlaces.length > 0; s++) {
       let chosenIndex = 0;
 
+      // Keep each day geographically sensible: after the first stop, only consider
+      // places within MAX_LEG_KM road distance of the previous stop and that still
+      // finish before DAY_END. If nothing qualifies, end the day early.
+      if (lastPlace) {
+        const lp: Place = lastPlace;
+        const eligible = unusedPlaces.findIndex((p) => {
+          const roadKm = estimateRoadDistanceKm(lp.lat, lp.lng, p.lat, p.lng);
+          if (roadKm > MAX_LEG_KM) return false;
+          const [h, m] = addMinutesToTime(
+            dayClock,
+            estimateTravelTimeMin(roadKm) + p.duration_min
+          )
+            .split(":")
+            .map(Number);
+          return h * 60 + m <= DAY_END_MIN;
+        });
+        if (eligible === -1) break;
+        chosenIndex = eligible;
+      }
+
       // Around lunch (12:30 to 14:00), prefer a meal stop if available within the nearby candidates
       const [currH, currM] = dayClock.split(":").map(Number);
       const clockMin = currH * 60 + currM;
       if (clockMin >= 12 * 60 && clockMin <= 14 * 60) {
         const mealIndex = unusedPlaces.findIndex(
-          (p, idx) => idx < 6 && (p.is_meal || p.categories.includes("food")) && !seenPlaceIds.has(p.id)
+          (p, idx) =>
+            idx < 6 &&
+            (p.is_meal || p.categories.includes("food")) &&
+            !seenPlaceIds.has(p.id) &&
+            (!lastPlace ||
+              estimateRoadDistanceKm(lastPlace.lat, lastPlace.lng, p.lat, p.lng) <= MAX_LEG_KM)
         );
         if (mealIndex !== -1) {
           chosenIndex = mealIndex;

@@ -146,19 +146,27 @@ export default function StopCard({
               {/* Subline: Entry cost, best time, crowd */}
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#586673] mt-1">
                 <span>{feeText}</span>
-                <span>·</span>
-                <span>
-                  {lang === "kn"
-                    ? `ಉತ್ತಮ ಸಮಯ: ${stop.place.best_time_en || "ಬೆಳಿಗ್ಗೆ 10 ಕ್ಕಿಂತ ಮೊದಲು"}`
-                    : `Best: ${stop.place.best_time_en || "Before 10 AM"}`}
-                </span>
-                <span>·</span>
-                <span className="inline-flex items-center gap-1">
-                  <span>{lang === "kn" ? "ಜನಸಂದಣಿ:" : "Crowd:"}</span>
-                  <span className="font-semibold capitalize text-[#14202B]">
-                    {stop.place.crowd || (stop.place.categories.includes("heritage") ? "medium" : "low")}
-                  </span>
-                </span>
+                {stop.place.best_time_en && (
+                  <>
+                    <span>·</span>
+                    <span>
+                      {lang === "kn"
+                        ? `ಉತ್ತಮ ಸಮಯ: ${stop.place.best_time_en}`
+                        : `Best: ${stop.place.best_time_en}`}
+                    </span>
+                  </>
+                )}
+                {stop.place.crowd && (
+                  <>
+                    <span>·</span>
+                    <span className="inline-flex items-center gap-1">
+                      <span>{lang === "kn" ? "ಜನಸಂದಣಿ:" : "Crowd:"}</span>
+                      <span className="font-semibold capitalize text-[#14202B]">
+                        {stop.place.crowd}
+                      </span>
+                    </span>
+                  </>
+                )}
               </div>
             </div>
 

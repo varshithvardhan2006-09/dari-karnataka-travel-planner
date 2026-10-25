@@ -204,6 +204,9 @@ export default function RegionMap({ selectedRegion, onSelectPlace }: RegionMapPr
       });
     });
 
+    const size = map.getSize();
+    if (!size.x || !size.y) return;
+
     // Fit bounds to selected region smoothly
     const bounds = REGION_BOUNDS[selectedRegion] || REGION_BOUNDS.all;
     map.flyToBounds(bounds, {

@@ -11,7 +11,7 @@
 ### Segment 1: Introduction & Hackathon Problem (0:00 - 0:45)
 
 **[Screen Action: 0:00]**  
-*Show browser on landing page `https://dari-karnataka.vercel.app` at full screen. Scroll down smoothly past the headline "Plan Karnataka your way." to show the bento destination cards (Mysuru, Hampi, Gokarna) and the three feature cards.*
+*Show browser on landing page `https://dari-karnataka-travel-planner.vercel.app` at full screen. Scroll down smoothly past the headline "Plan Karnataka your way." to show the bento destination cards (Mysuru, Hampi, Gokarna) and the three feature cards.*
 
 **[Voice-over Narration]**  
 "Namaskara! This is Dari (ದಾರಿ), an AI-powered travel planner built for the Kannada Digital Innovation Hackathon 2026, addressing Problem Statement 06.

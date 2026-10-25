@@ -238,7 +238,9 @@ export default function PlannerForm() {
                         {lang === "kn" ? cat.labelKn : cat.labelEn}
                       </div>
                       <div className="text-[11px] text-[#586673] mt-0.5">
-                        {placeCount} places
+                        {lang === "kn"
+                          ? `${placeCount} ಸ್ಥಳಗಳು`
+                          : `${placeCount} ${placeCount === 1 ? "place" : "places"}`}
                       </div>
                     </div>
                   </button>
@@ -540,7 +542,9 @@ export default function PlannerForm() {
         <div className="bg-white rounded-2xl p-4 border border-[#DCE1DD] shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#8E1F2F] bg-[#F9EBEB] px-2.5 py-1 rounded-md">
-              {totalMatchingPlacesCount} places match
+              {lang === "kn"
+                ? `${totalMatchingPlacesCount} ಸ್ಥಳಗಳು ಹೊಂದುತ್ತವೆ`
+                : `${totalMatchingPlacesCount} ${totalMatchingPlacesCount === 1 ? "place matches" : "places match"}`}
             </span>
             <span className="text-[11px] text-[#586673] font-medium">
               Real-time Map
@@ -637,7 +641,9 @@ export default function PlannerForm() {
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md p-3.5 border-t border-[#DCE1DD] shadow-lg flex items-center justify-between gap-3">
         <div>
           <div className="font-bold text-xs text-[#14202B]">
-            {totalMatchingPlacesCount} places match
+            {lang === "kn"
+              ? `${totalMatchingPlacesCount} ಸ್ಥಳಗಳು ಹೊಂದುತ್ತವೆ`
+              : `${totalMatchingPlacesCount} ${totalMatchingPlacesCount === 1 ? "place matches" : "places match"}`}
           </div>
           <div className="text-[11px] text-[#586673]">
             about {costRange.text}

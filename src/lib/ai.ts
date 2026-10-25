@@ -54,13 +54,14 @@ export function buildCandidatesPromptPayload(candidates: Place[]): string {
 }
 
 /**
- * Calls Groq API in JSON mode.
+ * Calls Groq API in JSON mode with configurable timeout signal.
  */
 async function callGroqAPI(
   systemPrompt: string,
   userPrompt: string,
   apiKey: string,
-  model: string = "openai/gpt-oss-120b"
+  model: string = "openai/gpt-oss-120b",
+  timeoutMs: number = 8000
 ): Promise<string> {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -77,7 +78,7 @@ async function callGroqAPI(
       temperature: 0.4,
       response_format: { type: "json_object" },
     }),
-    signal: AbortSignal.timeout(18000),
+    signal: AbortSignal.timeout(Math.min(timeoutMs, 10000)),
   });
 
   if (!response.ok) {
@@ -96,7 +97,8 @@ async function callGeminiAPI(
   systemPrompt: string,
   userPrompt: string,
   apiKey: string,
-  model: string = "gemini-flash-latest"
+  model: string = "gemini-flash-latest",
+  timeoutMs: number = 8000
 ): Promise<string> {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
@@ -115,7 +117,7 @@ async function callGeminiAPI(
         temperature: 0.4,
       },
     }),
-    signal: AbortSignal.timeout(18000),
+    signal: AbortSignal.timeout(Math.min(timeoutMs, 10000)),
   });
 
   if (!response.ok) {
@@ -258,49 +260,81 @@ ${buildCandidatesPromptPayload(candidates)}`;
   const geminiKey = process.env.GEMINI_API_KEY;
   const geminiModel = process.env.GEMINI_MODEL || "gemini-flash-latest";
 
+  const startTime = Date.now();
+  const DEADLINE_MS = 24000; // 24 seconds total budget, safely within Vercel's 30s limit
+  const getRemainingTimeout = () => Math.max(1500, DEADLINE_MS - (Date.now() - startTime));
+
   // Provider cascade: 1) Groq
   if (groqKey && groqKey.trim().length > 0) {
     try {
-      const rawText = await callGroqAPI(systemPrompt, userPrompt, groqKey, groqModel);
+      const rawText = await callGroqAPI(
+        systemPrompt,
+        userPrompt,
+        groqKey,
+        groqModel,
+        getRemainingTimeout()
+      );
       const validation = parseAndValidateModelOutput(rawText, request);
 
       if (validation.success) {
         return enrichPlan(validation.data, request, "ai-groq");
       }
 
-      // Retry once with error feedback
-      const retryPrompt = `${userPrompt}\n\nYour previous response failed with these validation errors. Please correct them and return ONLY valid JSON matching the schema:\n${validation.errors.join("\n")}`;
-      const retryText = await callGroqAPI(systemPrompt, retryPrompt, groqKey, groqModel);
-      const retryValidation = parseAndValidateModelOutput(retryText, request);
+      // Retry once if budget remains
+      if (getRemainingTimeout() > 4000) {
+        const retryPrompt = `${userPrompt}\n\nYour previous response failed with these validation errors. Please correct them and return ONLY valid JSON matching the schema:\n${validation.errors.join("\n")}`;
+        const retryText = await callGroqAPI(
+          systemPrompt,
+          retryPrompt,
+          groqKey,
+          groqModel,
+          getRemainingTimeout()
+        );
+        const retryValidation = parseAndValidateModelOutput(retryText, request);
 
-      if (retryValidation.success) {
-        return enrichPlan(retryValidation.data, request, "ai-groq");
+        if (retryValidation.success) {
+          return enrichPlan(retryValidation.data, request, "ai-groq");
+        }
       }
-    } catch {
-      // Groq failed, fall through to Gemini
+    } catch (err: unknown) {
+      console.warn("Groq attempt failed, falling back:", err instanceof Error ? err.message : "Error");
     }
   }
 
-  // Provider cascade: 2) Gemini
-  if (geminiKey && geminiKey.trim().length > 0) {
+  // Provider cascade: 2) Gemini (only if at least 4s remaining in budget)
+  if (geminiKey && geminiKey.trim().length > 0 && getRemainingTimeout() > 4000) {
     try {
-      const rawText = await callGeminiAPI(systemPrompt, userPrompt, geminiKey, geminiModel);
+      const rawText = await callGeminiAPI(
+        systemPrompt,
+        userPrompt,
+        geminiKey,
+        geminiModel,
+        getRemainingTimeout()
+      );
       const validation = parseAndValidateModelOutput(rawText, request);
 
       if (validation.success) {
         return enrichPlan(validation.data, request, "ai-gemini");
       }
 
-      // Retry once with error feedback
-      const retryPrompt = `${userPrompt}\n\nYour previous response failed with these validation errors. Please correct them and return ONLY valid JSON matching the schema:\n${validation.errors.join("\n")}`;
-      const retryText = await callGeminiAPI(systemPrompt, retryPrompt, geminiKey, geminiModel);
-      const retryValidation = parseAndValidateModelOutput(retryText, request);
+      // Retry once if budget remains
+      if (getRemainingTimeout() > 4000) {
+        const retryPrompt = `${userPrompt}\n\nYour previous response failed with these validation errors. Please correct them and return ONLY valid JSON matching the schema:\n${validation.errors.join("\n")}`;
+        const retryText = await callGeminiAPI(
+          systemPrompt,
+          retryPrompt,
+          geminiKey,
+          geminiModel,
+          getRemainingTimeout()
+        );
+        const retryValidation = parseAndValidateModelOutput(retryText, request);
 
-      if (retryValidation.success) {
-        return enrichPlan(retryValidation.data, request, "ai-gemini");
+        if (retryValidation.success) {
+          return enrichPlan(retryValidation.data, request, "ai-gemini");
+        }
       }
-    } catch {
-      // Gemini failed, fall through to deterministic planner
+    } catch (err: unknown) {
+      console.warn("Gemini attempt failed, falling back:", err instanceof Error ? err.message : "Error");
     }
   }
 

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLang } from "@/lib/i18n/useLang";
 
 export interface ErrorStateProps {
-  type: "busy" | "few_matches" | "fallback_sample";
+  type: "busy" | "few_matches" | "fallback_sample" | "invalid_link";
   matchCount?: number;
   days?: number;
   interests?: string[];
@@ -41,6 +41,31 @@ export default function ErrorState({
   const interestsList = interests
     .map((item) => t(`form.categories.${item}`, item))
     .join(lang === "kn" ? " ಮತ್ತು " : ", ");
+
+  if (type === "invalid_link") {
+    return (
+      <div className="bg-white rounded-3xl p-8 sm:p-10 border border-[#DCE1DD] shadow-sm max-w-md w-full">
+        <div className="w-12 h-12 rounded-2xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center text-2xl font-bold mb-6 select-none">
+          ✕
+        </div>
+        <h3 className="font-heading font-bold text-2xl text-[#14202B] mb-3">
+          {lang === "kn" ? "ಈ ಲಿಂಕ್ ಅಮಾನ್ಯವಾಗಿದೆ ಅಥವಾ ಅವಧಿ ಮುಗಿದಿದೆ" : "This trip link is invalid or expired"}
+        </h3>
+        <p className="text-sm text-[#586673] leading-relaxed mb-8">
+          {lang === "kn"
+            ? "ಹಂಚಿಕೊಂಡ ಲಿಂಕ್ ಹಾಳಾಗಿದೆ ಅಥವಾ ತಪ್ಪಾಗಿದೆ. ಹೊಸ ಪ್ರವಾಸವನ್ನು ಯೋಜಿಸಿ."
+            : "The shared trip link could not be decoded or has expired. You can plan a new trip anytime."}
+        </p>
+        <button
+          type="button"
+          onClick={() => router.push("/plan")}
+          className="w-fit px-6 py-2.5 rounded-xl font-semibold text-sm bg-[#8E1F2F] hover:bg-[#781926] text-white active:scale-95 transition-all shadow-xs cursor-pointer min-h-[42px]"
+        >
+          {lang === "kn" ? "ಹೊಸ ಪ್ರವಾಸ ಯೋಜಿಸಿ" : "Plan a new trip"}
+        </button>
+      </div>
+    );
+  }
 
   if (type === "busy") {
     const rawDesc = t("errors.busy_desc", "Too many requests in the last minute. Try again in {seconds} seconds, or open a ready-made trip while you wait.");

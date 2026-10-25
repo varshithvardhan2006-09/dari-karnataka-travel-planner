@@ -182,6 +182,11 @@ export default function PlannerMap({
       });
     });
 
+    // The map lives in a container that is display:none below the lg breakpoint.
+    // Fitting bounds on a 0x0 map yields NaN LatLng and crashes the page.
+    const size = map.getSize();
+    if (!size.x || !size.y) return;
+
     // Fit bounds to matching places if any, otherwise default Karnataka bounds
     if (matchingPlaces.length > 0) {
       const latLngs = matchingPlaces.map(

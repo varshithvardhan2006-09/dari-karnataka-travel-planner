@@ -42,7 +42,12 @@ export default function ShowToLocalModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[1300] bg-[#6B1421] text-white flex flex-col justify-between p-6 sm:p-10 animate-in fade-in duration-200">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Show to local driver"
+      className="fixed inset-0 z-[1300] bg-[#6B1421] text-white flex flex-col justify-between p-6 sm:p-10 animate-in fade-in duration-200"
+    >
       {/* Top Header */}
       <div className="flex items-center justify-between">
         <span className="text-xs font-bold tracking-widest uppercase text-white/80">

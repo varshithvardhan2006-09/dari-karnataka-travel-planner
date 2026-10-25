@@ -94,7 +94,11 @@ export const PlaceSchema = z.object({
 });
 export type Place = z.infer<typeof PlaceSchema>;
 
-export const StartCitySchema = z.string().min(1, "Please provide a starting city or town");
+export const StartCitySchema = z
+  .string()
+  .trim()
+  .min(1, "Please provide a starting city or town")
+  .max(40, "Starting city name cannot exceed 40 characters");
 export const StartCityEnum = StartCitySchema;
 export type StartCity = string;
 

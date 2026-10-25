@@ -74,7 +74,12 @@ export default function StopDetailDrawer({
       />
 
       {/* Slide-out Drawer Panel (Fixed full height with locked header, scrollable body, and locked footer) */}
-      <div className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col z-10 overflow-hidden animate-in slide-in-from-right duration-300">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Stop details"
+        className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col z-10 overflow-hidden animate-in slide-in-from-right duration-300"
+      >
         {/* 1. Header Bar with Close Button (Fixed at top) */}
         <div className="shrink-0 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-[#DCE1DD] flex items-center justify-between z-10">
           <div className="flex items-center gap-2">
@@ -143,26 +148,32 @@ export default function StopDetailDrawer({
                   </div>
                 </div>
 
-                <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                  <div className="text-[#586673] text-[11px]">Best time</div>
-                  <div className="font-bold text-[#14202B] mt-0.5">
-                    {place.best_time_en || "Morning before 11 AM"}
+                {place.best_time_en && (
+                  <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
+                    <div className="text-[#586673] text-[11px]">Best time</div>
+                    <div className="font-bold text-[#14202B] mt-0.5">
+                      {place.best_time_en}
+                    </div>
                   </div>
-                </div>
+                )}
 
-                <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                  <div className="text-[#586673] text-[11px]">Opening hours</div>
-                  <div className="font-bold text-[#14202B] mt-0.5">
-                    {place.opening_hours || "08:30 AM – 06:00 PM"}
+                {place.opening_hours && (
+                  <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
+                    <div className="text-[#586673] text-[11px]">Opening hours</div>
+                    <div className="font-bold text-[#14202B] mt-0.5">
+                      {place.opening_hours}
+                    </div>
                   </div>
-                </div>
+                )}
 
-                <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                  <div className="text-[#586673] text-[11px]">Crowd</div>
-                  <div className="font-bold text-[#14202B] mt-0.5 capitalize">
-                    {place.crowd || "Moderate"}
+                {place.crowd && (
+                  <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
+                    <div className="text-[#586673] text-[11px]">Crowd</div>
+                    <div className="font-bold text-[#14202B] mt-0.5 capitalize">
+                      {place.crowd}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
                   <div className="text-[#586673] text-[11px]">Best season</div>

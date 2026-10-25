@@ -461,7 +461,7 @@
     },
     {
       "day": 3,
-      "theme": "Mysuru & Coast Highlights",
+      "theme": "Mysuru & Hassan Highlights",
       "stops": [
         {
           "place_id": "mysore-palace",
@@ -608,52 +608,48 @@
           ]
         },
         {
-          "place_id": "udupi-krishna-temple",
-          "start": "20:35",
-          "duration_min": 90,
-          "note_en": "13th-century Vaishnavite temple founded by Saint Madhvacharya where Lord Krishna is viewed through the Kanakana Kindi window.",
+          "place_id": "shravanabelagola",
+          "start": "14:45",
+          "duration_min": 120,
+          "note_en": "Colossal 57-foot monolithic statue of Lord Bahubali atop Vindhyagiri hill carved in 981 CE.",
           "travel_from_prev": {
-            "km": 304.1,
-            "min": 465,
+            "km": 69.3,
+            "min": 115,
             "mode": "cab"
           },
           "place": {
-            "id": "udupi-krishna-temple",
-            "name_en": "Udupi Sri Krishna Temple & Matha",
-            "name_kn": "ಉಡುಪಿ ಶ್ರೀ ಕೃಷ್ಣ ಮಠ",
-            "region": "Coast",
-            "city": "Udupi",
-            "lat": 13.3409,
-            "lng": 74.7523,
+            "id": "shravanabelagola",
+            "name_en": "Shravanabelagola Gommateshwara",
+            "name_kn": "ಶ್ರವಣಬೆಳಗೊಳ ಗೊಮ್ಮಟೇಶ್ವರ",
+            "region": "Hassan",
+            "city": "Shravanabelagola",
+            "lat": 12.8576,
+            "lng": 76.4862,
             "categories": [
-              "spiritual",
-              "food",
-              "culture"
+              "heritage",
+              "spiritual"
             ],
-            "duration_min": 90,
+            "duration_min": 120,
             "entry_inr": 0,
             "best_months": [
-              9,
               10,
               11,
               12,
               1,
-              2,
-              3
+              2
             ],
             "budget_fit": [
               "budget",
               "mid",
               "premium"
             ],
-            "is_meal": "lunch",
-            "desc_en": "13th-century Vaishnavite temple founded by Saint Madhvacharya where Lord Krishna is viewed through the Kanakana Kindi window.",
-            "desc_kn": "ಮಧ್ವಾಚಾರ್ಯರಿಂದ ಸ್ಥಾಪಿತವಾದ, ಕನಕನ ಕಿಂಡಿಯ ಮೂಲಕ ಕೃಷ್ಣನ ದರ್ಶನ ಪಡೆಯುವ ಪವಿತ್ರ ಮಠ ಮತ್ತು ಅನ್ನದಾನ ಕ್ಷೇತ್ರ.",
-            "tip_en": "Partake in the serene temple bhojana (free community lunch) served in the grand dining halls.",
-            "tip_kn": "ಮಧ್ಯಾಹ್ನದ ಶ್ರೀಕೃಷ್ಣನ ಸಾತ್ವಿಕ ಪ್ರಸಾದ ಊಟವನ್ನು ತಪ್ಪದೇ ಸ್ವೀಕರಿಸಿ.",
+            "desc_en": "Colossal 57-foot monolithic statue of Lord Bahubali atop Vindhyagiri hill carved in 981 CE.",
+            "desc_kn": "ವಿಂಧ್ಯಗಿರಿ ಬೆಟ್ಟದ ಮೇಲಿರುವ ೫೭ ಅಡಿ ಎತ್ತರದ ಏಕಶಿಲಾ ಬಾಹುಬಲಿ ಸ್ವಾಮಿಯ ಪವಿತ್ರ ಗೊಮ್ಮಟೇಶ್ವರ ಕ್ಷೇತ್ರ.",
+            "tip_en": "Climb early morning to avoid hot rock steps; wearing thick socks protects feet from afternoon stone heat.",
+            "tip_kn": "ಬೆಟ್ಟದ ಬಂಡೆಗಳು ಬಿಸಿಯಾಗುವ ಮುನ್ನ ಬೆಳಿಗ್ಗೆಯೇ ಹತ್ತಿ; ಕಾಲ್ನಡಿಗೆಗೆ ಸಾಕ್ಸ್ ಧರಿಸುವುದು ಉತ್ತಮ.",
             "phrase_ids": [
+              "phrase-water",
               "phrase-temple-darshan",
-              "phrase-delicious-food",
               "phrase-thanks"
             ],
             "verified": true,
@@ -661,18 +657,18 @@
           },
           "phrases": [
             {
+              "id": "phrase-water",
+              "kn": "ನೀರು ಕೊಡಿ",
+              "translit": "Neeru kodi",
+              "en": "Please give water",
+              "context": "food"
+            },
+            {
               "id": "phrase-temple-darshan",
               "kn": "ದೇವಸ್ಥಾನದ ದರ್ಶನ ಸಮಯ ಯಾವಾಗ?",
               "translit": "Devasthanada darshana samaya yavaga?",
               "en": "When is the temple darshan time?",
               "context": "temple"
-            },
-            {
-              "id": "phrase-delicious-food",
-              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
-              "translit": "Oota tumba ruchi aagide",
-              "en": "The food is very tasty",
-              "context": "food"
             },
             {
               "id": "phrase-thanks",
@@ -684,15 +680,15 @@
           ]
         }
       ],
-      "travel_total_min": 500
+      "travel_total_min": 150
     }
   ],
   "cost": {
     "stay": 8800,
     "food": 7200,
-    "transport": 8046,
+    "transport": 3350,
     "entry": 1250,
-    "total": 25296,
+    "total": 20600,
     "people": 2
   },
   "tips": [

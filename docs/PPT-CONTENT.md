@@ -5,7 +5,7 @@
 **Theme:** "Code. Create. Celebrate Kannada."  
 **Problem Statement:** 06 — AI Travel Planner for Karnataka  
 **Presenter:** Solo Participant  
-**Live URL:** [https://dari-karnataka.vercel.app](https://dari-karnataka.vercel.app)  
+**Live URL:** [https://dari-karnataka-travel-planner.vercel.app](https://dari-karnataka-travel-planner.vercel.app)  
 
 ---
 
@@ -142,7 +142,7 @@
 **Summary:**  
 - **Deliverable 1:** Public GitHub repository with clean commits and CI.  
 - **Deliverable 2:** This 8-slide presentation deck.  
-- **Deliverable 3:** Live responsive deployment at `https://dari-karnataka.vercel.app`.  
+- **Deliverable 3:** Live responsive deployment at `https://dari-karnataka-travel-planner.vercel.app`.  
 - **Deliverable 4:** 4:30 minute demonstration video.  
 
 > **Speaker Notes (4:10 - 4:45):**  

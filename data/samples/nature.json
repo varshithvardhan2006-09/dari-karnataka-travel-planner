@@ -238,7 +238,7 @@
     },
     {
       "day": 2,
-      "theme": "Mysuru & Bengaluru Highlights",
+      "theme": "Mysuru Highlights",
       "stops": [
         {
           "place_id": "mysore-zoo",
@@ -386,249 +386,13 @@
           ]
         },
         {
-          "place_id": "vidyarthi-bhavan",
-          "start": "17:25",
-          "duration_min": 45,
-          "note_en": "Iconic 1943 heritage eatery famous for thick crispy golden benne masala dosas and filter coffee.",
-          "travel_from_prev": {
-            "km": 159.4,
-            "min": 250,
-            "mode": "cab"
-          },
-          "place": {
-            "id": "vidyarthi-bhavan",
-            "name_en": "Vidyarthi Bhavan Gandhi Bazaar",
-            "name_kn": "ವಿದ್ಯಾರ್ಥಿ ಭವನ ಗಾಂಧಿ ಬಜಾರ್",
-            "region": "Bengaluru",
-            "city": "Bengaluru",
-            "lat": 12.9427,
-            "lng": 77.5684,
-            "categories": [
-              "food"
-            ],
-            "duration_min": 45,
-            "entry_inr": 120,
-            "best_months": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7,
-              8,
-              9,
-              10,
-              11,
-              12
-            ],
-            "budget_fit": [
-              "budget",
-              "mid",
-              "premium"
-            ],
-            "is_meal": "breakfast",
-            "desc_en": "Iconic 1943 heritage eatery famous for thick crispy golden benne masala dosas and filter coffee.",
-            "desc_kn": "೧೯೪೩ ರಿಂದ ಗಾಂಧಿ ಬಜಾರಿನಲ್ಲಿ ಗರಿಗರಿ ಮಸಾಲೆ ದೋಸೆ ಮತ್ತು ಘಮಘಮಿಸುವ ಫಿಲ್ಟರ್ ಕಾಫಿಗೆ ಹೆಸರಾದ ಹೆಗ್ಗುರುತು.",
-            "tip_en": "Watch waiters masterfully balance stacks of up to 20 dosa plates across their arms.",
-            "tip_kn": "ಮಾಣಿಗಳು ಒಂದೇ ಕೈಯಲ್ಲಿ ಹತ್ತಾರು ದೋಸೆ ತಟ್ಟೆಗಳನ್ನು ಹೊತ್ತು ತರುವುದನ್ನು ನೋಡುವುದೇ ಸಂಭ್ರಮ.",
-            "phrase_ids": [
-              "phrase-masale-dose",
-              "phrase-delicious-food",
-              "phrase-bill-please"
-            ],
-            "verified": true,
-            "source_url": "https://vidyarthibhavan.in"
-          },
-          "phrases": [
-            {
-              "id": "phrase-masale-dose",
-              "kn": "ಒಂದು ಮಸಾಲೆ ದೋಸೆ ಕೊಡಿ",
-              "translit": "Ondu masale dose kodi",
-              "en": "Please give one masala dosa",
-              "context": "food"
-            },
-            {
-              "id": "phrase-delicious-food",
-              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
-              "translit": "Oota tumba ruchi aagide",
-              "en": "The food is very tasty",
-              "context": "food"
-            },
-            {
-              "id": "phrase-bill-please",
-              "kn": "ಬಿಲ್ ಕೊಡಿ",
-              "translit": "Bill kodi",
-              "en": "Please give the bill",
-              "context": "food"
-            }
-          ]
-        }
-      ],
-      "travel_total_min": 265
-    },
-    {
-      "day": 3,
-      "theme": "Bengaluru & Mysuru Highlights",
-      "stops": [
-        {
-          "place_id": "vv-puram-food-street",
-          "start": "09:00",
-          "duration_min": 75,
-          "note_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
-          "place": {
-            "id": "vv-puram-food-street",
-            "name_en": "VV Puram Food Street (Thindi Beedi)",
-            "name_kn": "ವಿ.ವಿ. ಪುರಂ ತಿಂಡಿ ಬೀದಿ",
-            "region": "Bengaluru",
-            "city": "Bengaluru",
-            "lat": 12.9526,
-            "lng": 77.5772,
-            "categories": [
-              "food",
-              "culture"
-            ],
-            "duration_min": 75,
-            "entry_inr": 200,
-            "best_months": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7,
-              8,
-              9,
-              10,
-              11,
-              12
-            ],
-            "budget_fit": [
-              "budget",
-              "mid",
-              "premium"
-            ],
-            "is_meal": "dinner",
-            "desc_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
-            "desc_kn": "ಬಿಸಿಬಿಸಿ ಅಕ್ಕಿ ರೊಟ್ಟಿ, ಪದ್ದು, ಮಸಾಲೆ ದೋಸೆ ಮತ್ತು ಗುಲ್ಕಂಡ್ ಸಿಹಿಗೆ ಹೆಸರಾದ ಬೆಂಗಳೂರಿನ ಆಹಾರ ರಸ್ತೆ.",
-            "tip_en": "Shops open after 18:30. Try warm akki rotti followed by traditional gulkand ice cream.",
-            "tip_kn": "ಸಂಜೆ ೬:೩೦ ರ ನಂತರ ಅಂಗಡಿಗಳು ತೆರೆಯುತ್ತವೆ. ಬಿಸಿ ಅಕ್ಕಿರೊಟ್ಟಿ ಮತ್ತು ಗುಲ್ಕಂಡ್ ರುಚಿ ನೋಡಿ.",
-            "phrase_ids": [
-              "phrase-how-much",
-              "phrase-delicious-food",
-              "phrase-bill-please"
-            ],
-            "verified": true,
-            "source_url": "https://karnatakatourism.org"
-          },
-          "phrases": [
-            {
-              "id": "phrase-how-much",
-              "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು?",
-              "translit": "Idakke eshtu?",
-              "en": "How much for this?",
-              "context": "shopping"
-            },
-            {
-              "id": "phrase-delicious-food",
-              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
-              "translit": "Oota tumba ruchi aagide",
-              "en": "The food is very tasty",
-              "context": "food"
-            },
-            {
-              "id": "phrase-bill-please",
-              "kn": "ಬಿಲ್ ಕೊಡಿ",
-              "translit": "Bill kodi",
-              "en": "Please give the bill",
-              "context": "food"
-            }
-          ]
-        },
-        {
-          "place_id": "lalbagh-gardens",
-          "start": "10:25",
-          "duration_min": 90,
-          "note_en": "Historical 240-acre botanical garden commissioned by Hyder Ali featuring the Victorian Glass House and ancient rock.",
-          "travel_from_prev": {
-            "km": 1.2,
-            "min": 10,
-            "mode": "cab"
-          },
-          "place": {
-            "id": "lalbagh-gardens",
-            "name_en": "Lalbagh Botanical Garden",
-            "name_kn": "ಲಾಲ್‌ಬಾಗ್ ಸಸ್ಯತೋಟ",
-            "region": "Bengaluru",
-            "city": "Bengaluru",
-            "lat": 12.9507,
-            "lng": 77.5848,
-            "categories": [
-              "nature",
-              "heritage"
-            ],
-            "duration_min": 90,
-            "entry_inr": 25,
-            "best_months": [
-              1,
-              2,
-              3,
-              8,
-              9,
-              10,
-              11,
-              12
-            ],
-            "budget_fit": [
-              "budget",
-              "mid",
-              "premium"
-            ],
-            "desc_en": "Historical 240-acre botanical garden commissioned by Hyder Ali featuring the Victorian Glass House and ancient rock.",
-            "desc_kn": "ಹೈದರ್ ಅಲಿ ಕಾಲದ ೨೪೦ ಎಕರೆ ವಿಸ್ತೀರ್ಣದ ಐತಿಹಾಸಿಕ ಗಾಜಿನ ಮನೆ ಹಾಗೂ ಪುರಾತನ ಬಂಡೆ ಹೊಂದಿರುವ ಸಸ್ಯತೋಟ.",
-            "tip_en": "Walk up the 3,000-million-year-old Lalbagh Rock near the main gate for a garden vista.",
-            "tip_kn": "ಉದ್ಯಾನವನದ ವಿಹಂಗಮ ನೋಟಕ್ಕಾಗಿ ಮುಖ್ಯ ದ್ವಾರದ ಬಳಿಯ ಪುರಾತನ ಲಾಲ್‌ಬಾಗ್ ಬಂಡೆಯನ್ನು ಹತ್ತಿ.",
-            "phrase_ids": [
-              "phrase-ticket-cost",
-              "phrase-take-photo",
-              "phrase-thanks"
-            ],
-            "verified": false,
-            "source_url": "https://karnatakatourism.org"
-          },
-          "phrases": [
-            {
-              "id": "phrase-ticket-cost",
-              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
-              "translit": "Ticket elli siguttade?",
-              "en": "Where do I get tickets?",
-              "context": "ticket"
-            },
-            {
-              "id": "phrase-take-photo",
-              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
-              "translit": "Ondu photo tegeyiri, dayavittu",
-              "en": "Please take one photo",
-              "context": "greeting"
-            },
-            {
-              "id": "phrase-thanks",
-              "kn": "ಧನ್ಯವಾದಗಳು",
-              "translit": "Dhanyavadagalu",
-              "en": "Thank you very much",
-              "context": "thanks"
-            }
-          ]
-        },
-        {
           "place_id": "brindavan-gardens",
-          "start": "16:10",
+          "start": "14:05",
           "duration_min": 120,
           "note_en": "Terraced botanical gardens laid across the KRS Dam with synchronized musical fountains at dusk.",
           "travel_from_prev": {
-            "km": 161.7,
-            "min": 255,
+            "km": 26,
+            "min": 50,
             "mode": "cab"
           },
           "place": {
@@ -693,15 +457,236 @@
           ]
         }
       ],
-      "travel_total_min": 265
+      "travel_total_min": 65
+    },
+    {
+      "day": 3,
+      "theme": "Coorg Highlights",
+      "stops": [
+        {
+          "place_id": "dubare-elephant-camp",
+          "start": "09:00",
+          "duration_min": 120,
+          "note_en": "Forest department ecotourism camp on Kaveri river where visitors learn about elephant training and conservation.",
+          "place": {
+            "id": "dubare-elephant-camp",
+            "name_en": "Dubare Elephant Camp",
+            "name_kn": "ದುಬಾರೆ ಆನೆ ಶಿಬಿರ",
+            "region": "Coorg",
+            "city": "Kushalnagar",
+            "lat": 12.3686,
+            "lng": 75.9042,
+            "categories": [
+              "wildlife",
+              "nature",
+              "adventure"
+            ],
+            "duration_min": 120,
+            "entry_inr": 100,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "budget_fit": [
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Forest department ecotourism camp on Kaveri river where visitors learn about elephant training and conservation.",
+            "desc_kn": "ಕಾವೇರಿ ನದಿ ತೀರದಲ್ಲಿರುವ ಅರಣ್ಯ ಇಲಾಖೆಯ ಆನೆಗಳ ಪಾಲನೆ ಮತ್ತು ಸಂರಕ್ಷಣಾ ಶಿಬಿರ.",
+            "tip_en": "Elephant bathing activities typically happen between 09:00 and 11:00 AM.",
+            "tip_kn": "ಆನೆಗಳ ಸ್ನಾನ ಮತ್ತು ಆರೈಕೆ ವೀಕ್ಷಿಸಲು ಬೆಳಿಗ್ಗೆ ೯ ರಿಂದ ೧೧ ರ ಒಳಗೆ ಭೇಟಿ ನೀಡಿ.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-water",
+              "phrase-take-photo"
+            ],
+            "verified": false,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-water",
+              "kn": "ನೀರು ಕೊಡಿ",
+              "translit": "Neeru kodi",
+              "en": "Please give water",
+              "context": "food"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            }
+          ]
+        },
+        {
+          "place_id": "rajas-seat",
+          "start": "11:45",
+          "duration_min": 60,
+          "note_en": "Scenic garden viewpoint where the Kings of Kodagu watched sunsets across rolling misty valleys.",
+          "travel_from_prev": {
+            "km": 24.6,
+            "min": 45,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "rajas-seat",
+            "name_en": "Raja's Seat Madikeri",
+            "name_kn": "ರಾಜಾಸೀಟ್ ಮಡಿಕೇರಿ",
+            "region": "Coorg",
+            "city": "Madikeri",
+            "lat": 12.4184,
+            "lng": 75.7381,
+            "categories": [
+              "nature"
+            ],
+            "duration_min": 60,
+            "entry_inr": 20,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Scenic garden viewpoint where the Kings of Kodagu watched sunsets across rolling misty valleys.",
+            "desc_kn": "ಕೊಡಗಿನ ರಾಜರು ಸಂಜೆಯ ಸೂರ್ಯಾಸ್ತ ವೀಕ್ಷಿಸುತ್ತಿದ್ದ ಮಂಜು ಮುಸುಕಿದ ಕಣಿವೆಯ ಸುಂದರ ಉದ್ಯಾನವನ.",
+            "tip_en": "Arrive an hour before sunset when the mist rolls into the western ghat valleys.",
+            "tip_kn": "ಕಣಿವೆಯಲ್ಲಿ ಮಂಜು ಆವರಿಸುವ ಸುಂದರ ಸಂಜೆಯ ಸೂರ್ಯಾಸ್ತ ನೋಡಲು ಬೇಗ ತಲುಪಿ.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-take-photo",
+              "phrase-very-nice"
+            ],
+            "verified": false,
+            "source_url": "https://coorg.nic.in"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-very-nice",
+              "kn": "ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ!",
+              "translit": "Tumba chennagide!",
+              "en": "It is very beautiful!",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "abbey-falls",
+          "start": "13:05",
+          "duration_min": 60,
+          "note_en": "Cascading waterfall nestled amidst lush coffee plantations and pepper vines with a hanging bridge view.",
+          "travel_from_prev": {
+            "km": 6,
+            "min": 20,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "abbey-falls",
+            "name_en": "Abbey Falls Madikeri",
+            "name_kn": "ಅಬ್ಬಿ ಜಲಪಾತ",
+            "region": "Coorg",
+            "city": "Madikeri",
+            "lat": 12.4542,
+            "lng": 75.7175,
+            "categories": [
+              "nature"
+            ],
+            "duration_min": 60,
+            "entry_inr": 15,
+            "best_months": [
+              8,
+              9,
+              10,
+              11,
+              12,
+              1
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Cascading waterfall nestled amidst lush coffee plantations and pepper vines with a hanging bridge view.",
+            "desc_kn": "ಕಾಫಿ ತೋಟಗಳು ಮತ್ತು ಕಾಳುಮೆಣಸಿನ ಬಳ್ಳಿಗಳ ನಡುವೆ ಧುಮ್ಮಿಕ್ಕುವ ಸುಂದರ ಜಲಪಾತ ಮತ್ತು ತೂಗುಸೇತುವೆ.",
+            "tip_en": "Walk down the stone pathway through fragrant spice estates to reach the viewing bridge.",
+            "tip_kn": "ಕಾಫಿ ತೋಟಗಳ ನಡುವಿನ ಹಾದಿಯಲ್ಲಿ ನಡೆದು ತೂಗುಸೇತುವೆಯ ಬಳಿ ಜಲಪಾತ ವೀಕ್ಷಿಸಿ.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-take-photo",
+              "phrase-water"
+            ],
+            "verified": false,
+            "source_url": "https://coorg.nic.in"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-water",
+              "kn": "ನೀರು ಕೊಡಿ",
+              "translit": "Neeru kodi",
+              "en": "Please give water",
+              "context": "food"
+            }
+          ]
+        }
+      ],
+      "travel_total_min": 65
     }
   ],
   "cost": {
     "stay": 17600,
     "food": 14400,
-    "transport": 7024,
-    "entry": 2980,
-    "total": 42004,
+    "transport": 1710,
+    "entry": 2140,
+    "total": 35850,
     "people": 4
   },
   "tips": [

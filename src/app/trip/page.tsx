@@ -93,7 +93,7 @@ function downloadIcsFile(plan: Plan, travelMonth: number = 11) {
 
       icsLines.push(
         "BEGIN:VEVENT",
-        `UID:dari-${day.day}-${stop.place_id}-${Date.now()}@dari-karnataka.vercel.app`,
+        `UID:dari-${day.day}-${stop.place_id}-${Date.now()}@dari-karnataka-travel-planner.vercel.app`,
         `DTSTAMP:${dateStr}T000000Z`,
         `DTSTART:${startIso}`,
         `DTEND:${endIso}`,
@@ -132,7 +132,7 @@ function TripViewContent() {
   const [isSheetMinimized, setIsSheetMinimized] = useState<boolean>(false);
   const [isSheetClosed, setIsSheetClosed] = useState<boolean>(false);
   const [errorState, setErrorState] = useState<{
-    type: "busy" | "few_matches" | "fallback_sample";
+    type: "busy" | "few_matches" | "fallback_sample" | "invalid_link";
     matchCount?: number;
     retryAfterS?: number;
   } | null>(null);
@@ -204,21 +204,30 @@ function TripViewContent() {
       }
 
       // Case 2: Decompress from lz-string
-      if (dParam) {
+      if (dParam !== null) {
         try {
           const decompressed = LZString.decompressFromEncodedURIComponent(dParam);
           if (decompressed) {
             const parsedPlan = JSON.parse(decompressed) as Plan;
-            if (!isCancelled) {
-              setPlan(parsedPlan);
-              setSelectedDay(1);
-              setLoading(false);
+            if (parsedPlan && Array.isArray(parsedPlan.days) && parsedPlan.days.length > 0) {
+              if (!isCancelled) {
+                setPlan(parsedPlan);
+                setSelectedDay(1);
+                setLoading(false);
+              }
+              return;
             }
-            return;
           }
         } catch (e) {
           console.warn("Failed to decompress shared plan:", e);
         }
+
+        // Corrupted or expired share link
+        if (!isCancelled) {
+          setErrorState({ type: "invalid_link" });
+          setLoading(false);
+        }
+        return;
       }
 
       // Case 3: API call with fallback
@@ -831,7 +840,10 @@ function TripViewContent() {
             </div>
 
             {/* Stat 5: Season & Weather */}
-            <div className="col-span-2 sm:col-span-1 bg-white p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-3">
+            <div
+              className="col-span-2 sm:col-span-1 bg-white p-3.5 rounded-2xl border border-[#DCE1DD] shadow-2xs flex items-center gap-3"
+              title={lang === "kn" ? "ವಿಶಿಷ್ಟ ಹವಾಮಾನ (ಮಾಸಿಕ ಸರಾಸರಿ)" : "Typical Weather (Monthly Average)"}
+            >
               <div className="w-8 h-8 rounded-xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center shrink-0">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="5" />
@@ -850,7 +862,9 @@ function TripViewContent() {
                   {tripStats.weather.temp}
                 </div>
                 <div className="text-[11px] text-[#586673] truncate">
-                  {lang === "kn" ? tripStats.weather.descKn : tripStats.weather.descEn}
+                  {lang === "kn"
+                    ? `${tripStats.weather.descKn} · ಮಾಸಿಕ ಸರಾಸರಿ`
+                    : `${tripStats.weather.descEn} · Monthly avg`}
                 </div>
               </div>
             </div>

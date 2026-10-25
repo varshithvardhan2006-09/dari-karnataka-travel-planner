@@ -1,4 +1,4 @@
-﻿import type { Metadata, Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Hanken_Grotesk, Noto_Sans_Kannada } from "next/font/google";
 import "./globals.css";
 import { LangProvider } from "@/lib/i18n/useLang";
@@ -33,7 +33,7 @@ const notoSansKannada = Noto_Sans_Kannada({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://dari-karnataka.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://dari-karnataka-travel-planner.vercel.app"),
   title: "Dari (ದಾರಿ) - AI Travel Planner for Karnataka",
   description:
     "Plan personalized Karnataka itineraries based on interests, available time, and budget. Authentic places, routes, costs, and Kannada phrases.",

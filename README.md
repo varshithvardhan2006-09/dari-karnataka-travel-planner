@@ -15,7 +15,7 @@
 
 ---
 
-## 📸 Interface Tour & Mockup Compliance
+## 📸 Interface & Mockup Architecture
 
 | 1. Landing & Destination Discovery | 2. Planner Form & Live Brief |
 |:---:|:---:|
@@ -40,7 +40,7 @@ Generic AI planners (like raw ChatGPT or Gemini prompts) hallucinate non-existen
 
 **Dari solves this with 6 core architectural principles:**
 
-1. **Constrained Place-ID Architecture (Zero Hallucinations):**  
+1. **Constrained Place-ID Architecture (Place-ID Constrained, Hallucination Prevention):**  
    The AI model is **strictly prohibited from generating free-text place names, coordinates, or fees**. The prompt receives only valid candidate IDs from [`data/places.json`](data/places.json) and must return valid IDs. Any unknown ID is automatically rejected, retried once, and backed by our deterministic fallback planner.
 2. **Honesty & Transparency Rule:**  
    We reject deceptive claims like `~99% verified` or `benchmarked against KSTDC`. Dari labels all numbers honestly:
@@ -52,7 +52,7 @@ Generic AI planners (like raw ChatGPT or Gemini prompts) hallucinate non-existen
    Every stop includes 2 to 3 practical Kannada phrases with script, English transliteration, English meaning, and high-fidelity native Kannada speech streaming (`/api/tts`) with browser Web Speech fallback.
 5. **"Show to Local" Full-Screen View:**  
    A dedicated high-contrast red card displaying *"ದಯವಿಟ್ಟು ನನ್ನನ್ನು ಇಲ್ಲಿಗೆ ಕರೆದುಕೊಂಡು ಹೋಗಿ"* (*Please take me here*) with destination details and native audio designed for auto drivers, bus conductors, and shopkeepers.
-6. **100% Offline & Deterministic Fallback:**  
+6. **Works without AI keys (Deterministic Fallback):**  
    Even if both Groq and Gemini APIs are down, rate-limited, or if zero API keys are provided, Dari generates a complete, geographically clustered itinerary using [`src/lib/planner.ts`](src/lib/planner.ts) with zero user-facing errors.
 
 ---
@@ -78,8 +78,8 @@ Generic AI planners (like raw ChatGPT or Gemini prompts) hallucinate non-existen
                                │
                                ▼
 [ 3. Cascading AI Execution (lib/ai.ts) ]
-   ├── Primary: Groq API (Llama 3.3 70B Versatile, JSON Mode)
-   ├── Secondary Fallback: Google Gemini API (Gemini 2.5 Flash)
+   ├── Primary: Groq API (openai/gpt-oss-120b, JSON Mode)
+   ├── Secondary Fallback: Google Gemini API (gemini-flash-latest)
    └── Validates place IDs with Zod (1 retry with feedback)
                                │
                                ▼ (on AI failure, timeout, or missing keys)
@@ -127,12 +127,12 @@ Our dataset covers 39 hand-curated places spanning all regions of Karnataka:
 | **Typography** | Bricolage Grotesque, Hanken Grotesk, Noto Sans Kannada | Correct native Kannada rendering with `line-height: 1.55` |
 | **Map Engine** | Leaflet 1.9 + OpenStreetMap | Native Leaflet container (no SSR memory leaks), custom numbered pin markers, double polyline route |
 | **Primary AI** | Groq API (`llama-3.3-70b-versatile` / `openai/gpt-oss-120b`) | Rapid inference (< 1.5s) in structured JSON mode |
-| **Fallback AI** | Google Gemini API (`gemini-2.5-flash`) | Secondary fallback provider |
+| **Fallback AI** | Google Gemini API (`gemini-flash-latest`) | Secondary fallback provider |
 | **Validation** | Zod 4 (`.issues` syntax) | Runtime input validation and AI output schema checks |
 | **URL Compression**| LZ-String 1.5 | Compresses entire JSON itinerary into URL `?d=...` for database-free sharing |
 | **Local Storage** | Web Storage API | Auto-saves last 10 trips on device ("My Trips") without login |
 | **Calendar Export**| iCalendar (`.ics`) RFC 5545 | Generates downloadable calendar schedule client-side |
-| **Speech** | Web Speech API (`speechSynthesis`, `lang="kn-IN"`) | Native on-device Kannada audio with normal/slow rate controls |
+| **Speech** | Native Kannada Audio Stream (`/api/tts`) + Web Speech | Streamed native audio with Web Speech fallback and slow-rate controls |
 | **Testing** | Vitest 5.0 (12 test suites, 45 tests) | Fast automated unit & integration testing |
 | **Deployment** | Vercel | Production edge deployment with automatic CI/CD |
 

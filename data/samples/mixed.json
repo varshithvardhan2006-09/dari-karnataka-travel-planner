@@ -920,7 +920,7 @@
     },
     {
       "day": 4,
-      "theme": "Mysuru & Hassan & Coorg Highlights",
+      "theme": "Mysuru & Hassan Highlights",
       "stops": [
         {
           "place_id": "brindavan-gardens",
@@ -1061,105 +1061,29 @@
           ]
         },
         {
-          "place_id": "bandipur-safari",
-          "start": "19:15",
-          "duration_min": 150,
-          "note_en": "Premier Project Tiger sanctuary spanning deciduous forests home to wild elephants, gaurs, and leopards.",
+          "place_id": "halebidu-temple",
+          "start": "17:05",
+          "duration_min": 90,
+          "note_en": "Twin temple dedicated to Lord Shiva featuring hundreds of intricate friezes of deities, battles, and wildlife.",
           "travel_from_prev": {
-            "km": 173.4,
-            "min": 270,
+            "km": 86.3,
+            "min": 140,
             "mode": "cab"
           },
           "place": {
-            "id": "bandipur-safari",
-            "name_en": "Bandipur National Park Safari",
-            "name_kn": "ಬಂಡೀಪುರ ರಾಷ್ಟ್ರೀಯ ಉದ್ಯಾನವನ ಸಫಾರಿ",
-            "region": "Mysuru",
-            "city": "Gundlupete",
-            "lat": 11.6664,
-            "lng": 76.6291,
+            "id": "halebidu-temple",
+            "name_en": "Halebidu Hoysaleswara Temple",
+            "name_kn": "ಹಳೇಬೀಡು ಹೊಯ್ಸಳೇಶ್ವರ ದೇವಾಲಯ",
+            "region": "Hassan",
+            "city": "Halebidu",
+            "lat": 13.2132,
+            "lng": 75.9939,
             "categories": [
-              "wildlife",
-              "nature",
-              "adventure"
+              "heritage",
+              "spiritual"
             ],
-            "duration_min": 150,
-            "entry_inr": 500,
-            "best_months": [
-              10,
-              11,
-              12,
-              1,
-              2,
-              3,
-              4,
-              5
-            ],
-            "budget_fit": [
-              "mid",
-              "premium"
-            ],
-            "desc_en": "Premier Project Tiger sanctuary spanning deciduous forests home to wild elephants, gaurs, and leopards.",
-            "desc_kn": "ಹುಲಿ, ಆನೆ, ಕಾಡುಕೋಣ ಮತ್ತು ಚಿರತೆಗಳನ್ನು ಹೊಂದಿರುವ ಪ್ರಸಿದ್ಧ ಪ್ರಾಜೆಕ್ಟ್ ಟೈಗರ್ ಅಭಯಾರಣ್ಯ.",
-            "tip_en": "Book the 06:30 AM dawn safari for the highest probability of big cat sightings.",
-            "tip_kn": "ಪ್ರಾಣಿಗಳನ್ನು ನೋಡಲು ಮುಂಜಾನೆ ೬:೩೦ ರ ಸಫಾರಿ ಅತ್ಯಂತ ಸೂಕ್ತ.",
-            "phrase_ids": [
-              "phrase-ticket-cost",
-              "phrase-which-way",
-              "phrase-thanks"
-            ],
-            "verified": false,
-            "source_url": "https://aranya.gov.in"
-          },
-          "phrases": [
-            {
-              "id": "phrase-ticket-cost",
-              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
-              "translit": "Ticket elli siguttade?",
-              "en": "Where do I get tickets?",
-              "context": "ticket"
-            },
-            {
-              "id": "phrase-which-way",
-              "kn": "ಈ ರಸ್ತೆ ಎಲ್ಲಿಗೆ ಹೋಗುತ್ತೆ?",
-              "translit": "Ee raste ellige hogutte?",
-              "en": "Where does this road lead to?",
-              "context": "directions"
-            },
-            {
-              "id": "phrase-thanks",
-              "kn": "ಧನ್ಯವಾದಗಳು",
-              "translit": "Dhanyavadagalu",
-              "en": "Thank you very much",
-              "context": "thanks"
-            }
-          ]
-        },
-        {
-          "place_id": "dubare-elephant-camp",
-          "start": "21:45",
-          "duration_min": 120,
-          "note_en": "Forest department ecotourism camp on Kaveri river where visitors learn about elephant training and conservation.",
-          "travel_from_prev": {
-            "km": 144.3,
-            "min": 225,
-            "mode": "cab"
-          },
-          "place": {
-            "id": "dubare-elephant-camp",
-            "name_en": "Dubare Elephant Camp",
-            "name_kn": "ದುಬಾರೆ ಆನೆ ಶಿಬಿರ",
-            "region": "Coorg",
-            "city": "Kushalnagar",
-            "lat": 12.3686,
-            "lng": 75.9042,
-            "categories": [
-              "wildlife",
-              "nature",
-              "adventure"
-            ],
-            "duration_min": 120,
-            "entry_inr": 100,
+            "duration_min": 90,
+            "entry_inr": 0,
             "best_months": [
               9,
               10,
@@ -1170,35 +1094,29 @@
               3
             ],
             "budget_fit": [
+              "budget",
               "mid",
               "premium"
             ],
-            "desc_en": "Forest department ecotourism camp on Kaveri river where visitors learn about elephant training and conservation.",
-            "desc_kn": "ಕಾವೇರಿ ನದಿ ತೀರದಲ್ಲಿರುವ ಅರಣ್ಯ ಇಲಾಖೆಯ ಆನೆಗಳ ಪಾಲನೆ ಮತ್ತು ಸಂರಕ್ಷಣಾ ಶಿಬಿರ.",
-            "tip_en": "Elephant bathing activities typically happen between 09:00 and 11:00 AM.",
-            "tip_kn": "ಆನೆಗಳ ಸ್ನಾನ ಮತ್ತು ಆರೈಕೆ ವೀಕ್ಷಿಸಲು ಬೆಳಿಗ್ಗೆ ೯ ರಿಂದ ೧೧ ರ ಒಳಗೆ ಭೇಟಿ ನೀಡಿ.",
+            "desc_en": "Twin temple dedicated to Lord Shiva featuring hundreds of intricate friezes of deities, battles, and wildlife.",
+            "desc_kn": "ನೂರಾರು ಅದ್ಭುತ ಶಿಲಾ ಕೆತ್ತನೆಗಳು ಮತ್ತು ಆನೆಗಳ ಪಟ್ಟಿಕೆಗಳಿಂದ ಅಲಂಕೃತವಾದ ಅವಳಿ ಶಿವ ದೇವಾಲಯ.",
+            "tip_en": "Walk the outer perimeter wall clockwise to follow the continuous relief storylines.",
+            "tip_kn": "ದೇವಾಲಯದ ಕಥಾ ಚಿತ್ರಣಗಳನ್ನು ಕ್ರಮಬದ್ಧವಾಗಿ ವೀಕ್ಷಿಸಲು ಪ್ರದಕ್ಷಿಣೆ ರೂಪದಲ್ಲಿ ನಡೆಯಿರಿ.",
             "phrase_ids": [
-              "phrase-ticket-cost",
-              "phrase-water",
-              "phrase-take-photo"
+              "phrase-temple-darshan",
+              "phrase-take-photo",
+              "phrase-thanks"
             ],
-            "verified": false,
+            "verified": true,
             "source_url": "https://karnatakatourism.org"
           },
           "phrases": [
             {
-              "id": "phrase-ticket-cost",
-              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
-              "translit": "Ticket elli siguttade?",
-              "en": "Where do I get tickets?",
-              "context": "ticket"
-            },
-            {
-              "id": "phrase-water",
-              "kn": "ನೀರು ಕೊಡಿ",
-              "translit": "Neeru kodi",
-              "en": "Please give water",
-              "context": "food"
+              "id": "phrase-temple-darshan",
+              "kn": "ದೇವಸ್ಥಾನದ ದರ್ಶನ ಸಮಯ ಯಾವಾಗ?",
+              "translit": "Devasthanada darshana samaya yavaga?",
+              "en": "When is the temple darshan time?",
+              "context": "temple"
             },
             {
               "id": "phrase-take-photo",
@@ -1206,19 +1124,26 @@
               "translit": "Ondu photo tegeyiri, dayavittu",
               "en": "Please take one photo",
               "context": "greeting"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
             }
           ]
         }
       ],
-      "travel_total_min": 600
+      "travel_total_min": 245
     }
   ],
   "cost": {
     "stay": 13200,
     "food": 9600,
-    "transport": 10124,
-    "entry": 3290,
-    "total": 36214,
+    "transport": 5496,
+    "entry": 2090,
+    "total": 30386,
     "people": 2
   },
   "tips": [
