@@ -3,6 +3,19 @@
  * Generates verified coordinate-based links and safe contextual fallback search queries.
  */
 
+/**
+ * Escapes text before it is interpolated into a Leaflet popup's raw HTML.
+ * Plan data can arrive from a shared link, so it is never trusted markup.
+ */
+export function escapeHtml(value: string | number | undefined | null): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export interface MapLocationTarget {
   name_en?: string;
   name_kn?: string;

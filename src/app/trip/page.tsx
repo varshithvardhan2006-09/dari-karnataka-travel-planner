@@ -34,7 +34,7 @@ import { buildDeterministicPlan } from "@/lib/planner";
 import { getSamplePlan, getCustomizedSamplePlan } from "@/lib/samples";
 import { computeTravelLeg, addMinutesToTime, roundTimeTo5Min, getPinNumber } from "@/lib/geo";
 import { calculateTripCost } from "@/lib/cost";
-import { getStartCityCoordinates } from "@/lib/candidates";
+import { getStartCityCoordinates, getCandidates, countMatchingPlaces } from "@/lib/candidates";
 import placesData from "../../../data/places.json";
 import phrasesData from "../../../data/phrases.json";
 
@@ -76,6 +76,12 @@ const KARNATAKA_WEATHER: Record<number, { temp: string; descEn: string; descKn: 
   10: { temp: "28° / 18°", descEn: "October, pleasant", descKn: "ಅಕ್ಟೋಬರ್, ಹಿತಕರ" },
   11: { temp: "26° / 15°", descEn: "November, dry", descKn: "ನವೆಂಬರ್, ಒಣ ಹವೆ" },
   12: { temp: "25° / 14°", descEn: "December, cool", descKn: "ಡಿಸೆಂಬರ್, ತಂಪಾದ ಹವೆ" },
+};
+
+const TRANSPORT_LABELS: Record<string, { en: string; kn: string }> = {
+  cab: { en: "Cab", kn: "ಕ್ಯಾಬ್" },
+  own_car: { en: "Own car", kn: "ಸ್ವಂತ ಕಾರು" },
+  bus_train: { en: "Bus & train", kn: "ಬಸ್ ಮತ್ತು ರೈಲು" },
 };
 
 function escapeIcsText(str: string): string {
@@ -166,6 +172,8 @@ function TripViewContent() {
   const [isShowToLocalOpen, setIsShowToLocalOpen] = useState<boolean>(false);
   const [showToLocalPlace, setShowToLocalPlace] = useState<Place | null>(null);
   const [savedTrips, setSavedTrips] = useState<SavedTripRecord[]>([]);
+  // Stops whose start time the user pinned: a recompute keeps these exact times.
+  const [lockedStopIds, setLockedStopIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     try {
@@ -267,18 +275,10 @@ function TripViewContent() {
                 setLoading(false);
               }
               return;
-            } else if (rawParsed && Array.isArray(rawParsed.days) && rawParsed.days.length > 0) {
-              // Resilient fallback for minor schema discrepancies in stored/shared payloads
-              console.warn("Shared plan had minor schema variances; recovering plan structure:", validation.error.format());
-              if (!isCancelled) {
-                setPlan(rawParsed as Plan);
-                setSelectedDay(1);
-                setLoading(false);
-              }
-              return;
-            } else {
-              console.warn("Shared plan failed PlanSchema validation:", validation.error.format());
             }
+            // A shared link is untrusted input: anything that does not satisfy
+            // PlanSchema is rejected outright rather than rendered as-is.
+            console.warn("Shared plan failed PlanSchema validation:", validation.error.format());
           }
         } catch (e) {
           console.warn("Failed to decompress shared plan:", e);
@@ -479,17 +479,27 @@ function TripViewContent() {
           totalTripKm += leg.km;
           clock = addMinutesToTime(clock, leg.min);
         } else {
-          // Stop 0 of the day: transfer from starting city hub or previous overnight stop
-          if (dayIdx === 0) {
-            const hubLeg = computeTravelLeg(startCoords.lat, startCoords.lng, stop.place.lat, stop.place.lng, people);
-            totalTripKm += hubLeg.km;
-          } else if (previousDayLastPlace) {
-            const interDayLeg = computeTravelLeg(previousDayLastPlace.lat, previousDayLastPlace.lng, stop.place.lat, stop.place.lng, people);
-            totalTripKm += interDayLeg.km;
+          // Stop 0 of the day: approach leg from the start city hub (day 1) or
+          // from the previous overnight stop. Recorded on the stop and counted
+          // in the day total to match how enrichPlan builds a fresh plan.
+          const origin =
+            dayIdx === 0
+              ? { lat: startCoords.lat, lng: startCoords.lng }
+              : previousDayLastPlace
+                ? { lat: previousDayLastPlace.lat, lng: previousDayLastPlace.lng }
+                : null;
+
+          if (origin) {
+            const approachLeg = computeTravelLeg(origin.lat, origin.lng, stop.place.lat, stop.place.lng, people);
+            leg = approachLeg;
+            dayTravelMin += approachLeg.min;
+            totalTripKm += approachLeg.km;
           }
         }
         clock = roundTimeTo5Min(clock);
-        const startTime = clock;
+        // A locked stop keeps the start time the user pinned; the rest of the
+        // day continues from that fixed point.
+        const startTime = lockedStopIds.has(stop.place_id) ? stop.start : clock;
         clock = roundTimeTo5Min(addMinutesToTime(startTime, stop.place.duration_min));
 
         return {
@@ -625,6 +635,19 @@ function TripViewContent() {
     recomputePlanLocally(updatedDays);
   };
 
+  // Pin or unpin a stop's start time so recomputes leave it alone
+  const handleToggleTimeLock = (placeId: string) => {
+    setLockedStopIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(placeId)) {
+        next.delete(placeId);
+      } else {
+        next.add(placeId);
+      }
+      return next;
+    });
+  };
+
   // Toggle travel mode between Auto, Cab, and Walk
   const handleToggleTravelMode = (placeId: string, mode: TravelMode) => {
     if (!plan) return;
@@ -706,10 +729,13 @@ function TripViewContent() {
         setIsDrawerOpen(true);
       }
     }
-    const el = document.getElementById(`stop-card-${placeId}`);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
+    // Desktop and mobile both mount a card per stop, so scroll to whichever
+    // copy is currently visible rather than the first one in the DOM.
+    const candidates = Array.from(
+      document.querySelectorAll<HTMLElement>(`[data-stop-card="${CSS.escape(placeId)}"]`)
+    );
+    const el = candidates.find((node) => node.offsetParent !== null) || candidates[0];
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
   // Compute Trip Stats
@@ -717,13 +743,25 @@ function TripViewContent() {
     if (!plan) return null;
     const totalStops = plan.days.reduce((acc, d) => acc + d.stops.length, 0);
     const uniqueTowns = new Set(plan.days.flatMap((d) => d.stops.map((s) => s.place.city))).size;
-    const totalKm = Math.round(
-      plan.days.reduce(
-        (acc, d) =>
-          acc + d.stops.reduce((sAcc, s) => sAcc + (s.travel_from_prev?.km || 0), 0),
-        0
-      )
+
+    // Distance covers every recorded leg plus the return journey to the start
+    // hub, matching the legs the transport cost is billed on.
+    const legKm = plan.days.reduce(
+      (acc, d) => acc + d.stops.reduce((sAcc, s) => sAcc + (s.travel_from_prev?.km || 0), 0),
+      0
     );
+    const lastStop = plan.days[plan.days.length - 1]?.stops.slice(-1)[0];
+    const hubCoords = getStartCityCoordinates(startCityParam || "Bengaluru");
+    const returnKm = lastStop
+      ? computeTravelLeg(
+          lastStop.place.lat,
+          lastStop.place.lng,
+          hubCoords.lat,
+          hubCoords.lng,
+          plan.cost.people || 2
+        ).km
+      : 0;
+    const totalKm = Math.round(legKm + returnKm);
     const totalDriveMin = plan.days.reduce((acc, d) => acc + d.travel_total_min, 0);
     const totalDriveHours = Math.max(1, Math.round(totalDriveMin / 60));
 
@@ -741,7 +779,41 @@ function TripViewContent() {
       costRangeText: lang === "kn" ? `₹${lowCostK}k - ${highCostK}k` : `Rs ${lowCostK}k to ${highCostK}k`,
       weather,
     };
-  }, [plan, currentMonth, lang]);
+  }, [plan, currentMonth, lang, startCityParam]);
+
+  // Real shortlist for the loading screen, derived from the same candidate
+  // scoring the planner uses, so the progress panel never shows invented data.
+  const loadingPreview = useMemo(() => {
+    const validCategories: Category[] = [
+      "heritage", "nature", "food", "spiritual", "adventure",
+      "beach", "wildlife", "coffee", "culture",
+    ];
+    const requested = (interestsParam ? interestsParam.split(",") : ["heritage", "food"])
+      .filter((c): c is Category => validCategories.includes(c as Category))
+      .slice(0, 4);
+    const interests: Category[] = requested.length > 0 ? requested : ["heritage", "food"];
+
+    const candidates = getCandidates(
+      {
+        interests,
+        days: parsedDays,
+        start_city: startCityParam || "Bengaluru",
+        budget: (budgetParam as BudgetFit) || "mid",
+        pace: (paceParam as Pace) || "relaxed",
+        travellers: (travellersParam as Travellers) || "couple",
+        month: currentMonth,
+        lang,
+      },
+      allPlaces
+    );
+
+    return {
+      candidates,
+      matchCount: countMatchingPlaces(interests, allPlaces),
+      names: candidates.map((p) => (lang === "kn" ? p.name_kn : p.name_en)),
+      regions: Array.from(new Set(candidates.map((p) => p.region))),
+    };
+  }, [interestsParam, parsedDays, startCityParam, budgetParam, paceParam, travellersParam, currentMonth, lang]);
 
   const visitedPlaceIds = useMemo(() => {
     if (!plan) return new Set<string>();
@@ -765,11 +837,15 @@ function TripViewContent() {
       <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <ProgressSteps
           days={parsedDays}
-          placeCount={parsedDays * 3}
+          placeCount={loadingPreview.candidates.length}
           interests={interestsParam ? interestsParam.split(",").join(" & ") : "Heritage & Food"}
           budget={budgetParam || "Mid-range"}
           pace={paceParam || "Relaxed"}
           month={currentMonth}
+          matchCount={loadingPreview.matchCount}
+          totalPlaces={allPlaces.length}
+          candidateNames={loadingPreview.names}
+          candidateRegions={loadingPreview.regions}
           onCancel={() => router.push("/plan")}
           onUseReadyMade={() => router.push("/trip?sample=heritage")}
         />
@@ -804,15 +880,19 @@ function TripViewContent() {
   if (!plan) {
     return (
       <div className="max-w-xl mx-auto px-4 py-16 text-center">
-        <h2 className="text-xl font-bold text-[#14202B]">Could not load trip</h2>
+        <h2 className="text-xl font-bold text-[#14202B]">
+          {lang === "kn" ? "ಪ್ರವಾಸವನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ" : "Could not load trip"}
+        </h2>
         <p className="text-sm text-[#586673] mt-2 mb-6">
-          We encountered an issue preparing this itinerary.
+          {lang === "kn"
+            ? "ಈ ಪ್ರವಾಸ ಯೋಜನೆಯನ್ನು ಸಿದ್ಧಪಡಿಸುವಾಗ ಸಮಸ್ಯೆ ಎದುರಾಯಿತು."
+            : "We encountered an issue preparing this itinerary."}
         </p>
         <Link
           href="/plan"
           className="px-6 py-2.5 rounded-xl bg-[#8E1F2F] text-white font-medium text-sm"
         >
-          Create New Plan
+          {lang === "kn" ? "ಹೊಸ ಯೋಜನೆ ರಚಿಸಿ" : "Create New Plan"}
         </Link>
       </div>
     );
@@ -830,7 +910,7 @@ function TripViewContent() {
   };
 
   return (
-    <div className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 flex flex-col gap-5 sm:gap-6 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] lg:pb-8 min-w-0 max-w-full overflow-x-hidden print:p-0 print:m-0 print:max-w-none">
+    <div className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 flex flex-col gap-5 sm:gap-6 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] lg:pb-8 min-w-0 overflow-x-hidden print:p-0 print:m-0 print:max-w-none">
       {/* Interactive On-Screen UI (Hidden on Print / PDF export) */}
       <div className="print:hidden flex flex-col gap-5 sm:gap-6 w-full min-w-0 max-w-full">
         {/* Top Header matching mockup 04 */}
@@ -844,7 +924,7 @@ function TripViewContent() {
                     .split(",")
                     .map((c) => t(`form.categories.${c}`, c))
                     .join(" & ")
-                : "Heritage & Food"}
+                : `${t("form.categories.heritage", "Heritage")} & ${t("form.categories.food", "Food")}`}
             </span>
             <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#FDF2CC] text-[#8C6D05]">
               {t(`form.budget_tiers.${budgetParam || "mid"}`, "Mid-range")}
@@ -853,7 +933,8 @@ function TripViewContent() {
               {t(`form.pace_tiers.${paceParam || "relaxed"}`, "Relaxed")}
             </span>
             <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#DDEFE7] text-[#1E6B52]">
-              Cab
+              {TRANSPORT_LABELS[transportModeParam || "cab"]?.[lang] ||
+                TRANSPORT_LABELS.cab[lang]}
             </span>
             {plan.source === "sample" && (
               <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-bold bg-[#F2B705] text-[#14202B]">
@@ -1071,7 +1152,8 @@ function TripViewContent() {
                   {t("common.day", "Day")} {day.day}
                 </div>
                 <div className={`text-[10px] sm:text-[11px] mt-0.5 truncate ${isSelected ? "text-white/80" : "text-[#586673]"}`}>
-                  {dayCity} · {stopCount} stops {dayKm > 0 ? `· ${dayKm} km` : ""}
+                  {dayCity} · {stopCount} {lang === "kn" ? "ನಿಲುಗಡೆ" : "stops"}
+                  {dayKm > 0 ? ` · ${dayKm} km` : ""}
                 </div>
               </button>
             );
@@ -1099,9 +1181,19 @@ function TripViewContent() {
                   isFirst={idx === 0}
                   pinNumber={pinNumber}
                   dayNum={currentDayData.day}
+                  isTimeLocked={lockedStopIds.has(stop.place_id)}
+                  viewId="desktop"
+                  approachFrom={
+                    idx === 0
+                      ? currentDayData.day === 1
+                        ? startCityParam || "Bengaluru"
+                        : plan.days[currentDayData.day - 2]?.stops.slice(-1)[0]?.place.city
+                      : undefined
+                  }
                   onCardClick={(placeId) => handlePinClick(placeId, true)}
                   onSwap={handleSwapStop}
                   onRemove={handleRemoveStop}
+                  onToggleTimeLock={handleToggleTimeLock}
                   onShowToLocal={(place) => {
                     setShowToLocalPlace(place);
                     setIsShowToLocalOpen(true);
@@ -1116,7 +1208,9 @@ function TripViewContent() {
           {suggestedPlaces.length > 0 && (
             <div className="p-3.5 rounded-2xl bg-[#F7F9F6] border border-[#E2E7E2] text-xs text-[#586673] flex flex-wrap items-center gap-2">
               <span className="font-semibold text-[#14202B]">
-                + Add a stop to Day {selectedDay}:
+                {lang === "kn"
+                  ? `+ ದಿನ ${selectedDay} ಕ್ಕೆ ನಿಲುಗಡೆ ಸೇರಿಸಿ:`
+                  : `+ Add a stop to Day ${selectedDay}:`}
               </span>
               {suggestedPlaces.map((p) => (
                 <button
@@ -1168,9 +1262,19 @@ function TripViewContent() {
                     isFirst={idx === 0}
                     pinNumber={pinNumber}
                     dayNum={currentDayData.day}
+                    isTimeLocked={lockedStopIds.has(stop.place_id)}
+                    viewId="mobile"
+                    approachFrom={
+                      idx === 0
+                        ? currentDayData.day === 1
+                          ? startCityParam || "Bengaluru"
+                          : plan.days[currentDayData.day - 2]?.stops.slice(-1)[0]?.place.city
+                        : undefined
+                    }
                     onCardClick={(placeId) => handlePinClick(placeId, true)}
                     onSwap={handleSwapStop}
                     onRemove={handleRemoveStop}
+                    onToggleTimeLock={handleToggleTimeLock}
                     onShowToLocal={(place) => {
                       setShowToLocalPlace(place);
                       setIsShowToLocalOpen(true);
@@ -1185,7 +1289,7 @@ function TripViewContent() {
             {suggestedPlaces.length > 0 && (
               <div className="p-3.5 rounded-2xl bg-[#F7F9F6] border border-[#E2E7E2] text-xs text-[#586673] flex flex-wrap items-center gap-2">
                 <span className="font-semibold text-[#14202B]">
-                  + Add a stop:
+                  {lang === "kn" ? "+ ನಿಲುಗಡೆ ಸೇರಿಸಿ:" : "+ Add a stop:"}
                 </span>
                 {suggestedPlaces.map((p) => (
                   <button
@@ -1374,18 +1478,22 @@ function TripViewContent() {
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-bold text-[#586673] uppercase tracking-wider">
-                  MY TRIPS
+                  {lang === "kn" ? "ನನ್ನ ಪ್ರವಾಸಗಳು" : "MY TRIPS"}
                 </span>
                 <h3 className="font-heading font-extrabold text-lg text-[#14202B]">
-                  Saved on this device
+                  {lang === "kn" ? "ಈ ಸಾಧನದಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ" : "Saved on this device"}
                 </h3>
               </div>
-              <span className="text-[11px] text-[#586673]">No account needed</span>
+              <span className="text-[11px] text-[#586673]">
+                {lang === "kn" ? "ಖಾತೆ ಅಗತ್ಯವಿಲ್ಲ" : "No account needed"}
+              </span>
             </div>
 
             {savedTrips.length === 0 ? (
               <div className="p-6 text-center text-xs text-[#586673] bg-white rounded-2xl border border-[#DCE1DD]">
-                No saved trips yet. Plans you create will automatically appear here.
+                {lang === "kn"
+                  ? "ಇನ್ನೂ ಯಾವುದೇ ಪ್ರವಾಸ ಉಳಿಸಿಲ್ಲ. ನೀವು ರಚಿಸುವ ಯೋಜನೆಗಳು ಇಲ್ಲಿ ತಾನಾಗಿ ಕಾಣಿಸುತ್ತವೆ."
+                  : "No saved trips yet. Plans you create will automatically appear here."}
               </div>
             ) : (
               <div className="space-y-3">
@@ -1394,17 +1502,18 @@ function TripViewContent() {
                     key={st.id}
                     className="p-4 rounded-2xl bg-white border border-[#DCE1DD] shadow-2xs flex items-center justify-between gap-3"
                   >
-                    <div
-                      className="cursor-pointer flex-1"
+                    <button
+                      type="button"
+                      className="cursor-pointer flex-1 text-left"
                       onClick={() => router.push(`/trip?d=${st.compressed}`)}
                     >
                       <h4 className="font-heading font-bold text-sm text-[#14202B] hover:text-[#8E1F2F]">
                         {st.title}
                       </h4>
                       <p className="text-xs text-[#586673] mt-0.5">
-                        {st.days} days · {st.costText}
+                        {st.days} {lang === "kn" ? "ದಿನಗಳು" : "days"} · {st.costText}
                       </p>
-                    </div>
+                    </button>
                     <button
                       type="button"
                       onClick={() => {
@@ -1424,7 +1533,11 @@ function TripViewContent() {
                       className="px-2.5 py-1.5 rounded-lg bg-[#F1F3F0] hover:bg-[#8E1F2F] hover:text-white text-[#14202B] text-xs font-semibold flex items-center gap-1 shrink-0 transition-colors cursor-pointer active:scale-95"
                       title="Share trip link"
                     >
-                      <span>{copied ? "✓ Copied" : "↗ Share"}</span>
+                      <span>
+                        {copied
+                          ? lang === "kn" ? "✓ ನಕಲಿಸಲಾಗಿದೆ" : "✓ Copied"
+                          : lang === "kn" ? "↗ ಹಂಚಿಕೊಳ್ಳಿ" : "↗ Share"}
+                      </span>
                     </button>
                   </div>
                 ))}
@@ -1490,7 +1603,7 @@ function TripViewContent() {
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
             </svg>
-            <span>{lang === "kn" ? "ಉಳಿಸಲಾಗಿದೆ" : "Saved"}</span>
+            <span>{t("nav.saved", "Saved")}</span>
           </button>
         </div>
       </div>

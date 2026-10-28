@@ -16,9 +16,10 @@ const AVG_SPEED_KMH = 40; // Average road speed in Karnataka (mix of city and st
 const BASE_TRAVEL_BUFFER_MIN = 10; // Base buffer for boarding, parking, and traffic
 
 /**
- * Calculates straight-line great circle distance (Haversine) in kilometers.
+ * Calculates exact straight-line great circle distance (Haversine) in kilometers.
+ * This is the single source of truth for geographic distance across the app.
  */
-export function haversineDistanceKm(
+export function exactHaversineKm(
   lat1: number,
   lon1: number,
   lat2: number,
@@ -33,7 +34,19 @@ export function haversineDistanceKm(
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return Math.round(EARTH_RADIUS_KM * c * 10) / 10;
+  return EARTH_RADIUS_KM * c;
+}
+
+/**
+ * Straight-line great circle distance rounded to one decimal place.
+ */
+export function haversineDistanceKm(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  return Math.round(exactHaversineKm(lat1, lon1, lat2, lon2) * 10) / 10;
 }
 
 /**
@@ -46,7 +59,7 @@ export function estimateRoadDistanceKm(
   lat2: number,
   lon2: number
 ): number {
-  const straightLine = haversineDistanceKm(lat1, lon1, lat2, lon2);
+  const straightLine = exactHaversineKm(lat1, lon1, lat2, lon2);
   return Math.round(straightLine * ROAD_FACTOR * 10) / 10;
 }
 
@@ -62,6 +75,8 @@ export function estimateTravelTimeMin(km: number): number {
 
 /**
  * Determines appropriate travel mode based on distance and passenger count.
+ * Short city hops for one or two travellers are cheaper by auto rickshaw;
+ * everything else is a cab.
  */
 export function selectTravelMode(km: number, people: number): TravelMode {
   if (people === 1 && km <= 15) {
@@ -69,9 +84,6 @@ export function selectTravelMode(km: number, people: number): TravelMode {
   }
   if (people <= 2 && km <= 8) {
     return "auto";
-  }
-  if (km > 120) {
-    return "cab";
   }
   return "cab";
 }

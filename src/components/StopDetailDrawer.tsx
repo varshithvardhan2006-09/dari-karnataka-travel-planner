@@ -42,7 +42,56 @@ export default function StopDetailDrawer({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
+  // Lock background scrolling so the page behind the drawer cannot move
+  useEffect(() => {
+    if (!isOpen || typeof document === "undefined") return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
+
   const place = stop?.place;
+
+  // Describe the place's own best travel window from its data instead of
+  // repeating a single hardcoded season for every stop.
+  const bestSeasonText = useMemo(() => {
+    const months = place?.best_months;
+    if (!months || months.length === 0) return null;
+    if (months.length >= 12) {
+      return lang === "kn" ? "ವರ್ಷವಿಡೀ" : "All year";
+    }
+
+    const names =
+      lang === "kn"
+        ? ["ಜನ", "ಫೆಬ್ರ", "ಮಾರ್ಚ್", "ಏಪ್ರಿ", "ಮೇ", "ಜೂನ್", "ಜುಲೈ", "ಆಗ", "ಸೆಪ್ಟೆಂ", "ಅಕ್ಟೋ", "ನವೆಂ", "ಡಿಸೆಂ"]
+        : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const sorted = [...months].sort((a, b) => a - b);
+
+    // Collapse a contiguous run (including one that wraps past December)
+    const isContiguous = sorted.every(
+      (m, i) => i === 0 || m === sorted[i - 1] + 1
+    );
+    const wraps =
+      !isContiguous &&
+      sorted.includes(1) &&
+      sorted.includes(12) &&
+      (() => {
+        const rotated = [...sorted.filter((m) => m >= 7), ...sorted.filter((m) => m < 7)];
+        return rotated.every((m, i) => i === 0 || m === (rotated[i - 1] % 12) + 1);
+      })();
+
+    if (isContiguous && sorted.length > 2) {
+      return `${names[sorted[0] - 1]} ${lang === "kn" ? "ರಿಂದ" : "to"} ${names[sorted[sorted.length - 1] - 1]}`;
+    }
+    if (wraps) {
+      const start = sorted.filter((m) => m >= 7)[0];
+      const end = sorted.filter((m) => m < 7).slice(-1)[0];
+      return `${names[start - 1]} ${lang === "kn" ? "ರಿಂದ" : "to"} ${names[end - 1]}`;
+    }
+    return sorted.map((m) => names[m - 1]).join(", ");
+  }, [place, lang]);
 
   // Find 2 to 3 similar alternatives from the same area or category (strictly omitting already visited stops)
   const alternatives = useMemo(() => {
@@ -89,7 +138,8 @@ export default function StopDetailDrawer({
               {stop.start}
             </span>
             <span className="text-xs font-semibold text-[#586673]">
-              {(stop.duration_min / 60).toFixed(1).replace(/\.0$/, "")} hours needed
+              {(stop.duration_min / 60).toFixed(1).replace(/\.0$/, "")}{" "}
+              {lang === "kn" ? "ಗಂಟೆ ಬೇಕು" : "hours needed"}
             </span>
           </div>
           <button
@@ -133,26 +183,29 @@ export default function StopDetailDrawer({
             {/* Fact Grid (Entry, Time, Best time, Opening hours, Crowd, Location Coordinates) */}
             <div className="bg-[#F7F9F6] rounded-2xl p-4 border border-[#E2E7E2] space-y-3">
               <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-[#586673]">
-                Visiting Facts
+                {lang === "kn" ? "ಭೇಟಿಯ ವಿವರಗಳು" : "Visiting Facts"}
               </h3>
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                  <div className="text-[#586673] text-[11px]">Entry fee</div>
+                  <div className="text-[#586673] text-[11px]">{lang === "kn" ? "ಪ್ರವೇಶ ಶುಲ್ಕ" : "Entry fee"}</div>
                   <div className="font-bold text-[#14202B] mt-0.5">
-                    {place.entry_inr === 0 ? "Free" : `About ₹${place.entry_inr}`}
+                    {place.entry_inr === 0
+                      ? lang === "kn" ? "ಉಚಿತ" : "Free"
+                      : `${lang === "kn" ? "ಸುಮಾರು" : "About"} ₹${place.entry_inr}`}
                   </div>
                 </div>
 
                 <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                  <div className="text-[#586673] text-[11px]">Time needed</div>
+                  <div className="text-[#586673] text-[11px]">{lang === "kn" ? "ಬೇಕಾದ ಸಮಯ" : "Time needed"}</div>
                   <div className="font-bold text-[#14202B] mt-0.5">
-                    {(place.duration_min / 60).toFixed(1).replace(/\.0$/, "")} hours
+                    {(place.duration_min / 60).toFixed(1).replace(/\.0$/, "")}{" "}
+                    {lang === "kn" ? "ಗಂಟೆ" : "hours"}
                   </div>
                 </div>
 
                 {place.best_time_en && (
                   <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                    <div className="text-[#586673] text-[11px]">Best time</div>
+                    <div className="text-[#586673] text-[11px]">{lang === "kn" ? "ಉತ್ತಮ ಸಮಯ" : "Best time"}</div>
                     <div className="font-bold text-[#14202B] mt-0.5">
                       {place.best_time_en}
                     </div>
@@ -161,7 +214,7 @@ export default function StopDetailDrawer({
 
                 {place.opening_hours && (
                   <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                    <div className="text-[#586673] text-[11px]">Opening hours</div>
+                    <div className="text-[#586673] text-[11px]">{lang === "kn" ? "ಸಮಯ ಸೂಚಿ" : "Opening hours"}</div>
                     <div className="font-bold text-[#14202B] mt-0.5">
                       {place.opening_hours}
                     </div>
@@ -170,24 +223,26 @@ export default function StopDetailDrawer({
 
                 {place.crowd && (
                   <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                    <div className="text-[#586673] text-[11px]">Crowd</div>
+                    <div className="text-[#586673] text-[11px]">{lang === "kn" ? "ಜನಸಂದಣಿ" : "Crowd"}</div>
                     <div className="font-bold text-[#14202B] mt-0.5 capitalize">
                       {place.crowd}
                     </div>
                   </div>
                 )}
 
-                <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                  <div className="text-[#586673] text-[11px]">Best season</div>
-                  <div className="font-bold text-[#14202B] mt-0.5">
-                    Oct to Feb (Pleasant)
+                {bestSeasonText && (
+                  <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
+                    <div className="text-[#586673] text-[11px]">
+                      {lang === "kn" ? "ಉತ್ತಮ ಕಾಲ" : "Best season"}
+                    </div>
+                    <div className="font-bold text-[#14202B] mt-0.5">{bestSeasonText}</div>
                   </div>
-                </div>
+                )}
 
                 {/* Precise GPS Coordinates Card */}
                 <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD] col-span-2 flex items-center justify-between gap-2">
                   <div>
-                    <div className="text-[#586673] text-[11px]">Location & Coordinates</div>
+                    <div className="text-[#586673] text-[11px]">{lang === "kn" ? "ಸ್ಥಳ ಮತ್ತು ನಿರ್ದೇಶಾಂಕಗಳು" : "Location & Coordinates"}</div>
                     <div className="font-bold text-[#14202B] text-xs mt-0.5">
                       {place.city} · {place.lat.toFixed(4)}°N, {place.lng.toFixed(4)}°E
                     </div>

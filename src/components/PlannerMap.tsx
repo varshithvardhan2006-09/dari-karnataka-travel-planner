@@ -5,7 +5,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import placesData from "../../data/places.json";
 import { Place, Category } from "@/lib/schema";
-import { getGoogleMapsSearchUrl } from "@/lib/maps";
+import { getGoogleMapsSearchUrl, escapeHtml } from "@/lib/maps";
 
 const allPlaces = placesData as Place[];
 
@@ -164,13 +164,13 @@ export default function PlannerMap({
 
       marker.bindPopup(
         `<div style="font-family: inherit; font-size: 13px; line-height: 1.4; padding: 2px; min-width: 140px;">
-          <div style="font-weight: 800; color: #14202B; font-size: 14px;">${place.name_en}</div>
-          <div style="color: #8E1F2F; font-size: 12px; font-weight: 600;">${place.name_kn}</div>
+          <div style="font-weight: 800; color: #14202B; font-size: 14px;">${escapeHtml(place.name_en)}</div>
+          <div style="color: #8E1F2F; font-size: 12px; font-weight: 600;">${escapeHtml(place.name_kn)}</div>
           <div style="color: #586673; font-size: 11px; margin-top: 3px;">
-            ${place.city} · ${place.entry_inr === 0 ? "Free entry" : `Entry ₹${place.entry_inr}`}
+            ${escapeHtml(place.city)} · ${place.entry_inr === 0 ? "Free entry" : `Entry ₹${escapeHtml(place.entry_inr)}`}
           </div>
           <div style="margin-top: 4px;">
-            <a href="${getGoogleMapsSearchUrl(place)}" target="_blank" rel="noopener noreferrer" style="color: #8E1F2F; font-size: 11px; font-weight: 700; text-decoration: underline;">Open in Google Maps ↗</a>
+            <a href="${escapeHtml(getGoogleMapsSearchUrl(place))}" target="_blank" rel="noopener noreferrer" style="color: #8E1F2F; font-size: 11px; font-weight: 700; text-decoration: underline;">Open in Google Maps ↗</a>
           </div>
         </div>`,
         { closeButton: true, offset: [0, -10] }

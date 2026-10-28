@@ -11,6 +11,11 @@
           "start": "09:00",
           "duration_min": 90,
           "note_en": "Historical 240-acre botanical garden commissioned by Hyder Ali featuring the Victorian Glass House and ancient rock.",
+          "travel_from_prev": {
+            "km": 3.3,
+            "min": 15,
+            "mode": "auto"
+          },
           "place": {
             "id": "lalbagh-gardens",
             "name_en": "Lalbagh Botanical Garden",
@@ -82,7 +87,7 @@
           "duration_min": 75,
           "note_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
           "travel_from_prev": {
-            "km": 1.2,
+            "km": 1.1,
             "min": 10,
             "mode": "auto"
           },
@@ -229,7 +234,7 @@
           ]
         }
       ],
-      "travel_total_min": 30
+      "travel_total_min": 45
     },
     {
       "day": 2,
@@ -240,6 +245,11 @@
           "start": "09:00",
           "duration_min": 75,
           "note_en": "UNESCO World Heritage trikuta Hoysala temple renowned for pristine star-shaped soapstone friezes.",
+          "travel_from_prev": {
+            "km": 144.7,
+            "min": 225,
+            "mode": "cab"
+          },
           "place": {
             "id": "somanathapura-temple",
             "name_en": "Chennakeshava Temple Somanathapura",
@@ -457,7 +467,7 @@
           ]
         }
       ],
-      "travel_total_min": 95
+      "travel_total_min": 320
     },
     {
       "day": 3,
@@ -468,6 +478,11 @@
           "start": "09:00",
           "duration_min": 120,
           "note_en": "Indo-Saracenic royal seat of the Wadiyar dynasty featuring grand courtyards and ornate glass domes.",
+          "travel_from_prev": {
+            "km": 1.1,
+            "min": 10,
+            "mode": "auto"
+          },
           "place": {
             "id": "mysore-palace",
             "name_en": "Mysore Palace",
@@ -613,7 +628,7 @@
           "duration_min": 120,
           "note_en": "Colossal 57-foot monolithic statue of Lord Bahubali atop Vindhyagiri hill carved in 981 CE.",
           "travel_from_prev": {
-            "km": 69.3,
+            "km": 69.2,
             "min": 115,
             "mode": "cab"
           },
@@ -680,15 +695,15 @@
           ]
         }
       ],
-      "travel_total_min": 150
+      "travel_total_min": 160
     }
   ],
   "cost": {
     "stay": 8800,
     "food": 7200,
-    "transport": 9472,
+    "transport": 9468,
     "entry": 1250,
-    "total": 26722,
+    "total": 26718,
     "people": 2
   },
   "tips": [

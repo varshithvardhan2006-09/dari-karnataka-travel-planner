@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import phrasesData from "../../../../data/phrases.json";
 
 export const maxDuration = 15;
+
+const MAX_TEXT_LENGTH = 500;
+const MAX_BODY_BYTES = 8 * 1024;
+
+const RATE_LIMIT = {
+  name: "translate",
+  limit: 20,
+  windowMs: 60 * 1000,
+};
 
 const SUPPORTED_LANGUAGES: Record<string, string> = {
   kn: "Kannada",
@@ -415,16 +425,47 @@ async function translateWithPublicFallback(
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as TranslateRequestBody;
-    const { text, sourceLang = "en", targetLang = "kn" } = body;
+    // Per-IP rate limiting: this route spends upstream AI quota, so it must not
+    // be usable as an open relay.
+    const rateLimit = checkRateLimit(getClientIp(req), RATE_LIMIT);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many translation requests. Please retry shortly." },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterS) } }
+      );
+    }
+
+    const contentLength = req.headers.get("content-length");
+    if (contentLength && parseInt(contentLength, 10) > MAX_BODY_BYTES) {
+      return NextResponse.json(
+        { error: "Payload exceeds 8KB limit." },
+        { status: 413 }
+      );
+    }
+
+    let body: TranslateRequestBody;
+    try {
+      body = (await req.json()) as TranslateRequestBody;
+    } catch {
+      return NextResponse.json({ error: "Malformed JSON payload." }, { status: 400 });
+    }
+
+    const { text, sourceLang = "en", targetLang = "kn" } = body || {};
 
     if (!text || typeof text !== "string" || text.trim().length === 0) {
       return NextResponse.json({ error: "Text is required for translation." }, { status: 400 });
     }
 
-    if (text.length > 500) {
+    if (text.length > MAX_TEXT_LENGTH) {
       return NextResponse.json(
-        { error: "Text exceeds maximum allowed length of 500 characters." },
+        { error: `Text exceeds maximum allowed length of ${MAX_TEXT_LENGTH} characters.` },
+        { status: 400 }
+      );
+    }
+
+    if (typeof sourceLang !== "string" || typeof targetLang !== "string") {
+      return NextResponse.json(
+        { error: "sourceLang and targetLang must be language codes." },
         { status: 400 }
       );
     }
@@ -527,9 +568,18 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    throw new Error("Translation service temporarily unavailable. Please retry.");
+    return NextResponse.json(
+      { error: "Translation service temporarily unavailable. Please retry." },
+      { status: 503 }
+    );
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Translation service encountered an error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.warn(
+      "Unexpected error in POST /api/translate:",
+      err instanceof Error ? err.message : err
+    );
+    return NextResponse.json(
+      { error: "Translation service encountered an error. Please retry." },
+      { status: 500 }
+    );
   }
 }

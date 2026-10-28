@@ -95,7 +95,9 @@ export function LangProvider({ children }: { children: ReactNode }) {
 
   return (
     <LangContext.Provider value={{ lang, setLang, toggleLang, t }}>
-      <div className={lang === "kn" ? "font-kannada" : ""}>
+      {/* Keeps the body's flex column intact so pages using flex-1 still fill
+          the viewport height (this wrapper sits between body and <main>). */}
+      <div className={`flex-1 flex flex-col min-h-0 ${lang === "kn" ? "font-kannada" : ""}`}>
         {children}
       </div>
     </LangContext.Provider>

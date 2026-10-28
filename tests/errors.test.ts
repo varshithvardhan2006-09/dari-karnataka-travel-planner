@@ -1,11 +1,30 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { POST, GET as GET_PLAN } from "@/app/api/plan/route";
 import { GET as GET_TTS } from "@/app/api/tts/route";
 import { NextRequest } from "next/server";
 import { getSamplePlan, getSamplePlanForInterests } from "@/lib/samples";
 import { PlanSchema } from "@/lib/schema";
 
+/**
+ * Stubs the Google TTS upstream so /api/tts can be asserted without network
+ * access (the route itself would otherwise make two real 6s requests).
+ */
+function stubTtsUpstream(ok: boolean = true) {
+  return vi.spyOn(globalThis, "fetch").mockImplementation(async () =>
+    ok
+      ? new Response(new Uint8Array([0xff, 0xfb, 0x90, 0x00]), {
+          status: 200,
+          headers: { "Content-Type": "audio/mpeg" },
+        })
+      : new Response("upstream down", { status: 503 })
+  );
+}
+
 describe("Stage 6: Error, Empty, and Fallback States", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("rejects malformed JSON body with 400 invalid_input", async () => {
     const req = new NextRequest("http://localhost:3000/api/plan", {
       method: "POST",
@@ -145,11 +164,20 @@ describe("Stage 6: Error, Empty, and Fallback States", () => {
   });
 
   it("handles valid GET /api/tts streaming audio correctly with Accept-Ranges", async () => {
+    stubTtsUpstream(true);
     const req = new NextRequest("http://localhost:3000/api/tts?text=Namaskara");
     const res = await GET_TTS(req);
     expect(res.status).toBe(200);
     expect(res.headers.get("Content-Type")).toBe("audio/mpeg");
     expect(res.headers.get("Accept-Ranges")).toBe("bytes");
+    expect(res.headers.get("Cache-Control")).toContain("max-age=604800");
+  });
+
+  it("returns 502 from GET /api/tts when every speech upstream is unreachable", async () => {
+    stubTtsUpstream(false);
+    const req = new NextRequest("http://localhost:3000/api/tts?text=Namaskara&lang=kn");
+    const res = await GET_TTS(req);
+    expect(res.status).toBe(502);
   });
 
   it("returns 413 Payload Too Large when request body exceeds 32KB", async () => {
