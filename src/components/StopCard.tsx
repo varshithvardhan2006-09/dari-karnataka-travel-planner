@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Stop, TravelMode, Place } from "@/lib/schema";
 import { useLang } from "@/lib/i18n/useLang";
 import { DAY_PIN_COLORS } from "@/lib/geo";
@@ -12,10 +12,20 @@ interface StopCardProps {
   isFirst: boolean;
   pinNumber?: number;
   dayNum?: number;
+  /** True when this stop's start time is pinned and must survive a recompute. */
+  isTimeLocked?: boolean;
+  /**
+   * Distinguishes the desktop and mobile renders of the same stop, which are
+   * both mounted at once, so their DOM ids stay unique.
+   */
+  viewId?: string;
+  /** Where the day's approach leg starts from, shown above the first stop. */
+  approachFrom?: string;
   onCardClick?: (placeId: string) => void;
   onSwap?: (placeId: string) => void;
   onRemove?: (placeId: string) => void;
   onToggleTravelMode?: (placeId: string, mode: TravelMode) => void;
+  onToggleTimeLock?: (placeId: string) => void;
   onShowToLocal?: (place: Place) => void;
 }
 
@@ -37,17 +47,18 @@ export default function StopCard({
   isFirst,
   pinNumber,
   dayNum = 1,
+  isTimeLocked = false,
+  viewId = "desktop",
+  approachFrom,
   onCardClick,
   onSwap,
   onRemove,
   onToggleTravelMode,
+  onToggleTimeLock,
   onShowToLocal,
 }: StopCardProps) {
   const { lang, t } = useLang();
-  const [isLocked, setIsLocked] = useState<boolean>(false);
-  const [currentMode, setCurrentMode] = useState<TravelMode>(
-    stop.travel_from_prev?.mode || "cab"
-  );
+  const currentMode: TravelMode = stop.travel_from_prev?.mode || "cab";
 
   const primaryCategory = stop.place.categories[0] || "heritage";
   const catStyle = CATEGORY_COLORS[primaryCategory] || CATEGORY_COLORS.heritage;
@@ -71,15 +82,47 @@ export default function StopCard({
 
   const handleModeChange = (newMode: TravelMode, e: React.MouseEvent) => {
     e.stopPropagation();
-    setCurrentMode(newMode);
     onToggleTravelMode?.(stop.place_id, newMode);
   };
 
   return (
     <div
-      id={`stop-card-${stop.place_id}`}
+      id={`stop-card-${viewId}-${stop.place_id}`}
+      data-stop-card={stop.place_id}
       className="relative flex flex-col group transition-all scroll-mt-24"
     >
+      {/* Approach leg into the day's first stop. It is counted in the day's
+          travel total, so it is shown rather than left unexplained. */}
+      {isFirst && stop.travel_from_prev && stop.travel_from_prev.km > 0 && (
+        <div className="flex items-center gap-2 sm:gap-3 pb-1.5 pl-8 sm:pl-14">
+          <div className="inline-flex flex-wrap items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-[#F7F9F6] border border-dashed border-[#DCE1DD] text-[#586673] max-w-full">
+            <svg
+              className="w-3 h-3 text-[#586673] shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+            <span className="shrink-0">
+              {approachFrom
+                ? lang === "kn"
+                  ? `${approachFrom} ನಿಂದ`
+                  : `From ${approachFrom}`
+                : lang === "kn"
+                  ? "ಪ್ರಯಾಣ"
+                  : "Travel in"}
+            </span>
+            <span className="text-[#DCE1DD]">|</span>
+            <span className="shrink-0">
+              {stop.travel_from_prev.km} km · {stop.travel_from_prev.min}{" "}
+              {t("common.minutes", "min")}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Travel Connector Chip between stops with Auto / Cab / Walk toggle */}
       {!isFirst && stop.travel_from_prev && (
         <div className="flex items-center gap-2 sm:gap-3 py-1.5 pl-8 sm:pl-14">
@@ -209,12 +252,18 @@ export default function StopCard({
 
               <button
                 type="button"
+                aria-pressed={isTimeLocked}
+                title={
+                  isTimeLocked
+                    ? "This start time is kept when the day is recalculated"
+                    : "Keep this start time when the day is recalculated"
+                }
                 onClick={(e) => {
                   e.stopPropagation();
-                  setIsLocked(!isLocked);
+                  onToggleTimeLock?.(stop.place_id);
                 }}
                 className={`inline-flex items-center gap-1 cursor-pointer transition-colors font-medium py-0.5 ${
-                  isLocked ? "text-[#1E6B52]" : "text-[#586673] hover:text-[#14202B]"
+                  isTimeLocked ? "text-[#1E6B52]" : "text-[#586673] hover:text-[#14202B]"
                 }`}
               >
                 <svg
@@ -228,7 +277,7 @@ export default function StopCard({
                   <polyline points="12 6 12 12 14 14" />
                 </svg>
                 <span>
-                  {isLocked
+                  {isTimeLocked
                     ? lang === "kn"
                       ? "ಲಾಕ್"
                       : "Locked"
@@ -294,13 +343,11 @@ export default function StopCard({
               </button>
             </div>
 
-            {/* Drag Handle Indicator */}
-            <div
-              className="text-[#DCE1DD] hover:text-[#586673] cursor-grab select-none font-mono text-xs tracking-tighter shrink-0 hidden sm:block"
-              title="Drag to reorder"
-            >
-              ⠿⠿
-            </div>
+            {isTimeLocked && (
+              <span className="text-[10px] sm:text-[11px] font-semibold text-[#1E6B52] shrink-0">
+                {lang === "kn" ? "ಸಮಯ ನಿಗದಿ" : "Time fixed"}
+              </span>
+            )}
           </div>
         </div>
       </div>

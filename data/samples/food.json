@@ -11,6 +11,11 @@
           "start": "09:00",
           "duration_min": 90,
           "note_en": "13th-century Vaishnavite temple founded by Saint Madhvacharya where Lord Krishna is viewed through the Kanakana Kindi window.",
+          "travel_from_prev": {
+            "km": 63.4,
+            "min": 105,
+            "mode": "cab"
+          },
           "place": {
             "id": "udupi-krishna-temple",
             "name_en": "Udupi Sri Krishna Temple & Matha",
@@ -83,7 +88,7 @@
           "duration_min": 150,
           "note_en": "Golden sandy beach with water sports and ferry boats to St. Mary's Island, famous for unique hexagonal basaltic rock pillars.",
           "travel_from_prev": {
-            "km": 7,
+            "km": 7.1,
             "min": 20,
             "mode": "cab"
           },
@@ -225,7 +230,7 @@
           ]
         }
       ],
-      "travel_total_min": 245
+      "travel_total_min": 350
     },
     {
       "day": 2,
@@ -236,6 +241,11 @@
           "start": "09:00",
           "duration_min": 90,
           "note_en": "Guided stroll through Arabica and Robusta plantations learning the bean harvesting and roasting process.",
+          "travel_from_prev": {
+            "km": 12.3,
+            "min": 30,
+            "mode": "cab"
+          },
           "place": {
             "id": "chikkamagaluru-coffee-estate",
             "name_en": "Coffee Estate Walk & Tasting",
@@ -306,7 +316,7 @@
           "duration_min": 105,
           "note_en": "Masterpiece of 12th-century Hoysala architecture with celebrated bracket figures and stone filigree.",
           "travel_from_prev": {
-            "km": 26,
+            "km": 26.1,
             "min": 50,
             "mode": "cab"
           },
@@ -449,7 +459,7 @@
           ]
         }
       ],
-      "travel_total_min": 90
+      "travel_total_min": 120
     },
     {
       "day": 3,
@@ -460,6 +470,11 @@
           "start": "09:00",
           "duration_min": 120,
           "note_en": "Colossal 57-foot monolithic statue of Lord Bahubali atop Vindhyagiri hill carved in 981 CE.",
+          "travel_from_prev": {
+            "km": 86.3,
+            "min": 140,
+            "mode": "cab"
+          },
           "place": {
             "id": "shravanabelagola",
             "name_en": "Shravanabelagola Gommateshwara",
@@ -674,7 +689,7 @@
           "duration_min": 60,
           "note_en": "Ornate teakwood palace set amidst landscaped lawns displaying intricate battle murals and relics.",
           "travel_from_prev": {
-            "km": 1.6,
+            "km": 1.5,
             "min": 10,
             "mode": "cab"
           },
@@ -742,15 +757,15 @@
           ]
         }
       ],
-      "travel_total_min": 150
+      "travel_total_min": 290
     }
   ],
   "cost": {
     "stay": 8000,
     "food": 7200,
-    "transport": 14678,
+    "transport": 14676,
     "entry": 2300,
-    "total": 32178,
+    "total": 32176,
     "people": 4
   },
   "tips": [

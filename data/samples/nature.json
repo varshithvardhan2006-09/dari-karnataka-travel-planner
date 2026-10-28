@@ -11,6 +11,11 @@
           "start": "09:00",
           "duration_min": 120,
           "note_en": "Indo-Saracenic royal seat of the Wadiyar dynasty featuring grand courtyards and ornate glass domes.",
+          "travel_from_prev": {
+            "km": 2.6,
+            "min": 15,
+            "mode": "cab"
+          },
           "place": {
             "id": "mysore-palace",
             "name_en": "Mysore Palace",
@@ -156,12 +161,12 @@
         },
         {
           "place_id": "mysore-zoo",
-          "start": "12:10",
+          "start": "12:05",
           "duration_min": 150,
           "note_en": "One of India's oldest and best maintained zoological gardens with spacious enclosures and exotic species.",
           "travel_from_prev": {
-            "km": 1.7,
-            "min": 15,
+            "km": 1.6,
+            "min": 10,
             "mode": "cab"
           },
           "place": {
@@ -229,7 +234,7 @@
           ]
         }
       ],
-      "travel_total_min": 25
+      "travel_total_min": 35
     },
     {
       "day": 2,
@@ -240,6 +245,11 @@
           "start": "09:00",
           "duration_min": 90,
           "note_en": "Prominent hill overlooking Mysuru with the historic Chamundeshwari Temple and massive monolith Nandi.",
+          "travel_from_prev": {
+            "km": 4.4,
+            "min": 15,
+            "mode": "cab"
+          },
           "place": {
             "id": "chamundi-hill",
             "name_en": "Chamundi Hill",
@@ -378,7 +388,7 @@
           ]
         }
       ],
-      "travel_total_min": 50
+      "travel_total_min": 65
     },
     {
       "day": 3,
@@ -389,6 +399,11 @@
           "start": "09:00",
           "duration_min": 120,
           "note_en": "Forest department ecotourism camp on Kaveri river where visitors learn about elephant training and conservation.",
+          "travel_from_prev": {
+            "km": 94.7,
+            "min": 150,
+            "mode": "cab"
+          },
           "place": {
             "id": "dubare-elephant-camp",
             "name_en": "Dubare Elephant Camp",
@@ -459,7 +474,7 @@
           "duration_min": 60,
           "note_en": "Scenic garden viewpoint where the Kings of Kodagu watched sunsets across rolling misty valleys.",
           "travel_from_prev": {
-            "km": 24.6,
+            "km": 24.5,
             "min": 45,
             "mode": "cab"
           },
@@ -532,7 +547,7 @@
           "duration_min": 60,
           "note_en": "Cascading waterfall nestled amidst lush coffee plantations and pepper vines with a hanging bridge view.",
           "travel_from_prev": {
-            "km": 6,
+            "km": 5.9,
             "min": 20,
             "mode": "cab"
           },
@@ -599,15 +614,15 @@
           ]
         }
       ],
-      "travel_total_min": 65
+      "travel_total_min": 215
     }
   ],
   "cost": {
     "stay": 17600,
     "food": 14400,
-    "transport": 6316,
+    "transport": 6308,
     "entry": 2140,
-    "total": 40456,
+    "total": 40448,
     "people": 4
   },
   "tips": [

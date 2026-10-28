@@ -11,6 +11,11 @@
           "start": "09:00",
           "duration_min": 90,
           "note_en": "Historical 240-acre botanical garden commissioned by Hyder Ali featuring the Victorian Glass House and ancient rock.",
+          "travel_from_prev": {
+            "km": 3.3,
+            "min": 15,
+            "mode": "auto"
+          },
           "place": {
             "id": "lalbagh-gardens",
             "name_en": "Lalbagh Botanical Garden",
@@ -82,7 +87,7 @@
           "duration_min": 75,
           "note_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
           "travel_from_prev": {
-            "km": 1.2,
+            "km": 1.1,
             "min": 10,
             "mode": "auto"
           },
@@ -234,7 +239,7 @@
           "duration_min": 45,
           "note_en": "Iconic 1943 heritage eatery famous for thick crispy golden benne masala dosas and filter coffee.",
           "travel_from_prev": {
-            "km": 8.7,
+            "km": 8.8,
             "min": 25,
             "mode": "cab"
           },
@@ -308,7 +313,7 @@
           ]
         }
       ],
-      "travel_total_min": 55
+      "travel_total_min": 70
     },
     {
       "day": 2,
@@ -319,6 +324,11 @@
           "start": "09:00",
           "duration_min": 75,
           "note_en": "UNESCO World Heritage trikuta Hoysala temple renowned for pristine star-shaped soapstone friezes.",
+          "travel_from_prev": {
+            "km": 136.6,
+            "min": 215,
+            "mode": "cab"
+          },
           "place": {
             "id": "somanathapura-temple",
             "name_en": "Chennakeshava Temple Somanathapura",
@@ -615,7 +625,7 @@
           ]
         }
       ],
-      "travel_total_min": 105
+      "travel_total_min": 320
     },
     {
       "day": 3,
@@ -626,6 +636,11 @@
           "start": "09:00",
           "duration_min": 120,
           "note_en": "Indo-Saracenic royal seat of the Wadiyar dynasty featuring grand courtyards and ornate glass domes.",
+          "travel_from_prev": {
+            "km": 1.1,
+            "min": 10,
+            "mode": "auto"
+          },
           "place": {
             "id": "mysore-palace",
             "name_en": "Mysore Palace",
@@ -916,7 +931,7 @@
           ]
         }
       ],
-      "travel_total_min": 70
+      "travel_total_min": 80
     },
     {
       "day": 4,
@@ -927,6 +942,11 @@
           "start": "09:00",
           "duration_min": 120,
           "note_en": "Terraced botanical gardens laid across the KRS Dam with synchronized musical fountains at dusk.",
+          "travel_from_prev": {
+            "km": 17.2,
+            "min": 35,
+            "mode": "cab"
+          },
           "place": {
             "id": "brindavan-gardens",
             "name_en": "Brindavan Gardens",
@@ -1135,15 +1155,15 @@
           ]
         }
       ],
-      "travel_total_min": 245
+      "travel_total_min": 280
     }
   ],
   "cost": {
     "stay": 13200,
     "food": 9600,
-    "transport": 13220,
+    "transport": 13222,
     "entry": 2090,
-    "total": 38110,
+    "total": 38112,
     "people": 2
   },
   "tips": [

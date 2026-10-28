@@ -221,6 +221,16 @@ export default function ShowToLocalModal({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, handleClose]);
 
+  // Lock background scrolling while this full-screen view is open
+  useEffect(() => {
+    if (!isOpen || typeof document === "undefined") return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
+
   if (!isOpen || !place) return null;
 
   // Dynamic Destination phrase matching the chosen language

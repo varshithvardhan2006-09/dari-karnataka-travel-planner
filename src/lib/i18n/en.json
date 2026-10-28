@@ -2,7 +2,11 @@
   "nav": {
     "plan_a_trip": "Plan a trip",
     "sample_trips": "Sample trips",
-    "about": "About"
+    "about": "About",
+    "plan": "Plan",
+    "map": "Map",
+    "phrases": "Phrases",
+    "saved": "Saved"
   },
   "landing": {
     "eyebrow": "AI TRAVEL PLANNER FOR KARNATAKA",

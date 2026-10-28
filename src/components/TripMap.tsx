@@ -6,7 +6,7 @@ import "leaflet/dist/leaflet.css";
 import { DayPlan } from "@/lib/schema";
 import { useLang } from "@/lib/i18n/useLang";
 import { getPinNumber, DAY_PIN_COLORS } from "@/lib/geo";
-import { getGoogleMapsSearchUrl } from "@/lib/maps";
+import { getGoogleMapsSearchUrl, escapeHtml } from "@/lib/maps";
 
 export { DAY_PIN_COLORS };
 
@@ -240,12 +240,14 @@ export default function TripMap({
         markersRef.current.set(stop.place_id, marker);
 
         // Bind popup only for selected pin or when clicked (no permanent overlapping labels)
+        // Plan data may originate from a shared link, so every interpolated
+        // value is escaped before it reaches the popup's raw HTML.
         marker.bindPopup(
           `<div style="font-family: inherit; font-size: 13px; line-height: 1.4; padding: 2px; min-width: 140px;">
-            <div style="font-weight: 800; color: #14202B; margin-bottom: 2px;">${placeLabel}</div>
-            <div style="color: #586673; font-size: 11px;">${stop.place.city} · ${stop.start} (${stop.duration_min} min)</div>
+            <div style="font-weight: 800; color: #14202B; margin-bottom: 2px;">${escapeHtml(placeLabel)}</div>
+            <div style="color: #586673; font-size: 11px;">${escapeHtml(stop.place.city)} · ${escapeHtml(stop.start)} (${escapeHtml(stop.duration_min)} min)</div>
             <div style="margin-top: 4px;">
-              <a href="${getGoogleMapsSearchUrl(stop.place)}" target="_blank" rel="noopener noreferrer" style="color: #8E1F2F; font-size: 11px; font-weight: 700; text-decoration: underline;">Open in Google Maps ↗</a>
+              <a href="${escapeHtml(getGoogleMapsSearchUrl(stop.place))}" target="_blank" rel="noopener noreferrer" style="color: #8E1F2F; font-size: 11px; font-weight: 700; text-decoration: underline;">Open in Google Maps ↗</a>
             </div>
           </div>`,
           { closeButton: false, offset: [0, -14] }

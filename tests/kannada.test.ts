@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import placesData from "../data/places.json";
 import phrasesData from "../data/phrases.json";
 import { SYSTEM_PROMPT_TEMPLATE } from "../src/lib/ai";
@@ -7,6 +7,10 @@ import { Place, Phrase } from "../src/lib/schema";
 import { stopKannadaSpeech, getKannadaVoice } from "../src/lib/speech";
 
 describe("Kannada mode and zero-AI-generated Kannada verification", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   const places = placesData as Place[];
   const phrases = phrasesData as Phrase[];
 
@@ -76,13 +80,19 @@ describe("Kannada mode and zero-AI-generated Kannada verification", () => {
   });
 
   it("verifies GET /api/tts handles valid speech requests with audio/mpeg headers", async () => {
+    // The speech upstream is stubbed so this assertion never depends on network access.
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(new Uint8Array([0xff, 0xfb, 0x90, 0x00]), {
+        status: 200,
+        headers: { "Content-Type": "audio/mpeg" },
+      })
+    );
+
     const { GET } = await import("../src/app/api/tts/route");
     const { NextRequest } = await import("next/server");
     const req = new NextRequest("http://localhost:3000/api/tts?text=%E0%B2%A8%E0%B2%AE%E0%B2%B8%E0%B3%8D%E0%B2%95%E0%B2%BE%E0%B2%B0&lang=kn");
     const res = await GET(req);
-    expect([200, 500, 502, 503]).toContain(res.status); // 200 when network available, upstream server error if unreachable
-    if (res.status === 200) {
-      expect(res.headers.get("content-type")).toContain("audio/mpeg");
-    }
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toContain("audio/mpeg");
   });
 });

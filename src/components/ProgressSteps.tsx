@@ -22,6 +22,14 @@ interface ProgressStepsProps {
   budget?: string;
   pace?: string;
   month?: number;
+  /** Places in the dataset matching the chosen interests. */
+  matchCount?: number;
+  /** Total curated places in the dataset. */
+  totalPlaces?: number;
+  /** Names of the real shortlisted candidates for this trip. */
+  candidateNames?: string[];
+  /** Regions the shortlisted candidates fall into. */
+  candidateRegions?: string[];
   onCancel?: () => void;
   onUseReadyMade?: () => void;
 }
@@ -34,58 +42,59 @@ interface StepItem {
   subKn: string;
 }
 
-const STEPS: StepItem[] = [
-  {
-    key: "matched",
-    titleEn: "Matched places to your interests",
-    titleKn: "ನಿಮ್ಮ ಆಸಕ್ತಿಗಳಿಗೆ ತಕ್ಕಂತೆ ಸ್ಥಳಗಳನ್ನು ಹೊಂದಿಸಲಾಗಿದೆ",
-    subEn: "25 of 39 places fit · 0.2 s",
-    subKn: "39 ಸ್ಥಳಗಳಲ್ಲಿ 25 ಸ್ಥಳಗಳು ಸರಿಹೊಂದಿವೆ · 0.2 ಸೆ",
-  },
-  {
-    key: "grouped",
-    titleEn: "Grouped nearby places into days",
-    titleKn: "ಸಮೀಪದ ಸ್ಥಳಗಳನ್ನು ದಿನವಾರು ಗುಂಪು ಮಾಡಲಾಗಿದೆ",
-    subEn: "Bengaluru, Mysuru and Hassan clusters · 0.1 s",
-    subKn: "ಬೆಂಗಳೂರು, ಮೈಸೂರು ಮತ್ತು ಹಾಸನ ವಲಯಗಳು · 0.1 ಸೆ",
-  },
-  {
-    key: "ai_writing",
-    titleEn: "AI is writing the day plans",
-    titleKn: "AI ದಿನದ ಪ್ರವಾಸ ಯೋಜನೆಯನ್ನು ರಚಿಸುತ್ತಿದೆ",
-    subEn: "Provider: Groq / Gemini · verified places only",
-    subKn: "ಪರಿಶೀಲಿಸಿದ ನೈಜ ಸ್ಥಳಗಳೊಂದಿಗೆ ರಚನೆ",
-  },
-  {
-    key: "checking_geo",
-    titleEn: "Checking times, distances and costs",
-    titleKn: "ಸಮಯ, ಅಂತರ ಮತ್ತು ವೆಚ್ಚಗಳನ್ನು ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತಿದೆ",
-    subEn: "The server validates every stop sequence",
-    subKn: "ಸರ್ವರ್ ಪ್ರತಿ ನಿಲುಗಡೆಯನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ",
-  },
-  {
-    key: "kannada_phrases",
-    titleEn: "Adding Kannada names and phrases",
-    titleKn: "ಕನ್ನಡ ಹೆಸರುಗಳು ಮತ್ತು ನುಡಿಗಟ್ಟುಗಳನ್ನು ಸೇರಿಸಲಾಗುತ್ತಿದೆ",
-    subEn: "From our curated verified phrase dataset",
-    subKn: "ನಮ್ಮ ಪರಿಶೀಲಿಸಿದ ನುಡಿಗಟ್ಟುಗಳ ಸಂಗ್ರಹದಿಂದ",
-  },
-];
+/**
+ * Builds the step list from the real shortlist for this request, so the
+ * subtitles describe what actually happened rather than fixed sample text.
+ */
+function buildSteps(
+  matchCount: number,
+  totalPlaces: number,
+  regions: string[]
+): StepItem[] {
+  const regionText = regions.length > 0 ? regions.slice(0, 3).join(", ") : "Karnataka";
+
+  return [
+    {
+      key: "matched",
+      titleEn: "Matched places to your interests",
+      titleKn: "ನಿಮ್ಮ ಆಸಕ್ತಿಗಳಿಗೆ ತಕ್ಕಂತೆ ಸ್ಥಳಗಳನ್ನು ಹೊಂದಿಸಲಾಗಿದೆ",
+      subEn: `${matchCount} of ${totalPlaces} curated places fit`,
+      subKn: `${totalPlaces} ಸ್ಥಳಗಳಲ್ಲಿ ${matchCount} ಸ್ಥಳಗಳು ಸರಿಹೊಂದಿವೆ`,
+    },
+    {
+      key: "grouped",
+      titleEn: "Grouped nearby places into days",
+      titleKn: "ಸಮೀಪದ ಸ್ಥಳಗಳನ್ನು ದಿನವಾರು ಗುಂಪು ಮಾಡಲಾಗಿದೆ",
+      subEn: `${regionText} clusters`,
+      subKn: `${regionText} ವಲಯಗಳು`,
+    },
+    {
+      key: "ai_writing",
+      titleEn: "AI is writing the day plans",
+      titleKn: "AI ದಿನದ ಪ್ರವಾಸ ಯೋಜನೆಯನ್ನು ರಚಿಸುತ್ತಿದೆ",
+      subEn: "Provider: Groq / Gemini · verified places only",
+      subKn: "ಪರಿಶೀಲಿಸಿದ ನೈಜ ಸ್ಥಳಗಳೊಂದಿಗೆ ರಚನೆ",
+    },
+    {
+      key: "checking_geo",
+      titleEn: "Checking times, distances and costs",
+      titleKn: "ಸಮಯ, ಅಂತರ ಮತ್ತು ವೆಚ್ಚಗಳನ್ನು ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತಿದೆ",
+      subEn: "The server validates every stop sequence",
+      subKn: "ಸರ್ವರ್ ಪ್ರತಿ ನಿಲುಗಡೆಯನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ",
+    },
+    {
+      key: "kannada_phrases",
+      titleEn: "Adding Kannada names and phrases",
+      titleKn: "ಕನ್ನಡ ಹೆಸರುಗಳು ಮತ್ತು ನುಡಿಗಟ್ಟುಗಳನ್ನು ಸೇರಿಸಲಾಗುತ್ತಿದೆ",
+      subEn: "From our curated verified phrase dataset",
+      subKn: "ನಮ್ಮ ಪರಿಶೀಲಿಸಿದ ನುಡಿಗಟ್ಟುಗಳ ಸಂಗ್ರಹದಿಂದ",
+    },
+  ];
+}
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
-];
-
-const CANDIDATE_CHIPS = [
-  "Lalbagh",
-  "Bangalore Palace",
-  "Vidyarthi Bhavan",
-  "VV Puram Food Street",
-  "Mysore Palace",
-  "Belur",
-  "Halebidu",
-  "+ 5 more",
 ];
 
 export default function ProgressSteps({
@@ -95,6 +104,10 @@ export default function ProgressSteps({
   budget = "Mid-range",
   pace = "Relaxed",
   month = 11,
+  matchCount,
+  totalPlaces,
+  candidateNames = [],
+  candidateRegions = [],
   onCancel,
   onUseReadyMade,
 }: ProgressStepsProps) {
@@ -102,11 +115,20 @@ export default function ProgressSteps({
   const { lang } = useLang();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
+  const steps = React.useMemo(
+    () => buildSteps(matchCount ?? placeCount, totalPlaces ?? placeCount, candidateRegions),
+    [matchCount, totalPlaces, placeCount, candidateRegions]
+  );
+
+  // Show the real shortlist, capped so the row stays on a couple of lines
+  const visibleChips = candidateNames.slice(0, 7);
+  const hiddenChipCount = Math.max(0, candidateNames.length - visibleChips.length);
+
   // Advance steps smoothly on a realistic timer (approx 2s per step)
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentStepIndex((prev) => {
-        if (prev < STEPS.length - 1) {
+        if (prev < steps.length - 1) {
           return prev + 1;
         }
         return prev;
@@ -114,7 +136,7 @@ export default function ProgressSteps({
     }, 2200);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [steps.length]);
 
   const handleCancel = () => {
     if (onCancel) {
@@ -136,8 +158,8 @@ export default function ProgressSteps({
     playKannadaSpeech(text);
   };
 
-  const progressPercent = Math.min(100, Math.round(((currentStepIndex + 1) / STEPS.length) * 100));
-  const secondsLeft = Math.max(2, (STEPS.length - 1 - currentStepIndex) * 2);
+  const progressPercent = Math.min(100, Math.round(((currentStepIndex + 1) / steps.length) * 100));
+  const secondsLeft = Math.max(2, (steps.length - 1 - currentStepIndex) * 2);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start w-full">
@@ -162,8 +184,8 @@ export default function ProgressSteps({
           <div className="flex items-center justify-between text-xs font-semibold text-[#586673]">
             <span>
               {lang === "kn"
-                ? `ಹಂತ ${currentStepIndex + 1} / 5`
-                : `Step ${currentStepIndex + 1} of 5`}
+                ? `ಹಂತ ${currentStepIndex + 1} / ${steps.length}`
+                : `Step ${currentStepIndex + 1} of ${steps.length}`}
             </span>
             <span className="font-normal text-[11px]">
               {lang === "kn"
@@ -181,7 +203,7 @@ export default function ProgressSteps({
 
         {/* 5 Real Progress Steps */}
         <div className="space-y-4 pt-1">
-          {STEPS.map((step, idx) => {
+          {steps.map((step, idx) => {
             const isCompleted = idx < currentStepIndex;
             const isActive = idx === currentStepIndex;
             const isPending = idx > currentStepIndex;
@@ -289,21 +311,28 @@ export default function ProgressSteps({
           </button>
         </div>
 
-        {/* Candidate Place Chips */}
-        <div className="flex flex-wrap gap-2">
-          {CANDIDATE_CHIPS.map((chip, cIdx) => (
-            <span
-              key={chip}
-              className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-                cIdx % 2 === 0
-                  ? "bg-[#F9EBEB] text-[#8E1F2F] border-[#F2D6D6]"
-                  : "bg-white text-[#14202B] border-[#DCE1DD]"
-              }`}
-            >
-              {chip}
-            </span>
-          ))}
-        </div>
+        {/* Shortlisted candidate places for this specific request */}
+        {visibleChips.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {visibleChips.map((chip, cIdx) => (
+              <span
+                key={chip}
+                className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                  cIdx % 2 === 0
+                    ? "bg-[#F9EBEB] text-[#8E1F2F] border-[#F2D6D6]"
+                    : "bg-white text-[#14202B] border-[#DCE1DD]"
+                }`}
+              >
+                {chip}
+              </span>
+            ))}
+            {hiddenChipCount > 0 && (
+              <span className="px-3 py-1 rounded-full text-xs font-semibold border bg-white text-[#586673] border-[#DCE1DD]">
+                + {hiddenChipCount} {lang === "kn" ? "ಇನ್ನಷ್ಟು" : "more"}
+              </span>
+            )}
+          </div>
+        )}
 
         {/* Skeleton Preview Card */}
         <div className="bg-white rounded-2xl p-5 border border-[#DCE1DD] shadow-2xs space-y-3 animate-pulse">

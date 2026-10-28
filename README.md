@@ -9,7 +9,7 @@
   <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19.3.0-61DAFB?style=for-the-badge&logo=react" alt="React" /></a>
   <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript" /></a>
   <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind-v4-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS" /></a>
-  <a href="https://vitest.dev/"><img src="https://img.shields.io/badge/Tests-98%20Passed-brightgreen?style=for-the-badge&logo=vitest" alt="Vitest" /></a>
+  <a href="https://vitest.dev/"><img src="https://img.shields.io/badge/Tests-118%20Passed-brightgreen?style=for-the-badge&logo=vitest" alt="Vitest" /></a>
   <a href="https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/varshithvardhan2006-09/dari-karnataka-travel-planner/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=CI" alt="Dari CI Status" /></a>
   <a href="https://dari-karnataka-travel-planner.vercel.app"><img src="https://img.shields.io/badge/Deployment-Live-success?style=for-the-badge&logo=vercel" alt="Vercel" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License" /></a>
@@ -149,8 +149,8 @@ $$\text{Total} = \text{Lodging} + \text{Food} + \text{Transport} + \text{Entry F
                                       │
                                       ▼
 [ 3. AI Cascade with 24s Shared Timeout Budget (src/lib/ai.ts) ]
-    ├── Tier 1: Groq API (openai/gpt-oss-120b in structured JSON mode)
-    ├── Tier 2: Google Gemini API (gemini-flash-latest)
+    ├── Tier 1: Groq API (llama-3.3-70b-versatile in structured JSON mode)
+    ├── Tier 2: Google Gemini API (gemini-1.5-flash)
     └── Whitelist & Prompt Rule Validation (1 retry with diagnostic feedback)
                                       │
                  ┌────────────────────┴────────────────────┐
@@ -215,11 +215,11 @@ To guarantee 99%+ factual accuracy and eliminate AI hallucinations, all data poi
 | **Validation** | **Zod 4.6** | Strict runtime schema parsing for API requests, datasets, and AI outputs |
 | **Styling** | **Tailwind CSS v4** | Modern CSS-first utility classes with official Karnataka heritage palette |
 | **Mapping** | **Leaflet 1.9** + **React Leaflet 5.0** | Interactive tile maps, custom SVG pin markers, and dynamic route polylines |
-| **AI Providers** | **Groq** (`openai/gpt-oss-120b`) & **Google Gemini** | Low-latency inference with cascading fallback |
+| **AI Providers** | **Groq** (`llama-3.3-70b-versatile`) & **Google Gemini** (`gemini-1.5-flash`) | Low-latency inference with cascading fallback |
 | **Audio & Speech** | **Google Neural TTS Proxy** + **Web Speech API** | Authentic native Kannada speech streaming with phonetic transliteration |
 | **URL Compression**| **LZ-String 1.5** | High-ratio compression for stateless itinerary sharing |
 | **Calendar** | **iCalendar RFC 5545** | Standard calendar event file generation client-side |
-| **Testing** | **Vitest 5.0** (16 suites, 98 tests) | Fast unit, schema, geographic, and API integration testing |
+| **Testing** | **Vitest 5.0** (18 suites, 118 tests) | Fast unit, schema, geographic, and API integration testing |
 | **CI / CD** | **GitHub Actions** + **Vercel** | Automated linting, test suite execution, and production deployment |
 
 ---
@@ -247,15 +247,18 @@ Configure your API keys (optional — if keys are omitted, Dari functions automa
 ```env
 # Primary AI Provider (Groq)
 GROQ_API_KEY=your_groq_api_key_here
-GROQ_MODEL=openai/gpt-oss-120b
+GROQ_MODEL=llama-3.3-70b-versatile
 
 # Secondary Fallback AI Provider (Google Gemini)
 GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_MODEL=gemini-flash-latest
+GEMINI_MODEL=gemini-1.5-flash
 
 # Base App URL
 NEXT_PUBLIC_APP_URL=https://dari-karnataka-travel-planner.vercel.app
 ```
+
+Both model names are overridable; the values above are the defaults the code
+falls back to when the variable is unset.
 
 ### 4. Development Server
 ```bash
@@ -265,7 +268,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ### 5. Running Tests & Quality Checks
 ```bash
-# Run unit & integration test suite (98 tests)
+# Run unit & integration test suite (118 tests)
 npm run test
 
 # Run ESLint validation
@@ -279,7 +282,7 @@ npm run build
 
 ## 🧪 Test Suite & Quality Assurance
 
-Dari maintains comprehensive automated test coverage across **16 test suites (98 tests)** verifying geographic route clustering, schedule constraints, itemized cost invariants, multi-language speech, and offline translation fallbacks. Run the full suite locally:
+Dari maintains comprehensive automated test coverage across **18 test suites (118 tests)** verifying geographic route clustering, schedule constraints, itemized cost invariants, multi-language speech, offline translation fallbacks, per-route rate limiting, and shared-link payload validation. The suite is fully offline: every external provider is stubbed, so no test depends on network access. Run it locally:
 
 ```bash
 npm test
@@ -330,6 +333,9 @@ Healthcheck and dataset telemetry endpoint.
 Instant conversational travel translation across South Indian languages.
 
 - **Supported Languages:** `kn` (Kannada), `hi` (Hindi), `te` (Telugu), `ta` (Tamil), `ml` (Malayalam), `en` (English).
+- **Payload Limits:** Maximum 8KB body (HTTP 413) and 500 characters of text (HTTP 400).
+- **Rate Limit:** 20 requests per minute per IP (HTTP 429 with `Retry-After`).
+- **Errors:** `400` malformed JSON, unsupported language pair, or missing text · `503` when every provider and the offline dictionary are exhausted.
 - **Request Body:**
 ```json
 {
@@ -354,15 +360,19 @@ Streams authentic native speech audio for Kannada (`kn`), Hindi (`hi`), Telugu (
 
 - **Response:** `200 OK`
 - **Headers:** `Content-Type: audio/mpeg`, `Accept-Ranges: bytes`, `Cache-Control: public, max-age=604800, immutable`.
+- **Rate Limit:** 60 requests per minute per IP (HTTP 429 with `Retry-After`).
+- **Errors:** `400` missing or empty text · `502` when every upstream speech endpoint is unreachable.
 
 ---
 
 ## 🔒 Security & Data Integrity
 
 - **Zero Secrets in Git History:** All sensitive keys reside strictly in `.env.local` (git-ignored) and are never committed.
-- **Payload Size Guards:** Strict 32KB request boundary protects serverless lambdas against memory exhaustion attacks.
+- **Payload Size Guards:** Strict 32KB request boundary on `/api/plan` and 8KB on `/api/translate` protect serverless lambdas against memory exhaustion attacks.
+- **Rate Limiting on Every Route:** All three API routes enforce a per-IP sliding window (`/api/plan` 12/min, `/api/translate` 20/min, `/api/tts` 60/min, each returning HTTP 429 with `Retry-After`), so the speech proxy cannot be used as an open relay and the translator cannot drain upstream AI quota.
+- **Untrusted Shared Links:** A `?d=` itinerary payload is strictly validated against `PlanSchema` before anything is rendered, and every value interpolated into a map popup is HTML-escaped.
 - **Fail-Safe Privacy:** No personal identifiable information (PII) is stored on servers; all saved trips persist exclusively in browser local storage.
-- **Open Photo Licensing:** All landmark images are curated from Wikimedia Commons under free licenses (CC0, CC BY, CC BY-SA, Public Domain) and attributed transparently at [`/credits`](https://dari-karnataka-travel-planner.vercel.app/credits).
+- **Open Photo Licensing:** Destination previews currently ship as original inline SVG scene illustrations (Palace, Hampi, Coast) with zero external copyright dependencies. [`scripts/fetch-images.mjs`](scripts/fetch-images.mjs) can populate the dataset with freely licensed Wikimedia Commons photography (CC0, CC BY, CC BY-SA, Public Domain); any photo added that way is attributed automatically at [`/credits`](https://dari-karnataka-travel-planner.vercel.app/credits).
 
 ---
 

@@ -219,10 +219,14 @@ export default function LandingPage() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 items-center">
           {/* Interests */}
           <div className="flex flex-col">
-            <span className="text-[11px] font-bold text-[#586673] uppercase tracking-wider">
+            <label
+              htmlFor="qs-interests"
+              className="text-[11px] font-bold text-[#586673] uppercase tracking-wider"
+            >
               {lang === "kn" ? "ಆಸಕ್ತಿಗಳು" : "INTERESTS"}
-            </span>
+            </label>
             <select
+              id="qs-interests"
               value={qsInterests}
               onChange={(e) => setQsInterests(e.target.value)}
               className="mt-1 text-sm font-semibold text-[#14202B] bg-transparent focus:outline-none cursor-pointer"
@@ -236,10 +240,14 @@ export default function LandingPage() {
 
           {/* Days */}
           <div className="flex flex-col border-l border-[#F1F3F0] pl-3">
-            <span className="text-[11px] font-bold text-[#586673] uppercase tracking-wider">
+            <label
+              htmlFor="qs-days"
+              className="text-[11px] font-bold text-[#586673] uppercase tracking-wider"
+            >
               {lang === "kn" ? "ದಿನಗಳು" : "DAYS"}
-            </span>
+            </label>
             <select
+              id="qs-days"
               value={qsDays}
               onChange={(e) => setQsDays(Number(e.target.value))}
               className="mt-1 text-sm font-semibold text-[#14202B] bg-transparent focus:outline-none cursor-pointer"
@@ -254,10 +262,14 @@ export default function LandingPage() {
 
           {/* Budget */}
           <div className="flex flex-col border-l border-[#F1F3F0] pl-3">
-            <span className="text-[11px] font-bold text-[#586673] uppercase tracking-wider">
+            <label
+              htmlFor="qs-budget"
+              className="text-[11px] font-bold text-[#586673] uppercase tracking-wider"
+            >
               {lang === "kn" ? "ಬಜೆಟ್" : "BUDGET"}
-            </span>
+            </label>
             <select
+              id="qs-budget"
               value={qsBudget}
               onChange={(e) => setQsBudget(e.target.value)}
               className="mt-1 text-sm font-semibold text-[#14202B] bg-transparent focus:outline-none cursor-pointer"
@@ -270,10 +282,14 @@ export default function LandingPage() {
 
           {/* Month */}
           <div className="flex flex-col border-l border-[#F1F3F0] pl-3">
-            <span className="text-[11px] font-bold text-[#586673] uppercase tracking-wider">
+            <label
+              htmlFor="qs-month"
+              className="text-[11px] font-bold text-[#586673] uppercase tracking-wider"
+            >
               {lang === "kn" ? "ತಿಂಗಳು" : "MONTH"}
-            </span>
+            </label>
             <select
+              id="qs-month"
               value={qsMonth}
               onChange={(e) => setQsMonth(Number(e.target.value))}
               className="mt-1 text-sm font-semibold text-[#14202B] bg-transparent focus:outline-none cursor-pointer"

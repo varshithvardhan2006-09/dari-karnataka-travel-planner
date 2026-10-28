@@ -60,7 +60,11 @@ export function enrichPlan(
         .map((pid) => phrasesMap.get(pid))
         .filter((ph): ph is Phrase => Boolean(ph));
 
-      // Calculate travel from previous stop / starting city
+      // Calculate travel from previous stop / starting city.
+      // The approach leg of each day (from the start city on day 1, from the
+      // previous overnight stop afterwards) is recorded on the stop and counted
+      // in the day total, so the schedule, the distance stats and the transport
+      // cost are all derived from the same legs.
       let travelFromPrev = undefined;
       if (i > 0) {
         const prevPlace = placesMap.get(dayItem.stops[i - 1].place_id);
@@ -81,26 +85,24 @@ export function enrichPlan(
         }
       } else {
         // Stop 0 of the day: account for departure hub or inter-day leg
-        if (dayIdx === 0) {
-          // Transfer from starting city
-          const hubLeg = computeTravelLeg(
-            startCoords.lat,
-            startCoords.lng,
+        const origin =
+          dayIdx === 0
+            ? { lat: startCoords.lat, lng: startCoords.lng }
+            : previousDayLastPlace
+              ? { lat: previousDayLastPlace.lat, lng: previousDayLastPlace.lng }
+              : null;
+
+        if (origin) {
+          const approachLeg = computeTravelLeg(
+            origin.lat,
+            origin.lng,
             place.lat,
             place.lng,
             people
           );
-          totalTripKm += hubLeg.km;
-        } else if (previousDayLastPlace) {
-          // Transfer from previous overnight destination
-          const interDayLeg = computeTravelLeg(
-            previousDayLastPlace.lat,
-            previousDayLastPlace.lng,
-            place.lat,
-            place.lng,
-            people
-          );
-          totalTripKm += interDayLeg.km;
+          travelFromPrev = approachLeg;
+          dayTravelTotalMin += approachLeg.min;
+          totalTripKm += approachLeg.km;
         }
       }
 

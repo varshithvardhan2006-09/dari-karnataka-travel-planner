@@ -3,50 +3,18 @@ import { PlanRequestSchema, Place } from "@/lib/schema";
 import { generateItinerary } from "@/lib/ai";
 import { buildDeterministicPlan } from "@/lib/planner";
 import { getCustomizedSamplePlan } from "@/lib/samples";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import placesData from "../../../../data/places.json";
 
 export const maxDuration = 30; // Route max duration set to 30 seconds per spec
 
 const allPlaces = placesData as Place[];
 
-/**
- * Architectural Note on Rate Limiting:
- * In serverless environments (e.g. Vercel), this in-memory sliding window provides fast
- * per-container abuse protection. In multi-region production scale, this is complemented
- * with distributed edge rate limiting (e.g., Upstash Redis / Vercel KV) or Cloudflare WAF
- * to share rate counters across independent serverless instances.
- */
-const ipRequestTimestamps = new Map<string, number[]>();
-const RATE_LIMIT_WINDOW_MS = 60 * 1000;
-const MAX_REQUESTS_PER_WINDOW = 12;
-const MAX_TRACKED_IPS = 5000;
-
-function checkRateLimit(ip: string): { allowed: boolean; retryAfterS: number } {
-  const now = Date.now();
-  const windowStart = now - RATE_LIMIT_WINDOW_MS;
-
-  // Prune map if it exceeds maximum size threshold to prevent memory growth
-  if (ipRequestTimestamps.size > MAX_TRACKED_IPS) {
-    for (const [key, times] of ipRequestTimestamps.entries()) {
-      const active = times.filter((t) => t > windowStart);
-      if (active.length === 0) {
-        ipRequestTimestamps.delete(key);
-      }
-    }
-  }
-
-  const timestamps = (ipRequestTimestamps.get(ip) || []).filter((t) => t > windowStart);
-
-  if (timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-    const oldestInWindow = timestamps[0];
-    const retryAfterS = Math.ceil((oldestInWindow + RATE_LIMIT_WINDOW_MS - now) / 1000);
-    return { allowed: false, retryAfterS: Math.max(1, retryAfterS) };
-  }
-
-  timestamps.push(now);
-  ipRequestTimestamps.set(ip, timestamps);
-  return { allowed: true, retryAfterS: 0 };
-}
+const RATE_LIMIT = {
+  name: "plan",
+  limit: 12,
+  windowMs: 60 * 1000,
+};
 
 export async function GET() {
   return NextResponse.json(
@@ -66,8 +34,8 @@ export async function POST(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const simulateHeader = req.headers.get("x-simulate") || searchParams.get("simulate");
 
-    // Simulation hooks for automated test verification and judge evaluation
-    const isSimulateAllowed = process.env.NODE_ENV !== "production" || req.headers.has("x-simulate");
+    // Simulation hooks for automated test verification. Never enabled in production.
+    const isSimulateAllowed = process.env.NODE_ENV !== "production";
     if (isSimulateAllowed && simulateHeader) {
       if (simulateHeader === "429") {
         return NextResponse.json(
@@ -94,10 +62,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 1. Per-IP Rate Limiting
-    const forwardedFor = req.headers.get("x-forwarded-for");
-    const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : "127.0.0.1";
-
-    const rateLimit = checkRateLimit(ip);
+    const rateLimit = checkRateLimit(getClientIp(req), RATE_LIMIT);
     if (!rateLimit.allowed) {
       return NextResponse.json(
         { error: "busy", retry_after_s: rateLimit.retryAfterS },

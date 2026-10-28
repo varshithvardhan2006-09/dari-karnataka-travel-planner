@@ -11,14 +11,15 @@ import CoastScene from "./illustrations/CoastScene";
 interface PlaceImageProps {
   place: Place;
   size?: "sm" | "md" | "hero";
-  priority?: boolean;
+  /** Preloads the image via a <link> in <head>; use for an above-the-fold hero. */
+  preload?: boolean;
   className?: string;
 }
 
 export default function PlaceImage({
   place,
   size = "md",
-  priority = false,
+  preload = false,
   className = "",
 }: PlaceImageProps) {
   const { lang } = useLang();
@@ -61,7 +62,7 @@ export default function PlaceImage({
           alt={altText}
           width={sizeDimensions.width}
           height={sizeDimensions.height}
-          priority={priority}
+          preload={preload}
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
           onError={() => setImgError(true)}
         />

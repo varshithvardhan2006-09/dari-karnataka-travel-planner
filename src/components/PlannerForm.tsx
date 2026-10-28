@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLang } from "@/lib/i18n/useLang";
 import {
@@ -180,6 +180,9 @@ export default function PlannerForm() {
   const [showAllMatches, setShowAllMatches] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // Timers started by handleSubmit, tracked so they can be cleared on unmount
+  const navigationTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
   // Prefetch trip route to ensure instantaneous navigation when clicking Generate
   useEffect(() => {
     try {
@@ -188,6 +191,13 @@ export default function PlannerForm() {
       // ignore
     }
   }, [router]);
+
+  useEffect(() => {
+    const timers = navigationTimersRef.current;
+    return () => {
+      timers.forEach(clearTimeout);
+    };
+  }, []);
 
   // Toggle category tiles (max 4)
   const toggleInterest = (category: Category) => {
@@ -284,30 +294,29 @@ export default function PlannerForm() {
       return;
     }
 
-    // 2. Fallback timer: If Next.js App Router client transition does not
-    // navigate within 600ms (e.g. RSC prefetch stall or connection lag),
-    // immediately perform a direct browser navigation so the user is NEVER stuck on "Generating...".
+    // 2. Fallback timer: if the App Router client transition has not landed on
+    // /trip within 1.2s (RSC prefetch stall or connection lag), fall back to a
+    // direct browser navigation so the user is never stuck on "Generating...".
     const fallbackTimer = setTimeout(() => {
       if (typeof window !== "undefined" && !window.location.pathname.startsWith("/trip")) {
         // eslint-disable-next-line @next/next/no-location-assign-relative-destination
         window.location.href = targetUrl;
       }
-    }, 600);
+    }, 1200);
 
-    // 3. Safety reset timer: If browser stays or user aborts, restore button state
-    // so it is never permanently frozen.
+    // 3. Safety reset timer: restore the button state so it is never permanently
+    // frozen if the browser stays on this page.
     const safetyTimer = setTimeout(() => {
       setSubmitting(false);
     }, 4000);
 
-    return () => {
-      clearTimeout(fallbackTimer);
-      clearTimeout(safetyTimer);
-    };
+    navigationTimersRef.current.push(fallbackTimer, safetyTimer);
   };
 
+  // The outer bottom padding clears the fixed mobile action bar, which would
+  // otherwise sit on top of the submit buttons at small widths.
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] lg:pb-0">
       {/* LEFT COLUMN: Form Controls (7 cols) */}
       <div className="lg:col-span-7 bg-white rounded-2xl p-6 sm:p-8 border border-[#DCE1DD] shadow-xs space-y-8">
         {/* Quick-start preset chips */}
@@ -334,9 +343,12 @@ export default function PlannerForm() {
           {/* 1. What do you enjoy? (Interest Tiles matching mockup 02) */}
           <div>
             <div className="flex items-baseline justify-between mb-1">
-              <label className="block font-heading font-bold text-base text-[#14202B]">
+              <span
+                id="interests-group-label"
+                className="block font-heading font-bold text-base text-[#14202B]"
+              >
                 {lang === "kn" ? "ನಿಮ್ಮ ಆಸಕ್ತಿಗಳೇನು?" : "What do you enjoy?"}
-              </label>
+              </span>
               <span className="text-xs text-[#586673]">
                 {interests.length >= 4
                   ? lang === "kn" ? "ಗರಿಷ್ಠ ೪" : "Max 4"
@@ -349,7 +361,11 @@ export default function PlannerForm() {
                 : "Pick one to four. Numbers show how many places we have."}
             </p>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div
+              role="group"
+              aria-labelledby="interests-group-label"
+              className="grid grid-cols-2 sm:grid-cols-4 gap-3"
+            >
               {CATEGORY_TILES.map((cat) => {
                 const selected = interests.includes(cat.id);
                 const placeCount = allPlaces.filter((p) => p.categories.includes(cat.id)).length;
@@ -358,6 +374,7 @@ export default function PlannerForm() {
                   <button
                     key={cat.id}
                     type="button"
+                    aria-pressed={selected}
                     onClick={() => toggleInterest(cat.id)}
                     className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer relative flex flex-col justify-between min-h-[90px] ${
                       selected
@@ -393,7 +410,10 @@ export default function PlannerForm() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
             {/* Days Slider */}
             <div>
-              <label className="block font-heading font-bold text-sm text-[#14202B] mb-1">
+              <label
+                htmlFor="planner-days"
+                className="block font-heading font-bold text-sm text-[#14202B] mb-1"
+              >
                 {lang === "kn" ? "ಎಷ್ಟು ದಿನಗಳು?" : "How many days?"}
               </label>
               <p className="text-xs text-[#586673] mb-3">
@@ -409,25 +429,34 @@ export default function PlannerForm() {
                 </span>
               </div>
               <input
+                id="planner-days"
                 type="range"
                 min={1}
                 max={7}
                 value={days}
                 onChange={(e) => setDays(Number(e.target.value))}
+                aria-valuetext={`${days} ${days === 1 ? "day" : "days"}`}
                 className="w-full mt-3 accent-[#8E1F2F] cursor-pointer"
               />
             </div>
 
             {/* Who is travelling? */}
             <div>
-              <label className="block font-heading font-bold text-sm text-[#14202B] mb-1">
+              <span
+                id="travellers-group-label"
+                className="block font-heading font-bold text-sm text-[#14202B] mb-1"
+              >
                 {lang === "kn" ? "ಯಾರು ಪ್ರಯಾಣಿಸುತ್ತಿದ್ದಾರೆ?" : "Who is travelling?"}
-              </label>
+              </span>
               <p className="text-xs text-[#586673] mb-3">
                 {lang === "kn" ? "ಗುಂಪಿಗೆ ಅನುಗುಣವಾಗಿ ವೆಚ್ಚ ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತದೆ" : "Costs are worked out for the group"}
               </p>
 
-              <div className="flex flex-wrap gap-1.5 mb-3">
+              <div
+                role="group"
+                aria-labelledby="travellers-group-label"
+                className="flex flex-wrap gap-1.5 mb-3"
+              >
                 {TRAVELLER_CONFIG.map((tr) => (
                   <button
                     key={tr.id}
@@ -476,17 +505,25 @@ export default function PlannerForm() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
             {/* Budget */}
             <div>
-              <label className="block font-heading font-bold text-sm text-[#14202B] mb-1">
+              <span
+                id="budget-group-label"
+                className="block font-heading font-bold text-sm text-[#14202B] mb-1"
+              >
                 {lang === "kn" ? "ಬಜೆಟ್" : "Budget"}
-              </label>
+              </span>
               <p className="text-xs text-[#586673] mb-3">
                 {lang === "kn" ? "ಪ್ರತಿ ವ್ಯಕ್ತಿಗೆ ದಿನಕ್ಕೆ, ವಾಸ್ತವ್ಯ ಮತ್ತು ಊಟ ಸೇರಿ" : "Rs per person per day, stay and food included"}
               </p>
-              <div className="grid grid-cols-3 gap-2">
+              <div
+                role="group"
+                aria-labelledby="budget-group-label"
+                className="grid grid-cols-3 gap-2"
+              >
                 {BUDGET_TIERS.map((b) => (
                   <button
                     key={b.id}
                     type="button"
+                    aria-pressed={budget === b.id}
                     onClick={() => setBudget(b.id)}
                     className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                       budget === b.id
@@ -504,17 +541,25 @@ export default function PlannerForm() {
 
             {/* Pace */}
             <div>
-              <label className="block font-heading font-bold text-sm text-[#14202B] mb-1">
+              <span
+                id="pace-group-label"
+                className="block font-heading font-bold text-sm text-[#14202B] mb-1"
+              >
                 {lang === "kn" ? "ಪ್ರವಾಸದ ವೇಗ" : "Pace"}
-              </label>
+              </span>
               <p className="text-xs text-[#586673] mb-3">
                 {lang === "kn" ? "ದಿನಕ್ಕೆ ನಿಲುಗಡೆಗಳು" : "Stops per day"}
               </p>
-              <div className="grid grid-cols-3 gap-2">
+              <div
+                role="group"
+                aria-labelledby="pace-group-label"
+                className="grid grid-cols-3 gap-2"
+              >
                 {PACE_TIERS.map((p) => (
                   <button
                     key={p.id}
                     type="button"
+                    aria-pressed={pace === p.id}
                     onClick={() => setPace(p.id)}
                     className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                       pace === p.id
@@ -532,13 +577,20 @@ export default function PlannerForm() {
 
           {/* 4. Month Picker with Best Season Dots */}
           <div className="pt-2">
-            <label className="block font-heading font-bold text-sm text-[#14202B] mb-1">
+            <span
+              id="month-group-label"
+              className="block font-heading font-bold text-sm text-[#14202B] mb-1"
+            >
               {lang === "kn" ? "ಯಾವ ತಿಂಗಳಲ್ಲಿ ಪ್ರಯಾಣ?" : "When are you travelling?"}
-            </label>
+            </span>
             <p className="text-xs text-[#586673] mb-3">
               {lang === "kn" ? "ಹಸಿರು ಚುಕ್ಕೆ ನಿಮ್ಮ ಆಸಕ್ತಿಗಳಿಗೆ ಉತ್ತಮ ತಿಂಗಳುಗಳನ್ನು ಸೂಚಿಸುತ್ತದೆ" : "A green dot marks the best months for your interests"}
             </p>
-            <div className="grid grid-cols-6 sm:grid-cols-12 gap-1.5">
+            <div
+              role="group"
+              aria-labelledby="month-group-label"
+              className="grid grid-cols-6 sm:grid-cols-12 gap-1.5"
+            >
               {MONTH_NAMES.map((mName, mIdx) => {
                 const monthNum = mIdx + 1;
                 const isSelected = month === monthNum;
@@ -548,6 +600,7 @@ export default function PlannerForm() {
                   <button
                     key={mName}
                     type="button"
+                    aria-pressed={isSelected}
                     onClick={() => setMonth(monthNum)}
                     className={`py-2 px-1 rounded-xl text-xs font-semibold transition-all cursor-pointer flex flex-col items-center justify-center border ${
                       isSelected
@@ -635,6 +688,9 @@ export default function PlannerForm() {
               </div>
               <button
                 type="button"
+                role="switch"
+                aria-checked={lowWalking}
+                aria-label={lang === "kn" ? "ಕಡಿಮೆ ನಡಿಗೆ" : "Low walking"}
                 onClick={() => setLowWalking(!lowWalking)}
                 className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${
                   lowWalking ? "bg-[#1E6B52]" : "bg-[#DCE1DD]"
