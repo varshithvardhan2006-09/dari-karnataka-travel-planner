@@ -1,109 +1,80 @@
 import { describe, it, expect } from "vitest";
-import { PlanSchema, Category, StartCity, BudgetFit, Pace, Travellers, PlanRequest } from "@/lib/schema";
-import { buildDeterministicPlan } from "@/lib/planner";
-import { getCustomizedSamplePlan } from "@/lib/samples";
+import { PlanSchema, PlanRequest } from "@/lib/schema";
+import { getCustomizedSamplePlan, getSamplePlan, SAMPLE_PLANS } from "@/lib/samples";
+import { SAMPLE_CONFIGS } from "../scripts/sample-configs";
+import { buildSamplePlan, serializeSamplePlan, normalizeEol } from "../scripts/build-samples";
 import fs from "fs";
 import path from "path";
 
-describe("Sample Itineraries Schema Validation", () => {
+const REGENERATE_HINT =
+  'run "npm run generate:samples" and commit the result if the change is intended';
+
+/**
+ * These tests are read-only. Generating the sample files is the job of
+ * scripts/generate-samples.mjs, so running the suite never mutates the
+ * repository and a sample that drifts from the planner fails loudly instead of
+ * being silently overwritten.
+ */
+describe("Curated sample itineraries", () => {
   const samplesDir = path.resolve(process.cwd(), "data/samples");
 
-  const sampleConfigs = [
-    {
-      file: "heritage.json",
-      title: "3-Day Royal Karnataka & Hoysala Heritage Trail",
-      summary: "A regal journey through Bengaluru palaces, Mysuru's royal court, and the intricate Hoysala stone temples of Belur and Halebidu.",
-      req: {
-        interests: ["heritage", "culture"] as Category[],
-        days: 3,
-        start_city: "Bengaluru" as StartCity,
-        budget: "mid" as BudgetFit,
-        pace: "relaxed" as Pace,
-        travellers: "couple" as Travellers,
-        month: 11,
-        lang: "en" as const,
-      },
-    },
-    {
-      file: "nature.json",
-      title: "3-Day Western Ghats Wildlife & Coffee Mist Retreat",
-      summary: "Breathe in the lush flora of Bandipur forests, encounter elephants at Dubare, and explore misty Coorg coffee plantations.",
-      req: {
-        interests: ["nature", "wildlife", "coffee"] as Category[],
-        days: 3,
-        start_city: "Mysuru" as StartCity,
-        budget: "mid" as BudgetFit,
-        pace: "relaxed" as Pace,
-        travellers: "family" as Travellers,
-        month: 10,
-        lang: "en" as const,
-      },
-    },
-    {
-      file: "food.json",
-      title: "3-Day Karavali Coast & Culinary Pilgrimage",
-      summary: "Savour authentic coastal delicacies, crisp ghee roasts, fresh seafood, and unwind at serene golden beaches from Mangaluru to Gokarna.",
-      req: {
-        interests: ["food", "beach"] as Category[],
-        days: 3,
-        start_city: "Mangaluru" as StartCity,
-        budget: "budget" as BudgetFit,
-        pace: "balanced" as Pace,
-        travellers: "friends" as Travellers,
-        month: 12,
-        lang: "en" as const,
-      },
-    },
-    {
-      file: "mixed.json",
-      title: "4-Day Karnataka Grand Panorama",
-      summary: "The complete Karnataka experience: majestic palaces, aromatic street foods, serene waterfalls, and centuries of vibrant living culture.",
-      req: {
-        interests: ["heritage", "nature", "food"] as Category[],
-        days: 4,
-        start_city: "Bengaluru" as StartCity,
-        budget: "mid" as BudgetFit,
-        pace: "balanced" as Pace,
-        travellers: "couple" as Travellers,
-        month: 1,
-        lang: "en" as const,
-      },
-    },
-  ];
-
-  it("generates and validates all 4 sample itineraries", () => {
-    if (!fs.existsSync(samplesDir)) {
-      fs.mkdirSync(samplesDir, { recursive: true });
-    }
-
-    sampleConfigs.forEach(({ file, title, summary, req }) => {
-      const plan = buildDeterministicPlan(req);
-      plan.source = "sample";
-      plan.title = title;
-      plan.summary = summary;
-
-      const result = PlanSchema.safeParse(plan);
-      if (!result.success) {
-        console.error(`Validation failed for ${file}:`, result.error.issues);
-      }
-      expect(result.success).toBe(true);
-
+  it.each(SAMPLE_CONFIGS.map((c) => [c.file, c] as const))(
+    "%s on disk matches what the planner currently produces",
+    (file, config) => {
       const filePath = path.join(samplesDir, file);
-      fs.writeFileSync(filePath, JSON.stringify(plan, null, 2), "utf-8");
+      expect(
+        fs.existsSync(filePath),
+        `data/samples/${file} is missing — ${REGENERATE_HINT}`
+      ).toBe(true);
 
-      // Verify file read back
-      const readContent = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-      const parsedRead = PlanSchema.safeParse(readContent);
-      expect(parsedRead.success).toBe(true);
-      expect(readContent.source).toBe("sample");
-      expect(readContent.days.length).toBe(req.days);
-      expect(readContent.cost.total).toBe(
-        readContent.cost.stay +
-          readContent.cost.food +
-          readContent.cost.transport +
-          readContent.cost.entry
+      // Normalized so the check is about content, not the clone's line endings
+      const committed = normalizeEol(fs.readFileSync(filePath, "utf-8"));
+      const expected = normalizeEol(serializeSamplePlan(buildSamplePlan(config)));
+
+      expect(
+        committed,
+        `data/samples/${file} is out of date with the planner — ${REGENERATE_HINT}`
+      ).toBe(expected);
+    }
+  );
+
+  it.each(SAMPLE_CONFIGS.map((c) => [c.file, c] as const))(
+    "%s satisfies PlanSchema and the cost invariant",
+    (file, config) => {
+      const committed = JSON.parse(
+        fs.readFileSync(path.join(samplesDir, file), "utf-8")
       );
+
+      const parsed = PlanSchema.safeParse(committed);
+      if (!parsed.success) {
+        console.error(`Validation failed for ${file}:`, parsed.error.issues);
+      }
+      expect(parsed.success).toBe(true);
+
+      expect(committed.source).toBe("sample");
+      expect(committed.title).toBe(config.title);
+      expect(committed.days.length).toBe(config.req.days);
+      expect(committed.days.map((d: { day: number }) => d.day)).toEqual(
+        Array.from({ length: config.req.days }, (_, i) => i + 1)
+      );
+      expect(committed.cost.total).toBe(
+        committed.cost.stay +
+          committed.cost.food +
+          committed.cost.transport +
+          committed.cost.entry
+      );
+    }
+  );
+
+  it("exposes every generated sample under the key the UI requests", () => {
+    SAMPLE_CONFIGS.forEach((config) => {
+      expect(SAMPLE_PLANS[config.key], `SAMPLE_PLANS is missing "${config.key}"`).toBeDefined();
+      expect(getSamplePlan(config.key).title).toBe(config.title);
     });
+  });
+
+  it("falls back to the mixed sample for an unknown key", () => {
+    expect(getSamplePlan("does-not-exist")).toBe(SAMPLE_PLANS.mixed);
   });
 
   it("customizes emergency sample plans to match requested days, people count, and budget", () => {
@@ -159,5 +130,17 @@ describe("Sample Itineraries Schema Validation", () => {
         customized5Day.cost.transport +
         customized5Day.cost.entry
     );
+  });
+
+  it("does not modify any sample file when the suite runs", () => {
+    // Guards the property this split exists to protect.
+    const before = SAMPLE_CONFIGS.map((c) =>
+      fs.readFileSync(path.join(samplesDir, c.file), "utf-8")
+    );
+    SAMPLE_CONFIGS.forEach((c) => buildSamplePlan(c));
+    const after = SAMPLE_CONFIGS.map((c) =>
+      fs.readFileSync(path.join(samplesDir, c.file), "utf-8")
+    );
+    expect(after).toEqual(before);
   });
 });
