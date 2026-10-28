@@ -9,7 +9,7 @@
   <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19.3.0-61DAFB?style=for-the-badge&logo=react" alt="React" /></a>
   <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript" /></a>
   <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind-v4-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS" /></a>
-  <a href="https://vitest.dev/"><img src="https://img.shields.io/badge/Tests-118%20Passed-brightgreen?style=for-the-badge&logo=vitest" alt="Vitest" /></a>
+  <a href="https://vitest.dev/"><img src="https://img.shields.io/badge/Tests-128%20Passed-brightgreen?style=for-the-badge&logo=vitest" alt="Vitest" /></a>
   <a href="https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/varshithvardhan2006-09/dari-karnataka-travel-planner/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=CI" alt="Dari CI Status" /></a>
   <a href="https://dari-karnataka-travel-planner.vercel.app"><img src="https://img.shields.io/badge/Deployment-Live-success?style=for-the-badge&logo=vercel" alt="Vercel" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License" /></a>
@@ -219,7 +219,7 @@ To guarantee 99%+ factual accuracy and eliminate AI hallucinations, all data poi
 | **Audio & Speech** | **Google Neural TTS Proxy** + **Web Speech API** | Authentic native Kannada speech streaming with phonetic transliteration |
 | **URL Compression**| **LZ-String 1.5** | High-ratio compression for stateless itinerary sharing |
 | **Calendar** | **iCalendar RFC 5545** | Standard calendar event file generation client-side |
-| **Testing** | **Vitest 5.0** (18 suites, 118 tests) | Fast unit, schema, geographic, and API integration testing |
+| **Testing** | **Vitest 5.0** (18 suites, 128 tests) | Fast unit, schema, geographic, and API integration testing |
 | **CI / CD** | **GitHub Actions** + **Vercel** | Automated linting, test suite execution, and production deployment |
 
 ---
@@ -268,7 +268,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ### 5. Running Tests & Quality Checks
 ```bash
-# Run unit & integration test suite (118 tests)
+# Run unit & integration test suite (128 tests)
 npm run test
 
 # Run ESLint validation
@@ -276,13 +276,22 @@ npm run lint
 
 # Build for production
 npm run build
+
+# Regenerate the curated sample itineraries in data/samples/
+npm run generate:samples
 ```
+
+The test suite is read-only: it never writes to the repository. The four curated
+samples in `data/samples/` are produced by `npm run generate:samples`, and the
+suite checks the committed files still match what the planner produces. If a
+planner, cost or geo change alters them, the samples test fails and names the
+command to run.
 
 ---
 
 ## 🧪 Test Suite & Quality Assurance
 
-Dari maintains comprehensive automated test coverage across **18 test suites (118 tests)** verifying geographic route clustering, schedule constraints, itemized cost invariants, multi-language speech, offline translation fallbacks, per-route rate limiting, and shared-link payload validation. The suite is fully offline: every external provider is stubbed, so no test depends on network access. Run it locally:
+Dari maintains comprehensive automated test coverage across **18 test suites (128 tests)** verifying geographic route clustering, schedule constraints, itemized cost invariants, multi-language speech, offline translation fallbacks, per-route rate limiting, shared-link payload validation, and drift between the planner and the committed sample itineraries. The suite is fully offline: every external provider is stubbed, so no test depends on network access. Run it locally:
 
 ```bash
 npm test
