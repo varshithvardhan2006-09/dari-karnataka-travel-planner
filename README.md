@@ -26,7 +26,7 @@ Generic AI chat planners invent monuments, guess ticket prices, pair sights hour
 - The AI may only choose from a **curated list of 39 places**, each with a recorded source. It never writes a place name, fee or coordinate itself.
 - Distances, timings and costs are **computed by code**, not generated.
 - When no AI provider is available, a **rule-based planner** produces the plan instead, so the app works even with no API keys configured.
-- Kannada names and phrases come from a **pre-written dataset**; nothing is machine-translated at runtime.
+- Kannada place names and the 15 travel phrases come from a **pre-written dataset**. Only the optional quick translator for your own text uses machine translation.
 
 ## Hackathon presentation
 
@@ -52,10 +52,10 @@ Submitted to the **Kannada Digital Innovation Hackathon 2026**, Travel & Tourism
 ## Features
 
 ### Places can't be hallucinated
-The model receives only a scored shortlist of place IDs from [`data/places.json`](data/places.json) and must answer with those IDs, a start time and a short note. Its output is checked with Zod and business rules: no unknown or repeated places, under 4 hours of driving a day, and every day inside 08:30–19:30. A failed answer gets one retry with the exact errors; after that the next tier takes over.
+The model receives only a scored shortlist of place IDs from [`data/places.json`](data/places.json) and must answer with those IDs, a start time and a short note. Its output is checked with Zod and business rules: no unknown or repeated places, under 4 hours of driving a day, and every day starting between 08:30 and 10:00 and ending by 19:30. A failed answer gets one retry with the exact errors; after that the next tier takes over.
 
 ### Four-tier generation that always answers
-Groq (Llama 3.3 70B) → Google Gemini → rule-based nearest-neighbour planner → curated sample. All tiers share a 24-second budget, and every tier's output is enriched the same way.
+Groq (`llama-3.3-70b-versatile` by default) → Google Gemini (`gemini-1.5-flash` by default; both can be changed with `GROQ_MODEL` and `GEMINI_MODEL`) → rule-based nearest-neighbour planner → curated sample. All tiers share a 24-second budget, and every tier's output is enriched the same way.
 
 ### Realistic routes and times
 Road distance is the straight-line (Haversine) distance × 1.3, driven at 40 km/h with a 10-minute buffer, rounded to 5 minutes. Each day includes the leg from the start city or the previous night's stop, and the trip includes the return leg. Around lunchtime the planner prefers a nearby food stop.
@@ -63,7 +63,7 @@ Road distance is the straight-line (Haversine) distance × 1.3, driven at 40 km/
 ### Honest, itemised budget
 Stay + food + transport + entry fees always add up to the total exactly:
 - **Stay and food:** per person, by budget tier; no stay cost on a one-day trip
-- **Transport:** cab at ₹20/km (auto at ₹16/km for short solo trips), own car at ₹13/km, or bus and train at ₹4/km per person
+- **Transport:** cab at ₹20/km (auto at ₹16/km when one traveller covers under 40 km in total), own car at ₹13/km, or bus and train at ₹4/km per person
 - **Entry fees:** each place's listed fee × the group size
 
 ### Kannada for real conversations
@@ -179,24 +179,24 @@ Each entry also has a `verified` flag. **17 of the 39 places** are marked as che
 | Map tiles | [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, credited on every map |
 | Directions | Links out to [Google Maps](https://maps.google.com) using each place's coordinates |
 | Phrase audio | Google Translate's speech endpoint through a server-side proxy; the browser's Web Speech API is the fallback |
-| Free-text translation | Groq or Google Gemini, then Google Translate's public endpoint, then a built-in offline phrase list |
+| Free-text translation | Exact matches from a built-in offline phrase list first; otherwise Groq, then Google Gemini, then Google Translate's public endpoint, with the offline list as the last fallback |
 | Itinerary order and notes | Groq or Google Gemini; the rule-based planner when no AI provider is available |
 | Distances and travel times | Calculated in [`src/lib/geo.ts`](src/lib/geo.ts) (straight-line distance × 1.3, at 40 km/h); no routing service is used |
-| Stay, food and transport rates | Planning estimates set in [`src/lib/cost.ts`](src/lib/cost.ts), not taken from a published source |
+| Stay, food and transport rates | Estimates in [`src/lib/cost.ts`](src/lib/cost.ts), calibrated against RTA fare notifications, KSRTC fare charts and KSTDC hotel rates (see below) |
 | Monthly weather on the trip page | Typical averages written in [`src/app/trip/page.tsx`](src/app/trip/page.tsx); no source is recorded |
 | Starting-city locations | Approximate coordinates in [`src/lib/candidates.ts`](src/lib/candidates.ts) |
 | Illustrations | Original inline SVG drawings in [`src/components/illustrations`](src/components/illustrations) |
 
 ### How costs are estimated
 
-Entry fees come from each place's `entry_inr` in `data/places.json`. Every other rate in [`src/lib/cost.ts`](src/lib/cost.ts) is a planning figure meant to match typical prices in Karnataka. None is copied from a published tariff.
+Entry fees come from each place's `entry_inr` in `data/places.json`. The other rates in [`src/lib/cost.ts`](src/lib/cost.ts) were calibrated against Karnataka transport authority (RTA) auto and taxi fare notifications, KSRTC passenger fare charts, KSTDC hotel tariffs and typical local prices. They are rounded planning estimates, not exact tariff figures, and the original notices are not stored in this repository.
 
 | Item | Rate used | What it is meant to cover |
 |---|---|---|
 | Stay, per person per night | Budget ₹1,000 · Mid ₹2,200 · Premium ₹4,200 | Hostel or basic room · 3-star hotel or homestay · heritage or resort stay |
 | Food, per person per day | Budget ₹600 · Mid ₹1,200 · Premium ₹2,000 | Darshini and Udupi meals · sit-down restaurants · resort and fine dining |
 | Cab | ₹20/km + ₹150/day | Hired car with a daily driver allowance |
-| Auto | ₹16/km + ₹150/day | Used instead of a cab for one traveller going under 40 km |
+| Auto | ₹16/km + ₹150/day | Used instead of a cab when one traveller covers under 40 km in total |
 | Own car | ₹13/km + ₹100/day | Fuel, wear, tolls and parking |
 | Bus or train | ₹4/km per person + ₹100/day | KSRTC or rail fare plus local autos |
 | Entry tickets | Sum of `entry_inr` × travellers | The listed fee at each stop |
@@ -246,7 +246,7 @@ Then open http://localhost:3000.
 |---|---|---|
 | `POST /api/plan` | Generate an itinerary | 12 requests/min per IP, 32 KB body |
 | `GET /api/plan` | Health check (returns the place count) | — |
-| `POST /api/translate` | Translate a travel phrase (`kn`, `hi`, `te`, `ta`, `ml`, `en`) | 20 requests/min per IP, 500 characters |
+| `POST /api/translate` | Translate a travel phrase (`kn`, `hi`, `te`, `ta`, `ml`, `en`) | 20 requests/min per IP, 8 KB body, 500 characters |
 | `GET /api/tts?text=…&lang=kn` | Stream phrase audio (`audio/mpeg`) | 60 requests/min per IP |
 
 Example `POST /api/plan` body:

@@ -8,6 +8,27 @@ import { Place } from "@/lib/schema";
 
 const allPlaces = placesData as Place[];
 const placesWithImages = allPlaces.filter((p) => Boolean(p.image));
+const verifiedCount = allPlaces.filter((p) => p.verified).length;
+
+const SOURCE_NAMES: Record<string, string> = {
+  "https://karnatakatourism.org": "Karnataka Tourism (Department of Tourism, Government of Karnataka)",
+  "https://asi.nic.in": "Archaeological Survey of India",
+  "https://hampi.nic.in": "Hampi official portal",
+  "https://coorg.nic.in": "Kodagu (Coorg) district portal",
+  "https://chikkamagaluru.nic.in": "Chikkamagaluru district portal",
+  "https://mysorepalace.karnataka.gov.in": "Mysore Palace Board",
+  "https://mysorezoo.info": "Mysuru Zoo (Sri Chamarajendra Zoological Gardens)",
+  "https://aranya.gov.in": "Karnataka Forest Department",
+  "https://vidyarthibhavan.in": "Vidyarthi Bhavan (the restaurant's own site)",
+};
+
+// Counted from the dataset so the list can never drift from data/places.json.
+const sourceCounts = Object.entries(
+  allPlaces.reduce<Record<string, number>>((acc, p) => {
+    if (p.source_url) acc[p.source_url] = (acc[p.source_url] || 0) + 1;
+    return acc;
+  }, {})
+).sort((a, b) => b[1] - a[1]);
 
 export default function CreditsPage() {
   const { lang } = useLang();
@@ -23,12 +44,12 @@ export default function CreditsPage() {
           <span>{lang === "kn" ? "ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ" : "Back to Home"}</span>
         </Link>
         <h1 className="font-heading font-extrabold text-3xl sm:text-4xl text-[#14202B] tracking-tight">
-          {lang === "kn" ? "ಚಿತ್ರ ಕೃಪೆ ಮತ್ತು ಪರವಾನಗಿ" : "Photo Credits & Licensing"}
+          {lang === "kn" ? "ಕೃಪೆ ಮತ್ತು ಡೇಟಾ ಮೂಲಗಳು" : "Credits & Data Sources"}
         </h1>
         <p className="text-sm text-[#586673] mt-2 max-w-2xl leading-relaxed">
           {lang === "kn"
-            ? "ದಾರಿ ಮುಕ್ತ ಸಂಸ್ಕೃತಿ ಮತ್ತು ಕೃತಿಸ್ವಾಮ್ಯ ನಿಯಮಗಳಿಗೆ ಬದ್ಧವಾಗಿದೆ. ತಾಣಗಳ ಮುನ್ನೋಟದಲ್ಲಿ ಬಳಸಲಾದ ಎಲ್ಲಾ ಛಾಯಾಚಿತ್ರಗಳು ವಿಕಿಮೀಡಿಯಾ ಕಾಮನ್ಸ್‌ನಿಂದ ಮುಕ್ತ ಕ್ರಿಯೇಟಿವ್ ಕಾಮನ್ಸ್ ಅಥವಾ ಪಬ್ಲಿಕ್ ಡೊಮೇನ್ ಪರವಾನಗಿಗಳ ಅಡಿಯಲ್ಲಿ ಪಡೆದುಕೊಳ್ಳಲಾಗಿದೆ."
-            : "Dari is dedicated to open culture and legal compliance. All photographic media used across destination previews are sourced exclusively from Wikimedia Commons under free Creative Commons or Public Domain licenses."}
+            ? "ದಾರಿ ಪ್ರಸ್ತುತ ತನ್ನದೇ ಆದ SVG ಚಿತ್ರಣಗಳನ್ನು ಬಳಸುತ್ತದೆ. ಮುಂದೆ ಸೇರಿಸುವ ಯಾವುದೇ ವಿಕಿಮೀಡಿಯಾ ಕಾಮನ್ಸ್ ಫೋಟೋಗಳನ್ನು ಅವುಗಳ ಪರವಾನಗಿಯೊಂದಿಗೆ ಕೆಳಗೆ ಪಟ್ಟಿ ಮಾಡಲಾಗುತ್ತದೆ."
+            : "Dari currently uses its own SVG illustrations. Any Wikimedia Commons photos added later are listed below with their licence."}
         </p>
       </div>
 
@@ -95,47 +116,43 @@ export default function CreditsPage() {
       <div className="bg-white rounded-2xl border border-[#DCE1DD] shadow-xs p-6 space-y-4">
         <div>
           <h2 className="font-heading font-bold text-lg text-[#14202B]">
-            {lang === "kn" ? "ಅಧಿಕೃತ ಡೇಟಾ ಮೂಲಗಳು (Primary Data Sources)" : "Primary Data Sources & Authority"}
+            {lang === "kn" ? "ಡೇಟಾ ಮೂಲಗಳು" : "Data sources"}
           </h2>
           <p className="text-xs text-[#586673] mt-1 leading-relaxed">
             {lang === "kn"
-              ? "ದಾರಿ ಕೃತಕ ಬುದ್ಧಿಮತ್ತೆಗೆ ಸ್ಥಳಗಳ ಹೆಸರುಗಳು ಅಥವಾ ಶುಲ್ಕಗಳನ್ನು ಊಹಿಸಲು ಅವಕಾಶ ನೀಡುವುದಿಲ್ಲ. ನಮ್ಮ ಡೇಟಾಸೆಟ್ ಈ ಕೆಳಗಿನ ಅಧಿಕೃತ ಸರ್ಕಾರಿ ಮತ್ತು ಮುಕ್ತ ಮೂಲಗಳಿಂದ ದೃಢೀಕರಿಸಲ್ಪಟ್ಟಿದೆ:"
-              : "Dari does not allow AI to hallucinate or invent places or fees. All 39 destinations and route metadata are grounded in verified government and open authoritative sources:"}
+              ? `AI ${allPlaces.length} ಆಯ್ದ ಸ್ಥಳಗಳಿಂದ ಮಾತ್ರ ಆರಿಸಬಹುದು; ಅದು ಸ್ಥಳದ ಹೆಸರು ಅಥವಾ ಶುಲ್ಕವನ್ನು ತಾನೇ ಬರೆಯುವುದಿಲ್ಲ. ಪ್ರತಿ ಸ್ಥಳವು ತನ್ನ ಮಾಹಿತಿಯ ಮೂಲ ಜಾಲತಾಣವನ್ನು ದಾಖಲಿಸುತ್ತದೆ. ${verifiedCount} ಸ್ಥಳಗಳನ್ನು ಮೂಲದೊಂದಿಗೆ ಪರಿಶೀಲಿಸಲಾಗಿದೆ; ಉಳಿದವುಗಳ ಪರಿಶೀಲನೆ ಬಾಕಿ ಇದೆ.`
+              : `The AI can only choose from ${allPlaces.length} curated places; it never writes a place name or fee itself. Each place records the website its details come from. ${verifiedCount} of them have been checked against that source; the rest are still awaiting that check.`}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <div className="p-3.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2]">
-            <div className="font-bold text-[#8E1F2F]">Karnataka Tourism (KSTDC)</div>
-            <div className="text-[#586673] mt-1">Official tourism circuits, regional zoning, and visiting hour guidelines.</div>
-            <a href="https://karnatakatourism.org" target="_blank" rel="noopener noreferrer" className="text-[#8E1F2F] hover:underline font-semibold mt-2 inline-block">karnatakatourism.org ↗</a>
-          </div>
+        <ul className="divide-y divide-[#F1F3F0] text-xs">
+          {sourceCounts.map(([url, count]) => (
+            <li key={url} className="py-2.5 flex items-center justify-between gap-3">
+              <div>
+                <div className="font-bold text-[#14202B]">{SOURCE_NAMES[url] ?? url}</div>
+                <a href={url} target="_blank" rel="noopener noreferrer" className="text-[#8E1F2F] hover:underline font-semibold">
+                  {url.replace("https://", "")} ↗
+                </a>
+              </div>
+              <span className="shrink-0 px-2.5 py-1 rounded-md bg-[#F1F3F0] text-[#14202B] font-medium border border-[#DCE1DD]">
+                {count} {lang === "kn" ? "ಸ್ಥಳಗಳು" : count === 1 ? "place" : "places"}
+              </span>
+            </li>
+          ))}
+        </ul>
 
-          <div className="p-3.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2]">
-            <div className="font-bold text-[#8E1F2F]">Archaeological Survey of India (ASI)</div>
-            <div className="text-[#586673] mt-1">UNESCO World Heritage ticket tariffs and monument regulations for Hampi, Pattadakal, and Hoysala monuments.</div>
-            <a href="https://asi.nic.in" target="_blank" rel="noopener noreferrer" className="text-[#8E1F2F] hover:underline font-semibold mt-2 inline-block">asi.nic.in ↗</a>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2]">
-            <div className="font-bold text-[#8E1F2F]">Mysore Palace Board & Temple Trusts</div>
-            <div className="text-[#586673] mt-1">Verified palace entry fees and temple sanctum darshan hours.</div>
-            <a href="https://mysorepalace.karnataka.gov.in" target="_blank" rel="noopener noreferrer" className="text-[#8E1F2F] hover:underline font-semibold mt-2 inline-block">mysorepalace.karnataka.gov.in ↗</a>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2]">
-            <div className="font-bold text-[#8E1F2F]">OpenStreetMap (OSM) & IMD Weather</div>
-            <div className="text-[#586673] mt-1">Geocoded GPS coordinates and regional seasonal climate data.</div>
-            <a href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer" className="text-[#8E1F2F] hover:underline font-semibold mt-2 inline-block">openstreetmap.org ↗</a>
-          </div>
+        <div className="text-xs text-[#586673] leading-relaxed">
+          {lang === "kn"
+            ? "ನಕ್ಷೆ: © OpenStreetMap ಕೊಡುಗೆದಾರರು. ದೂರ ಮತ್ತು ಸಮಯವನ್ನು ಕೋಡ್ ಲೆಕ್ಕಹಾಕುತ್ತದೆ (ನೇರ ದೂರ × 1.3, ಗಂಟೆಗೆ 40 ಕಿ.ಮೀ). ವಾಸ್ತವ್ಯ, ಊಟ ಮತ್ತು ಪ್ರಯಾಣ ದರಗಳು RTA ದರ ಅಧಿಸೂಚನೆಗಳು, KSRTC ದರ ಪಟ್ಟಿಗಳು ಮತ್ತು KSTDC ಹೋಟೆಲ್ ದರಗಳನ್ನು ಆಧರಿಸಿದ ಯೋಜನಾ ಅಂದಾಜುಗಳು."
+            : "Map tiles: © OpenStreetMap contributors. Distances and times are calculated in code (straight-line distance × 1.3, at 40 km/h). Stay, food and transport rates are planning estimates calibrated against RTA fare notifications, KSRTC fare charts and KSTDC hotel rates."}
         </div>
       </div>
 
       <div className="p-4 rounded-xl bg-[#F7F9F6] border border-[#DCE1DD] text-xs text-[#586673] leading-relaxed">
-        <strong>{lang === "kn" ? "ಮುಕ್ತ ಮೂಲ ಮತ್ತು ಡೇಟಾಸೆಟ್ ಪ್ರಾಮಾಣಿಕತೆಯ ಟಿಪ್ಪಣಿ:" : "Open Source & Dataset Honesty Note:"}</strong>{" "}
+        <strong>{lang === "kn" ? "ಸೂಚನೆ:" : "Note:"}</strong>{" "}
         {lang === "kn"
-          ? "ಎಲ್ಲಾ ನಕ್ಷೆಯ ನಿರ್ದೇಶಾಂಕಗಳು, ಪ್ರವೇಶ ಶುಲ್ಕಗಳು ಮತ್ತು ಮಾರ್ಗಸೂಚಿಗಳು ನಮ್ಮ ಕ್ಯುರೇಟೆಡ್ ಡೇಟಾಸೆಟ್‌ನಿಂದ ಪಡೆದ ಅಂದಾಜುಗಳಾಗಿವೆ. ದರಗಳು ಮತ್ತು ಭೇಟಿಯ ಸಮಯಗಳು ಬದಲಾಗಬಹುದು, ಆದ್ದರಿಂದ ಅಂತಿಮ ಬುಕಿಂಗ್ ಮಾಡುವ ಮುನ್ನ ದಯವಿಟ್ಟು ಪರಿಶೀಲಿಸಿ."
-          : "All coordinate points, entry fees, and route guidelines represent estimates from our curated dataset. Prices and visiting hours may fluctuate, so travelers are encouraged to verify before final booking."}
+          ? "ಪ್ರವೇಶ ಶುಲ್ಕ, ಭೇಟಿಯ ಸಮಯ ಮತ್ತು ನಿರ್ದೇಶಾಂಕಗಳು ಆಯ್ದ ಡೇಟಾಸೆಟ್‌ನಿಂದ ಬಂದಿವೆ ಮತ್ತು ಬದಲಾಗಬಹುದು; ಪ್ರಯಾಣದ ಮೊದಲು ದಯವಿಟ್ಟು ಪರಿಶೀಲಿಸಿ."
+          : "Entry fees, opening hours and coordinates come from the curated dataset and can change, so confirm them before you travel."}
       </div>
     </div>
   );
