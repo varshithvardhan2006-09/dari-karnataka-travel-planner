@@ -34,20 +34,22 @@ Submitted to the **Kannada Digital Innovation Hackathon 2026**, Travel & Tourism
 
 ## Screenshots
 
+Captured from the live app on 29 October 2026.
+
 | Landing page | Planner form |
 |:---:|:---:|
 | ![Landing page](assets/screenshots/01-landing.png) | ![Planner form](assets/screenshots/02-planner-form.png) |
-| *Hero, quick-start bar and region explorer map* | *Interests, days, group size, budget, pace, month and transport* |
+| *Hero, quick-start bar and feature highlights* | *Quick-start trips, interests with place counts, group, budget and pace, beside a map of matching places* |
 
 | Generating a plan | Itinerary and map |
 |:---:|:---:|
 | ![Generating](assets/screenshots/03-generating.png) | ![Itinerary and map](assets/screenshots/04-itinerary-map.png) |
-| *Progress steps with the real candidate shortlist* | *Day plan, numbered route map and cost breakdown* |
+| *Five progress steps, with the real shortlist on the map and a Kannada word to learn while you wait* | *Trip summary (days, stops, km, cost range, weather), day tabs, stop cards with edit controls, and the route map* |
 
 | Kannada mode | Mobile |
 |:---:|:---:|
 | ![Kannada mode](assets/screenshots/05-kannada-mode.png) | ![Mobile view](assets/screenshots/07-mobile.png) |
-| *Full Kannada interface and the "Show to local" driver card* | *Bottom navigation: Plan, Map, Phrases, Saved* |
+| *Interface, place names and descriptions in Kannada* | *Plan and map views with the Plan, Map, Phrases, Saved bar, and the "Show to local" driver card* |
 
 ## Features
 
