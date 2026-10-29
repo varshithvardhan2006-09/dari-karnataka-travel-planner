@@ -205,18 +205,24 @@ A trip of *N* days is charged for *N* − 1 nights, so a day trip has no stay co
 
 ## Tech stack
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 16 (App Router, Turbopack), React 19 |
-| Language | TypeScript 5 (strict) |
-| Styling | Tailwind CSS v4 |
-| Validation | Zod 4 — API requests, AI output and shared links |
-| Maps | Leaflet with OpenStreetMap tiles |
-| AI | Groq (`llama-3.3-70b-versatile`), Google Gemini (`gemini-1.5-flash`) |
-| Speech | Server-side Google Translate speech proxy, Web Speech API fallback |
-| Sharing | LZ-String URL compression, iCalendar (`.ics`) export |
-| Testing | Vitest — 18 suites, 128 tests, fully offline |
-| CI/CD | GitHub Actions (lint, test, build) and Vercel |
+| Layer | Technology | Why it is used | Where it is used |
+|---|---|---|---|
+| Framework | Next.js 16.4 (App Router, Turbopack), React 19.3 | Pages and API routes in one project, so the AI keys stay on the server; deploys to Vercel with no extra setup | `src/app/` (pages), `src/app/api/` (`plan`, `translate`, `tts`) |
+| Language | TypeScript 5 (strict) | Catches mistakes in plan, place and cost shapes at build time | Whole codebase |
+| Styling | Tailwind CSS v4 | Fast, consistent responsive styling for desktop, mobile and print | `src/app/globals.css` and component class names |
+| Fonts | `next/font` — Bricolage Grotesque, Hanken Grotesk, Noto Sans Kannada | Self-hosted fonts load without layout shift; Noto Sans Kannada renders Kannada script correctly | `src/app/layout.tsx` |
+| Validation | Zod 4 | Rejects bad requests, malformed AI output and tampered share links before they are used | `src/lib/schema.ts`, `src/lib/planner.ts`, the API routes |
+| Maps | Leaflet 1.9 + React Leaflet 5, OpenStreetMap tiles | Free, keyless interactive maps with numbered route markers | `src/components/TripMap.tsx`, `PlannerMap.tsx`, `RegionMap.tsx` |
+| AI planning | Groq (`llama-3.3-70b-versatile`), Google Gemini (`gemini-1.5-flash`) | Orders the shortlisted places and writes short notes; Groq is fast, Gemini is the backup | `src/lib/ai.ts` |
+| Offline planner | Rule-based nearest-neighbour planner | Produces a valid plan when no AI key is set or both providers fail | `src/lib/planner.ts`, `src/lib/candidates.ts` |
+| Translation | Offline phrase list, Groq, Gemini, Google Translate public endpoint | Quick translator for the traveller's own text, with a fallback at every step | `src/app/api/translate/route.ts` |
+| Speech | Google Translate speech endpoint (server proxy), Web Speech API | Plays Kannada phrase audio; the proxy avoids browser CORS blocks, and the browser voice is the fallback | `src/app/api/tts/route.ts`, `src/lib/speech.ts` |
+| Sharing and export | LZ-String, iCalendar (`.ics`), browser print | Fits a whole trip into one link with no database; adds the trip to a calendar; saves it as a PDF | `src/app/trip/page.tsx` |
+| Abuse protection | In-memory per-IP rate limiter | Stops one client from exhausting the AI quota | `src/lib/rate-limit.ts`, the API routes |
+| Social preview | `next/og` | Generates the link-preview image shown when the site is shared | `src/app/opengraph-image.tsx` |
+| Testing | Vitest 5 — 18 suites, 128 tests | Checks scoring, validation, costs, geo maths and API routes, with every external service stubbed so tests run offline | `tests/` |
+| Linting | ESLint 9 with `eslint-config-next` | Enforces React and Next.js best practices | `npm run lint`, CI |
+| CI/CD | GitHub Actions, Vercel | Every push runs lint, tests and a production build; Vercel deploys `main` automatically | `.github/workflows/ci.yml` |
 
 ## Run locally
 
