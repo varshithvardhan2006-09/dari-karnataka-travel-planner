@@ -18,6 +18,7 @@
 <p align="center">
   <a href="https://dari-karnataka-travel-planner.vercel.app"><strong>Explore Live Deployment ↗</strong></a> •
   <a href="https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner"><strong>GitHub Repository</strong></a> •
+  <a href="docs/Dari-Presentation.pdf"><strong>Hackathon Presentation</strong></a> •
   <a href="https://dari-karnataka-travel-planner.vercel.app/credits"><strong>Photo Credits & Licensing</strong></a>
 </p>
 
@@ -36,6 +37,7 @@ Most generic AI planners (such as raw ChatGPT or Gemini prompts) suffer from sev
 ## 📑 Table of Contents
 
 - [🧭 Overview](#-overview)
+- [📊 Hackathon Presentation](#-hackathon-presentation)
 - [📸 Application Preview & Interface](#-application-preview--interface)
 - [🌟 Key Highlights & Engineering Features](#-key-highlights--engineering-features)
   - [1. Constrained Place-ID Architecture (Zero Hallucination)](#1-constrained-place-id-architecture-zero-hallucination)
@@ -62,6 +64,18 @@ Most generic AI planners (such as raw ChatGPT or Gemini prompts) suffer from sev
 - [🔒 Security & Data Integrity](#-security--data-integrity)
 - [🚀 Roadmap & Future Enhancements](#-roadmap--future-enhancements)
 - [👨‍💻 Author & Project Credits](#-author--project-credits)
+
+---
+
+## 📊 Hackathon Presentation
+
+Dari was submitted to the **Kannada Digital Innovation Hackathon 2026** in the **Travel & Tourism** track.
+
+| Format | File |
+|---|---|
+| PDF (opens in the browser) | [`docs/Dari-Presentation.pdf`](docs/Dari-Presentation.pdf) |
+
+The eight slides follow the submission guidelines: Participant Info · Problem Statement · Existing System · How the Solution Is Different · Approach · Tech Stack · Architecture Diagram · Conclusion (including the business model and future scope).
 
 ---
 
