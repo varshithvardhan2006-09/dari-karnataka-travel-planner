@@ -282,13 +282,25 @@ Over-limit requests get `429` with a `Retry-After` header; invalid input gets `4
 - Shared trip links are validated against the plan schema before anything is shown, and map pop-up text is HTML-escaped.
 - Nothing personal is stored on a server; saved trips stay in your browser.
 
-## Roadmap
+## Future enhancements
 
-- Live KSRTC bus and rail timings for inter-city legs
-- Offline progressive web app with cached map tiles
-- Monsoon and temple-crowd signals feeding the route
-- Hands-free voice changes for travellers on the road
-- Shared rate limiting across server instances (Redis / Vercel KV)
+Each item below fixes a limit of the current version.
+
+| Area | Enhancement | Today |
+|---|---|---|
+| **Data** | Check the remaining 22 places against their sources and record page-level source links | 17 of 39 places are marked checked; sources are recorded per website |
+| | Grow the dataset beyond 39 places, starting with Udupi–Karwar coast, Malnad and Kalyana-Karnataka | 39 places, so some regions have only a few options |
+| | Add licensed photos through `scripts/fetch-images.mjs`, credited on the Credits page | Places use original SVG illustrations only |
+| **Routing** | Real road distances and times from a routing service such as OSRM | Straight-line distance × 1.3 at a flat 40 km/h |
+| | Live KSRTC bus and Indian Railways timings for inter-city legs | Bus and train cost is estimated per km; no timetables |
+| | Opening days and seasonal closures (for example, monsoon trek bans) checked during planning | Only best months are considered |
+| **Travel on the ground** | Offline progressive web app with cached map tiles and saved trips | Needs a connection for maps and AI planning |
+| | Monsoon and temple-crowd signals that shift the order of stops | Order uses interests, month, budget and distance only |
+| | Hands-free voice commands to change the plan while travelling | Edits are touch only |
+| | More Kannada phrases, grouped by situation (transport, food, temples, emergencies) | 15 phrases |
+| **Platform** | Shared rate limiting across server instances (Redis or Vercel KV) | Each server instance keeps its own in-memory count |
+| | Optional accounts to sync saved trips across devices | The last 10 trips are saved in one browser only |
+| | Booking links for stays, cabs and tickets, the first step of the business model | Plans link to Google Maps only |
 
 ## Author
 
