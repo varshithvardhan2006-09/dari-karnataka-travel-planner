@@ -1,7 +1,7 @@
 # Dari (ದಾರಿ) — AI Travel Planner for Karnataka
 
 <p align="center">
-  <strong>Personalised day-by-day Karnataka itineraries built only from verified places, with a route map, an itemised budget and Kannada phrases for every stop.</strong>
+  <strong>Personalised day-by-day Karnataka itineraries built only from curated places, with a route map, an itemised budget and Kannada phrases for every stop.</strong>
 </p>
 
 <p align="center">
@@ -23,7 +23,7 @@
 
 Generic AI chat planners invent monuments, guess ticket prices, pair sights hours apart on the same morning and stop working when the model is rate-limited. Dari avoids this by design:
 
-- The AI may only choose from a **curated list of 39 verified places**. It never writes a place name, fee or coordinate itself.
+- The AI may only choose from a **curated list of 39 places**, each with a recorded source. It never writes a place name, fee or coordinate itself.
 - Distances, timings and costs are **computed by code**, not generated.
 - When no AI provider is available, a **rule-based planner** produces the plan instead, so the app works even with no API keys configured.
 - Kannada names and phrases come from a **pre-written dataset**; nothing is machine-translated at runtime.
@@ -104,7 +104,88 @@ Stay + food + transport + entry fees always add up to the total exactly:
 | **Coast** | Gokarna Mahabaleshwar Temple, Om Beach, Udupi Sri Krishna Matha, Malpe Beach & St. Mary's Island, Murudeshwar, Jog Falls |
 | **Coorg and Chikkamagaluru** | Abbey Falls, Raja's Seat, Dubare Elephant Camp, Mullayanagiri, Coffee estate walk |
 
-Each place records its source. The main ones are [Karnataka Tourism](https://karnatakatourism.org), the [Archaeological Survey of India](https://asi.nic.in), the Hampi, Coorg and Chikkamagaluru district portals, the [Mysore Palace Board](https://mysorepalace.karnataka.gov.in) and the [Karnataka Forest Department](https://aranya.gov.in).
+## Data sources
+
+### Places
+
+Every place in [`data/places.json`](data/places.json) records the source its details come from (`source_url`). That covers its description, Kannada name, visit duration, entry fee, best months and tips. Sources are recorded at website level, not individual pages.
+
+| Source | Places |
+|---|---|
+| [Karnataka Tourism](https://karnatakatourism.org) — Department of Tourism, Government of Karnataka | 21 |
+| [Archaeological Survey of India](https://asi.nic.in) | 8 |
+| [Hampi official portal](https://hampi.nic.in) | 2 |
+| [Kodagu (Coorg) district portal](https://coorg.nic.in) | 2 |
+| [Chikkamagaluru district portal](https://chikkamagaluru.nic.in) | 2 |
+| [Mysore Palace Board](https://mysorepalace.karnataka.gov.in) | 1 |
+| [Mysuru Zoo](https://mysorezoo.info) — Sri Chamarajendra Zoological Gardens | 1 |
+| [Karnataka Forest Department](https://aranya.gov.in) | 1 |
+| [Vidyarthi Bhavan](https://vidyarthibhavan.in) — the restaurant's own site | 1 |
+
+Each entry also has a `verified` flag. **17 of the 39 places** are marked as checked against their source; the other 22 record a source but are still awaiting that check. Entry fees and opening hours change, so confirm them before visiting.
+
+<details>
+<summary><strong>Source for each of the 39 places</strong></summary>
+
+| Area | Place | Source | Checked |
+|---|---|---|:---:|
+| Bengaluru | Lalbagh Botanical Garden | Karnataka Tourism | |
+| Bengaluru | Bangalore Palace | Karnataka Tourism | |
+| Bengaluru | VV Puram Food Street (Thindi Beedi) | Karnataka Tourism | ✓ |
+| Bengaluru | Vidyarthi Bhavan, Gandhi Bazaar | Vidyarthi Bhavan | ✓ |
+| Mysuru | Mysore Palace | Mysore Palace Board | |
+| Mysuru | Chamundi Hill | Karnataka Tourism | ✓ |
+| Mysuru | Devaraja Market | Karnataka Tourism | ✓ |
+| Mysuru | Mysore Zoo | Mysuru Zoo | |
+| Mysuru | Brindavan Gardens | Karnataka Tourism | |
+| Mysuru | Mylari (lunch stop) | Karnataka Tourism | ✓ |
+| Mysuru | Sri Ranganathaswamy Temple, Srirangapatna | Karnataka Tourism | ✓ |
+| Mysuru | Tipu Sultan's Summer Palace (Dariya Daulat) | Archaeological Survey of India | |
+| Mysuru | Chennakeshava Temple, Somanathapura | Archaeological Survey of India | |
+| Mysuru | Bandipur National Park safari | Karnataka Forest Department | |
+| Hassan | Belur Chennakeshava Temple | Karnataka Tourism | ✓ |
+| Hassan | Halebidu Hoysaleswara Temple | Karnataka Tourism | ✓ |
+| Hassan | Shravanabelagola Gommateshwara | Karnataka Tourism | ✓ |
+| Hampi | Virupaksha Temple | Hampi official portal | |
+| Hampi | Vittala Temple & Stone Chariot | Archaeological Survey of India | |
+| Hampi | Hemakuta Hill sunset | Hampi official portal | ✓ |
+| Hampi | Lotus Mahal & Elephant Stables | Archaeological Survey of India | |
+| Badami | Badami Cave Temples | Archaeological Survey of India | |
+| Badami | Pattadakal Monument Group | Archaeological Survey of India | |
+| Badami | Aihole Durga Temple Complex | Archaeological Survey of India | |
+| North Karnataka | Gol Gumbaz, Vijayapura | Archaeological Survey of India | |
+| North Karnataka | Bidar Fort | Karnataka Tourism | ✓ |
+| North Karnataka | Kalaburagi Fort & Jami Masjid | Karnataka Tourism | ✓ |
+| North Karnataka | Dharwad Peda tasting (Line Bazaar) | Karnataka Tourism | ✓ |
+| Coast | Gokarna Mahabaleshwar Temple | Karnataka Tourism | ✓ |
+| Coast | Om Beach, Gokarna | Karnataka Tourism | ✓ |
+| Coast | Udupi Sri Krishna Temple & Matha | Karnataka Tourism | ✓ |
+| Coast | Malpe Beach & St. Mary's Island | Karnataka Tourism | |
+| Coast | Murudeshwar Shiva Statue & Beach | Karnataka Tourism | |
+| Coast | Jog Falls | Karnataka Tourism | |
+| Coorg | Abbey Falls, Madikeri | Kodagu district portal | |
+| Coorg | Raja's Seat, Madikeri | Kodagu district portal | |
+| Coorg | Dubare Elephant Camp | Karnataka Tourism | |
+| Chikkamagaluru | Mullayanagiri Peak | Chikkamagaluru district portal | ✓ |
+| Chikkamagaluru | Coffee estate walk & tasting | Chikkamagaluru district portal | |
+
+</details>
+
+### Everything else
+
+| Data | Where it comes from |
+|---|---|
+| Kannada phrases (15) | Pre-written in [`data/phrases.json`](data/phrases.json); no external source is recorded |
+| Map tiles | [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, credited on every map |
+| Directions | Links out to [Google Maps](https://maps.google.com) using each place's coordinates |
+| Phrase audio | Google Translate's speech endpoint through a server-side proxy; the browser's Web Speech API is the fallback |
+| Free-text translation | Groq or Google Gemini, then Google Translate's public endpoint, then a built-in offline phrase list |
+| Itinerary order and notes | Groq or Google Gemini; the rule-based planner when no AI provider is available |
+| Distances and travel times | Calculated in [`src/lib/geo.ts`](src/lib/geo.ts) (straight-line distance × 1.3, at 40 km/h); no routing service is used |
+| Stay, food and transport rates | Planning estimates set in [`src/lib/cost.ts`](src/lib/cost.ts), not taken from a published source |
+| Monthly weather on the trip page | Typical averages written in [`src/app/trip/page.tsx`](src/app/trip/page.tsx); no source is recorded |
+| Starting-city locations | Approximate coordinates in [`src/lib/candidates.ts`](src/lib/candidates.ts) |
+| Illustrations | Original inline SVG drawings in [`src/components/illustrations`](src/components/illustrations) |
 
 ## Tech stack
 
