@@ -757,7 +757,7 @@ export default function PlannerForm() {
                 : `${totalMatchingPlacesCount} ${totalMatchingPlacesCount === 1 ? "place matches" : "places match"}`}
             </span>
             <span className="text-[11px] text-[#586673] font-medium">
-              {lang === "kn" ? "ನೈಜ ನಕ್ಷೆ" : "Real-time Map"}
+              {lang === "kn" ? "ಹೊಂದುವ ಸ್ಥಳಗಳ ನಕ್ಷೆ" : "Matching places"}
             </span>
           </div>
           <PlannerMap selectedCategories={interests} height="h-[320px]" />

@@ -24,7 +24,7 @@
     },
     "features": {
       "real_places_title": "Curated places",
-      "real_places_desc": "The AI can only pick from our checked list, never invent.",
+      "real_places_desc": "The AI can only pick from our curated list, never invent.",
       "kannada_title": "Kannada built in",
       "kannada_desc": "Names, phrases and audio, written by people.",
       "route_costs_title": "Honest estimates",
