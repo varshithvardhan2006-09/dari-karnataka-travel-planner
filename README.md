@@ -187,6 +187,22 @@ Each entry also has a `verified` flag. **17 of the 39 places** are marked as che
 | Starting-city locations | Approximate coordinates in [`src/lib/candidates.ts`](src/lib/candidates.ts) |
 | Illustrations | Original inline SVG drawings in [`src/components/illustrations`](src/components/illustrations) |
 
+### How costs are estimated
+
+Entry fees come from each place's `entry_inr` in `data/places.json`. Every other rate in [`src/lib/cost.ts`](src/lib/cost.ts) is a planning figure meant to match typical prices in Karnataka. None is copied from a published tariff.
+
+| Item | Rate used | What it is meant to cover |
+|---|---|---|
+| Stay, per person per night | Budget ₹1,000 · Mid ₹2,200 · Premium ₹4,200 | Hostel or basic room · 3-star hotel or homestay · heritage or resort stay |
+| Food, per person per day | Budget ₹600 · Mid ₹1,200 · Premium ₹2,000 | Darshini and Udupi meals · sit-down restaurants · resort and fine dining |
+| Cab | ₹20/km + ₹150/day | Hired car with a daily driver allowance |
+| Auto | ₹16/km + ₹150/day | Used instead of a cab for one traveller going under 40 km |
+| Own car | ₹13/km + ₹100/day | Fuel, wear, tolls and parking |
+| Bus or train | ₹4/km per person + ₹100/day | KSRTC or rail fare plus local autos |
+| Entry tickets | Sum of `entry_inr` × travellers | The listed fee at each stop |
+
+A trip of *N* days is charged for *N* − 1 nights, so a day trip has no stay cost. The total is always exactly stay + food + transport + entry.
+
 ## Tech stack
 
 | Layer | Technology |
