@@ -72,8 +72,8 @@ function buildSteps(
       key: "ai_writing",
       titleEn: "AI is writing the day plans",
       titleKn: "AI ದಿನದ ಪ್ರವಾಸ ಯೋಜನೆಯನ್ನು ರಚಿಸುತ್ತಿದೆ",
-      subEn: "Provider: Groq / Gemini · verified places only",
-      subKn: "ಪರಿಶೀಲಿಸಿದ ನೈಜ ಸ್ಥಳಗಳೊಂದಿಗೆ ರಚನೆ",
+      subEn: "Provider: Groq / Gemini · curated places only",
+      subKn: "ಆಯ್ದ ಸ್ಥಳಗಳಿಂದ ಮಾತ್ರ ರಚನೆ",
     },
     {
       key: "checking_geo",
@@ -86,8 +86,8 @@ function buildSteps(
       key: "kannada_phrases",
       titleEn: "Adding Kannada names and phrases",
       titleKn: "ಕನ್ನಡ ಹೆಸರುಗಳು ಮತ್ತು ನುಡಿಗಟ್ಟುಗಳನ್ನು ಸೇರಿಸಲಾಗುತ್ತಿದೆ",
-      subEn: "From our curated verified phrase dataset",
-      subKn: "ನಮ್ಮ ಪರಿಶೀಲಿಸಿದ ನುಡಿಗಟ್ಟುಗಳ ಸಂಗ್ರಹದಿಂದ",
+      subEn: "From our pre-written phrase dataset",
+      subKn: "ನಮ್ಮ ಮೊದಲೇ ಬರೆದ ನುಡಿಗಟ್ಟುಗಳ ಸಂಗ್ರಹದಿಂದ",
     },
   ];
 }
@@ -276,7 +276,7 @@ export default function ProgressSteps({
               {lang === "kn" ? `${placeCount} ಸ್ಥಳಗಳನ್ನು ಜೋಡಿಸಲಾಗುತ್ತಿದೆ` : `Placing ${placeCount} stops`}
             </span>
             <span className="text-[11px] text-[#586673] font-medium">
-              Live Environment Map
+              {lang === "kn" ? "ಶಾರ್ಟ್‌ಲಿಸ್ಟ್ ನಕ್ಷೆ" : "Shortlist map"}
             </span>
           </div>
           <div className="w-full">
