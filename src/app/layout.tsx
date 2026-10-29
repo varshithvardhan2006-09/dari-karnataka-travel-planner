@@ -3,6 +3,7 @@ import { Bricolage_Grotesque, Hanken_Grotesk, Noto_Sans_Kannada } from "next/fon
 import "./globals.css";
 import { LangProvider } from "@/lib/i18n/useLang";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -73,6 +74,7 @@ export default function RootLayout({
         <LangProvider>
           <Navbar />
           <main className="flex-1 flex flex-col">{children}</main>
+          <Footer />
         </LangProvider>
       </body>
     </html>

@@ -12,7 +12,7 @@
 
 <p align="center">
   <a href="https://dari-karnataka-travel-planner.vercel.app"><strong>Open the live app ↗</strong></a> •
-  <a href="docs/Dari-Presentation.pdf"><strong>Hackathon presentation (PDF)</strong></a>
+  <a href="docs/Dari-Presentation.pdf"><strong>Presentation (PDF)</strong></a>
 </p>
 
 ---
@@ -28,7 +28,7 @@ Generic AI chat planners invent monuments, guess ticket prices, pair sights hour
 - When no AI provider is available, a **rule-based planner** produces the plan instead, so the app works even with no API keys configured.
 - Kannada place names and the 15 travel phrases come from a **pre-written dataset**. Only the optional quick translator for your own text uses machine translation.
 
-## Hackathon presentation
+## Presentation
 
 Submitted to the **Kannada Digital Innovation Hackathon 2026**, Travel & Tourism track. The deck is at [`docs/Dari-Presentation.pdf`](docs/Dari-Presentation.pdf) and covers the problem, the existing tools, how Dari differs, the approach, the tech stack, the architecture, and the business model and future scope.
 
@@ -281,6 +281,10 @@ Over-limit requests get `429` with a `Retry-After` header; invalid input gets `4
 - Every API route is rate-limited per IP and has a request size limit, so the speech proxy and translator can't be abused as open relays.
 - Shared trip links are validated against the plan schema before anything is shown, and map pop-up text is HTML-escaped.
 - Nothing personal is stored on a server; saved trips stay in your browser.
+
+## Privacy
+
+Dari has no accounts, cookies, analytics or database. Saved trips, saved phrases and the language choice stay in the browser. The trip brief goes to Groq or Gemini to order the plan, and nothing is kept after the response. The in-app [Privacy page](https://dari-karnataka-travel-planner.vercel.app/privacy) ([`src/app/privacy/page.tsx`](src/app/privacy/page.tsx)) lists every service that receives data.
 
 ## Future enhancements
 
