@@ -12,7 +12,8 @@
 
 <p align="center">
   <a href="https://dari-karnataka-travel-planner.vercel.app"><strong>Open the live app ↗</strong></a> •
-  <a href="docs/Dari-Presentation.pdf"><strong>Presentation (PDF)</strong></a>
+  <a href="docs/Dari-Presentation.pdf"><strong>Presentation (PDF)</strong></a> •
+  <a href="docs/Dari-Explanation-Video.mp4"><strong>Explanation video</strong></a>
 </p>
 
 ---
@@ -31,6 +32,8 @@ Generic AI chat planners invent monuments, guess ticket prices, pair sights hour
 ## Presentation
 
 Submitted to the **Kannada Digital Innovation Hackathon 2026**, Travel & Tourism track. The deck is at [`docs/Dari-Presentation.pdf`](docs/Dari-Presentation.pdf) and covers the problem, the existing tools, how Dari differs, the approach, the tech stack, the architecture, and the business model and future scope.
+
+The 4½-minute explanation video, [`docs/Dari-Explanation-Video.mp4`](docs/Dari-Explanation-Video.mp4), walks through the problem, existing tools, a live demo, the tech stack and the conclusion. It was recorded from the live app with a computer-generated voice-over.
 
 ## Screenshots
 
