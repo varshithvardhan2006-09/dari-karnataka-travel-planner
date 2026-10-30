@@ -6,16 +6,16 @@
 
 <p>
   <a href="https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner/actions/workflows/ci.yml"><img src="https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI" height="20" /></a>
-  <a href="https://dari-karnataka-travel-planner.vercel.app"><img src="https://img.shields.io/badge/Vercel-live-000000?logo=vercel&amp;logoColor=white" alt="Live on Vercel" height="20" /></a>
-  <img src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&amp;logoColor=white" alt="Next.js 16" height="20" />
-  <img src="https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&amp;logoColor=white" alt="TypeScript strict" height="20" />
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-D4A017" alt="MIT License" height="20" /></a>
+  <a href="https://dari-karnataka-travel-planner.vercel.app"><img src="assets/badges/vercel.svg" alt="Live on Vercel" height="20" /></a>
+  <img src="assets/badges/nextjs.svg" alt="Next.js 16" height="20" />
+  <img src="assets/badges/typescript.svg" alt="TypeScript strict" height="20" />
+  <a href="LICENSE"><img src="assets/badges/license.svg" alt="MIT License" height="20" /></a>
 </p>
 
 <p>
-  <a href="https://dari-karnataka-travel-planner.vercel.app"><img src="https://img.shields.io/badge/Live_app-Open_%E2%86%97-1E8A5A?style=for-the-badge" alt="Open the live app" /></a>&nbsp;&nbsp;
-  <a href="docs/Dari-Presentation.pdf"><img src="https://img.shields.io/badge/Presentation-PDF-9F1431?style=for-the-badge" alt="Presentation (PDF)" /></a>&nbsp;&nbsp;
-  <a href="docs/Dari-Explanation-Video.mp4"><img src="https://img.shields.io/badge/Explanation_video-MP4-2F6FD6?style=for-the-badge" alt="Explanation video" /></a>
+  <a href="https://dari-karnataka-travel-planner.vercel.app"><img src="assets/badges/live-app.svg" alt="Open the live app" /></a>&nbsp;&nbsp;
+  <a href="docs/Dari-Presentation.pdf"><img src="assets/badges/presentation.svg" alt="Presentation (PDF)" /></a>&nbsp;&nbsp;
+  <a href="docs/Dari-Explanation-Video.mp4"><img src="assets/badges/video.svg" alt="Explanation video" /></a>
 </p>
 
 </div>
