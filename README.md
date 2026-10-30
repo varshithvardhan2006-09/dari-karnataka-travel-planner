@@ -1,20 +1,24 @@
-# Dari (ದಾರಿ) — AI Travel Planner for Karnataka
+<div align="center">
 
-<p align="center">
-  <strong>Personalised day-by-day Karnataka itineraries built only from curated places, with a route map, an itemised budget and Kannada phrases for every stop.</strong>
+<h1>Dari (ದಾರಿ) — AI Travel Planner for Karnataka</h1>
+
+<p><strong>Personalised day-by-day Karnataka itineraries built only from curated places,<br />with a route map, an itemised budget and Kannada phrases for every stop.</strong></p>
+
+<p>
+  <a href="https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner/actions/workflows/ci.yml"><img src="https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI" height="20" /></a>
+  <a href="https://dari-karnataka-travel-planner.vercel.app"><img src="https://img.shields.io/badge/Vercel-live-000000?logo=vercel&amp;logoColor=white" alt="Live on Vercel" height="20" /></a>
+  <img src="https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&amp;logoColor=white" alt="Next.js 16" height="20" />
+  <img src="https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&amp;logoColor=white" alt="TypeScript strict" height="20" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-D4A017" alt="MIT License" height="20" /></a>
 </p>
 
-<p align="center">
-  <a href="https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/varshithvardhan2006-09/dari-karnataka-travel-planner/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=CI" alt="CI status" /></a>
-  <a href="https://dari-karnataka-travel-planner.vercel.app"><img src="https://img.shields.io/badge/Deployment-Live-success?style=for-the-badge&logo=vercel" alt="Live on Vercel" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="MIT License" /></a>
+<p>
+  <a href="https://dari-karnataka-travel-planner.vercel.app"><img src="https://img.shields.io/badge/Live_app-Open_%E2%86%97-1E8A5A?style=for-the-badge" alt="Open the live app" /></a>&nbsp;&nbsp;
+  <a href="docs/Dari-Presentation.pdf"><img src="https://img.shields.io/badge/Presentation-PDF-9F1431?style=for-the-badge" alt="Presentation (PDF)" /></a>&nbsp;&nbsp;
+  <a href="docs/Dari-Explanation-Video.mp4"><img src="https://img.shields.io/badge/Explanation_video-MP4-2F6FD6?style=for-the-badge" alt="Explanation video" /></a>
 </p>
 
-<p align="center">
-  <a href="https://dari-karnataka-travel-planner.vercel.app"><strong>Open the live app ↗</strong></a> •
-  <a href="docs/Dari-Presentation.pdf"><strong>Presentation (PDF)</strong></a> •
-  <a href="docs/Dari-Explanation-Video.mp4"><strong>Explanation video</strong></a>
-</p>
+</div>
 
 ---
 
