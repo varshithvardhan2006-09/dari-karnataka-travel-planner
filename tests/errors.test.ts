@@ -163,13 +163,13 @@ describe("Stage 6: Error, Empty, and Fallback States", () => {
     expect(resEmpty.status).toBe(400);
   });
 
-  it("handles valid GET /api/tts streaming audio correctly with Accept-Ranges", async () => {
+  it("serves GET /api/tts audio without advertising unsupported byte ranges", async () => {
     stubTtsUpstream(true);
     const req = new NextRequest("http://localhost:3000/api/tts?text=Namaskara");
     const res = await GET_TTS(req);
     expect(res.status).toBe(200);
     expect(res.headers.get("Content-Type")).toBe("audio/mpeg");
-    expect(res.headers.get("Accept-Ranges")).toBe("bytes");
+    expect(res.headers.get("Accept-Ranges")).toBeNull();
     expect(res.headers.get("Cache-Control")).toContain("max-age=604800");
   });
 

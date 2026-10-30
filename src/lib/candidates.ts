@@ -75,7 +75,8 @@ export function getStartCityCoordinates(cityName: string): {
     (p) =>
       p.city.toLowerCase() === normalized ||
       p.region.toLowerCase() === normalized ||
-      p.name_en.toLowerCase().includes(normalized)
+      // Partial name matches need a few letters, so "a" does not resolve to a random place.
+      (normalized.length >= 3 && p.name_en.toLowerCase().includes(normalized))
   );
   if (matchingPlace) {
     return {

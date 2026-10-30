@@ -185,5 +185,12 @@ export function enrichPlan(
           "Respect dress guidelines at sacred temple sanctums (shoulders and knees covered).",
         ],
     source,
+    trip: {
+      start_city: request.start_city,
+      budget: request.budget,
+      travellers: request.travellers,
+      month: request.month,
+      transport_mode: request.transport_mode,
+    },
   };
 }

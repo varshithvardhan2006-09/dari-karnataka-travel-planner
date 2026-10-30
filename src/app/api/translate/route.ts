@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { DEFAULT_GEMINI_MODEL, DEFAULT_GROQ_MODEL } from "@/lib/ai";
 import phrasesData from "../../../../data/phrases.json";
 
 export const maxDuration = 15;
@@ -294,7 +295,7 @@ async function translateWithGroq(
   sourceLangName: string,
   targetLangName: string,
   apiKey: string,
-  model: string = "llama-3.3-70b-versatile"
+  model: string = DEFAULT_GROQ_MODEL
 ): Promise<{ translatedText: string; transliteration?: string }> {
   const systemPrompt = `You are an expert travel translator specializing in Indian languages (Kannada, Hindi, Telugu, Tamil, Malayalam) for tourists.
 Translate the user's text from ${sourceLangName} to ${targetLangName}.
@@ -346,7 +347,7 @@ async function translateWithGemini(
   sourceLangName: string,
   targetLangName: string,
   apiKey: string,
-  model: string = "gemini-1.5-flash"
+  model: string = DEFAULT_GEMINI_MODEL
 ): Promise<{ translatedText: string; transliteration?: string }> {
   const systemPrompt = `Translate the text from ${sourceLangName} to ${targetLangName} naturally for a traveler in Karnataka and South India.
 Provide BOTH the native script translation in ${targetLangName} AND an English phonetic pronunciation transliteration.
@@ -356,10 +357,10 @@ Output STRICT JSON:
   "transliteration": "..."
 }`;
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
   const res = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
     body: JSON.stringify({
       contents: [
         {
@@ -435,8 +436,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const contentLength = req.headers.get("content-length");
-    if (contentLength && parseInt(contentLength, 10) > MAX_BODY_BYTES) {
+    // Measure the body itself: a Content-Length header can be absent or wrong.
+    const rawBody = await req.text();
+    if (Buffer.byteLength(rawBody, "utf8") > MAX_BODY_BYTES) {
       return NextResponse.json(
         { error: "Payload exceeds 8KB limit." },
         { status: 413 }
@@ -445,7 +447,7 @@ export async function POST(req: NextRequest) {
 
     let body: TranslateRequestBody;
     try {
-      body = (await req.json()) as TranslateRequestBody;
+      body = JSON.parse(rawBody) as TranslateRequestBody;
     } catch {
       return NextResponse.json({ error: "Malformed JSON payload." }, { status: 400 });
     }
@@ -473,7 +475,8 @@ export async function POST(req: NextRequest) {
     const sLang = sourceLang.toLowerCase();
     const tLang = targetLang.toLowerCase();
 
-    if (!SUPPORTED_LANGUAGES[sLang] || !SUPPORTED_LANGUAGES[tLang]) {
+    // Own-property check, so keys like "constructor" are not mistaken for languages.
+    if (!Object.hasOwn(SUPPORTED_LANGUAGES, sLang) || !Object.hasOwn(SUPPORTED_LANGUAGES, tLang)) {
       return NextResponse.json(
         { error: `Unsupported language pair: ${sLang} to ${tLang}` },
         { status: 400 }
@@ -509,7 +512,7 @@ export async function POST(req: NextRequest) {
     // 1. Try Groq (ultra fast response)
     if (groqKey) {
       try {
-        const groqModel = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+        const groqModel = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
         const result = await translateWithGroq(text.trim(), sourceLangName, targetLangName, groqKey, groqModel);
         if (result.translatedText) {
           return NextResponse.json({
@@ -527,7 +530,7 @@ export async function POST(req: NextRequest) {
     // 2. Try Gemini
     if (geminiKey) {
       try {
-        const geminiModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+        const geminiModel = process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
         const result = await translateWithGemini(text.trim(), sourceLangName, targetLangName, geminiKey, geminiModel);
         if (result.translatedText) {
           return NextResponse.json({
@@ -554,18 +557,7 @@ export async function POST(req: NextRequest) {
         });
       }
     } catch {
-      // Continue to offline dictionary
-    }
-
-    // 4. Offline Travel Dictionary Fallback (ensures offline and CI test resilience)
-    const offlineResult = lookupOfflinePhrase(text.trim(), sLang, tLang);
-    if (offlineResult) {
-      return NextResponse.json({
-        ...offlineResult,
-        sourceLang: sLang,
-        targetLang: tLang,
-        provider: "offline-dictionary",
-      });
+      // All providers failed; the offline dictionary was already checked above.
     }
 
     return NextResponse.json(

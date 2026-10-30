@@ -3,17 +3,23 @@ import { getCandidates } from "./candidates";
 import { PACE_STOP_LIMITS, validateAIOutput, buildDeterministicPlan } from "./planner";
 import { enrichPlan } from "./enrich";
 
+// Defaults are models confirmed to be served by each provider; override with GROQ_MODEL / GEMINI_MODEL.
+export const DEFAULT_GROQ_MODEL = "openai/gpt-oss-120b";
+export const DEFAULT_GEMINI_MODEL = "gemini-flash-latest";
+
+const PROVIDER_CALL_MAX_MS = 20000;
+
 export const SYSTEM_PROMPT_TEMPLATE = `You are a Karnataka trip planner. You receive a trip brief and a list of CANDIDATE PLACES.
 Rules:
 1. Use ONLY place ids from the candidate list. Never invent places, ids, prices or distances.
 2. Produce exactly {days} days. Each day holds {min_stops} to {max_stops} stops.
-3. Put geographically close places on the same day. Use the lat/lng provided. Avoid days with more than 4 hours of driving in total.
+3. Put geographically close places on the same day. Use the coordinates provided. Avoid days with more than 4 hours of driving in total.
 4. Respect each stop's duration_min. Start between 08:30 and 10:00 and finish before 19:30. Include a meal stop around 12:30 to 14:00 when a meal place is available.
 5. Match the traveller's interests and pace. Prefer places whose best_months include the travel month.
 6. Write one short note per stop in plain English (max 18 words): why it fits and one practical tip.
 7. Output valid JSON only, strictly conforming to this exact structure:
 {
-  "title": "{days} Days Karnataka Discovery",
+  "title": "{days}-Day Karnataka Discovery",
   "summary": "Overview of the journey highlighting key sights and culinary stops.",
   "days": [
     {
@@ -35,22 +41,24 @@ Rules:
 }`;
 
 /**
- * Builds the candidate summary sent to the LLM (keeps token count lean).
+ * Builds the candidate table sent to the LLM: one line per place, so the prompt
+ * stays small enough for free-tier token-per-minute limits.
  */
 export function buildCandidatesPromptPayload(candidates: Place[]): string {
-  const compact = candidates.map((p) => ({
-    id: p.id,
-    name: p.name_en,
-    region: p.region,
-    city: p.city,
-    lat: p.lat,
-    lng: p.lng,
-    categories: p.categories,
-    duration_min: p.duration_min,
-    is_meal: p.is_meal || false,
-    best_months: p.best_months,
-  }));
-  return JSON.stringify(compact, null, 2);
+  const header = "id | name | city | lat,lng | categories | duration_min | meal | best_months";
+  const rows = candidates.map((p) =>
+    [
+      p.id,
+      p.name_en,
+      p.city,
+      `${p.lat.toFixed(3)},${p.lng.toFixed(3)}`,
+      p.categories.join("/"),
+      p.duration_min,
+      p.is_meal || "-",
+      p.best_months.join(" "),
+    ].join(" | ")
+  );
+  return [header, ...rows].join("\n");
 }
 
 /**
@@ -60,7 +68,7 @@ async function callGroqAPI(
   systemPrompt: string,
   userPrompt: string,
   apiKey: string,
-  model: string = "llama-3.3-70b-versatile",
+  model: string = DEFAULT_GROQ_MODEL,
   timeoutMs: number = 8000
 ): Promise<string> {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -78,12 +86,12 @@ async function callGroqAPI(
       temperature: 0.4,
       response_format: { type: "json_object" },
     }),
-    signal: AbortSignal.timeout(Math.min(timeoutMs, 10000)),
+    signal: AbortSignal.timeout(Math.min(timeoutMs, PROVIDER_CALL_MAX_MS)),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Groq API error (${response.status}): ${errorText}`);
+    throw new Error(`Groq API error (${response.status}): ${errorText.slice(0, 300)}`);
   }
 
   const json = await response.json();
@@ -97,14 +105,15 @@ async function callGeminiAPI(
   systemPrompt: string,
   userPrompt: string,
   apiKey: string,
-  model: string = "gemini-1.5-flash",
+  model: string = DEFAULT_GEMINI_MODEL,
   timeoutMs: number = 8000
 ): Promise<string> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
 
+  // The key travels in a header, not the URL, so it never appears in request logs.
   const response = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
     body: JSON.stringify({
       contents: [
         {
@@ -117,12 +126,12 @@ async function callGeminiAPI(
         temperature: 0.4,
       },
     }),
-    signal: AbortSignal.timeout(Math.min(timeoutMs, 10000)),
+    signal: AbortSignal.timeout(Math.min(timeoutMs, PROVIDER_CALL_MAX_MS)),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Gemini API error (${response.status}): ${errorText}`);
+    throw new Error(`Gemini API error (${response.status}): ${errorText.slice(0, 300)}`);
   }
 
   const json = await response.json();
@@ -159,7 +168,7 @@ function parseAndValidateModelOutput(
       title:
         typeof parsed.title === "string" && parsed.title.trim()
           ? parsed.title.trim()
-          : `${request.days} Days Karnataka Discovery`,
+          : `${request.days}-Day Karnataka Discovery`,
       summary:
         typeof parsed.summary === "string" && parsed.summary.trim()
           ? parsed.summary.trim()
@@ -240,9 +249,9 @@ export async function generateItinerary(request: PlanRequest): Promise<Plan> {
 
   const limits = PACE_STOP_LIMITS[request.pace] || PACE_STOP_LIMITS.balanced;
   const systemPrompt = SYSTEM_PROMPT_TEMPLATE
-    .replace("{days}", request.days.toString())
-    .replace("{min_stops}", limits.min.toString())
-    .replace("{max_stops}", limits.max.toString());
+    .replaceAll("{days}", request.days.toString())
+    .replaceAll("{min_stops}", limits.min.toString())
+    .replaceAll("{max_stops}", limits.max.toString());
 
   const userPrompt = `TRIP BRIEF:
 - Days: ${request.days}
@@ -257,10 +266,10 @@ CANDIDATE PLACES (Use ONLY these place IDs):
 ${buildCandidatesPromptPayload(candidates)}`;
 
   const groqKey = process.env.GROQ_API_KEY;
-  const groqModel = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+  const groqModel = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
 
   const geminiKey = process.env.GEMINI_API_KEY;
-  const geminiModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+  const geminiModel = process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
 
   const startTime = Date.now();
   const DEADLINE_MS = 24000; // 24 seconds total budget, safely within Vercel's 30s limit

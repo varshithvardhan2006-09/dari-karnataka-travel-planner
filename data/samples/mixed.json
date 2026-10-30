@@ -1171,5 +1171,11 @@
     "Dress respectfully when entering active sanctums and historic temples.",
     "Sample local Karnataka breakfast specialities including Tatte Idli and Benne Dosa."
   ],
-  "source": "sample"
+  "source": "sample",
+  "trip": {
+    "start_city": "Bengaluru",
+    "budget": "mid",
+    "travellers": "couple",
+    "month": 1
+  }
 }

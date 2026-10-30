@@ -32,6 +32,7 @@ import ShowToLocalModal from "@/components/ShowToLocalModal";
 import { PrintItinerary } from "@/components/PrintItinerary";
 import { buildDeterministicPlan } from "@/lib/planner";
 import { getSamplePlan, getCustomizedSamplePlan } from "@/lib/samples";
+import { rehydrateSharedPlan } from "@/lib/share";
 import { computeTravelLeg, addMinutesToTime, roundTimeTo5Min, getPinNumber } from "@/lib/geo";
 import { calculateTripCost } from "@/lib/cost";
 import { getStartCityCoordinates, getCandidates, countMatchingPlaces } from "@/lib/candidates";
@@ -212,6 +213,8 @@ function TripViewContent() {
 
   const rawMonth = monthParam ? parseInt(monthParam, 10) : 11;
   const currentMonth = !isNaN(rawMonth) && rawMonth >= 1 && rawMonth <= 12 ? rawMonth : 11;
+  // The travel month stored on the plan wins, so shared links keep their own month.
+  const tripMonth = plan?.trip?.month ?? currentMonth;
 
   useEffect(() => {
     let isCancelled = false;
@@ -268,17 +271,22 @@ function TripViewContent() {
             const rawParsed = JSON.parse(decompressed);
             // Strict runtime schema validation using PlanSchema
             const validation = PlanSchema.safeParse(rawParsed);
-            if (validation.success) {
+            // Places and phrases are rebuilt from the dataset, so a crafted link
+            // cannot show invented names, fees or source links.
+            const rehydrated = validation.success ? rehydrateSharedPlan(validation.data) : null;
+            if (rehydrated) {
               if (!isCancelled) {
-                setPlan(validation.data);
+                setPlan(rehydrated);
                 setSelectedDay(1);
                 setLoading(false);
               }
               return;
             }
-            // A shared link is untrusted input: anything that does not satisfy
-            // PlanSchema is rejected outright rather than rendered as-is.
-            console.warn("Shared plan failed PlanSchema validation:", validation.error.format());
+            // A shared link is untrusted input: anything that fails the schema or
+            // names an unknown place is rejected outright rather than rendered.
+            if (!validation.success) {
+              console.warn("Shared plan failed PlanSchema validation:", validation.error.format());
+            }
           }
         } catch (e) {
           console.warn("Failed to decompress shared plan:", e);
@@ -428,7 +436,7 @@ function TripViewContent() {
         id: tripId,
         title: plan.title,
         days: plan.days.length,
-        month: currentMonth,
+        month: tripMonth,
         costText: `Rs ${Math.round((plan.cost.total * 0.9) / 1000)}k to ${Math.round((plan.cost.total * 1.15) / 1000)}k`,
         firstCity,
         region,
@@ -445,7 +453,7 @@ function TripViewContent() {
     } catch {
       // ignore
     }
-  }, [plan, currentMonth]);
+  }, [plan, tripMonth]);
 
   // Recalculate plan travel legs, times, and costs after local edits
   const recomputePlanLocally = (updatedDays: Plan["days"]) => {
@@ -454,7 +462,10 @@ function TripViewContent() {
     let totalTripKm = 0;
     const allVisitedPlaces: Place[] = [];
 
-    const startCoords = getStartCityCoordinates(startCityParam || "Bengaluru");
+    // A plan opened from a shared link has no query parameters, so prefer the
+    // trip details stored on the plan itself.
+    const trip = plan.trip;
+    const startCoords = getStartCityCoordinates(trip?.start_city || startCityParam || "Bengaluru");
     let previousDayLastPlace: Place | null = null;
 
     const computedDays = updatedDays.map((d, dayIdx) => {
@@ -527,8 +538,8 @@ function TripViewContent() {
       totalTripKm += returnLeg.km;
     }
 
-    const travellersVal = (travellersParam as Travellers) || "couple";
-    const budgetVal = (budgetParam as BudgetFit) || "mid";
+    const travellersVal = trip?.travellers || (travellersParam as Travellers) || "couple";
+    const budgetVal = trip?.budget || (budgetParam as BudgetFit) || "mid";
 
     const newCost = calculateTripCost({
       days: plan.days.length,
@@ -537,7 +548,7 @@ function TripViewContent() {
       totalKm: totalTripKm,
       visitedPlaces: allVisitedPlaces,
       peopleCount: plan.cost.people,
-      transportPreference: (transportModeParam as TransportPreference) || undefined,
+      transportPreference: trip ? trip.transport_mode : (transportModeParam as TransportPreference) || undefined,
     });
 
     const newPlan: Plan = {
@@ -769,7 +780,7 @@ function TripViewContent() {
     const lowCostK = Math.round((plan.cost.total * 0.9) / 1000);
     const highCostK = Math.round((plan.cost.total * 1.15) / 1000);
 
-    const weather = KARNATAKA_WEATHER[currentMonth] || KARNATAKA_WEATHER[11];
+    const weather = KARNATAKA_WEATHER[tripMonth] || KARNATAKA_WEATHER[11];
 
     return {
       totalStops,
@@ -779,7 +790,7 @@ function TripViewContent() {
       costRangeText: lang === "kn" ? `₹${lowCostK}k - ${highCostK}k` : `Rs ${lowCostK}k to ${highCostK}k`,
       weather,
     };
-  }, [plan, currentMonth, lang, startCityParam]);
+  }, [plan, tripMonth, lang, startCityParam]);
 
   // Real shortlist for the loading screen, derived from the same candidate
   // scoring the planner uses, so the progress panel never shows invented data.
@@ -959,7 +970,7 @@ function TripViewContent() {
 
             <button
               type="button"
-              onClick={() => downloadIcsFile(plan, currentMonth)}
+              onClick={() => downloadIcsFile(plan, tripMonth)}
               title="Add to calendar .ics"
               aria-label="Download calendar file"
               className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"

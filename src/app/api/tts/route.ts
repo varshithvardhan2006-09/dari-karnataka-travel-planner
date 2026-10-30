@@ -88,12 +88,11 @@ export async function GET(req: NextRequest) {
       headers: {
         "Content-Type": "audio/mpeg",
         "Content-Length": audioBuffer.byteLength.toString(),
-        "Accept-Ranges": "bytes",
         "Cache-Control": "public, max-age=604800, s-maxage=604800, immutable",
       },
     });
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "TTS error";
-    return new NextResponse(msg, { status: 500 });
+  } catch {
+    // Internal error details are not sent to the client.
+    return new NextResponse("Speech service error", { status: 500 });
   }
 }

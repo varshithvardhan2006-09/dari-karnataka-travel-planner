@@ -325,7 +325,9 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
   }
 
   const rawOutput: AIModelOutput = {
-    title: `${request.days} Days ${request.interests.join(" & ")} Journey`,
+    title: `${request.days}-Day ${request.interests
+      .map((i) => i.charAt(0).toUpperCase() + i.slice(1))
+      .join(" & ")} Journey`,
     summary: `Curated ${request.pace} route covering ${request.start_city} and premier Karnataka cultural sights.`,
     days: rawDays,
     tips,

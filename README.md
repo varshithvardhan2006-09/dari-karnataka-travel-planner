@@ -64,7 +64,7 @@ Captured from the live app on 29 October 2026.
 The model receives only a scored shortlist of place IDs from [`data/places.json`](data/places.json) and must answer with those IDs, a start time and a short note. Its output is checked with Zod and business rules: no unknown or repeated places, under 4 hours of driving a day, and every day starting between 08:30 and 10:00 and ending by 19:30. A failed answer gets one retry with the exact errors; after that the next tier takes over.
 
 ### Four-tier generation that always answers
-Groq (`llama-3.3-70b-versatile` by default) → Google Gemini (`gemini-1.5-flash` by default; both can be changed with `GROQ_MODEL` and `GEMINI_MODEL`) → rule-based nearest-neighbour planner → curated sample. All tiers share a 24-second budget, and every tier's output is enriched the same way.
+Groq (`openai/gpt-oss-120b` by default) → Google Gemini (`gemini-flash-latest` by default; both can be changed with `GROQ_MODEL` and `GEMINI_MODEL`) → rule-based nearest-neighbour planner → curated sample. All tiers share a 24-second budget, and every tier's output is enriched the same way.
 
 ### Realistic routes and times
 Road distance is the straight-line (Haversine) distance × 1.3, driven at 40 km/h with a 10-minute buffer, rounded to 5 minutes. Each day includes the leg from the start city or the previous night's stop, and the trip includes the return leg. Around lunchtime the planner prefers a nearby food stop.
@@ -222,7 +222,7 @@ A trip of *N* days is charged for *N* − 1 nights, so a day trip has no stay co
 | Fonts | `next/font` — Bricolage Grotesque, Hanken Grotesk, Noto Sans Kannada | Self-hosted fonts load without layout shift; Noto Sans Kannada renders Kannada script correctly | `src/app/layout.tsx` |
 | Validation | Zod 4 | Rejects bad requests, malformed AI output and tampered share links before they are used | `src/lib/schema.ts`, `src/lib/planner.ts`, the API routes |
 | Maps | Leaflet 1.9 + React Leaflet 5, OpenStreetMap tiles | Free, keyless interactive maps with numbered route markers | `src/components/TripMap.tsx`, `PlannerMap.tsx`, `RegionMap.tsx` |
-| AI planning | Groq (`llama-3.3-70b-versatile`), Google Gemini (`gemini-1.5-flash`) | Orders the shortlisted places and writes short notes; Groq is fast, Gemini is the backup | `src/lib/ai.ts` |
+| AI planning | Groq (`openai/gpt-oss-120b`), Google Gemini (`gemini-flash-latest`); both configurable | Orders the shortlisted places and writes short notes; Groq is fast, Gemini is the backup | `src/lib/ai.ts` |
 | Offline planner | Rule-based nearest-neighbour planner | Produces a valid plan when no AI key is set or both providers fail | `src/lib/planner.ts`, `src/lib/candidates.ts` |
 | Translation | Offline phrase list, Groq, Gemini, Google Translate public endpoint | Quick translator for the traveller's own text, with a fallback at every step | `src/app/api/translate/route.ts` |
 | Speech | Google Translate speech endpoint (server proxy), Web Speech API | Plays Kannada phrase audio; the proxy avoids browser CORS blocks, and the browser voice is the fallback | `src/app/api/tts/route.ts`, `src/lib/speech.ts` |

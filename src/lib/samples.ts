@@ -95,6 +95,13 @@ export function getCustomizedSamplePlan(request: PlanRequest): { plan: Plan; key
     customized.title = `${request.days}-Day ${customized.title}`;
   }
   customized.source = "sample";
+  customized.trip = {
+    start_city: request.start_city,
+    budget: request.budget,
+    travellers: request.travellers,
+    month: request.month,
+    transport_mode: request.transport_mode,
+  };
 
   return { plan: customized, key };
 }
@@ -103,5 +110,6 @@ export function getCustomizedSamplePlan(request: PlanRequest): { plan: Plan; key
  * Returns a specific sample plan by key.
  */
 export function getSamplePlan(key: string): Plan {
-  return SAMPLE_PLANS[key] || SAMPLE_PLANS.mixed;
+  // Own-property check: keys such as "constructor" must not resolve to Object internals.
+  return Object.hasOwn(SAMPLE_PLANS, key) ? SAMPLE_PLANS[key] : SAMPLE_PLANS.mixed;
 }

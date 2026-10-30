@@ -55,9 +55,13 @@ export default function CreditsPage() {
 
       <div className="bg-white rounded-2xl border border-[#DCE1DD] shadow-xs overflow-hidden">
         <div className="p-4 bg-[#F7F9F6] border-b border-[#DCE1DD] text-xs font-bold text-[#14202B] uppercase tracking-wider">
-          {lang === "kn"
-            ? `ವಿಕಿಮೀಡಿಯಾ ಕಾಮನ್ಸ್ ಗುಣಲಕ್ಷಣ ಪಟ್ಟಿ (${placesWithImages.length} ಸ್ಥಳಗಳು)`
-            : `Wikimedia Commons Attribution List (${placesWithImages.length} Places)`}
+          {placesWithImages.length === 0
+            ? lang === "kn"
+              ? "ಛಾಯಾಚಿತ್ರ ಕೃಪೆ"
+              : "Photo credits"
+            : lang === "kn"
+              ? `ವಿಕಿಮೀಡಿಯಾ ಕಾಮನ್ಸ್ ಗುಣಲಕ್ಷಣ ಪಟ್ಟಿ (${placesWithImages.length} ಸ್ಥಳಗಳು)`
+              : `Wikimedia Commons attribution (${placesWithImages.length} ${placesWithImages.length === 1 ? "place" : "places"})`}
         </div>
 
         {placesWithImages.length === 0 ? (
