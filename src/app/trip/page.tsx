@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense, useMemo } from "react";
+import React, { useState, useEffect, Suspense, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -33,6 +33,7 @@ import { PrintItinerary } from "@/components/PrintItinerary";
 import { buildDeterministicPlan } from "@/lib/planner";
 import { getSamplePlan, getCustomizedSamplePlan } from "@/lib/samples";
 import { rehydrateSharedPlan } from "@/lib/share";
+import { exportItineraryPdf } from "@/lib/pdf-export";
 import { computeTravelLeg, addMinutesToTime, roundTimeTo5Min, getPinNumber } from "@/lib/geo";
 import { calculateTripCost } from "@/lib/cost";
 import { getStartCityCoordinates, getCandidates, countMatchingPlaces } from "@/lib/candidates";
@@ -175,6 +176,10 @@ function TripViewContent() {
   const [savedTrips, setSavedTrips] = useState<SavedTripRecord[]>([]);
   // Stops whose start time the user pinned: a recompute keeps these exact times.
   const [lockedStopIds, setLockedStopIds] = useState<Set<string>>(new Set());
+  // While true, an on-screen copy of the printable itinerary is mounted for PDF capture.
+  const [exportingPdf, setExportingPdf] = useState<boolean>(false);
+  const pdfRootRef = useRef<HTMLDivElement>(null);
+  const pdfBusyRef = useRef<boolean>(false);
 
   useEffect(() => {
     try {
@@ -421,6 +426,31 @@ function TripViewContent() {
     lang,
     refreshKey,
   ]);
+
+  // Build and download the PDF once the off-screen itinerary has rendered.
+  // If the file cannot be built, fall back to the browser's print dialog.
+  useEffect(() => {
+    // The ref guard stops a second export starting if the plan changes mid-export.
+    if (!exportingPdf || !plan || pdfBusyRef.current) return;
+    pdfBusyRef.current = true;
+    const run = async () => {
+      // Wait for fonts so Kannada text is drawn with the right typeface.
+      await document.fonts?.ready;
+      const root = pdfRootRef.current?.querySelector<HTMLElement>("aside");
+      try {
+        if (!root) throw new Error("Printable itinerary not rendered");
+        const slug = plan.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "itinerary";
+        await exportItineraryPdf(root, `dari-${slug}.pdf`);
+      } catch (err) {
+        console.warn("PDF export failed, opening print dialog instead:", err);
+        window.print();
+      } finally {
+        pdfBusyRef.current = false;
+        setExportingPdf(false);
+      }
+    };
+    run();
+  }, [exportingPdf, plan]);
 
   // Auto-save trips to localStorage (U7 My Trips)
   useEffect(() => {
@@ -985,11 +1015,14 @@ function TripViewContent() {
 
             <button
               type="button"
-              onClick={() => window.print()}
-              title="PDF Print View"
-              className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-bold bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 transition-all cursor-pointer shadow-2xs active:scale-95"
+              onClick={() => setExportingPdf(true)}
+              disabled={exportingPdf}
+              title="Download PDF"
+              aria-label="Download itinerary as PDF"
+              aria-busy={exportingPdf}
+              className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-bold bg-white border border-[#DCE1DD] text-[#14202B] hover:bg-gray-50 transition-all cursor-pointer shadow-2xs active:scale-95 disabled:opacity-60 disabled:cursor-wait"
             >
-              PDF
+              {exportingPdf ? (lang === "kn" ? "ಸಿದ್ಧವಾಗುತ್ತಿದೆ…" : "Saving…") : "PDF"}
             </button>
 
             <button
@@ -1620,7 +1653,23 @@ function TripViewContent() {
       </div>
       </div>
 
-      {/* Dedicated Print & PDF Export Document (Visible ONLY during print/PDF export) */}
+      {/* Off-screen copy used only while building the downloadable PDF */}
+      {exportingPdf && (
+        <div ref={pdfRootRef} className="fixed top-0 -left-[10000px] pointer-events-none" aria-hidden="true">
+          <PrintItinerary
+            plan={plan}
+            tripStats={tripStats}
+            budgetParam={budgetParam}
+            travellersParam={travellersParam}
+            paceParam={paceParam}
+            interestsParam={interestsParam}
+            lang={lang}
+            mode="export"
+          />
+        </div>
+      )}
+
+      {/* Dedicated Print Document (visible only in the browser's print view) */}
       <PrintItinerary
         plan={plan}
         tripStats={tripStats}

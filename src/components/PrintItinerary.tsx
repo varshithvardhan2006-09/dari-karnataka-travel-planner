@@ -23,6 +23,8 @@ interface PrintItineraryProps {
   paceParam?: string | null;
   interestsParam?: string | null;
   lang?: "en" | "kn";
+  /** "print" shows only in the browser's print view; "export" renders on screen for PDF capture. */
+  mode?: "print" | "export";
 }
 
 export function PrintItinerary({
@@ -33,6 +35,7 @@ export function PrintItinerary({
   paceParam = "relaxed",
   interestsParam,
   lang = "en",
+  mode = "print",
 }: PrintItineraryProps) {
   const currentDate = new Date().toLocaleDateString("en-IN", {
     day: "numeric",
@@ -43,10 +46,14 @@ export function PrintItinerary({
   return (
     <aside
       aria-label="Printable Itinerary Document"
-      className="hidden print:block w-full max-w-none text-[#14202B] bg-white font-sans text-xs leading-normal"
+      aria-hidden={mode === "export" ? true : undefined}
+      className={`${
+        mode === "export" ? "block w-[794px] p-6" : "hidden print:block w-full max-w-none"
+      } text-[#14202B] bg-white font-sans text-xs leading-normal`}
     >
+      {/* Elements marked data-pdf-block are kept whole on one page in the downloaded PDF. */}
       {/* 1. Branded Header */}
-      <div className="border-b-2 border-[#8E1F2F] pb-3 mb-4">
+      <div data-pdf-block className="border-b-2 border-[#8E1F2F] pb-3 mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-[#8E1F2F] text-white font-bold flex items-center justify-center text-sm font-kannada">
@@ -57,7 +64,7 @@ export function PrintItinerary({
                 {lang === "kn" ? "ದಾರಿ · ಕರ್ನಾಟಕ ಪ್ರವಾಸ ಕಾರ್ಯಕ್ರಮ" : "Dari (ದಾರಿ) · Karnataka Travel Itinerary"}
               </h1>
               <p className="text-[10px] text-[#586673]">
-                AI-curated travel plan for Karnataka, India · dari-karnataka.vercel.app
+                AI-curated travel plan for Karnataka, India · dari-karnataka-travel-planner.vercel.app
               </p>
             </div>
           </div>
@@ -135,7 +142,7 @@ export function PrintItinerary({
               className={`space-y-2.5 ${dIdx > 0 ? "pt-2" : ""}`}
             >
               {/* Day Header Banner */}
-              <div className="print-avoid-break bg-[#14202B] text-white px-3 py-1.5 rounded flex items-center justify-between">
+              <div data-pdf-block className="print-avoid-break bg-[#14202B] text-white px-3 py-1.5 rounded flex items-center justify-between">
                 <div className="font-bold text-xs">
                   DAY {day.day}: {day.theme || firstCity}
                 </div>
@@ -157,6 +164,7 @@ export function PrintItinerary({
                   return (
                     <div
                       key={`${day.day}-${stop.place_id}`}
+                      data-pdf-block
                       className="print-avoid-break border border-gray-300 rounded-lg p-2.5 bg-white space-y-1.5"
                     >
                       {/* Stop Top Line: Stop #, Time, Name, Kannada Name, Category, City */}
@@ -250,7 +258,7 @@ export function PrintItinerary({
       </div>
 
       {/* 3. Cost Breakdown & Budget Summary */}
-      <div className="print-avoid-break mt-5 pt-3 border-t-2 border-gray-300">
+      <div data-pdf-block className="print-avoid-break mt-5 pt-3 border-t-2 border-gray-300">
         <h3 className="font-bold text-xs text-[#14202B] uppercase tracking-wide mb-2">
           Estimated Trip Cost Breakdown ({plan.cost.people} People)
         </h3>
@@ -266,7 +274,9 @@ export function PrintItinerary({
             <tr className="border-b border-gray-200">
               <td className="p-1.5 border-r border-gray-300 font-medium">🏨 Accommodation</td>
               <td className="p-1.5 border-r border-gray-300 text-gray-600">
-                {plan.days.length} nights for {plan.cost.people} travellers ({budgetParam || "mid"} tier)
+                {plan.days.length > 1
+                  ? `${plan.days.length - 1} ${plan.days.length === 2 ? "night" : "nights"} for ${plan.cost.people} travellers (${budgetParam || "mid"} tier)`
+                  : "Day trip, no overnight stay"}
               </td>
               <td className="p-1.5 text-right font-semibold">₹{(plan.cost.stay || 0).toLocaleString("en-IN")}</td>
             </tr>
@@ -303,11 +313,11 @@ export function PrintItinerary({
       </div>
 
       {/* 4. Emergency Contacts & Local Assistance */}
-      <div className="print-avoid-break mt-4 p-2.5 rounded border border-gray-300 bg-gray-50 text-[10px] space-y-1">
+      <div data-pdf-block className="print-avoid-break mt-4 p-2.5 rounded border border-gray-300 bg-gray-50 text-[10px] space-y-1">
         <div className="font-bold text-xs text-[#14202B]">
-          Karnataka Tourist Helplines & Emergency Numbers
+          Emergency Numbers (all India)
         </div>
-        <div className="grid grid-cols-3 gap-2 pt-1 text-gray-700">
+        <div className="grid grid-cols-4 gap-2 pt-1 text-gray-700">
           <div>
             <strong>Police / Emergency:</strong> 112
           </div>
@@ -315,13 +325,7 @@ export function PrintItinerary({
             <strong>Ambulance:</strong> 108
           </div>
           <div>
-            <strong>Karnataka Tourism:</strong> 1361 / +91 80 2235 2828
-          </div>
-          <div>
             <strong>Women Helpline:</strong> 1091 / 181
-          </div>
-          <div>
-            <strong>KSRTC Bus Enquiry:</strong> 080-49596666
           </div>
           <div>
             <strong>Railway Helpline:</strong> 139
@@ -330,7 +334,7 @@ export function PrintItinerary({
       </div>
 
       {/* 5. Essential Kannada Phrase Guide */}
-      <div className="print-avoid-break mt-3 p-2.5 rounded border border-gray-300 bg-white text-[10px] space-y-1">
+      <div data-pdf-block className="print-avoid-break mt-3 p-2.5 rounded border border-gray-300 bg-white text-[10px] space-y-1">
         <div className="font-bold text-xs text-[#8E1F2F]">
           Quick Kannada Cheat Sheet
         </div>
@@ -345,7 +349,7 @@ export function PrintItinerary({
       </div>
 
       {/* 6. Footer */}
-      <div className="print-avoid-break mt-4 pt-2 border-t border-gray-200 text-center text-[9px] text-gray-400">
+      <div data-pdf-block className="print-avoid-break mt-4 pt-2 border-t border-gray-200 text-center text-[9px] text-gray-400">
         Plan generated by Dari (ದಾರಿ) Karnataka AI Travel Planner · Have a memorable and safe journey through Karnataka!
       </div>
     </aside>
