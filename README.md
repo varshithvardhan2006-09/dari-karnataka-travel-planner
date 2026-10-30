@@ -84,7 +84,7 @@ Stay + food + transport + entry fees always add up to the total exactly:
 ### Edit, share and save, with no account
 - Swap, remove or add stops, change each leg's travel mode, and lock a stop's start time
 - Share a whole trip as one link (the plan is compressed into the URL; nothing is stored on a server)
-- Export the trip to your calendar as an `.ics` file, or print it as a PDF
+- Export the trip to your calendar as an `.ics` file, or download it as an A4 PDF (works on phones too)
 - The last 10 trips are saved in your browser
 
 ## Architecture
@@ -226,7 +226,8 @@ A trip of *N* days is charged for *N* − 1 nights, so a day trip has no stay co
 | Offline planner | Rule-based nearest-neighbour planner | Produces a valid plan when no AI key is set or both providers fail | `src/lib/planner.ts`, `src/lib/candidates.ts` |
 | Translation | Offline phrase list, Groq, Gemini, Google Translate public endpoint | Quick translator for the traveller's own text, with a fallback at every step | `src/app/api/translate/route.ts` |
 | Speech | Google Translate speech endpoint (server proxy), Web Speech API | Plays Kannada phrase audio; the proxy avoids browser CORS blocks, and the browser voice is the fallback | `src/app/api/tts/route.ts`, `src/lib/speech.ts` |
-| Sharing and export | LZ-String, iCalendar (`.ics`), browser print | Fits a whole trip into one link with no database; adds the trip to a calendar; saves it as a PDF | `src/app/trip/page.tsx` |
+| Sharing and export | LZ-String, iCalendar (`.ics`) | Fits a whole trip into one link with no database; adds the trip to a calendar | `src/app/trip/page.tsx` |
+| PDF download | jsPDF, html-to-image | Builds a real A4 PDF file in the browser, since many phone browsers ignore the print command; loaded only when the PDF button is tapped | `src/lib/pdf-export.ts`, `src/components/PrintItinerary.tsx` |
 | Abuse protection | In-memory per-IP rate limiter | Stops one client from exhausting the AI quota | `src/lib/rate-limit.ts`, the API routes |
 | Social preview | `next/og` | Generates the link-preview image shown when the site is shared | `src/app/opengraph-image.tsx` |
 | Testing | Vitest 5 — 18 suites, 128 tests | Checks scoring, validation, costs, geo maths and API routes, with every external service stubbed so tests run offline | `tests/` |

@@ -11,6 +11,8 @@
     "generate:samples": "node scripts/generate-samples.mjs"
   },
   "dependencies": {
+    "html-to-image": "1.11.13",
+    "jspdf": "4.2.1",
     "leaflet": "^1.9.4",
     "lz-string": "^1.5.0",
     "next": "16.4.2",
