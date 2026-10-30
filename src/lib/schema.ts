@@ -189,6 +189,17 @@ export const CostSummarySchema = z.object({
 });
 export type CostSummary = z.infer<typeof CostSummarySchema>;
 
+// The request a plan was built from, kept with the plan so edits made after
+// opening a shared link recompute costs and legs for the right trip.
+export const PlanTripSchema = z.object({
+  start_city: StartCitySchema,
+  budget: BudgetFitEnum,
+  travellers: TravellersEnum,
+  month: z.number().int().min(1).max(12),
+  transport_mode: TransportPreferenceEnum.optional(),
+});
+export type PlanTrip = z.infer<typeof PlanTripSchema>;
+
 export const PlanSchema = z.object({
   title: z.string(),
   summary: z.string(),
@@ -196,5 +207,6 @@ export const PlanSchema = z.object({
   cost: CostSummarySchema,
   tips: z.array(z.string()),
   source: z.enum(["ai-groq", "ai-gemini", "planner", "sample"]),
+  trip: PlanTripSchema.optional(),
 });
 export type Plan = z.infer<typeof PlanSchema>;

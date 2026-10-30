@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { buildDeterministicPlan, validateAIOutput } from "../src/lib/planner";
+import { buildDeterministicPlan } from "../src/lib/planner";
 import { getCandidates, getStartCityCoordinates } from "../src/lib/candidates";
-import { calculateTripCost, TIER_DAILY_RATES } from "../src/lib/cost";
+import { calculateTripCost } from "../src/lib/cost";
 import { PlanRequest, BudgetFit, Pace, Travellers, Category, Place } from "../src/lib/schema";
 import placesData from "../data/places.json";
 

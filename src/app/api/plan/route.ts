@@ -10,6 +10,8 @@ export const maxDuration = 30; // Route max duration set to 30 seconds per spec
 
 const allPlaces = placesData as Place[];
 
+const MAX_BODY_BYTES = 32 * 1024;
+
 const RATE_LIMIT = {
   name: "plan",
   limit: 12,
@@ -52,9 +54,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Request size guard (max 32KB payload)
+    // Fast reject when the client declares an oversized body.
     const contentLength = req.headers.get("content-length");
-    if (contentLength && parseInt(contentLength, 10) > 32 * 1024) {
+    if (contentLength && parseInt(contentLength, 10) > MAX_BODY_BYTES) {
       return NextResponse.json(
         { error: "invalid_input", details: "Payload exceeds 32KB limit" },
         { status: 413 }
@@ -71,9 +73,18 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Validate JSON body with Zod
+    // Measure the body itself too: Content-Length can be absent (chunked) or wrong.
+    const rawBody = await req.text();
+    if (Buffer.byteLength(rawBody, "utf8") > MAX_BODY_BYTES) {
+      return NextResponse.json(
+        { error: "invalid_input", details: "Payload exceeds 32KB limit" },
+        { status: 413 }
+      );
+    }
+
     let body: unknown;
     try {
-      body = await req.json();
+      body = JSON.parse(rawBody);
     } catch {
       return NextResponse.json(
         { error: "invalid_input", details: "Malformed JSON payload" },
