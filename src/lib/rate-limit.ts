@@ -12,12 +12,12 @@ const MAX_TRACKED_IPS = 5000;
 
 const buckets = new Map<string, Map<string, number[]>>();
 
-export interface RateLimitResult {
+interface RateLimitResult {
   allowed: boolean;
   retryAfterS: number;
 }
 
-export interface RateLimitOptions {
+interface RateLimitOptions {
   /** Logical bucket name, so each route keeps an independent window. */
   name: string;
   /** Maximum requests permitted inside the window. */

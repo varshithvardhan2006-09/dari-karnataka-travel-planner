@@ -349,6 +349,6 @@ ${buildCandidatesPromptPayload(candidates)}`;
     }
   }
 
-  // Provider cascade: 3) Deterministic Planner (zero-failure guarantee)
+  // Provider cascade: 3) Deterministic planner, which needs no AI provider
   return buildDeterministicPlan(request);
 }

@@ -2,7 +2,7 @@ import placesData from "../../data/places.json";
 import { Place, PlanRequest, Category } from "./schema";
 import { exactHaversineKm } from "./geo";
 
-export const START_CITY_COORDINATES: Record<string, { lat: number; lng: number }> = {
+const START_CITY_COORDINATES: Record<string, { lat: number; lng: number }> = {
   Bengaluru: { lat: 12.9716, lng: 77.5946 },
   Mysuru: { lat: 12.2958, lng: 76.6394 },
   Mangaluru: { lat: 12.9141, lng: 74.8560 },

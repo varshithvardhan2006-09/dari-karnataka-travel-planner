@@ -452,7 +452,7 @@ function TripViewContent() {
     run();
   }, [exportingPdf, plan]);
 
-  // Auto-save trips to localStorage (U7 My Trips)
+  // Auto-save trips to localStorage
   useEffect(() => {
     if (!plan || typeof window === "undefined") return;
     try {
@@ -954,7 +954,7 @@ function TripViewContent() {
     <div className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 flex flex-col gap-5 sm:gap-6 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] lg:pb-8 min-w-0 overflow-x-hidden print:p-0 print:m-0 print:max-w-none">
       {/* Interactive On-Screen UI (Hidden on Print / PDF export) */}
       <div className="print:hidden flex flex-col gap-5 sm:gap-6 w-full min-w-0 max-w-full">
-        {/* Top Header matching mockup 04 */}
+        {/* Top Header */}
         <div className="flex flex-col gap-3.5 sm:gap-4 w-full min-w-0 max-w-full">
         {/* Tag pills and Action buttons */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 w-full min-w-0">
@@ -1063,7 +1063,7 @@ function TripViewContent() {
           </p>
         </div>
 
-        {/* 5 Stat Cards Row matching mockup 04 */}
+        {/* 5 Stat Cards Row */}
         {tripStats && (
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 pt-1 w-full min-w-0 max-w-full">
             {/* Stat 1: Days */}
@@ -1171,7 +1171,7 @@ function TripViewContent() {
           </div>
         )}
 
-        {/* Day Cards Row Acting as Tabs matching mockup 04 */}
+        {/* Day Cards Row Acting as Tabs */}
         <div className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto scrollbar-none py-1 w-full max-w-full min-w-0 touch-pan-x">
           {plan.days.map((day) => {
             const isSelected = day.day === selectedDay;
@@ -1248,7 +1248,7 @@ function TripViewContent() {
             })}
           </div>
 
-          {/* "+ Add a stop to Day X" suggestion row matching mockup 04 */}
+          {/* "+ Add a stop to Day X" suggestion row */}
           {suggestedPlaces.length > 0 && (
             <div className="p-3.5 rounded-2xl bg-[#F7F9F6] border border-[#E2E7E2] text-xs text-[#586673] flex flex-wrap items-center gap-2">
               <span className="font-semibold text-[#14202B]">
@@ -1516,7 +1516,7 @@ function TripViewContent() {
           </div>
         )}
 
-        {/* 4. Mobile Saved Tab (mockup 06 & 08) */}
+        {/* 4. Mobile Saved Tab */}
         {activeMobileTab === "saved" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -1680,7 +1680,7 @@ function TripViewContent() {
         lang={lang}
       />
 
-      {/* Stop Detail Drawer (U5) */}
+      {/* Stop Detail Drawer */}
       <StopDetailDrawer
         stop={drawerStop}
         isOpen={isDrawerOpen}
@@ -1702,7 +1702,7 @@ function TripViewContent() {
         }}
       />
 
-      {/* Show To Local Full-Screen View (U6) */}
+      {/* Show To Local Full-Screen View */}
       <ShowToLocalModal
         place={showToLocalPlace || currentActiveStop?.place || activeDayStops[0]?.place || null}
         isOpen={isShowToLocalOpen}

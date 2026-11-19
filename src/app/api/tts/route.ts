@@ -38,9 +38,8 @@ async function fetchUpstreamAudio(url: string): Promise<ArrayBuffer | null> {
 }
 
 /**
- * Server-side audio proxy for authentic native speech.
- * Bypasses client-side browser Referer blocks and CORS restrictions,
- * delivering crystal-clear native audio across all devices.
+ * Server-side proxy for phrase audio. Browsers block calling the upstream
+ * speech endpoint directly (Referer and CORS rules), so the server fetches it.
  */
 export async function GET(req: NextRequest) {
   try {

@@ -221,7 +221,7 @@ A trip of *N* days is charged for *N* − 1 nights, so a day trip has no stay co
 | Styling | Tailwind CSS v4 | Fast, consistent responsive styling for desktop, mobile and print | `src/app/globals.css` and component class names |
 | Fonts | `next/font` — Bricolage Grotesque, Hanken Grotesk, Noto Sans Kannada | Self-hosted fonts load without layout shift; Noto Sans Kannada renders Kannada script correctly | `src/app/layout.tsx` |
 | Validation | Zod 4 | Rejects bad requests, malformed AI output and tampered share links before they are used | `src/lib/schema.ts`, `src/lib/planner.ts`, the API routes |
-| Maps | Leaflet 1.9 + React Leaflet 5, OpenStreetMap tiles | Free, keyless interactive maps with numbered route markers | `src/components/TripMap.tsx`, `PlannerMap.tsx`, `RegionMap.tsx` |
+| Maps | Leaflet 1.9, OpenStreetMap tiles | Free, keyless interactive maps with numbered route markers | `src/components/TripMap.tsx`, `PlannerMap.tsx`, `RegionMap.tsx` |
 | AI planning | Groq (`openai/gpt-oss-120b`), Google Gemini (`gemini-flash-latest`); both configurable | Orders the shortlisted places and writes short notes; Groq is fast, Gemini is the backup | `src/lib/ai.ts` |
 | Offline planner | Rule-based nearest-neighbour planner | Produces a valid plan when no AI key is set or both providers fail | `src/lib/planner.ts`, `src/lib/candidates.ts` |
 | Translation | Offline phrase list, Groq, Gemini, Google Translate public endpoint | Quick translator for the traveller's own text, with a fallback at every step | `src/app/api/translate/route.ts` |

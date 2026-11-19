@@ -82,12 +82,12 @@ h1, h2, h3, h4, h5, h6 {
 .border-brand-red { border-color: var(--red); }
 .border-brand-gold { border-color: var(--gold); }
 
-/* Kannada matra line-height preservation (U6) */
+/* Kannada matra line-height preservation */
 [lang="kn"], .font-kannada {
   line-height: 1.55 !important;
 }
 
-/* Print styling for PDF export (U4) */
+/* Print styling for PDF export */
 @media print {
   @page {
     margin: 12mm 15mm 15mm 15mm;

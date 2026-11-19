@@ -4,7 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { useLang } from "@/lib/i18n/useLang";
 
-export interface ErrorStateProps {
+interface ErrorStateProps {
   type: "busy" | "few_matches" | "fallback_sample" | "invalid_link";
   matchCount?: number;
   days?: number;

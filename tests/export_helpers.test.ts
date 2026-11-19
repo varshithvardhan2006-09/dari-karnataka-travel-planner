@@ -5,7 +5,7 @@ import { PlanRequest, Place } from "../src/lib/schema";
 import { calculateTripCost } from "../src/lib/cost";
 import placesData from "../data/places.json";
 
-describe("U4 Helpers & Guarantees", () => {
+describe("Export helpers and guarantees", () => {
   it("rounds stop start times cleanly to the nearest 5 minutes", () => {
     expect(roundTimeTo5Min("09:00")).toBe("09:00");
     expect(roundTimeTo5Min("09:02")).toBe("09:00");

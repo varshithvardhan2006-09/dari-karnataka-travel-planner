@@ -340,7 +340,7 @@ export default function PlannerForm() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* 1. What do you enjoy? (Interest Tiles matching mockup 02) */}
+          {/* 1. What do you enjoy? (Interest Tiles) */}
           <div>
             <div className="flex items-baseline justify-between mb-1">
               <span
@@ -624,7 +624,7 @@ export default function PlannerForm() {
             </div>
           </div>
 
-          {/* 5. Optional Filters (mockup 02 Part 2) */}
+          {/* 5. Optional Filters */}
           <div className="pt-4 border-t border-[#F1F3F0] space-y-4">
             <h4 className="font-heading font-bold text-sm text-[#14202B]">
               {lang === "kn" ? "ಹೆಚ್ಚುವರಿ ಆದ್ಯತೆಗಳು" : "Optional preferences"}
@@ -847,7 +847,7 @@ export default function PlannerForm() {
         </div>
       </div>
 
-      {/* MOBILE STICKY BOTTOM BAR (mockup 02) */}
+      {/* MOBILE STICKY BOTTOM BAR */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md p-3.5 border-t border-[#DCE1DD] shadow-lg flex items-center justify-between gap-3">
         <div>
           <div className="font-bold text-xs text-[#14202B]">

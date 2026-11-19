@@ -1,6 +1,6 @@
 /**
- * Shared Google Maps URL generation utility for Dari Karnataka Travel Planner.
- * Generates verified coordinate-based links and safe contextual fallback search queries.
+ * Google Maps links for places, plus HTML escaping for map pop-ups.
+ * Links use coordinates when available, otherwise a name and city search.
  */
 
 /**
@@ -16,7 +16,7 @@ export function escapeHtml(value: string | number | undefined | null): string {
     .replace(/'/g, "&#39;");
 }
 
-export interface MapLocationTarget {
+interface MapLocationTarget {
   name_en?: string;
   name_kn?: string;
   city?: string;

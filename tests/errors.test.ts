@@ -20,7 +20,7 @@ function stubTtsUpstream(ok: boolean = true) {
   );
 }
 
-describe("Stage 6: Error, Empty, and Fallback States", () => {
+describe("Error, empty and fallback states", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });

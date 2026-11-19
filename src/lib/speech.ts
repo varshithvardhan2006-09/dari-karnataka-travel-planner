@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 
 let currentAudio: HTMLAudioElement | null = null;
 
-export interface KannadaSpeechOptions {
+interface KannadaSpeechOptions {
   translit?: string;
   isSlow?: boolean;
   lang?: string;
@@ -15,7 +15,7 @@ export interface KannadaSpeechOptions {
 /**
  * Checks if browser has native voice in SpeechSynthesis for specified language.
  */
-export function getLanguageVoice(langCode: string = "kn"): SpeechSynthesisVoice | null {
+function getLanguageVoice(langCode: string = "kn"): SpeechSynthesisVoice | null {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     return null;
   }
@@ -177,14 +177,6 @@ export function stopKannadaSpeech(): void {
 }
 
 /**
- * Backward compatible wrapper for legacy calls.
- */
-export function speakKannadaText(text: string, onEnd?: () => void): boolean {
-  playKannadaSpeech(text, { onEnd });
-  return true;
-}
-
-/**
  * React hook to manage Kannada speech playback with Play, Stop, and Replay controls.
  */
 export function useKannadaSpeech() {
@@ -229,7 +221,7 @@ export function useKannadaSpeech() {
   );
 
   return {
-    hasVoice: true, // Universally available across all modern devices
+    hasVoice: true, // Server audio with a browser-voice fallback, so playback is always attempted
     isSpeaking,
     hasPlayed,
     speak,

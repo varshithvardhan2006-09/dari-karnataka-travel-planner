@@ -8,8 +8,6 @@ import { useLang } from "@/lib/i18n/useLang";
 import { getPinNumber, DAY_PIN_COLORS } from "@/lib/geo";
 import { getGoogleMapsSearchUrl, escapeHtml } from "@/lib/maps";
 
-export { DAY_PIN_COLORS };
-
 interface TripMapProps {
   days: DayPlan[];
   selectedDay: number;
@@ -324,7 +322,7 @@ export default function TripMap({
 
   return (
     <div className="relative w-full h-full min-h-[450px] rounded-2xl overflow-hidden border border-[#DCE1DD] shadow-xs">
-      {/* Day Chips on the Map (matching mockup 04: Day 1 / 2 / 3 / 4 / All) */}
+      {/* Day Chips on the Map */}
       <div className="absolute top-3 left-3 z-[1000] max-w-[calc(100%-3.5rem)] overflow-x-auto scrollbar-none flex items-center gap-1.5 bg-white/95 backdrop-blur-xs p-1.5 rounded-xl shadow-sm border border-[#DCE1DD] text-xs font-semibold text-[#14202B]">
         {days.map((d) => (
           <button

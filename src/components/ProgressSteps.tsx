@@ -163,7 +163,7 @@ export default function ProgressSteps({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start w-full">
-      {/* Left Column: Progress Steps (mockup 03) */}
+      {/* Left Column: Progress Steps */}
       <div className="lg:col-span-6 flex flex-col justify-center space-y-6">
         <div>
           <span className="text-xs font-bold tracking-wider uppercase text-[#8E1F2F]">

@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useSyncExternalStore, React
 import en from "./en.json";
 import kn from "./kn.json";
 
-export type Lang = "en" | "kn";
+type Lang = "en" | "kn";
 
 interface LangContextType {
   lang: Lang;

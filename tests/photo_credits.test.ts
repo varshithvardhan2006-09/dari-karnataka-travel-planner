@@ -14,7 +14,7 @@ const ALLOWED_LICENSES = [
   "PD",
 ];
 
-describe("U10 Real place photos & Wikimedia compliance", () => {
+describe("Place photos and Wikimedia credit rules", () => {
   const places = placesData as Place[];
   const placesWithImages = places.filter((p) => Boolean(p.image));
 

@@ -101,7 +101,7 @@ export default function LandingPage() {
 
   return (
     <div className="flex-1 flex flex-col max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 gap-16">
-      {/* 1. HERO SECTION (mockup 01) */}
+      {/* 1. HERO SECTION */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
         {/* Left Column: Eyebrow, H1, Buttons, Ticks */}
         <div className="lg:col-span-6 flex flex-col justify-center">
@@ -214,7 +214,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 2. QUICK-START BAR UNDER HERO (mockup 01) */}
+      {/* 2. QUICK-START BAR UNDER HERO */}
       <section className="bg-white rounded-2xl p-4 sm:p-5 border border-[#DCE1DD] shadow-sm">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 items-center">
           {/* Interests */}
@@ -315,7 +315,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 3. FOUR HONEST TRUST CARDS (mockup 01 Part 2) */}
+      {/* 3. FOUR HONEST TRUST CARDS */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Curated places */}
         <div className="bg-white rounded-2xl p-5 border border-[#DCE1DD] shadow-2xs">
@@ -381,7 +381,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 4. HOW IT WORKS (mockup 01 Part 2) */}
+      {/* 4. HOW IT WORKS */}
       <section id="about" className="space-y-4 scroll-mt-24">
         <div>
           <span className="text-[11px] font-bold text-[#586673] uppercase tracking-wider">
@@ -442,7 +442,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 5. SAMPLE TRIPS (mockup 01 Part 2 & 3) */}
+      {/* 5. SAMPLE TRIPS */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
@@ -557,7 +557,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 6. EXPLORE BY REGION & KANNADA PHRASE OF THE DAY (mockup 01 Part 3) */}
+      {/* 6. EXPLORE BY REGION & KANNADA PHRASE OF THE DAY */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left: Explore by Region + SVG Map */}
         <div className="lg:col-span-7 bg-white rounded-2xl p-6 border border-[#DCE1DD] shadow-xs space-y-5">

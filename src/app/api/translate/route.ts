@@ -509,7 +509,7 @@ export async function POST(req: NextRequest) {
     const groqKey = process.env.GROQ_API_KEY;
     const geminiKey = process.env.GEMINI_API_KEY;
 
-    // 1. Try Groq (ultra fast response)
+    // 1. Try Groq
     if (groqKey) {
       try {
         const groqModel = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;

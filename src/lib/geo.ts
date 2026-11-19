@@ -38,18 +38,6 @@ export function exactHaversineKm(
 }
 
 /**
- * Straight-line great circle distance rounded to one decimal place.
- */
-export function haversineDistanceKm(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number {
-  return Math.round(exactHaversineKm(lat1, lon1, lat2, lon2) * 10) / 10;
-}
-
-/**
  * Calculates road distance between two coordinates in kilometers.
  * Distance: haversine distance multiplied by 1.3 (road factor).
  */
@@ -78,7 +66,7 @@ export function estimateTravelTimeMin(km: number): number {
  * Short city hops for one or two travellers are cheaper by auto rickshaw;
  * everything else is a cab.
  */
-export function selectTravelMode(km: number, people: number): TravelMode {
+function selectTravelMode(km: number, people: number): TravelMode {
   if (people === 1 && km <= 15) {
     return "auto";
   }

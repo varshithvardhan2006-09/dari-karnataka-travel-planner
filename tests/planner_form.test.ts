@@ -5,7 +5,7 @@ import { buildDeterministicPlan } from "../src/lib/planner";
 import placesData from "../data/places.json";
 import { Place } from "../src/lib/schema";
 
-describe("U2 Match counter & cost range tests", () => {
+describe("Planner form match counter and cost range", () => {
   const places = placesData as Place[];
 
   it("accurately counts places matching chosen interests", () => {

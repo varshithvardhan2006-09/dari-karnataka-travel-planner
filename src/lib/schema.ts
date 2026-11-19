@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const CategoryEnum = z.enum([
+const CategoryEnum = z.enum([
   "heritage",
   "nature",
   "food",
@@ -13,7 +13,7 @@ export const CategoryEnum = z.enum([
 ]);
 export type Category = z.infer<typeof CategoryEnum>;
 
-export const RegionEnum = z.enum([
+const RegionEnum = z.enum([
   "Mysuru",
   "Hassan",
   "Hampi-Ballari",
@@ -26,15 +26,13 @@ export const RegionEnum = z.enum([
   "Kalyana-Karnataka",
   "North Kannada",
 ]);
-export type Region = z.infer<typeof RegionEnum>;
 
-export const BudgetFitEnum = z.enum(["budget", "mid", "premium"]);
+const BudgetFitEnum = z.enum(["budget", "mid", "premium"]);
 export type BudgetFit = z.infer<typeof BudgetFitEnum>;
 
-export const MealTypeEnum = z.enum(["breakfast", "lunch", "dinner", "snack"]);
-export type MealType = z.infer<typeof MealTypeEnum>;
+const MealTypeEnum = z.enum(["breakfast", "lunch", "dinner", "snack"]);
 
-export const PhraseContextEnum = z.enum([
+const PhraseContextEnum = z.enum([
   "greeting",
   "ticket",
   "food",
@@ -44,7 +42,6 @@ export const PhraseContextEnum = z.enum([
   "temple",
   "thanks",
 ]);
-export type PhraseContext = z.infer<typeof PhraseContextEnum>;
 
 export const PhraseSchema = z.object({
   id: z.string(),
@@ -55,7 +52,7 @@ export const PhraseSchema = z.object({
 });
 export type Phrase = z.infer<typeof PhraseSchema>;
 
-export const PlaceImageSchema = z.object({
+const PlaceImageSchema = z.object({
   file: z.string(),
   thumb: z.string().optional(),
   alt_en: z.string(),
@@ -64,7 +61,6 @@ export const PlaceImageSchema = z.object({
   license: z.string(),
   source_url: z.string(),
 });
-export type PlaceImage = z.infer<typeof PlaceImageSchema>;
 
 export const PlaceSchema = z.object({
   id: z.string(),
@@ -94,30 +90,29 @@ export const PlaceSchema = z.object({
 });
 export type Place = z.infer<typeof PlaceSchema>;
 
-export const StartCitySchema = z
+const StartCitySchema = z
   .string()
   .trim()
   .min(1, "Please provide a starting city or town")
   .max(40, "Starting city name cannot exceed 40 characters");
-export const StartCityEnum = StartCitySchema;
 export type StartCity = string;
 
-export const PaceEnum = z.enum(["relaxed", "balanced", "packed"]);
+const PaceEnum = z.enum(["relaxed", "balanced", "packed"]);
 export type Pace = z.infer<typeof PaceEnum>;
 
-export const TravellersEnum = z.enum(["solo", "couple", "family", "friends"]);
+const TravellersEnum = z.enum(["solo", "couple", "family", "friends"]);
 export type Travellers = z.infer<typeof TravellersEnum>;
 
-export const FoodPreferenceEnum = z.enum(["any", "veg", "nonveg"]);
+const FoodPreferenceEnum = z.enum(["any", "veg", "nonveg"]);
 export type FoodPreference = z.infer<typeof FoodPreferenceEnum>;
 
-export const TransportPreferenceEnum = z.enum(["cab", "own_car", "bus_train"]);
+const TransportPreferenceEnum = z.enum(["cab", "own_car", "bus_train"]);
 export type TransportPreference = z.infer<typeof TransportPreferenceEnum>;
 
 export const PlanRequestSchema = z.object({
   interests: z.array(CategoryEnum).min(1, "Pick at least one interest").max(4, "Pick at most 4 interests"),
   days: z.number().int("Days must be an integer").min(1).max(7),
-  start_city: StartCityEnum,
+  start_city: StartCitySchema,
   budget: BudgetFitEnum,
   pace: PaceEnum,
   travellers: TravellersEnum,
@@ -130,13 +125,13 @@ export const PlanRequestSchema = z.object({
 });
 export type PlanRequest = z.infer<typeof PlanRequestSchema>;
 
-export const AIModelOutputStopSchema = z.object({
+const AIModelOutputStopSchema = z.object({
   place_id: z.string(),
   start: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Start must be HH:MM format"),
   note_en: z.string().max(200),
 });
 
-export const AIModelOutputDaySchema = z.object({
+const AIModelOutputDaySchema = z.object({
   day: z.number().min(1),
   theme: z.string().max(60),
   stops: z.array(AIModelOutputStopSchema),
@@ -150,17 +145,17 @@ export const AIModelOutputSchema = z.object({
 });
 export type AIModelOutput = z.infer<typeof AIModelOutputSchema>;
 
-export const TravelModeEnum = z.enum(["auto", "cab", "bus", "walk"]);
+const TravelModeEnum = z.enum(["auto", "cab", "bus", "walk"]);
 export type TravelMode = z.infer<typeof TravelModeEnum>;
 
-export const TravelFromPrevSchema = z.object({
+const TravelFromPrevSchema = z.object({
   km: z.number().nonnegative(),
   min: z.number().nonnegative(),
   mode: TravelModeEnum,
 });
 export type TravelFromPrev = z.infer<typeof TravelFromPrevSchema>;
 
-export const StopSchema = z.object({
+const StopSchema = z.object({
   place_id: z.string(),
   start: z.string(),
   duration_min: z.number(),
@@ -171,7 +166,7 @@ export const StopSchema = z.object({
 });
 export type Stop = z.infer<typeof StopSchema>;
 
-export const DayPlanSchema = z.object({
+const DayPlanSchema = z.object({
   day: z.number(),
   theme: z.string(),
   stops: z.array(StopSchema),
@@ -179,7 +174,7 @@ export const DayPlanSchema = z.object({
 });
 export type DayPlan = z.infer<typeof DayPlanSchema>;
 
-export const CostSummarySchema = z.object({
+const CostSummarySchema = z.object({
   stay: z.number(),
   food: z.number(),
   transport: z.number(),
@@ -191,14 +186,13 @@ export type CostSummary = z.infer<typeof CostSummarySchema>;
 
 // The request a plan was built from, kept with the plan so edits made after
 // opening a shared link recompute costs and legs for the right trip.
-export const PlanTripSchema = z.object({
+const PlanTripSchema = z.object({
   start_city: StartCitySchema,
   budget: BudgetFitEnum,
   travellers: TravellersEnum,
   month: z.number().int().min(1).max(12),
   transport_mode: TransportPreferenceEnum.optional(),
 });
-export type PlanTrip = z.infer<typeof PlanTripSchema>;
 
 export const PlanSchema = z.object({
   title: z.string(),

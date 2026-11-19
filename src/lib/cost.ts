@@ -8,7 +8,7 @@ export const PEOPLE_COUNT_MAP: Record<Travellers, number> = {
 };
 
 // Daily rates per person in INR
-export const TIER_DAILY_RATES: Record<BudgetFit, { stayPerPerson: number; foodPerPerson: number }> = {
+const TIER_DAILY_RATES: Record<BudgetFit, { stayPerPerson: number; foodPerPerson: number }> = {
   budget: {
     stayPerPerson: 1000,
     foodPerPerson: 600,
@@ -24,7 +24,7 @@ export const TIER_DAILY_RATES: Record<BudgetFit, { stayPerPerson: number; foodPe
 };
 
 // Transport rates per km in INR
-export const TRANSPORT_RATES = {
+const TRANSPORT_RATES = {
   autoPerKm: 16,
   cabPerKm: 20,
   baseBookingFee: 150, // Base daily driver allowance / vehicle booking component

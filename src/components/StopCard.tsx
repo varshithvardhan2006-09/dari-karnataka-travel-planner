@@ -179,7 +179,7 @@ export default function StopCard({
           <span className="text-[9px] sm:text-[10px] text-[#586673] font-medium leading-none">{durationText}</span>
         </div>
 
-        {/* Card Body matching mockup 04 */}
+        {/* Card Body */}
         <div className="flex-1 min-w-0 bg-white rounded-2xl p-3.5 sm:p-5 border border-[#DCE1DD] shadow-2xs hover:shadow-xs transition-shadow">
           <div className="flex items-start justify-between gap-2 min-w-0">
             <div className="min-w-0 flex-1">

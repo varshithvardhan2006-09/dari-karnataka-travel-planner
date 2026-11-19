@@ -6,7 +6,7 @@ import { getCustomizedSamplePlan } from "@/lib/samples";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import placesData from "../../../../data/places.json";
 
-export const maxDuration = 30; // Route max duration set to 30 seconds per spec
+export const maxDuration = 30;
 
 const allPlaces = placesData as Place[];
 

@@ -1,6 +1,6 @@
 import { Plan, PlanSchema } from "../src/lib/schema";
 import { buildDeterministicPlan } from "../src/lib/planner";
-import { SAMPLE_CONFIGS, SampleConfig } from "./sample-configs";
+import { SampleConfig } from "./sample-configs";
 
 /**
  * Builds one curated sample itinerary from its config.
@@ -43,11 +43,4 @@ export function serializeSamplePlan(plan: Plan): string {
  */
 export function normalizeEol(text: string): string {
   return text.replace(/\r\n/g, "\n");
-}
-
-/**
- * Builds every curated sample, keyed by its filename.
- */
-export function buildAllSamplePlans(): Map<string, Plan> {
-  return new Map(SAMPLE_CONFIGS.map((config) => [config.file, buildSamplePlan(config)]));
 }
