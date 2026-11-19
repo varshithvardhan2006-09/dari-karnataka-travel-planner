@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Place } from "@/lib/schema";
 import { playKannadaSpeech, stopKannadaSpeech } from "@/lib/speech";
 import { getGoogleMapsDirectionsUrl } from "@/lib/maps";
@@ -204,12 +204,38 @@ export default function ShowToLocalModal({
   const [isTranslating, setIsTranslating] = useState(false);
   const [translateError, setTranslateError] = useState("");
 
-  // Close on Escape & stop speech on close
+  // Only the latest translation request may update the screen.
+  const translateRequestRef = useRef(0);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // Close on Escape & stop speech on close. Everything is reset so the next
+  // place opens fresh instead of replaying or showing the previous one.
   const handleClose = useCallback(() => {
     stopKannadaSpeech();
+    translateRequestRef.current += 1;
     setIsPlaying(false);
+    setCustomSpokenText("");
+    setInputText("");
+    setTranslatedText("");
+    setTransliteration("");
+    setTranslateError("");
+    setIsTranslating(false);
+    setActiveTab("destination");
     onClose();
   }, [onClose]);
+
+  useEffect(() => () => {
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+  }, []);
+
+  // Move focus into the dialog when it opens and give it back when it closes.
+  useEffect(() => {
+    if (!isOpen) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    dialogRef.current?.focus();
+    return () => previouslyFocused?.focus?.();
+  }, [isOpen]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -304,7 +330,7 @@ export default function ShowToLocalModal({
     setIsPlaying(true);
     playKannadaSpeech(activeSpokenText, {
       isSlow,
-      lang: activeTab === "translator" ? targetLang : targetLang,
+      lang: targetLang,
       translit: activeTab === "translator" ? transliteration : destinationInfo.translit,
       onStart: () => setIsPlaying(true),
       onEnd: () => {
@@ -318,6 +344,7 @@ export default function ShowToLocalModal({
     if (!query) return;
 
     const target = langOverride || targetLang;
+    const requestId = ++translateRequestRef.current;
     setIsTranslating(true);
     setTranslateError("");
 
@@ -338,14 +365,17 @@ export default function ShowToLocalModal({
       }
 
       const data = await res.json();
+      // A newer request (for example after another language change) has started.
+      if (requestId !== translateRequestRef.current) return;
       setTranslatedText(data.translatedText);
       setTransliteration(data.transliteration || "");
       setCustomSpokenText(data.translatedText);
     } catch (err: unknown) {
+      if (requestId !== translateRequestRef.current) return;
       const msg = err instanceof Error ? err.message : "Translation service unavailable";
       setTranslateError(msg);
     } finally {
-      setIsTranslating(false);
+      if (requestId === translateRequestRef.current) setIsTranslating(false);
     }
   };
 
@@ -353,6 +383,8 @@ export default function ShowToLocalModal({
     setTargetLang(newLang);
     stopKannadaSpeech();
     setIsPlaying(false);
+    // Text spoken in the previous language must not be replayed in the new one.
+    setCustomSpokenText("");
 
     // 1. If currently displaying a quick phrase, switch immediately from pre-baked cache!
     const quickMatch = QUICK_PHRASES.find(
@@ -392,19 +424,25 @@ export default function ShowToLocalModal({
   };
 
   const handleCopy = (text: string) => {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
+    if (typeof navigator === "undefined" || !navigator.clipboard) return;
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(true);
+        if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => setCopied(false));
   };
 
   return (
     <div
+      ref={dialogRef}
+      tabIndex={-1}
       role="dialog"
       aria-modal="true"
       aria-label="Show to local driver and AI Travel Translator"
-      className="fixed inset-0 z-[1300] bg-[#58101B] text-white flex flex-col justify-between pt-[calc(1.2rem+env(safe-area-inset-top,0px))] pb-[calc(1.2rem+env(safe-area-inset-bottom,0px))] px-4 sm:px-8 overflow-y-auto animate-in fade-in duration-200"
+      className="fixed inset-0 z-[1300] outline-none bg-[#58101B] text-white flex flex-col justify-between pt-[calc(1.2rem+env(safe-area-inset-top,0px))] pb-[calc(1.2rem+env(safe-area-inset-bottom,0px))] px-4 sm:px-8 overflow-y-auto animate-in fade-in duration-200"
     >
       {/* Top Header with Tab Switcher & Global Language Selector */}
       <div className="max-w-2xl mx-auto w-full flex items-center justify-between border-b border-white/15 pb-3 gap-2">
@@ -563,7 +601,7 @@ export default function ShowToLocalModal({
             {/* Input Form */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-white/90">
+                <label htmlFor="show-to-local-input" className="text-xs font-bold text-white/90">
                   Your sentence (English):
                 </label>
                 <span className="text-xs text-[#F2B705] font-bold">
@@ -573,6 +611,7 @@ export default function ShowToLocalModal({
 
               <div className="relative">
                 <textarea
+                  id="show-to-local-input"
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   placeholder={

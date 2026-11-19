@@ -96,17 +96,22 @@ export function playKannadaSpeech(
       onEnd?.();
     };
 
-    audio.onerror = () => {
-      // Fallback to browser Web Speech API
+    // A failed load can trigger both onerror and the play() rejection;
+    // fall back to the browser voice only once so the phrase is not spoken twice.
+    let fellBack = false;
+    const fallBack = () => {
+      if (fellBack || currentAudio !== audio) return;
+      fellBack = true;
+      currentAudio = null;
       speakWithWebSpeech(text, translit, isSlow, lang, onEnd);
     };
 
+    audio.onerror = fallBack;
+
     const playPromise = audio.play();
     if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        // Fallback to Web Speech API if autoplay restriction or network failure
-        speakWithWebSpeech(text, translit, isSlow, lang, onEnd);
-      });
+      // Autoplay restriction or network failure
+      playPromise.catch(fallBack);
     }
   } catch {
     speakWithWebSpeech(text, translit, isSlow, lang, onEnd);

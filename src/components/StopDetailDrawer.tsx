@@ -73,25 +73,35 @@ export default function StopDetailDrawer({
     const isContiguous = sorted.every(
       (m, i) => i === 0 || m === sorted[i - 1] + 1
     );
+    // A run that wraps past December (e.g. Jun to Jan) starts right after the
+    // one gap in the sorted list; rotate the list to begin there.
+    const gapIndex = sorted.findIndex((m, i) => i > 0 && m !== sorted[i - 1] + 1);
+    const rotated = gapIndex > 0 ? [...sorted.slice(gapIndex), ...sorted.slice(0, gapIndex)] : sorted;
     const wraps =
       !isContiguous &&
       sorted.includes(1) &&
       sorted.includes(12) &&
-      (() => {
-        const rotated = [...sorted.filter((m) => m >= 7), ...sorted.filter((m) => m < 7)];
-        return rotated.every((m, i) => i === 0 || m === (rotated[i - 1] % 12) + 1);
-      })();
+      rotated.every((m, i) => i === 0 || m === (rotated[i - 1] % 12) + 1);
 
     if (isContiguous && sorted.length > 2) {
       return `${names[sorted[0] - 1]} ${lang === "kn" ? "ರಿಂದ" : "to"} ${names[sorted[sorted.length - 1] - 1]}`;
     }
     if (wraps) {
-      const start = sorted.filter((m) => m >= 7)[0];
-      const end = sorted.filter((m) => m < 7).slice(-1)[0];
-      return `${names[start - 1]} ${lang === "kn" ? "ರಿಂದ" : "to"} ${names[end - 1]}`;
+      return `${names[rotated[0] - 1]} ${lang === "kn" ? "ರಿಂದ" : "to"} ${names[rotated[rotated.length - 1] - 1]}`;
     }
     return sorted.map((m) => names[m - 1]).join(", ");
   }, [place, lang]);
+
+  // Only http(s) source links are shown; anything else is ignored rather than linked.
+  const sourceHost = useMemo(() => {
+    if (!place?.source_url) return null;
+    try {
+      const url = new URL(place.source_url);
+      return url.protocol === "https:" || url.protocol === "http:" ? url.hostname.replace(/^www\./, "") : null;
+    } catch {
+      return null;
+    }
+  }, [place]);
 
   // Find 2 to 3 similar alternatives from the same area or category (strictly omitting already visited stops)
   const alternatives = useMemo(() => {
@@ -156,7 +166,7 @@ export default function StopDetailDrawer({
         <div className="flex-1 overflow-y-auto">
           {/* Hero Image / Scene Slot */}
           <div className="h-56 relative w-full overflow-hidden bg-gray-100 shrink-0">
-            <PlaceImage place={place} size="md" />
+            <PlaceImage key={place.id} place={place} size="md" />
           </div>
 
           <div className="p-6 space-y-6">
@@ -264,15 +274,15 @@ export default function StopDetailDrawer({
                   <span className="text-[#1E6B52] font-bold">✓</span>
                   <span>{place.verified ? "Checked against its source" : "From the curated dataset; confirm before visiting"}</span>
                 </span>
-                {place.source_url && (
+                {sourceHost && (
                   <a
                     href={place.source_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#8E1F2F] hover:underline font-semibold flex items-center gap-1 text-[11px]"
                   >
-                    <span>Source: {new URL(place.source_url).hostname.replace(/^www\./, "")}</span>
-                    <span>↗</span>
+                    <span>Source: {sourceHost}</span>
+                    <span aria-hidden="true">↗</span>
                   </a>
                 )}
               </div>
@@ -306,6 +316,7 @@ export default function StopDetailDrawer({
                         onClick={() => playPhraseAudio(ph.kn, ph.translit)}
                         className="w-8 h-8 rounded-lg bg-[#8E1F2F] text-white flex items-center justify-center shrink-0 hover:bg-[#781926] active:scale-95 cursor-pointer shadow-2xs"
                         title="Play audio"
+                        aria-label={`Play "${ph.en}" in Kannada`}
                       >
                         ▶
                       </button>
