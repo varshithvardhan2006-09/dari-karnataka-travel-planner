@@ -1238,6 +1238,12 @@
     "start_city": "Bengaluru",
     "budget": "mid",
     "travellers": "couple",
-    "month": 1
+    "month": 1,
+    "interests": [
+      "heritage",
+      "nature",
+      "food"
+    ],
+    "pace": "balanced"
   }
 }

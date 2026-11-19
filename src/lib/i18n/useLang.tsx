@@ -54,13 +54,15 @@ export function LangProvider({ children }: { children: ReactNode }) {
     }
   }, [lang]);
 
+  // Stored choices drive the language (and stay in sync across tabs); the
+  // local value is only used when the browser blocks localStorage.
   const setLang = (newLang: Lang) => {
-    setLocalLang(newLang);
     try {
       localStorage.setItem(STORAGE_KEY, newLang);
+      setLocalLang(null);
       window.dispatchEvent(new Event("storage"));
     } catch {
-      // Ignore localStorage access failures
+      setLocalLang(newLang);
     }
   };
 

@@ -636,6 +636,11 @@
     "start_city": "Bengaluru",
     "budget": "mid",
     "travellers": "couple",
-    "month": 11
+    "month": 11,
+    "interests": [
+      "heritage",
+      "culture"
+    ],
+    "pace": "relaxed"
   }
 }

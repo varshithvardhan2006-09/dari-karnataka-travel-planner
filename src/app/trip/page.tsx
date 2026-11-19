@@ -10,16 +10,20 @@ import {
   PlanSchema,
   PlanRequest,
   Category,
-  StartCity,
   BudgetFit,
   Pace,
   Travellers,
   Place,
   Stop,
   TravelMode,
-  FoodPreference,
-  TransportPreference,
   Phrase,
+  CategoryEnum,
+  BudgetFitEnum,
+  PaceEnum,
+  TravellersEnum,
+  FoodPreferenceEnum,
+  TransportPreferenceEnum,
+  StartCitySchema,
 } from "@/lib/schema";
 import { useLang } from "@/lib/i18n/useLang";
 import StopCard from "@/components/StopCard";
@@ -86,6 +90,13 @@ const TRANSPORT_LABELS: Record<string, { en: string; kn: string }> = {
   bus_train: { en: "Bus & train", kn: "ಬಸ್ ಮತ್ತು ರೈಲು" },
 };
 
+/** Short stable hash (djb2) for building saved-trip ids. */
+function hashString(value: string): string {
+  let hash = 5381;
+  for (let i = 0; i < value.length; i++) hash = ((hash << 5) + hash + value.charCodeAt(i)) | 0;
+  return (hash >>> 0).toString(36);
+}
+
 function escapeIcsText(str: string): string {
   return str
     .replace(/\\/g, "\\\\")
@@ -116,10 +127,12 @@ function downloadIcsFile(plan: Plan, travelMonth: number = 11) {
     const dateStr = `${year}${pad(travelMonth)}${pad(dayNum)}`;
 
     day.stops.forEach((stop) => {
-      const [h, m] = (stop.start || "09:00").split(":").map(Number);
+      const time = /^([01]\d|2[0-3]):[0-5]\d$/.test(stop.start) ? stop.start : "09:00";
+      const [h, m] = time.split(":").map(Number);
       const startIso = `${dateStr}T${pad(h)}${pad(m)}00`;
-      const endTotalMin = h * 60 + m + stop.duration_min;
-      const endH = Math.floor(endTotalMin / 60) % 24;
+      // An event that would run past midnight ends at 23:59 instead of wrapping.
+      const endTotalMin = Math.min(h * 60 + m + stop.duration_min, 23 * 60 + 59);
+      const endH = Math.floor(endTotalMin / 60);
       const endM = endTotalMin % 60;
       const endIso = `${dateStr}T${pad(endH)}${pad(endM)}00`;
 
@@ -158,13 +171,21 @@ function TripViewContent() {
   const [plan, setPlan] = useState<Plan | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedDay, setSelectedDay] = useState<number>(1);
-  const [copied, setCopied] = useState<boolean>(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const markCopied = (id: string) => {
+    setCopiedId(id);
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = setTimeout(() => setCopiedId(null), 3000);
+  };
+  const copied = copiedId === "header";
   const [activeMobileTab, setActiveMobileTab] = useState<"plan" | "map" | "phrases" | "saved">("plan");
   const [selectedStopPlaceId, setSelectedStopPlaceId] = useState<string | null>(null);
   const [isSheetMinimized, setIsSheetMinimized] = useState<boolean>(false);
   const [isSheetClosed, setIsSheetClosed] = useState<boolean>(false);
   const [errorState, setErrorState] = useState<{
     type: "busy" | "few_matches" | "fallback_sample" | "invalid_link";
+    sampleTheme?: string;
     matchCount?: number;
     retryAfterS?: number;
   } | null>(null);
@@ -221,6 +242,57 @@ function TripViewContent() {
   // The travel month stored on the plan wins, so shared links keep their own month.
   const tripMonth = plan?.trip?.month ?? currentMonth;
 
+  // URL values checked against the same rules the server uses; anything
+  // invalid falls back to a default instead of reaching the planner.
+  const urlRequest = useMemo(() => {
+    const interests = Array.from(
+      new Set(
+        (interestsParam || "")
+          .split(",")
+          .map((c) => CategoryEnum.safeParse(c.trim()))
+          .flatMap((r) => (r.success ? [r.data] : []))
+      )
+    ).slice(0, 4);
+    const people = peopleCountParam ? parseInt(peopleCountParam, 10) : NaN;
+    return {
+      interests: interests.length > 0 ? interests : (["heritage", "food"] as Category[]),
+      start_city: StartCitySchema.safeParse(startCityParam ?? "").data ?? "Bengaluru",
+      budget: BudgetFitEnum.safeParse(budgetParam).data ?? ("mid" as BudgetFit),
+      pace: PaceEnum.safeParse(paceParam).data ?? ("relaxed" as Pace),
+      travellers: TravellersEnum.safeParse(travellersParam).data ?? ("couple" as Travellers),
+      people_count: people >= 1 && people <= 10 ? people : undefined,
+      food_preference: FoodPreferenceEnum.safeParse(foodPrefParam).data,
+      transport_mode: TransportPreferenceEnum.safeParse(transportModeParam).data,
+      low_walking: lowWalkingParam === "1" ? true : lowWalkingParam === "0" ? false : undefined,
+    };
+  }, [
+    interestsParam,
+    startCityParam,
+    budgetParam,
+    paceParam,
+    travellersParam,
+    peopleCountParam,
+    foodPrefParam,
+    transportModeParam,
+    lowWalkingParam,
+  ]);
+
+  // Trip details shown and used for edits: the plan's own record first, so
+  // shared links and samples describe themselves, then the validated URL.
+  const tripStartCity = plan?.trip?.start_city ?? urlRequest.start_city;
+  const tripBudget = plan?.trip?.budget ?? urlRequest.budget;
+  const tripTravellers = plan?.trip?.travellers ?? urlRequest.travellers;
+  const tripPace = plan?.trip?.pace ?? urlRequest.pace;
+  const tripInterests = plan?.trip?.interests ?? urlRequest.interests;
+  const tripTransport = plan?.trip ? plan.trip.transport_mode : urlRequest.transport_mode;
+
+  // Language only changes labels; reading it through a ref keeps a language
+  // switch from reloading (and regenerating) the trip.
+  const langRef = useRef(lang);
+  useEffect(() => {
+    langRef.current = lang;
+  }, [lang]);
+
   useEffect(() => {
     let isCancelled = false;
 
@@ -242,7 +314,7 @@ function TripViewContent() {
       if (simulateParam === "fallback") {
         const sample = getSamplePlan("heritage");
         setPlan(sample);
-        setErrorState({ type: "fallback_sample" });
+        setErrorState({ type: "fallback_sample", sampleTheme: "heritage" });
         setSelectedDay(1);
         setLoading(false);
         return;
@@ -306,46 +378,11 @@ function TripViewContent() {
       }
 
       // Case 3: API call with fallback
-      const rawInterests = interestsParam
-        ? (interestsParam.split(",").filter(Boolean) as Category[])
-        : (["heritage", "food"] as Category[]);
-      // Ensure at least 1 and at most 4 valid interests for PlanRequestSchema
-      const validCategories: Category[] = [
-        "heritage", "nature", "food", "spiritual", "adventure",
-        "beach", "wildlife", "coffee", "culture"
-      ];
-      const filteredInterests = rawInterests.filter((cat) => validCategories.includes(cat));
-      const interests: Category[] = filteredInterests.length > 0
-        ? filteredInterests.slice(0, 4)
-        : ["heritage", "food"];
-
-      const start_city: StartCity = (startCityParam as StartCity) || "Bengaluru";
-      const budget: BudgetFit = (budgetParam as BudgetFit) || "mid";
-      const pace: Pace = (paceParam as Pace) || "relaxed";
-      const travellers: Travellers = (travellersParam as Travellers) || "couple";
-
-      // Parse user-selected extended preferences safely
-      const parsedPeopleCount = peopleCountParam ? parseInt(peopleCountParam, 10) : undefined;
-      const people_count = parsedPeopleCount && !isNaN(parsedPeopleCount) && parsedPeopleCount >= 1 && parsedPeopleCount <= 10
-        ? parsedPeopleCount
-        : undefined;
-      const food_preference = (foodPrefParam as FoodPreference) || undefined;
-      const transport_mode = (transportModeParam as TransportPreference) || undefined;
-      const low_walking = lowWalkingParam === "1" ? true : lowWalkingParam === "0" ? false : undefined;
-
       const request: PlanRequest = {
-        interests,
+        ...urlRequest,
         days: parsedDays,
-        start_city,
-        budget,
-        pace,
-        travellers,
         month: currentMonth,
-        lang,
-        people_count,
-        food_preference,
-        transport_mode,
-        low_walking,
+        lang: langRef.current,
       };
 
       try {
@@ -392,9 +429,9 @@ function TripViewContent() {
           const fallback = buildDeterministicPlan(request);
           setPlan(fallback);
         } catch {
-          const { plan: samplePlan } = getCustomizedSamplePlan(request);
+          const { plan: samplePlan, key } = getCustomizedSamplePlan(request);
           setPlan(samplePlan);
-          setErrorState({ type: "fallback_sample" });
+          setErrorState({ type: "fallback_sample", sampleTheme: key });
         }
         setSelectedDay(1);
         setLoading(false);
@@ -406,26 +443,7 @@ function TripViewContent() {
     return () => {
       isCancelled = true;
     };
-  }, [
-    dParam,
-    sampleParam,
-    simulateParam,
-    interestsParam,
-    daysParam,
-    startCityParam,
-    budgetParam,
-    paceParam,
-    travellersParam,
-    monthParam,
-    peopleCountParam,
-    foodPrefParam,
-    transportModeParam,
-    lowWalkingParam,
-    parsedDays,
-    currentMonth,
-    lang,
-    refreshKey,
-  ]);
+  }, [dParam, sampleParam, simulateParam, urlRequest, parsedDays, currentMonth, refreshKey]);
 
   // Build and download the PDF once the off-screen itinerary has rendered.
   // If the file cannot be built, fall back to the browser's print dialog.
@@ -460,7 +478,8 @@ function TripViewContent() {
       const list: SavedTripRecord[] = raw ? JSON.parse(raw) : [];
       const firstCity = plan.days[0]?.stops[0]?.place.city || "Bengaluru";
       const region = plan.days[0]?.stops[0]?.place.region || "Mysuru";
-      const tripId = `${plan.days.length}d-${firstCity.toLowerCase()}`;
+      // One saved entry per trip request: edits update it, different trips do not collide.
+      const tripId = `trip-${hashString(searchParams.toString() || plan.title)}`;
       const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(plan));
       const record: SavedTripRecord = {
         id: tripId,
@@ -483,7 +502,7 @@ function TripViewContent() {
     } catch {
       // ignore
     }
-  }, [plan, tripMonth]);
+  }, [plan, tripMonth, searchParams]);
 
   // Recalculate plan travel legs, times, and costs after local edits
   const recomputePlanLocally = (updatedDays: Plan["days"]) => {
@@ -494,8 +513,7 @@ function TripViewContent() {
 
     // A plan opened from a shared link has no query parameters, so prefer the
     // trip details stored on the plan itself.
-    const trip = plan.trip;
-    const startCoords = getStartCityCoordinates(trip?.start_city || startCityParam || "Bengaluru");
+    const startCoords = getStartCityCoordinates(tripStartCity);
     let previousDayLastPlace: Place | null = null;
 
     const computedDays = updatedDays.map((d, dayIdx) => {
@@ -568,17 +586,15 @@ function TripViewContent() {
       totalTripKm += returnLeg.km;
     }
 
-    const travellersVal = trip?.travellers || (travellersParam as Travellers) || "couple";
-    const budgetVal = trip?.budget || (budgetParam as BudgetFit) || "mid";
 
     const newCost = calculateTripCost({
       days: plan.days.length,
-      budget: budgetVal,
-      travellers: travellersVal,
+      budget: tripBudget,
+      travellers: tripTravellers,
       totalKm: totalTripKm,
       visitedPlaces: allVisitedPlaces,
       peopleCount: plan.cost.people,
-      transportPreference: trip ? trip.transport_mode : (transportModeParam as TransportPreference) || undefined,
+      transportPreference: tripTransport,
     });
 
     const newPlan: Plan = {
@@ -720,20 +736,17 @@ function TripViewContent() {
       if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
         navigator.clipboard
           .writeText(shareUrl)
-          .then(() => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 3000);
-          })
-          .catch(() => fallbackCopy(shareUrl));
+          .then(() => markCopied("header"))
+          .catch(() => fallbackCopy(shareUrl, "header"));
       } else {
-        fallbackCopy(shareUrl);
+        fallbackCopy(shareUrl, "header");
       }
     } catch (err) {
       console.error("Failed to copy share link:", err);
     }
   };
 
-  const fallbackCopy = (text: string) => {
+  const fallbackCopy = (text: string, id: string) => {
     try {
       const textArea = document.createElement("textarea");
       textArea.value = text;
@@ -744,8 +757,7 @@ function TripViewContent() {
       textArea.select();
       document.execCommand("copy");
       document.body.removeChild(textArea);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
+      markCopied(id);
     } catch (e) {
       console.warn("Fallback copy failed:", e);
     }
@@ -763,7 +775,9 @@ function TripViewContent() {
     setSelectedStopPlaceId(placeId);
     setIsSheetClosed(false);
     setIsSheetMinimized(false);
-    const targetStop = plan?.days.flatMap((d) => d.stops).find((s) => s.place_id === placeId);
+    const targetDay = plan?.days.find((d) => d.stops.some((s) => s.place_id === placeId));
+    if (targetDay && targetDay.day !== selectedDay) setSelectedDay(targetDay.day);
+    const targetStop = targetDay?.stops.find((s) => s.place_id === placeId);
     if (targetStop) {
       setDrawerStop(targetStop);
       if (openDrawer) {
@@ -792,7 +806,7 @@ function TripViewContent() {
       0
     );
     const lastStop = plan.days[plan.days.length - 1]?.stops.slice(-1)[0];
-    const hubCoords = getStartCityCoordinates(startCityParam || "Bengaluru");
+    const hubCoords = getStartCityCoordinates(tripStartCity);
     const returnKm = lastStop
       ? computeTravelLeg(
           lastStop.place.lat,
@@ -820,41 +834,23 @@ function TripViewContent() {
       costRangeText: lang === "kn" ? `₹${lowCostK}k - ${highCostK}k` : `Rs ${lowCostK}k to ${highCostK}k`,
       weather,
     };
-  }, [plan, tripMonth, lang, startCityParam]);
+  }, [plan, tripMonth, lang, tripStartCity]);
 
   // Real shortlist for the loading screen, derived from the same candidate
   // scoring the planner uses, so the progress panel never shows invented data.
   const loadingPreview = useMemo(() => {
-    const validCategories: Category[] = [
-      "heritage", "nature", "food", "spiritual", "adventure",
-      "beach", "wildlife", "coffee", "culture",
-    ];
-    const requested = (interestsParam ? interestsParam.split(",") : ["heritage", "food"])
-      .filter((c): c is Category => validCategories.includes(c as Category))
-      .slice(0, 4);
-    const interests: Category[] = requested.length > 0 ? requested : ["heritage", "food"];
-
     const candidates = getCandidates(
-      {
-        interests,
-        days: parsedDays,
-        start_city: startCityParam || "Bengaluru",
-        budget: (budgetParam as BudgetFit) || "mid",
-        pace: (paceParam as Pace) || "relaxed",
-        travellers: (travellersParam as Travellers) || "couple",
-        month: currentMonth,
-        lang,
-      },
+      { ...urlRequest, days: parsedDays, month: currentMonth, lang },
       allPlaces
     );
 
     return {
       candidates,
-      matchCount: countMatchingPlaces(interests, allPlaces),
+      matchCount: countMatchingPlaces(urlRequest.interests, allPlaces),
       names: candidates.map((p) => (lang === "kn" ? p.name_kn : p.name_en)),
       regions: Array.from(new Set(candidates.map((p) => p.region))),
     };
-  }, [interestsParam, parsedDays, startCityParam, budgetParam, paceParam, travellersParam, currentMonth, lang]);
+  }, [urlRequest, parsedDays, currentMonth, lang]);
 
   const visitedPlaceIds = useMemo(() => {
     if (!plan) return new Set<string>();
@@ -879,9 +875,9 @@ function TripViewContent() {
         <ProgressSteps
           days={parsedDays}
           placeCount={loadingPreview.candidates.length}
-          interests={interestsParam ? interestsParam.split(",").join(" & ") : "Heritage & Food"}
-          budget={budgetParam || "Mid-range"}
-          pace={paceParam || "Relaxed"}
+          interests={urlRequest.interests.map((c) => t(`form.categories.${c}`, c)).join(" & ")}
+          budget={t(`form.budget_tiers.${urlRequest.budget}`, urlRequest.budget)}
+          pace={t(`form.pace_tiers.${urlRequest.pace}`, urlRequest.pace)}
           month={currentMonth}
           matchCount={loadingPreview.matchCount}
           totalPlaces={allPlaces.length}
@@ -907,8 +903,8 @@ function TripViewContent() {
           matchCount={errorState.matchCount}
           retryAfterS={errorState.retryAfterS}
           days={parsedDays}
-          interests={interestsParam ? (interestsParam.split(",") as Category[]) : ["beach"]}
-          budget={budgetParam || "premium"}
+          interests={urlRequest.interests}
+          budget={urlRequest.budget}
           month={currentMonth}
           onRetry={handleRegenerate}
           onOpenSample={() => router.push("/trip?sample=heritage")}
@@ -954,27 +950,47 @@ function TripViewContent() {
     <div className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 flex flex-col gap-5 sm:gap-6 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] lg:pb-8 min-w-0 overflow-x-hidden print:p-0 print:m-0 print:max-w-none">
       {/* Interactive On-Screen UI (Hidden on Print / PDF export) */}
       <div className="print:hidden flex flex-col gap-5 sm:gap-6 w-full min-w-0 max-w-full">
+        {errorState?.type === "fallback_sample" && (
+          <div
+            role="status"
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-[#DDEFE7] border border-[#B9DCCB] text-[#14202B]"
+          >
+            <div>
+              <p className="font-heading font-bold text-sm">{t("errors.fallback_title", "Showing a ready-made trip")}</p>
+              <p className="text-xs text-[#3E4E5C] mt-1 leading-relaxed">
+                {t(
+                  "errors.fallback_desc",
+                  "We could not reach the AI, so this is a saved {days}-day {theme} sample. Your choices are kept. Regenerate when you are back online."
+                )
+                  .replace("{days}", String(plan.days.length))
+                  .replace("{theme}", t(`form.categories.${errorState.sampleTheme || "heritage"}`, errorState.sampleTheme || "heritage"))}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleRegenerate}
+              className="w-fit px-4 py-2 rounded-xl font-semibold text-sm bg-[#8E1F2F] hover:bg-[#781926] text-white cursor-pointer shrink-0"
+            >
+              {t("errors.fallback_action", "Regenerate")}
+            </button>
+          </div>
+        )}
         {/* Top Header */}
         <div className="flex flex-col gap-3.5 sm:gap-4 w-full min-w-0 max-w-full">
         {/* Tag pills and Action buttons */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 w-full min-w-0">
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 min-w-0">
             <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#F9EBEB] text-[#8E1F2F]">
-              {interestsParam
-                ? interestsParam
-                    .split(",")
-                    .map((c) => t(`form.categories.${c}`, c))
-                    .join(" & ")
-                : `${t("form.categories.heritage", "Heritage")} & ${t("form.categories.food", "Food")}`}
+              {tripInterests.map((c) => t(`form.categories.${c}`, c)).join(" & ")}
             </span>
             <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#FDF2CC] text-[#8C6D05]">
-              {t(`form.budget_tiers.${budgetParam || "mid"}`, "Mid-range")}
+              {t(`form.budget_tiers.${tripBudget}`, "Mid-range")}
             </span>
             <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#E1ECF5] text-[#2B5F8A]">
-              {t(`form.pace_tiers.${paceParam || "relaxed"}`, "Relaxed")}
+              {t(`form.pace_tiers.${tripPace}`, "Relaxed")}
             </span>
             <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#DDEFE7] text-[#1E6B52]">
-              {TRANSPORT_LABELS[transportModeParam || "cab"]?.[lang] ||
+              {TRANSPORT_LABELS[tripTransport || "cab"]?.[lang] ||
                 TRANSPORT_LABELS.cab[lang]}
             </span>
             {plan.source === "sample" && (
@@ -1230,7 +1246,7 @@ function TripViewContent() {
                   approachFrom={
                     idx === 0
                       ? currentDayData.day === 1
-                        ? startCityParam || "Bengaluru"
+                        ? tripStartCity
                         : plan.days[currentDayData.day - 2]?.stops.slice(-1)[0]?.place.city
                       : undefined
                   }
@@ -1311,7 +1327,7 @@ function TripViewContent() {
                     approachFrom={
                       idx === 0
                         ? currentDayData.day === 1
-                          ? startCityParam || "Bengaluru"
+                          ? tripStartCity
                           : plan.days[currentDayData.day - 2]?.stops.slice(-1)[0]?.place.city
                         : undefined
                     }
@@ -1565,20 +1581,17 @@ function TripViewContent() {
                         if (navigator.clipboard?.writeText) {
                           navigator.clipboard
                             .writeText(url)
-                            .then(() => {
-                              setCopied(true);
-                              setTimeout(() => setCopied(false), 3000);
-                            })
-                            .catch(() => fallbackCopy(url));
+                            .then(() => markCopied(st.id))
+                            .catch(() => fallbackCopy(url, st.id));
                         } else {
-                          fallbackCopy(url);
+                          fallbackCopy(url, st.id);
                         }
                       }}
                       className="px-2.5 py-1.5 rounded-lg bg-[#F1F3F0] hover:bg-[#8E1F2F] hover:text-white text-[#14202B] text-xs font-semibold flex items-center gap-1 shrink-0 transition-colors cursor-pointer active:scale-95"
                       title="Share trip link"
                     >
                       <span>
-                        {copied
+                        {copiedId === st.id
                           ? lang === "kn" ? "✓ ನಕಲಿಸಲಾಗಿದೆ" : "✓ Copied"
                           : lang === "kn" ? "↗ ಹಂಚಿಕೊಳ್ಳಿ" : "↗ Share"}
                       </span>
@@ -1659,10 +1672,10 @@ function TripViewContent() {
           <PrintItinerary
             plan={plan}
             tripStats={tripStats}
-            budgetParam={budgetParam}
-            travellersParam={travellersParam}
-            paceParam={paceParam}
-            interestsParam={interestsParam}
+            budgetParam={tripBudget}
+            travellersParam={tripTravellers}
+            paceParam={tripPace}
+            interestsParam={tripInterests.join(", ")}
             lang={lang}
             mode="export"
           />
@@ -1673,10 +1686,10 @@ function TripViewContent() {
       <PrintItinerary
         plan={plan}
         tripStats={tripStats}
-        budgetParam={budgetParam}
-        travellersParam={travellersParam}
-        paceParam={paceParam}
-        interestsParam={interestsParam}
+        budgetParam={tripBudget}
+        travellersParam={tripTravellers}
+        paceParam={tripPace}
+        interestsParam={tripInterests.join(", ")}
         lang={lang}
       />
 
@@ -1697,6 +1710,7 @@ function TripViewContent() {
           setIsDrawerOpen(false);
         }}
         onShowToLocal={(place) => {
+          setIsDrawerOpen(false);
           setShowToLocalPlace(place);
           setIsShowToLocalOpen(true);
         }}

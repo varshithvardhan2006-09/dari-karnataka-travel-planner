@@ -465,6 +465,7 @@ export default function PlannerForm() {
                       setTravellers(tr.id);
                       setPeopleCount(PEOPLE_COUNT_MAP[tr.id] || 2);
                     }}
+                    aria-pressed={travellers === tr.id}
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-colors ${
                       travellers === tr.id
                         ? "bg-[#14202B] text-white"
@@ -482,6 +483,7 @@ export default function PlannerForm() {
                   type="button"
                   disabled={peopleCount <= 1}
                   onClick={() => setPeopleCount((c) => Math.max(1, c - 1))}
+                  aria-label={lang === "kn" ? "ಒಬ್ಬ ವ್ಯಕ್ತಿ ಕಡಿಮೆ" : "One person fewer"}
                   className="w-8 h-8 rounded-lg bg-[#F1F3F0] border border-[#DCE1DD] font-bold text-sm text-[#14202B] flex items-center justify-center disabled:opacity-40 cursor-pointer"
                 >
                   -
@@ -493,6 +495,7 @@ export default function PlannerForm() {
                   type="button"
                   disabled={peopleCount >= 10}
                   onClick={() => setPeopleCount((c) => Math.min(10, c + 1))}
+                  aria-label={lang === "kn" ? "ಒಬ್ಬ ವ್ಯಕ್ತಿ ಹೆಚ್ಚು" : "One person more"}
                   className="w-8 h-8 rounded-lg bg-[#F1F3F0] border border-[#DCE1DD] font-bold text-sm text-[#14202B] flex items-center justify-center disabled:opacity-40 cursor-pointer"
                 >
                   +
@@ -641,6 +644,7 @@ export default function PlannerForm() {
                     key={pref.id}
                     type="button"
                     onClick={() => setFoodPref(pref.id)}
+                    aria-pressed={foodPref === pref.id}
                     className={`px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition-colors ${
                       foodPref === pref.id
                         ? "bg-[#8E1F2F] text-white"
@@ -664,6 +668,7 @@ export default function PlannerForm() {
                     key={mode.id}
                     type="button"
                     onClick={() => setTransportMode(mode.id)}
+                    aria-pressed={transportMode === mode.id}
                     className={`px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition-colors ${
                       transportMode === mode.id
                         ? "bg-[#8E1F2F] text-white"

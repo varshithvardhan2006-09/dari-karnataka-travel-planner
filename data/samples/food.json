@@ -778,6 +778,11 @@
     "start_city": "Mangaluru",
     "budget": "budget",
     "travellers": "friends",
-    "month": 12
+    "month": 12,
+    "interests": [
+      "food",
+      "beach"
+    ],
+    "pace": "balanced"
   }
 }

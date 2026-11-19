@@ -33,6 +33,7 @@ export default function TripMap({
   const layerGroupRef = useRef<L.LayerGroup | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const fitBoundsRef = useRef<(() => void) | null>(null);
+  const lastViewKeyRef = useRef("");
 
   // Create custom HTML divIcon for a stop with pin numbering
   const createDayPinIcon = (pinNumber: number, dayNum: number, isSelected: boolean) => {
@@ -71,10 +72,14 @@ export default function TripMap({
       if (onPinClick) {
         onPinClick(placeId);
       } else {
-        const cardEl = document.getElementById(`stop-card-${placeId}`);
-        if (cardEl) {
-          cardEl.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
+        // Scroll to whichever copy of the stop card (desktop or mobile) is visible.
+        const cards = Array.from(
+          document.querySelectorAll<HTMLElement>(`[data-stop-card="${CSS.escape(placeId)}"]`)
+        );
+        (cards.find((node) => node.offsetParent !== null) || cards[0])?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
       }
     },
     [onPinClick]
@@ -117,6 +122,7 @@ export default function TripMap({
 
     const layerGroup = L.layerGroup().addTo(map);
     mapRef.current = map;
+    lastViewKeyRef.current = ""; // a new map always fits its view once
     layerGroupRef.current = layerGroup;
 
     const timer = setTimeout(() => {
@@ -302,7 +308,13 @@ export default function TripMap({
     };
 
     fitBoundsRef.current = fitCurrentBounds;
-    fitCurrentBounds();
+    // Selecting a stop only restyles the markers; refit the view only when the
+    // day, the whole-trip toggle or the stops change, so the user's zoom is kept.
+    const viewKey = `${wholeTrip}|${selectedDay}|${days.map((d) => d.stops.map((s) => s.place_id).join(",")).join("|")}`;
+    if (viewKey !== lastViewKeyRef.current) {
+      lastViewKeyRef.current = viewKey;
+      fitCurrentBounds();
+    }
   }, [days, selectedDay, wholeTrip, selectedPlaceId, lang, handleMarkerClick]);
 
   // Center on selected stop when selectedPlaceId changes
@@ -332,6 +344,7 @@ export default function TripMap({
               setWholeTrip(false);
               onSelectDay?.(d.day);
             }}
+            aria-pressed={!wholeTrip && selectedDay === d.day}
             className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer shrink-0 ${
               !wholeTrip && selectedDay === d.day
                 ? "bg-[#14202B] text-white shadow-2xs"
@@ -351,6 +364,7 @@ export default function TripMap({
         <button
           type="button"
           onClick={() => setWholeTrip(true)}
+          aria-pressed={wholeTrip}
           className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer shrink-0 ${
             wholeTrip
               ? "bg-[#14202B] text-white shadow-2xs"

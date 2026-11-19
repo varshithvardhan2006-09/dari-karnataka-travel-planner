@@ -599,7 +599,9 @@ export default function LandingPage() {
           {/* Real-time interactive Leaflet OpenStreetMap */}
           <RegionMap
             selectedRegion={selectedRegion}
-            onSelectPlace={(place) => router.push(`/plan?interests=${place.categories[0]}`)}
+            onSelectPlace={(place) =>
+              router.push(place.categories[0] ? `/plan?interests=${place.categories[0]}` : "/plan")
+            }
           />
         </div>
 

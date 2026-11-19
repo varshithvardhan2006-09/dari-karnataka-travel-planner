@@ -148,6 +148,7 @@ export default function StopCard({
                   key={mode}
                   type="button"
                   onClick={(e) => handleModeChange(mode, e)}
+                  aria-pressed={currentMode === mode}
                   className={`px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-semibold uppercase cursor-pointer transition-colors ${
                     currentMode === mode
                       ? "bg-[#14202B] text-white"
@@ -184,7 +185,17 @@ export default function StopCard({
           <div className="flex items-start justify-between gap-2 min-w-0">
             <div className="min-w-0 flex-1">
               <h3 className="font-heading font-bold text-sm sm:text-lg text-[#14202B] leading-snug break-words">
-                {placeName}
+                {/* A real button, so keyboard users can open the stop's details too */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCardClick?.(stop.place_id);
+                  }}
+                  className="text-left cursor-pointer hover:underline focus-visible:underline rounded"
+                >
+                  {placeName}
+                </button>
               </h3>
 
               {/* Subline: Entry cost, best time, crowd */}

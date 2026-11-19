@@ -635,6 +635,12 @@
     "start_city": "Mysuru",
     "budget": "mid",
     "travellers": "family",
-    "month": 10
+    "month": 10,
+    "interests": [
+      "nature",
+      "wildlife",
+      "coffee"
+    ],
+    "pace": "relaxed"
   }
 }

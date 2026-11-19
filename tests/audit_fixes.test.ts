@@ -102,7 +102,7 @@ describe("Shared links are rebuilt from the dataset", () => {
 });
 
 describe("Plans carry the trip they were built for", () => {
-  it("stores start city, budget, travellers, month and transport on the plan", () => {
+  it("stores the trip request (city, budget, group, month, transport, interests, pace) on the plan", () => {
     const plan = buildDeterministicPlan({ ...baseRequest, transport_mode: "bus_train" });
     expect(plan.trip).toEqual({
       start_city: "Mysuru",
@@ -110,6 +110,8 @@ describe("Plans carry the trip they were built for", () => {
       travellers: "family",
       month: 1,
       transport_mode: "bus_train",
+      interests: ["heritage", "nature"],
+      pace: "balanced",
     });
     expect(PlanSchema.safeParse(plan).success).toBe(true);
   });
@@ -196,5 +198,30 @@ describe("Speech proxy", () => {
     const res = await GET(new NextRequest("http://localhost:3000/api/tts?text=Namaskara&lang=kn"));
     expect(res.status).toBe(502);
     spy.mockRestore();
+  });
+});
+
+describe("Shared links cannot show invented costs or text", () => {
+  it("keeps the real cost for a genuine plan and recalculates a tampered one", () => {
+    const plan = buildDeterministicPlan(baseRequest);
+    expect(rehydrateSharedPlan(structuredClone(plan))!.cost).toEqual(plan.cost);
+
+    const tampered = structuredClone(plan);
+    tampered.cost = { ...tampered.cost, total: 1, stay: 0 };
+    tampered.title = "x".repeat(5000);
+    const rebuilt = rehydrateSharedPlan(tampered)!;
+    expect(rebuilt.cost).toEqual(plan.cost);
+    expect(rebuilt.title.length).toBeLessThanOrEqual(120);
+  });
+
+  it("rejects links with broken day numbering or too many days", () => {
+    const plan = buildDeterministicPlan(baseRequest);
+    const renumbered = structuredClone(plan);
+    renumbered.days[1].day = 7;
+    expect(rehydrateSharedPlan(renumbered)).toBeNull();
+
+    const long = structuredClone(plan);
+    long.days = Array.from({ length: 8 }, (_, i) => ({ ...plan.days[0], day: i + 1 }));
+    expect(rehydrateSharedPlan(long)).toBeNull();
   });
 });

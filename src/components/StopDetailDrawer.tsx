@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Stop, Place } from "@/lib/schema";
 import { useLang } from "@/lib/i18n/useLang";
 import PlaceImage from "./PlaceImage";
@@ -41,6 +41,15 @@ export default function StopDetailDrawer({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
+
+  // Move focus into the drawer when it opens and give it back when it closes.
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!isOpen) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    dialogRef.current?.focus();
+    return () => previouslyFocused?.focus?.();
+  }, [isOpen]);
 
   // Lock background scrolling so the page behind the drawer cannot move
   useEffect(() => {
@@ -136,10 +145,12 @@ export default function StopDetailDrawer({
 
       {/* Slide-out Drawer Panel (Fixed full height with locked header, scrollable body, and locked footer) */}
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label="Stop details"
-        className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col z-10 overflow-hidden animate-in slide-in-from-right duration-300"
+        className="outline-none relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col z-10 overflow-hidden animate-in slide-in-from-right duration-300"
       >
         {/* 1. Header Bar with Close Button (Fixed at top) */}
         <div className="shrink-0 bg-white/95 backdrop-blur-md px-5 sm:px-6 pt-[calc(1rem+env(safe-area-inset-top,0px))] pb-4 border-b border-[#DCE1DD] flex items-center justify-between z-10">

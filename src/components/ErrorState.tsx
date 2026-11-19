@@ -23,8 +23,8 @@ export default function ErrorState({
   type,
   matchCount = 3,
   days = 4,
-  interests = ["beaches"],
-  budget = "premium",
+  interests = ["heritage", "food"],
+  budget = "mid",
   month = 11,
   sampleTheme = "Heritage",
   retryAfterS = 30,
@@ -45,7 +45,7 @@ export default function ErrorState({
   if (type === "invalid_link") {
     return (
       <div className="bg-white rounded-3xl p-8 sm:p-10 border border-[#DCE1DD] shadow-sm max-w-md w-full">
-        <div className="w-12 h-12 rounded-2xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center text-2xl font-bold mb-6 select-none">
+        <div className="w-12 h-12 rounded-2xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center text-2xl font-bold mb-6 select-none" aria-hidden="true">
           ✕
         </div>
         <h3 className="font-heading font-bold text-2xl text-[#14202B] mb-3">
@@ -74,7 +74,7 @@ export default function ErrorState({
     return (
       <div className="bg-white rounded-3xl p-8 sm:p-10 border border-[#DCE1DD] shadow-sm max-w-md w-full">
         {/* Yellow Exclamation Badge */}
-        <div className="w-12 h-12 rounded-2xl bg-[#FEF7D6] text-[#8C6D05] flex items-center justify-center text-2xl font-bold mb-6 select-none">
+        <div className="w-12 h-12 rounded-2xl bg-[#FEF7D6] text-[#8C6D05] flex items-center justify-center text-2xl font-bold mb-6 select-none" aria-hidden="true">
           !
         </div>
 
@@ -125,7 +125,7 @@ export default function ErrorState({
     return (
       <div className="bg-white rounded-3xl p-8 sm:p-10 border border-[#DCE1DD] shadow-sm max-w-md w-full">
         {/* Blue Question Mark Badge */}
-        <div className="w-12 h-12 rounded-2xl bg-[#E1ECF5] text-[#2B5F8A] flex items-center justify-center text-2xl font-bold mb-6 select-none">
+        <div className="w-12 h-12 rounded-2xl bg-[#E1ECF5] text-[#2B5F8A] flex items-center justify-center text-2xl font-bold mb-6 select-none" aria-hidden="true">
           ?
         </div>
 
@@ -160,7 +160,7 @@ export default function ErrorState({
   return (
     <div className="bg-white rounded-3xl p-8 sm:p-10 border border-[#DCE1DD] shadow-sm max-w-md w-full">
       {/* Green Check Mark Badge */}
-      <div className="w-12 h-12 rounded-2xl bg-[#DDEFE7] text-[#1E6B52] flex items-center justify-center text-2xl font-bold mb-6 select-none">
+      <div className="w-12 h-12 rounded-2xl bg-[#DDEFE7] text-[#1E6B52] flex items-center justify-center text-2xl font-bold mb-6 select-none" aria-hidden="true">
         ✓
       </div>
 

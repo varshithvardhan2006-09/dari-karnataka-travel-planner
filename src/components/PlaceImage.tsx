@@ -71,7 +71,11 @@ export default function PlaceImage({
   }
 
   return (
-    <div className={`relative overflow-hidden w-full h-full ${className}`}>
+    <div
+      className={`relative overflow-hidden w-full h-full ${className}`}
+      role="img"
+      aria-label={altText}
+    >
       {renderFallbackScene()}
     </div>
   );

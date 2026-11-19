@@ -101,6 +101,8 @@ export function getCustomizedSamplePlan(request: PlanRequest): { plan: Plan; key
     travellers: request.travellers,
     month: request.month,
     transport_mode: request.transport_mode,
+    interests: request.interests,
+    pace: request.pace,
   };
 
   return { plan: customized, key };

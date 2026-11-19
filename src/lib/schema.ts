@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const CategoryEnum = z.enum([
+export const CategoryEnum = z.enum([
   "heritage",
   "nature",
   "food",
@@ -27,7 +27,7 @@ const RegionEnum = z.enum([
   "North Kannada",
 ]);
 
-const BudgetFitEnum = z.enum(["budget", "mid", "premium"]);
+export const BudgetFitEnum = z.enum(["budget", "mid", "premium"]);
 export type BudgetFit = z.infer<typeof BudgetFitEnum>;
 
 const MealTypeEnum = z.enum(["breakfast", "lunch", "dinner", "snack"]);
@@ -90,23 +90,23 @@ export const PlaceSchema = z.object({
 });
 export type Place = z.infer<typeof PlaceSchema>;
 
-const StartCitySchema = z
+export const StartCitySchema = z
   .string()
   .trim()
   .min(1, "Please provide a starting city or town")
   .max(40, "Starting city name cannot exceed 40 characters");
 export type StartCity = string;
 
-const PaceEnum = z.enum(["relaxed", "balanced", "packed"]);
+export const PaceEnum = z.enum(["relaxed", "balanced", "packed"]);
 export type Pace = z.infer<typeof PaceEnum>;
 
-const TravellersEnum = z.enum(["solo", "couple", "family", "friends"]);
+export const TravellersEnum = z.enum(["solo", "couple", "family", "friends"]);
 export type Travellers = z.infer<typeof TravellersEnum>;
 
-const FoodPreferenceEnum = z.enum(["any", "veg", "nonveg"]);
+export const FoodPreferenceEnum = z.enum(["any", "veg", "nonveg"]);
 export type FoodPreference = z.infer<typeof FoodPreferenceEnum>;
 
-const TransportPreferenceEnum = z.enum(["cab", "own_car", "bus_train"]);
+export const TransportPreferenceEnum = z.enum(["cab", "own_car", "bus_train"]);
 export type TransportPreference = z.infer<typeof TransportPreferenceEnum>;
 
 export const PlanRequestSchema = z.object({
@@ -192,6 +192,8 @@ const PlanTripSchema = z.object({
   travellers: TravellersEnum,
   month: z.number().int().min(1).max(12),
   transport_mode: TransportPreferenceEnum.optional(),
+  interests: z.array(CategoryEnum).min(1).max(4).optional(),
+  pace: PaceEnum.optional(),
 });
 
 export const PlanSchema = z.object({

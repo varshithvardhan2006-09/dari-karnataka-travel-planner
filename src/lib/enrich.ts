@@ -191,6 +191,8 @@ export function enrichPlan(
       travellers: request.travellers,
       month: request.month,
       transport_mode: request.transport_mode,
+      interests: request.interests,
+      pace: request.pace,
     },
   };
 }

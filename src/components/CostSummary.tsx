@@ -20,7 +20,8 @@ const CATEGORY_COLORS = {
 export default function CostSummary({ cost, days, source }: CostSummaryProps) {
   const { lang, t } = useLang();
 
-  const total = Math.max(1, cost.total);
+  // Slices are shares of the four parts, so they always close the ring exactly.
+  const total = Math.max(1, cost.stay + cost.food + cost.transport + cost.entry);
   const stayPct = cost.stay / total;
   const foodPct = cost.food / total;
   const transPct = cost.transport / total;
