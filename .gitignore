@@ -40,6 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Agent instruction file written by next dev
+# Written by next dev
 AGENTS.md
-CLAUDE.md
