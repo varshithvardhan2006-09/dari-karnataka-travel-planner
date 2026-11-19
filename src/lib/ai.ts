@@ -215,7 +215,7 @@ function parseAndValidateModelOutput(
             day: typeof d.day === "number" ? d.day : dayIdx + 1,
             theme:
               typeof d.theme === "string" && d.theme.trim()
-                ? d.theme.trim()
+                ? d.theme.trim().slice(0, 60)
                 : `Day ${dayIdx + 1} Discovery`,
             stops: Array.isArray(d.stops)
               ? (d.stops as Array<Record<string, unknown>>).map((s, stopIdx: number) => ({

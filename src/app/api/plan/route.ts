@@ -4,6 +4,8 @@ import { generateItinerary } from "@/lib/ai";
 import { buildDeterministicPlan } from "@/lib/planner";
 import { getCustomizedSamplePlan } from "@/lib/samples";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { readBodyWithLimit } from "@/lib/request-body";
+import { countMatchingPlaces } from "@/lib/candidates";
 import placesData from "../../../../data/places.json";
 
 export const maxDuration = 30;
@@ -11,6 +13,7 @@ export const maxDuration = 30;
 const allPlaces = placesData as Place[];
 
 const MAX_BODY_BYTES = 32 * 1024;
+const MIN_MATCHES_FOR_LONG_TRIP = 4;
 
 const RATE_LIMIT = {
   name: "plan",
@@ -74,8 +77,8 @@ export async function POST(req: NextRequest) {
 
     // 2. Validate JSON body with Zod
     // Measure the body itself too: Content-Length can be absent (chunked) or wrong.
-    const rawBody = await req.text();
-    if (Buffer.byteLength(rawBody, "utf8") > MAX_BODY_BYTES) {
+    const rawBody = await readBodyWithLimit(req, MAX_BODY_BYTES);
+    if (rawBody === null) {
       return NextResponse.json(
         { error: "invalid_input", details: "Payload exceeds 32KB limit" },
         { status: 413 }
@@ -105,17 +108,14 @@ export async function POST(req: NextRequest) {
 
     const planRequest = parseResult.data;
 
-    // Check for too few candidates (e.g. 1 interest with very few matches for multi-day trip)
-    const matchingPlaces = allPlaces.filter((p) =>
-      planRequest.interests.some((cat) => p.categories.includes(cat))
-    );
-    const minNeededForDays = Math.min(4, planRequest.days * 2);
-    if (matchingPlaces.length < minNeededForDays && planRequest.days > 2) {
+    // A trip of 3+ days needs at least a few places matching the chosen interests
+    const matchCount = countMatchingPlaces(planRequest.interests, allPlaces);
+    if (planRequest.days > 2 && matchCount < MIN_MATCHES_FOR_LONG_TRIP) {
       return NextResponse.json(
         {
           error: "few_matches",
-          match_count: matchingPlaces.length,
-          min_needed: minNeededForDays,
+          match_count: matchCount,
+          min_needed: MIN_MATCHES_FOR_LONG_TRIP,
         },
         { status: 422 }
       );

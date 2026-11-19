@@ -5,7 +5,7 @@ export const maxDuration = 15;
 
 const ALLOWED_LANGUAGES = new Set(["kn", "en", "hi", "te", "ta", "ml"]);
 
-const MAX_TEXT_LENGTH = 250;
+const MAX_TEXT_LENGTH = 200;
 const UPSTREAM_TIMEOUT_MS = 6000;
 
 const RATE_LIMIT = {
@@ -29,7 +29,8 @@ async function fetchUpstreamAudio(url: string): Promise<ArrayBuffer | null> {
       headers: UPSTREAM_HEADERS,
       signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
     });
-    if (!res.ok) return null;
+    // Only real audio is passed on (and cached); an HTML error or captcha page is not.
+    if (!res.ok || !(res.headers.get("content-type") || "").startsWith("audio/")) return null;
     const buffer = await res.arrayBuffer();
     return buffer.byteLength > 0 ? buffer : null;
   } catch {
@@ -62,7 +63,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Limit length to prevent abuse (Google TTS limit is ~200 chars per segment)
+    // The upstream speech endpoint accepts about 200 characters per request
     const trimmed = text.trim().slice(0, MAX_TEXT_LENGTH);
     const encoded = encodeURIComponent(trimmed);
 

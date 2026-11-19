@@ -28,8 +28,11 @@ interface RateLimitOptions {
 
 /**
  * Reads the caller's IP from proxy headers, falling back to loopback.
+ * Vercel's own header is preferred because clients cannot set it.
  */
 export function getClientIp(req: Request): string {
+  const vercelIp = req.headers.get("x-vercel-forwarded-for")?.split(",")[0].trim();
+  if (vercelIp) return vercelIp;
   const forwardedFor = req.headers.get("x-forwarded-for");
   if (forwardedFor) {
     const first = forwardedFor.split(",")[0].trim();
@@ -52,12 +55,17 @@ export function checkRateLimit(ip: string, options: RateLimitOptions): RateLimit
     buckets.set(name, bucket);
   }
 
-  // Prune the bucket when it grows past the threshold to prevent memory growth
+  // Prune the bucket when it grows past the threshold to prevent memory growth.
+  // If many addresses are still active, drop the oldest ones so the map stays bounded.
   if (bucket.size > MAX_TRACKED_IPS) {
     for (const [key, times] of bucket.entries()) {
       if (times.every((t) => t <= windowStart)) {
         bucket.delete(key);
       }
+    }
+    for (const key of bucket.keys()) {
+      if (bucket.size <= MAX_TRACKED_IPS) break;
+      bucket.delete(key);
     }
   }
 

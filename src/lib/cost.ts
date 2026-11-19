@@ -74,9 +74,12 @@ export function calculateTripCost(params: {
     transport = Math.round(safeKm * perKmRate + safeDays * TRANSPORT_RATES.baseBookingFee);
   }
 
-  // 4. Entry fees: sum of entry_inr * people
+  // 4. Entry fees: sum of entry_inr * people. For meal places entry_inr is the
+  // meal's price, which the daily food budget already covers, so they are skipped.
   const safePlaces = Array.isArray(visitedPlaces) ? visitedPlaces : [];
-  const entryTotalPerPerson = safePlaces.reduce((sum, p) => sum + (p.entry_inr || 0), 0);
+  const entryTotalPerPerson = safePlaces
+    .filter((p) => !p.is_meal)
+    .reduce((sum, p) => sum + (p.entry_inr || 0), 0);
   const entry = Math.round(entryTotalPerPerson * people);
 
   // Total must exactly equal the sum of all itemized categories

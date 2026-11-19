@@ -193,7 +193,7 @@ export function PrintItinerary({
                             <div className="text-[10px] text-gray-500 mt-0.5">
                               Start Time: <strong className="text-gray-800">{stop.start || "09:00"}</strong>
                               {" · "}Duration: {(stop.duration_min / 60).toFixed(1)} hrs ({stop.duration_min} min)
-                              {" · "}Entry: {stop.place.entry_inr === 0 ? "Free" : `₹${stop.place.entry_inr}`}
+                              {" · "}{stop.place.is_meal ? "Meal" : "Entry"}: {stop.place.entry_inr === 0 ? "Free" : `₹${stop.place.entry_inr}`}
                             </div>
                           </div>
                         </div>

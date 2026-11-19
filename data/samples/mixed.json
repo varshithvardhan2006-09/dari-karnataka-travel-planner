@@ -4,7 +4,7 @@
   "days": [
     {
       "day": 1,
-      "theme": "Bengaluru Highlights",
+      "theme": "Bengaluru & Mysuru Highlights",
       "stops": [
         {
           "place_id": "lalbagh-gardens",
@@ -82,88 +82,8 @@
           ]
         },
         {
-          "place_id": "vv-puram-food-street",
-          "start": "10:40",
-          "duration_min": 75,
-          "note_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
-          "travel_from_prev": {
-            "km": 1.1,
-            "min": 10,
-            "mode": "auto"
-          },
-          "place": {
-            "id": "vv-puram-food-street",
-            "name_en": "VV Puram Food Street (Thindi Beedi)",
-            "name_kn": "ವಿ.ವಿ. ಪುರಂ ತಿಂಡಿ ಬೀದಿ",
-            "region": "Bengaluru",
-            "city": "Bengaluru",
-            "lat": 12.9526,
-            "lng": 77.5772,
-            "categories": [
-              "food",
-              "culture"
-            ],
-            "duration_min": 75,
-            "entry_inr": 200,
-            "best_months": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7,
-              8,
-              9,
-              10,
-              11,
-              12
-            ],
-            "budget_fit": [
-              "budget",
-              "mid",
-              "premium"
-            ],
-            "is_meal": "dinner",
-            "desc_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
-            "desc_kn": "ಬಿಸಿಬಿಸಿ ಅಕ್ಕಿ ರೊಟ್ಟಿ, ಪದ್ದು, ಮಸಾಲೆ ದೋಸೆ ಮತ್ತು ಗುಲ್ಕಂಡ್ ಸಿಹಿಗೆ ಹೆಸರಾದ ಬೆಂಗಳೂರಿನ ಆಹಾರ ರಸ್ತೆ.",
-            "tip_en": "Shops open after 18:30. Try warm akki rotti followed by traditional gulkand ice cream.",
-            "tip_kn": "ಸಂಜೆ ೬:೩೦ ರ ನಂತರ ಅಂಗಡಿಗಳು ತೆರೆಯುತ್ತವೆ. ಬಿಸಿ ಅಕ್ಕಿರೊಟ್ಟಿ ಮತ್ತು ಗುಲ್ಕಂಡ್ ರುಚಿ ನೋಡಿ.",
-            "phrase_ids": [
-              "phrase-how-much",
-              "phrase-delicious-food",
-              "phrase-bill-please"
-            ],
-            "verified": true,
-            "source_url": "https://karnatakatourism.org"
-          },
-          "phrases": [
-            {
-              "id": "phrase-how-much",
-              "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು?",
-              "translit": "Idakke eshtu?",
-              "en": "How much for this?",
-              "context": "shopping"
-            },
-            {
-              "id": "phrase-delicious-food",
-              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
-              "translit": "Oota tumba ruchi aagide",
-              "en": "The food is very tasty",
-              "context": "food"
-            },
-            {
-              "id": "phrase-bill-please",
-              "kn": "ಬಿಲ್ ಕೊಡಿ",
-              "translit": "Bill kodi",
-              "en": "Please give the bill",
-              "context": "food"
-            }
-          ]
-        },
-        {
           "place_id": "bangalore-palace",
-          "start": "12:15",
+          "start": "10:50",
           "duration_min": 90,
           "note_en": "Tudor-style royal estate with fortified towers, wood carvings, and paintings of the Mysore royal family.",
           "travel_from_prev": {
@@ -234,99 +154,13 @@
           ]
         },
         {
-          "place_id": "vidyarthi-bhavan",
-          "start": "14:10",
-          "duration_min": 45,
-          "note_en": "Iconic 1943 heritage eatery famous for thick crispy golden benne masala dosas and filter coffee.",
-          "travel_from_prev": {
-            "km": 8.8,
-            "min": 25,
-            "mode": "cab"
-          },
-          "place": {
-            "id": "vidyarthi-bhavan",
-            "name_en": "Vidyarthi Bhavan Gandhi Bazaar",
-            "name_kn": "ವಿದ್ಯಾರ್ಥಿ ಭವನ ಗಾಂಧಿ ಬಜಾರ್",
-            "region": "Bengaluru",
-            "city": "Bengaluru",
-            "lat": 12.9427,
-            "lng": 77.5684,
-            "categories": [
-              "food"
-            ],
-            "duration_min": 45,
-            "entry_inr": 120,
-            "best_months": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7,
-              8,
-              9,
-              10,
-              11,
-              12
-            ],
-            "budget_fit": [
-              "budget",
-              "mid",
-              "premium"
-            ],
-            "is_meal": "breakfast",
-            "desc_en": "Iconic 1943 heritage eatery famous for thick crispy golden benne masala dosas and filter coffee.",
-            "desc_kn": "೧೯೪೩ ರಿಂದ ಗಾಂಧಿ ಬಜಾರಿನಲ್ಲಿ ಗರಿಗರಿ ಮಸಾಲೆ ದೋಸೆ ಮತ್ತು ಘಮಘಮಿಸುವ ಫಿಲ್ಟರ್ ಕಾಫಿಗೆ ಹೆಸರಾದ ಹೆಗ್ಗುರುತು.",
-            "tip_en": "Watch waiters masterfully balance stacks of up to 20 dosa plates across their arms.",
-            "tip_kn": "ಮಾಣಿಗಳು ಒಂದೇ ಕೈಯಲ್ಲಿ ಹತ್ತಾರು ದೋಸೆ ತಟ್ಟೆಗಳನ್ನು ಹೊತ್ತು ತರುವುದನ್ನು ನೋಡುವುದೇ ಸಂಭ್ರಮ.",
-            "phrase_ids": [
-              "phrase-masale-dose",
-              "phrase-delicious-food",
-              "phrase-bill-please"
-            ],
-            "verified": true,
-            "source_url": "https://vidyarthibhavan.in"
-          },
-          "phrases": [
-            {
-              "id": "phrase-masale-dose",
-              "kn": "ಒಂದು ಮಸಾಲೆ ದೋಸೆ ಕೊಡಿ",
-              "translit": "Ondu masale dose kodi",
-              "en": "Please give one masala dosa",
-              "context": "food"
-            },
-            {
-              "id": "phrase-delicious-food",
-              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
-              "translit": "Oota tumba ruchi aagide",
-              "en": "The food is very tasty",
-              "context": "food"
-            },
-            {
-              "id": "phrase-bill-please",
-              "kn": "ಬಿಲ್ ಕೊಡಿ",
-              "translit": "Bill kodi",
-              "en": "Please give the bill",
-              "context": "food"
-            }
-          ]
-        }
-      ],
-      "travel_total_min": 70
-    },
-    {
-      "day": 2,
-      "theme": "Mysuru Highlights",
-      "stops": [
-        {
           "place_id": "somanathapura-temple",
-          "start": "09:00",
+          "start": "16:05",
           "duration_min": 75,
           "note_en": "UNESCO World Heritage trikuta Hoysala temple renowned for pristine star-shaped soapstone friezes.",
           "travel_from_prev": {
-            "km": 136.6,
-            "min": 215,
+            "km": 144.7,
+            "min": 225,
             "mode": "cab"
           },
           "place": {
@@ -395,7 +229,7 @@
         },
         {
           "place_id": "tipu-summer-palace",
-          "start": "11:15",
+          "start": "18:20",
           "duration_min": 60,
           "note_en": "Ornate teakwood palace set amidst landscaped lawns displaying intricate battle murals and relics.",
           "travel_from_prev": {
@@ -465,14 +299,96 @@
               "context": "thanks"
             }
           ]
+        }
+      ],
+      "travel_total_min": 320
+    },
+    {
+      "day": 2,
+      "theme": "Mysuru Highlights",
+      "stops": [
+        {
+          "place_id": "srirangapatna-temple",
+          "start": "09:00",
+          "duration_min": 75,
+          "note_en": "Majestic river island shrine on the Kaveri dedicated to Lord Ranganatha, dating to the 9th-century Ganga dynasty.",
+          "travel_from_prev": {
+            "km": 1.5,
+            "min": 10,
+            "mode": "auto"
+          },
+          "place": {
+            "id": "srirangapatna-temple",
+            "name_en": "Sri Ranganathaswamy Temple",
+            "name_kn": "ಶ್ರೀ ರಂಗನಾಥಸ್ವಾಮಿ ದೇವಾಲಯ",
+            "region": "Mysuru",
+            "city": "Srirangapatna",
+            "lat": 12.4239,
+            "lng": 76.6946,
+            "categories": [
+              "spiritual",
+              "heritage"
+            ],
+            "duration_min": 75,
+            "entry_inr": 0,
+            "best_months": [
+              1,
+              2,
+              3,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Majestic river island shrine on the Kaveri dedicated to Lord Ranganatha, dating to the 9th-century Ganga dynasty.",
+            "desc_kn": "ಕಾವೇರಿ ನದಿ ದ್ವೀಪದಲ್ಲಿರುವ ೯ನೇ ಶತಮಾನದ ಗಂಗರ ಕಾಲದ ಭವ್ಯ ರಂಗನಾಥಸ್ವಾಮಿ ಕ್ಷೇತ್ರ.",
+            "tip_en": "Dress modestly in traditional Indian clothing for darshan inside the inner sanctum.",
+            "tip_kn": "ಗರ್ಭಗುಡಿಯ ದರ್ಶನಕ್ಕಾಗಿ ಸಾಂಪ್ರದಾಯಿಕ ಉಡುಪನ್ನು ಧರಿಸಿ.",
+            "phrase_ids": [
+              "phrase-temple-darshan",
+              "phrase-water",
+              "phrase-thanks"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-temple-darshan",
+              "kn": "ದೇವಸ್ಥಾನದ ದರ್ಶನ ಸಮಯ ಯಾವಾಗ?",
+              "translit": "Devasthanada darshana samaya yavaga?",
+              "en": "When is the temple darshan time?",
+              "context": "temple"
+            },
+            {
+              "id": "phrase-water",
+              "kn": "ನೀರು ಕೊಡಿ",
+              "translit": "Neeru kodi",
+              "en": "Please give water",
+              "context": "food"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
         },
         {
           "place_id": "mylari-dosa",
-          "start": "12:50",
+          "start": "10:50",
           "duration_min": 45,
           "note_en": "Legendary eatery renowned for melt-in-your-mouth butter benne dosas served with fresh coconut chutney.",
           "travel_from_prev": {
-            "km": 16.5,
+            "km": 17,
             "min": 35,
             "mode": "cab"
           },
@@ -547,7 +463,7 @@
         },
         {
           "place_id": "devaraja-market",
-          "start": "13:45",
+          "start": "11:45",
           "duration_min": 75,
           "note_en": "Vibrant 130-year-old traditional bazaar packed with fragrant flowers, Mysore betel leaves, and perfumes.",
           "travel_from_prev": {
@@ -623,13 +539,87 @@
               "context": "thanks"
             }
           ]
+        },
+        {
+          "place_id": "mysore-zoo",
+          "start": "13:15",
+          "duration_min": 150,
+          "note_en": "One of India's oldest and best maintained zoological gardens with spacious enclosures and exotic species.",
+          "travel_from_prev": {
+            "km": 2.3,
+            "min": 15,
+            "mode": "auto"
+          },
+          "place": {
+            "id": "mysore-zoo",
+            "name_en": "Mysore Zoo",
+            "name_kn": "ಮೈಸೂರು ಮೃಗಾಲಯ",
+            "region": "Mysuru",
+            "city": "Mysuru",
+            "lat": 12.3023,
+            "lng": 76.6644,
+            "categories": [
+              "wildlife",
+              "nature"
+            ],
+            "duration_min": 150,
+            "entry_inr": 100,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "One of India's oldest and best maintained zoological gardens with spacious enclosures and exotic species.",
+            "desc_kn": "ವಿಶಾಲ ಆವರಣಗಳು ಮತ್ತು ಅಪರೂಪದ ಪ್ರಾಣಿ ಸಂಕುಲ ಹೊಂದಿರುವ ಭಾರತದ ಅತ್ಯಂತ ಪುರಾತನ ಮತ್ತು ಸುಂದರ ಮೃಗಾಲಯ.",
+            "tip_en": "Rent a battery-operated buggy if travelling with seniors or small children.",
+            "tip_kn": "ಹಿರಿಯರು ಅಥವಾ ಮಕ್ಕಳೊಂದಿಗೆ ಪ್ರಯಾಣಿಸುತ್ತಿದ್ದರೆ ಬ್ಯಾಟರಿ ವಾಹನವನ್ನು ಬಳಸಬಹುದು.",
+            "phrase_ids": [
+              "phrase-ticket-cost",
+              "phrase-water",
+              "phrase-thanks"
+            ],
+            "verified": false,
+            "source_url": "https://mysorezoo.info"
+          },
+          "phrases": [
+            {
+              "id": "phrase-ticket-cost",
+              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
+              "translit": "Ticket elli siguttade?",
+              "en": "Where do I get tickets?",
+              "context": "ticket"
+            },
+            {
+              "id": "phrase-water",
+              "kn": "ನೀರು ಕೊಡಿ",
+              "translit": "Neeru kodi",
+              "en": "Please give water",
+              "context": "food"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
         }
       ],
-      "travel_total_min": 320
+      "travel_total_min": 70
     },
     {
       "day": 3,
-      "theme": "Mysuru Highlights",
+      "theme": "Mysuru & Hassan Highlights",
       "stops": [
         {
           "place_id": "mysore-palace",
@@ -637,7 +627,7 @@
           "duration_min": 120,
           "note_en": "Indo-Saracenic royal seat of the Wadiyar dynasty featuring grand courtyards and ornate glass domes.",
           "travel_from_prev": {
-            "km": 1.1,
+            "km": 1.4,
             "min": 10,
             "mode": "auto"
           },
@@ -706,87 +696,13 @@
           ]
         },
         {
-          "place_id": "mysore-zoo",
-          "start": "11:10",
-          "duration_min": 150,
-          "note_en": "One of India's oldest and best maintained zoological gardens with spacious enclosures and exotic species.",
-          "travel_from_prev": {
-            "km": 1.4,
-            "min": 10,
-            "mode": "auto"
-          },
-          "place": {
-            "id": "mysore-zoo",
-            "name_en": "Mysore Zoo",
-            "name_kn": "ಮೈಸೂರು ಮೃಗಾಲಯ",
-            "region": "Mysuru",
-            "city": "Mysuru",
-            "lat": 12.3023,
-            "lng": 76.6644,
-            "categories": [
-              "wildlife",
-              "nature"
-            ],
-            "duration_min": 150,
-            "entry_inr": 100,
-            "best_months": [
-              9,
-              10,
-              11,
-              12,
-              1,
-              2,
-              3
-            ],
-            "budget_fit": [
-              "budget",
-              "mid",
-              "premium"
-            ],
-            "desc_en": "One of India's oldest and best maintained zoological gardens with spacious enclosures and exotic species.",
-            "desc_kn": "ವಿಶಾಲ ಆವರಣಗಳು ಮತ್ತು ಅಪರೂಪದ ಪ್ರಾಣಿ ಸಂಕುಲ ಹೊಂದಿರುವ ಭಾರತದ ಅತ್ಯಂತ ಪುರಾತನ ಮತ್ತು ಸುಂದರ ಮೃಗಾಲಯ.",
-            "tip_en": "Rent a battery-operated buggy if travelling with seniors or small children.",
-            "tip_kn": "ಹಿರಿಯರು ಅಥವಾ ಮಕ್ಕಳೊಂದಿಗೆ ಪ್ರಯಾಣಿಸುತ್ತಿದ್ದರೆ ಬ್ಯಾಟರಿ ವಾಹನವನ್ನು ಬಳಸಬಹುದು.",
-            "phrase_ids": [
-              "phrase-ticket-cost",
-              "phrase-water",
-              "phrase-thanks"
-            ],
-            "verified": false,
-            "source_url": "https://mysorezoo.info"
-          },
-          "phrases": [
-            {
-              "id": "phrase-ticket-cost",
-              "kn": "ಟಿಕೆಟ್ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?",
-              "translit": "Ticket elli siguttade?",
-              "en": "Where do I get tickets?",
-              "context": "ticket"
-            },
-            {
-              "id": "phrase-water",
-              "kn": "ನೀರು ಕೊಡಿ",
-              "translit": "Neeru kodi",
-              "en": "Please give water",
-              "context": "food"
-            },
-            {
-              "id": "phrase-thanks",
-              "kn": "ಧನ್ಯವಾದಗಳು",
-              "translit": "Dhanyavadagalu",
-              "en": "Thank you very much",
-              "context": "thanks"
-            }
-          ]
-        },
-        {
           "place_id": "chamundi-hill",
-          "start": "13:55",
+          "start": "11:20",
           "duration_min": 90,
           "note_en": "Prominent hill overlooking Mysuru with the historic Chamundeshwari Temple and massive monolith Nandi.",
           "travel_from_prev": {
-            "km": 4.4,
-            "min": 15,
+            "km": 5.3,
+            "min": 20,
             "mode": "auto"
           },
           "place": {
@@ -856,95 +772,13 @@
           ]
         },
         {
-          "place_id": "srirangapatna-temple",
-          "start": "16:10",
-          "duration_min": 75,
-          "note_en": "Majestic river island shrine on the Kaveri dedicated to Lord Ranganatha, dating to the 9th-century Ganga dynasty.",
-          "travel_from_prev": {
-            "km": 22.1,
-            "min": 45,
-            "mode": "cab"
-          },
-          "place": {
-            "id": "srirangapatna-temple",
-            "name_en": "Sri Ranganathaswamy Temple",
-            "name_kn": "ಶ್ರೀ ರಂಗನಾಥಸ್ವಾಮಿ ದೇವಾಲಯ",
-            "region": "Mysuru",
-            "city": "Srirangapatna",
-            "lat": 12.4239,
-            "lng": 76.6946,
-            "categories": [
-              "spiritual",
-              "heritage"
-            ],
-            "duration_min": 75,
-            "entry_inr": 0,
-            "best_months": [
-              1,
-              2,
-              3,
-              8,
-              9,
-              10,
-              11,
-              12
-            ],
-            "budget_fit": [
-              "budget",
-              "mid",
-              "premium"
-            ],
-            "desc_en": "Majestic river island shrine on the Kaveri dedicated to Lord Ranganatha, dating to the 9th-century Ganga dynasty.",
-            "desc_kn": "ಕಾವೇರಿ ನದಿ ದ್ವೀಪದಲ್ಲಿರುವ ೯ನೇ ಶತಮಾನದ ಗಂಗರ ಕಾಲದ ಭವ್ಯ ರಂಗನಾಥಸ್ವಾಮಿ ಕ್ಷೇತ್ರ.",
-            "tip_en": "Dress modestly in traditional Indian clothing for darshan inside the inner sanctum.",
-            "tip_kn": "ಗರ್ಭಗುಡಿಯ ದರ್ಶನಕ್ಕಾಗಿ ಸಾಂಪ್ರದಾಯಿಕ ಉಡುಪನ್ನು ಧರಿಸಿ.",
-            "phrase_ids": [
-              "phrase-temple-darshan",
-              "phrase-water",
-              "phrase-thanks"
-            ],
-            "verified": true,
-            "source_url": "https://karnatakatourism.org"
-          },
-          "phrases": [
-            {
-              "id": "phrase-temple-darshan",
-              "kn": "ದೇವಸ್ಥಾನದ ದರ್ಶನ ಸಮಯ ಯಾವಾಗ?",
-              "translit": "Devasthanada darshana samaya yavaga?",
-              "en": "When is the temple darshan time?",
-              "context": "temple"
-            },
-            {
-              "id": "phrase-water",
-              "kn": "ನೀರು ಕೊಡಿ",
-              "translit": "Neeru kodi",
-              "en": "Please give water",
-              "context": "food"
-            },
-            {
-              "id": "phrase-thanks",
-              "kn": "ಧನ್ಯವಾದಗಳು",
-              "translit": "Dhanyavadagalu",
-              "en": "Thank you very much",
-              "context": "thanks"
-            }
-          ]
-        }
-      ],
-      "travel_total_min": 80
-    },
-    {
-      "day": 4,
-      "theme": "Mysuru & Hassan Highlights",
-      "stops": [
-        {
           "place_id": "brindavan-gardens",
-          "start": "09:00",
+          "start": "13:40",
           "duration_min": 120,
           "note_en": "Terraced botanical gardens laid across the KRS Dam with synchronized musical fountains at dusk.",
           "travel_from_prev": {
-            "km": 17.2,
-            "min": 35,
+            "km": 26,
+            "min": 50,
             "mode": "cab"
           },
           "place": {
@@ -1010,7 +844,7 @@
         },
         {
           "place_id": "shravanabelagola",
-          "start": "12:45",
+          "start": "17:25",
           "duration_min": 120,
           "note_en": "Colossal 57-foot monolithic statue of Lord Bahubali atop Vindhyagiri hill carved in 981 CE.",
           "travel_from_prev": {
@@ -1079,10 +913,17 @@
               "context": "thanks"
             }
           ]
-        },
+        }
+      ],
+      "travel_total_min": 185
+    },
+    {
+      "day": 4,
+      "theme": "Hassan & Chikkamagaluru Highlights",
+      "stops": [
         {
           "place_id": "halebidu-temple",
-          "start": "17:05",
+          "start": "09:00",
           "duration_min": 90,
           "note_en": "Twin temple dedicated to Lord Shiva featuring hundreds of intricate friezes of deities, battles, and wildlife.",
           "travel_from_prev": {
@@ -1153,17 +994,238 @@
               "context": "thanks"
             }
           ]
+        },
+        {
+          "place_id": "belur-temple",
+          "start": "11:10",
+          "duration_min": 105,
+          "note_en": "Masterpiece of 12th-century Hoysala architecture with celebrated bracket figures and stone filigree.",
+          "travel_from_prev": {
+            "km": 20.3,
+            "min": 40,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "belur-temple",
+            "name_en": "Belur Chennakeshava Temple",
+            "name_kn": "ಬೇಲೂರು ಚನ್ನಕೇಶವ ದೇವಾಲಯ",
+            "region": "Hassan",
+            "city": "Belur",
+            "lat": 13.1627,
+            "lng": 75.8596,
+            "categories": [
+              "heritage",
+              "spiritual"
+            ],
+            "duration_min": 105,
+            "entry_inr": 0,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Masterpiece of 12th-century Hoysala architecture with celebrated bracket figures and stone filigree.",
+            "desc_kn": "೧೨ನೇ ಶತಮಾನದ ಹೊಯ್ಸಳ ವಾಸ್ತುಶಿಲ್ಪದ ಮೇರುಕೃತಿ, ಸುಪ್ರಸಿದ್ಧ ಶಿಲಾಬಾಲಿಕೆಯರು ಮತ್ತು ಸೂಕ್ಷ್ಮ ಕೆತ್ತನೆಗಳ ತಾಣ.",
+            "tip_en": "Look up at the angled bracket figures (Madanikas) supporting the outer ceiling eaves.",
+            "tip_kn": "ಹೊರಗಿನ ಮೇಲ್ಛಾವಣಿಯ ಮದನಿಕಾ ಶಿಲಾಬಾಲಿಕೆಯರ ಸೂಕ್ಷ್ಮ ಸೌಂದರ್ಯವನ್ನು ತಪ್ಪದೇ ವೀಕ್ಷಿಸಿ.",
+            "phrase_ids": [
+              "phrase-temple-darshan",
+              "phrase-take-photo",
+              "phrase-very-nice"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-temple-darshan",
+              "kn": "ದೇವಸ್ಥಾನದ ದರ್ಶನ ಸಮಯ ಯಾವಾಗ?",
+              "translit": "Devasthanada darshana samaya yavaga?",
+              "en": "When is the temple darshan time?",
+              "context": "temple"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-very-nice",
+              "kn": "ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ!",
+              "translit": "Tumba chennagide!",
+              "en": "It is very beautiful!",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "chikkamagaluru-coffee-estate",
+          "start": "13:45",
+          "duration_min": 90,
+          "note_en": "Guided stroll through Arabica and Robusta plantations learning the bean harvesting and roasting process.",
+          "travel_from_prev": {
+            "km": 26.1,
+            "min": 50,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "chikkamagaluru-coffee-estate",
+            "name_en": "Coffee Estate Walk & Tasting",
+            "name_kn": "ಕಾಫಿ ತೋಟದ ನಡಿಗೆ",
+            "region": "Chikkamagaluru",
+            "city": "Chikkamagaluru",
+            "lat": 13.3218,
+            "lng": 75.7725,
+            "categories": [
+              "coffee",
+              "nature",
+              "food"
+            ],
+            "duration_min": 90,
+            "entry_inr": 200,
+            "best_months": [
+              10,
+              11,
+              12,
+              1,
+              2,
+              3
+            ],
+            "budget_fit": [
+              "mid",
+              "premium"
+            ],
+            "is_meal": "snack",
+            "desc_en": "Guided stroll through Arabica and Robusta plantations learning the bean harvesting and roasting process.",
+            "desc_kn": "ಅರೇಬಿಕಾ ಮತ್ತು ರೋಬಸ್ಟಾ ಕಾಫಿ ಗಿಡಗಳ ನಡುವೆ ನಡಿಗೆ ಹಾಗೂ ಹೊಸದಾಗಿ ಹುರಿದ ಕಾಫಿ ರುಚಿ ನೋಡುವ ಅನುಭವ.",
+            "tip_en": "Buy freshly roasted and ground estate filter coffee directly from the planter.",
+            "tip_kn": "ತೋಟದಲ್ಲೇ ಹೊಸದಾಗಿ ಪುಡಿ ಮಾಡಿದ ಶುದ್ಧ ಫಿಲ್ಟರ್ ಕಾಫಿ ಪುಡಿಯನ್ನು ಖರೀದಿಸಿ.",
+            "phrase_ids": [
+              "phrase-how-much",
+              "phrase-water",
+              "phrase-thanks"
+            ],
+            "verified": false,
+            "source_url": "https://chikkamagaluru.nic.in"
+          },
+          "phrases": [
+            {
+              "id": "phrase-how-much",
+              "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು?",
+              "translit": "Idakke eshtu?",
+              "en": "How much for this?",
+              "context": "shopping"
+            },
+            {
+              "id": "phrase-water",
+              "kn": "ನೀರು ಕೊಡಿ",
+              "translit": "Neeru kodi",
+              "en": "Please give water",
+              "context": "food"
+            },
+            {
+              "id": "phrase-thanks",
+              "kn": "ಧನ್ಯವಾದಗಳು",
+              "translit": "Dhanyavadagalu",
+              "en": "Thank you very much",
+              "context": "thanks"
+            }
+          ]
+        },
+        {
+          "place_id": "mullayanagiri",
+          "start": "15:45",
+          "duration_min": 120,
+          "note_en": "Highest peak in Karnataka (1,930 m) featuring breathtaking panoramas of the Western Ghats and Baba Budan range.",
+          "travel_from_prev": {
+            "km": 12.3,
+            "min": 30,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "mullayanagiri",
+            "name_en": "Mullayanagiri Peak",
+            "name_kn": "ಮುಳ್ಳಯ್ಯನಗಿರಿ ಶಿಖರ",
+            "region": "Chikkamagaluru",
+            "city": "Chikkamagaluru",
+            "lat": 13.3912,
+            "lng": 75.7214,
+            "categories": [
+              "adventure",
+              "nature"
+            ],
+            "duration_min": 120,
+            "entry_inr": 0,
+            "best_months": [
+              9,
+              10,
+              11,
+              12,
+              1,
+              2
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "desc_en": "Highest peak in Karnataka (1,930 m) featuring breathtaking panoramas of the Western Ghats and Baba Budan range.",
+            "desc_kn": "ಕರ್ನಾಟಕದ ಅತ್ಯುನ್ನತ ಶಿಖರ (೧,೯೩೦ ಮೀ), ಪಶ್ಚಿಮ ಘಟ್ಟಗಳ ಮೈನವಿರೇಳಿಸುವ ಹಸಿರು ನೋಟಗಳನ್ನು ನೀಡುತ್ತದೆ.",
+            "tip_en": "Wind speeds can be high; carry a light jacket even on sunny mornings.",
+            "tip_kn": "ಬೆಟ್ಟದ ಮೇಲೆ ತಂಪಾದ ಬಲವಾದ ಗಾಳಿ ಇರುತ್ತದೆ; ಲಘು ಸ್ವೆಟರ್ ಅಥವಾ ಜಾಕೆಟ್ ತೆಗೆದುಕೊಂಡು ಹೋಗಿ.",
+            "phrase_ids": [
+              "phrase-which-way",
+              "phrase-take-photo",
+              "phrase-very-nice"
+            ],
+            "verified": true,
+            "source_url": "https://chikkamagaluru.nic.in"
+          },
+          "phrases": [
+            {
+              "id": "phrase-which-way",
+              "kn": "ಈ ರಸ್ತೆ ಎಲ್ಲಿಗೆ ಹೋಗುತ್ತೆ?",
+              "translit": "Ee raste ellige hogutte?",
+              "en": "Where does this road lead to?",
+              "context": "directions"
+            },
+            {
+              "id": "phrase-take-photo",
+              "kn": "ಒಂದು ಫೋಟೋ ತೆಗೆಯಿರಿ, ದಯವಿಟ್ಟು",
+              "translit": "Ondu photo tegeyiri, dayavittu",
+              "en": "Please take one photo",
+              "context": "greeting"
+            },
+            {
+              "id": "phrase-very-nice",
+              "kn": "ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ!",
+              "translit": "Tumba chennagide!",
+              "en": "It is very beautiful!",
+              "context": "thanks"
+            }
+          ]
         }
       ],
-      "travel_total_min": 280
+      "travel_total_min": 260
     }
   ],
   "cost": {
     "stay": 13200,
     "food": 9600,
-    "transport": 13222,
-    "entry": 2090,
-    "total": 38112,
+    "transport": 15024,
+    "entry": 1150,
+    "total": 38974,
     "people": 2
   },
   "tips": [

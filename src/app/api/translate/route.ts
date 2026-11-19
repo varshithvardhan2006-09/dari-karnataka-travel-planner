@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { DEFAULT_GEMINI_MODEL, DEFAULT_GROQ_MODEL, withModelFallback } from "@/lib/ai";
+import { readBodyWithLimit } from "@/lib/request-body";
 import phrasesData from "../../../../data/phrases.json";
 
 export const maxDuration = 15;
 
 const MAX_TEXT_LENGTH = 500;
 const MAX_BODY_BYTES = 8 * 1024;
+// All upstream calls share one budget that ends safely before maxDuration.
+const TOTAL_BUDGET_MS = 13000;
+const PROVIDER_TIMEOUT_MS = 7000;
 
 const RATE_LIMIT = {
   name: "translate",
@@ -22,6 +26,11 @@ const SUPPORTED_LANGUAGES: Record<string, string> = {
   ta: "Tamil",
   ml: "Malayalam",
 };
+
+/** Lower-cases and drops punctuation, so "Eshtu?" matches "eshtu". */
+function stripPunctuation(value: string): string {
+  return value.toLowerCase().replace(/[.,!?;:]/g, "").trim();
+}
 
 interface TranslateRequestBody {
   text: string;
@@ -217,7 +226,7 @@ function lookupOfflinePhrase(
   sourceLang: string,
   targetLang: string
 ): { translatedText: string; transliteration?: string } | null {
-  const normalized = query.trim().toLowerCase().replace(/[.,!?;:]/g, "");
+  const normalized = stripPunctuation(query);
 
   // English -> Target Language lookup
   if (sourceLang === "en") {
@@ -249,7 +258,7 @@ function lookupOfflinePhrase(
       if (
         targetObj &&
         (targetObj.text === query.trim() ||
-          (targetObj.translit && targetObj.translit.toLowerCase() === normalized))
+          (targetObj.translit && stripPunctuation(targetObj.translit) === normalized))
       ) {
         return { translatedText: enKey };
       }
@@ -257,7 +266,7 @@ function lookupOfflinePhrase(
 
     if (sourceLang === "kn") {
       const phraseMatchKn = (phrasesData as Array<{ en: string; kn: string; translit: string }>).find(
-        (p) => p.kn.trim() === query.trim() || p.translit.toLowerCase().trim() === normalized
+        (p) => p.kn.trim() === query.trim() || stripPunctuation(p.translit) === normalized
       );
       if (phraseMatchKn) {
         return { translatedText: phraseMatchKn.en };
@@ -274,7 +283,7 @@ function lookupOfflinePhrase(
         srcObj &&
         tgtObj &&
         (srcObj.text === query.trim() ||
-          (srcObj.translit && srcObj.translit.toLowerCase() === normalized))
+          (srcObj.translit && stripPunctuation(srcObj.translit) === normalized))
       ) {
         return {
           translatedText: tgtObj.text,
@@ -295,7 +304,8 @@ async function translateWithGroq(
   sourceLangName: string,
   targetLangName: string,
   apiKey: string,
-  model: string = DEFAULT_GROQ_MODEL
+  model: string = DEFAULT_GROQ_MODEL,
+  timeoutMs: number = PROVIDER_TIMEOUT_MS
 ): Promise<{ translatedText: string; transliteration?: string }> {
   const systemPrompt = `You are an expert travel translator specializing in Indian languages (Kannada, Hindi, Telugu, Tamil, Malayalam) for tourists.
 Translate the user's text from ${sourceLangName} to ${targetLangName}.
@@ -323,7 +333,7 @@ Requirements:
       temperature: 0.3,
       response_format: { type: "json_object" },
     }),
-    signal: AbortSignal.timeout(7000),
+    signal: AbortSignal.timeout(timeoutMs),
   });
 
   if (!res.ok) {
@@ -347,7 +357,8 @@ async function translateWithGemini(
   sourceLangName: string,
   targetLangName: string,
   apiKey: string,
-  model: string = DEFAULT_GEMINI_MODEL
+  model: string = DEFAULT_GEMINI_MODEL,
+  timeoutMs: number = PROVIDER_TIMEOUT_MS
 ): Promise<{ translatedText: string; transliteration?: string }> {
   const systemPrompt = `Translate the text from ${sourceLangName} to ${targetLangName} naturally for a traveler in Karnataka and South India.
 Provide BOTH the native script translation in ${targetLangName} AND an English phonetic pronunciation transliteration.
@@ -373,7 +384,7 @@ Output STRICT JSON:
         temperature: 0.3,
       },
     }),
-    signal: AbortSignal.timeout(7000),
+    signal: AbortSignal.timeout(timeoutMs),
   });
 
   if (!res.ok) {
@@ -396,10 +407,11 @@ Output STRICT JSON:
 async function translateWithPublicFallback(
   text: string,
   sourceLang: string,
-  targetLang: string
+  targetLang: string,
+  timeoutMs: number = 5000
 ): Promise<{ translatedText: string; transliteration?: string }> {
   const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=rm&q=${encodeURIComponent(text)}`;
-  const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
   if (!res.ok) {
     throw new Error("Public translation endpoint unavailable");
   }
@@ -437,8 +449,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Measure the body itself: a Content-Length header can be absent or wrong.
-    const rawBody = await req.text();
-    if (Buffer.byteLength(rawBody, "utf8") > MAX_BODY_BYTES) {
+    const rawBody = await readBodyWithLimit(req, MAX_BODY_BYTES);
+    if (rawBody === null) {
       return NextResponse.json(
         { error: "Payload exceeds 8KB limit." },
         { status: 413 }
@@ -508,13 +520,16 @@ export async function POST(req: NextRequest) {
     const targetLangName = SUPPORTED_LANGUAGES[tLang];
     const groqKey = process.env.GROQ_API_KEY;
     const geminiKey = process.env.GEMINI_API_KEY;
+    const deadline = Date.now() + TOTAL_BUDGET_MS;
+    const remaining = () => deadline - Date.now();
+    const providerTimeout = () => Math.min(PROVIDER_TIMEOUT_MS, remaining());
 
     // 1. Try Groq
-    if (groqKey) {
+    if (groqKey && remaining() > 2000) {
       try {
         const groqModel = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
         const result = await withModelFallback(groqModel, DEFAULT_GROQ_MODEL, (model) =>
-          translateWithGroq(text.trim(), sourceLangName, targetLangName, groqKey, model)
+          translateWithGroq(text.trim(), sourceLangName, targetLangName, groqKey, model, providerTimeout())
         );
         if (result.translatedText) {
           return NextResponse.json({
@@ -530,11 +545,11 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Try Gemini
-    if (geminiKey) {
+    if (geminiKey && remaining() > 2000) {
       try {
         const geminiModel = process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
         const result = await withModelFallback(geminiModel, DEFAULT_GEMINI_MODEL, (model) =>
-          translateWithGemini(text.trim(), sourceLangName, targetLangName, geminiKey, model)
+          translateWithGemini(text.trim(), sourceLangName, targetLangName, geminiKey, model, providerTimeout())
         );
         if (result.translatedText) {
           return NextResponse.json({
@@ -551,7 +566,12 @@ export async function POST(req: NextRequest) {
 
     // 3. Try universal public fallback
     try {
-      const fallbackResult = await translateWithPublicFallback(text.trim(), sLang, tLang);
+      const fallbackResult = await translateWithPublicFallback(
+        text.trim(),
+        sLang,
+        tLang,
+        Math.max(1500, Math.min(5000, remaining()))
+      );
       if (fallbackResult.translatedText) {
         return NextResponse.json({
           ...fallbackResult,

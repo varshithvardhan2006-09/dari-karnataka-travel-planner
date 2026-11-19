@@ -48,7 +48,8 @@ describe("PrintItinerary Component", () => {
     samplePlan.days.forEach((day) => {
       expect(html).toContain(`DAY ${day.day}`);
       day.stops.forEach((stop) => {
-        expect(html).toContain(stop.place.name_en);
+        // Markup escapes "&", e.g. "Coffee Estate Walk &amp; Tasting"
+        expect(html).toContain(stop.place.name_en.replace(/&/g, "&amp;"));
         // Verify Google Maps link exists for each stop
         expect(html).toContain("Google Maps Link");
         expect(html).toContain("google.com/maps");

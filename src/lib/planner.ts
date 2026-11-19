@@ -15,6 +15,24 @@ const validPlaceIdSet = new Set(allPlaces.map((p) => p.id));
 const MAX_LEG_KM = 90; // about 2 h 15 min by road between two stops on the same day
 const DAY_END_MIN = 19 * 60 + 30;
 
+// When a meal place can be visited (arrival time, minutes after midnight).
+const MEAL_WINDOWS: Record<string, [number, number]> = {
+  breakfast: [7 * 60 + 30, 11 * 60],
+  lunch: [11 * 60 + 30, 15 * 60],
+  snack: [10 * 60, 18 * 60],
+  dinner: [17 * 60 + 30, DAY_END_MIN],
+};
+
+function fitsMealTime(place: Place, arrivalMin: number): boolean {
+  const window = place.is_meal ? MEAL_WINDOWS[place.is_meal] : undefined;
+  return !window || (arrivalMin >= window[0] && arrivalMin <= window[1]);
+}
+
+function toMinutes(time: string): number {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+}
+
 export const PACE_STOP_LIMITS = {
   relaxed: { min: 2, max: 3, target: 3 },
   balanced: { min: 3, max: 4, target: 4 },
@@ -67,6 +85,9 @@ export function validateAIOutput(
     let previousPlace: Place | null = null;
     let prevStopStartMin = -1;
     let dayDrivingMin = 0;
+    // The schedule as enrichPlan will lay it out: a stop starts at its requested
+    // time or when the previous stop and the drive there are done, whichever is later.
+    let clockMin = 9 * 60;
 
     dayItem.stops.forEach((stop, stopIdx) => {
       // 4. Place ID must exist in candidate whitelist (or dataset fallback)
@@ -88,6 +109,7 @@ export function validateAIOutput(
       seenPlaceIds.add(stop.place_id);
 
       const place = allPlaces.find((p) => p.id === stop.place_id);
+      let travelMin = 0;
       if (place && previousPlace) {
         const roadKm = estimateRoadDistanceKm(
           previousPlace.lat,
@@ -95,7 +117,8 @@ export function validateAIOutput(
           place.lat,
           place.lng
         );
-        dayDrivingMin += estimateTravelTimeMin(roadKm);
+        travelMin = estimateTravelTimeMin(roadKm);
+        dayDrivingMin += travelMin;
       }
       if (place) previousPlace = place;
 
@@ -122,9 +145,12 @@ export function validateAIOutput(
 
         prevStopStartMin = startMinutes;
 
-        // Day must conclude before 19:30
+        // Day must conclude before 19:30, using the real start once earlier
+        // stops and travel are accounted for (not just the requested time).
         const durationMin = place?.duration_min ?? 60;
-        const stopEndMin = startMinutes + durationMin;
+        const effectiveStart = Math.max(startMinutes, clockMin + travelMin);
+        const stopEndMin = effectiveStart + durationMin;
+        clockMin = stopEndMin;
         if (stopEndMin > DAY_END_MIN) {
           errors.push(
             `Day ${dayItem.day} stop ${stopIdx + 1} ends at ${Math.floor(stopEndMin / 60)}:${String(stopEndMin % 60).padStart(2, "0")}, exceeding the 19:30 evening cutoff.`
@@ -208,53 +234,42 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
       // Keep each day geographically sensible: after the first stop, only consider
       // places within MAX_LEG_KM road distance of the previous stop and that still
       // finish before DAY_END. If nothing qualifies, end the day early.
+      const clockNow = toMinutes(dayClock);
       if (lastPlace) {
         const lp: Place = lastPlace;
-        let maxLeg = MAX_LEG_KM;
-        let eligible = unusedPlaces.findIndex((p) => {
+        // Within reach of the previous stop, finished before the day ends, and
+        // (for meal places) arriving at the right time of day.
+        const fitsDay = (p: Place, maxLeg: number) => {
           const roadKm = estimateRoadDistanceKm(lp.lat, lp.lng, p.lat, p.lng);
           if (roadKm > maxLeg) return false;
-          const [h, m] = addMinutesToTime(
-            dayClock,
-            estimateTravelTimeMin(roadKm) + p.duration_min
-          )
-            .split(":")
-            .map(Number);
-          return h * 60 + m <= DAY_END_MIN;
-        });
+          const arrival = clockNow + estimateTravelTimeMin(roadKm);
+          return arrival + p.duration_min <= DAY_END_MIN && fitsMealTime(p, arrival);
+        };
+        let eligible = unusedPlaces.findIndex((p) => fitsDay(p, MAX_LEG_KM));
 
         // If minimum stops for the day haven't been met, relax distance threshold up to 160km
         if (eligible === -1 && dayStops.length < limits.min) {
-          maxLeg = 160;
-          eligible = unusedPlaces.findIndex((p) => {
-            const roadKm = estimateRoadDistanceKm(lp.lat, lp.lng, p.lat, p.lng);
-            if (roadKm > maxLeg) return false;
-            const [h, m] = addMinutesToTime(
-              dayClock,
-              estimateTravelTimeMin(roadKm) + p.duration_min
-            )
-              .split(":")
-              .map(Number);
-            return h * 60 + m <= DAY_END_MIN;
-          });
+          eligible = unusedPlaces.findIndex((p) => fitsDay(p, 160));
         }
 
         if (eligible === -1) break;
         chosenIndex = eligible;
+      } else {
+        // First stop of the day: skip meal places that do not suit the morning.
+        const firstFit = unusedPlaces.findIndex((p) => fitsMealTime(p, clockNow));
+        chosenIndex = firstFit === -1 ? 0 : firstFit;
       }
 
-      // Around lunch (12:30 to 14:00), prefer a meal stop if available within the nearby candidates
-      const [currH, currM] = dayClock.split(":").map(Number);
-      const clockMin = currH * 60 + currM;
-      if (clockMin >= 12 * 60 && clockMin <= 14 * 60) {
-        const mealIndex = unusedPlaces.findIndex(
-          (p, idx) =>
-            idx < 6 &&
-            (p.is_meal || p.categories.includes("food")) &&
-            !seenPlaceIds.has(p.id) &&
-            (!lastPlace ||
-              estimateRoadDistanceKm(lastPlace.lat, lastPlace.lng, p.lat, p.lng) <= MAX_LEG_KM)
-        );
+      // Around lunch (12:00 to 14:00), prefer a nearby food stop that suits lunchtime
+      if (clockNow >= 12 * 60 && clockNow <= 14 * 60) {
+        const mealIndex = unusedPlaces.findIndex((p, idx) => {
+          if (idx >= 6 || seenPlaceIds.has(p.id)) return false;
+          if (!p.is_meal && !p.categories.includes("food")) return false;
+          const roadKm = lastPlace ? estimateRoadDistanceKm(lastPlace.lat, lastPlace.lng, p.lat, p.lng) : 0;
+          if (roadKm > MAX_LEG_KM) return false;
+          const arrival = clockNow + estimateTravelTimeMin(roadKm);
+          return arrival + p.duration_min <= DAY_END_MIN && fitsMealTime(p, arrival);
+        });
         if (mealIndex !== -1) {
           chosenIndex = mealIndex;
         }

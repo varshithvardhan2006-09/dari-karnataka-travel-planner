@@ -81,91 +81,12 @@
           ]
         },
         {
-          "place_id": "mylari-dosa",
-          "start": "11:10",
-          "duration_min": 45,
-          "note_en": "Legendary eatery renowned for melt-in-your-mouth butter benne dosas served with fresh coconut chutney.",
-          "travel_from_prev": {
-            "km": 1,
-            "min": 10,
-            "mode": "cab"
-          },
-          "place": {
-            "id": "mylari-dosa",
-            "name_en": "Lunch at Mylari",
-            "name_kn": "ಮೈಲಾರಿ ದೋಸೆ",
-            "region": "Mysuru",
-            "city": "Mysuru",
-            "lat": 12.3117,
-            "lng": 76.6578,
-            "categories": [
-              "food"
-            ],
-            "duration_min": 45,
-            "entry_inr": 150,
-            "best_months": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7,
-              8,
-              9,
-              10,
-              11,
-              12
-            ],
-            "budget_fit": [
-              "budget",
-              "mid",
-              "premium"
-            ],
-            "is_meal": "breakfast",
-            "desc_en": "Legendary eatery renowned for melt-in-your-mouth butter benne dosas served with fresh coconut chutney.",
-            "desc_kn": "ಬೆಣ್ಣೆ ಮಸಾಲೆ ದೋಸೆ ಮತ್ತು ಸಾಗುಗೆ ಹೆಸರುವಾಸಿಯಾದ ಮೈಸೂರಿನ ಐತಿಹಾಸಿಕ ಹೋಟೆಲ್.",
-            "tip_en": "Soft butter dosa from a Mysuru institution. Expect a short wait during peak morning hours.",
-            "tip_kn": "ಬೆಣ್ಣೆ ದೋಸೆಗೆ ಹೆಸರಾದ ಮೈಸೂರಿನ ಹೋಟೆಲ್. ಬೆಳಿಗ್ಗೆ ಸ್ವಲ್ಪ ಸರತಿ ಸಾಲಿರುತ್ತದೆ.",
-            "phrase_ids": [
-              "phrase-masale-dose",
-              "phrase-delicious-food",
-              "phrase-bill-please"
-            ],
-            "verified": true,
-            "source_url": "https://karnatakatourism.org"
-          },
-          "phrases": [
-            {
-              "id": "phrase-masale-dose",
-              "kn": "ಒಂದು ಮಸಾಲೆ ದೋಸೆ ಕೊಡಿ",
-              "translit": "Ondu masale dose kodi",
-              "en": "Please give one masala dosa",
-              "context": "food"
-            },
-            {
-              "id": "phrase-delicious-food",
-              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
-              "translit": "Oota tumba ruchi aagide",
-              "en": "The food is very tasty",
-              "context": "food"
-            },
-            {
-              "id": "phrase-bill-please",
-              "kn": "ಬಿಲ್ ಕೊಡಿ",
-              "translit": "Bill kodi",
-              "en": "Please give the bill",
-              "context": "food"
-            }
-          ]
-        },
-        {
           "place_id": "mysore-zoo",
-          "start": "12:05",
+          "start": "11:10",
           "duration_min": 150,
           "note_en": "One of India's oldest and best maintained zoological gardens with spacious enclosures and exotic species.",
           "travel_from_prev": {
-            "km": 1.6,
+            "km": 1.4,
             "min": 10,
             "mode": "cab"
           },
@@ -232,17 +153,10 @@
               "context": "thanks"
             }
           ]
-        }
-      ],
-      "travel_total_min": 35
-    },
-    {
-      "day": 2,
-      "theme": "Mysuru Highlights",
-      "stops": [
+        },
         {
           "place_id": "chamundi-hill",
-          "start": "09:00",
+          "start": "13:55",
           "duration_min": 90,
           "note_en": "Prominent hill overlooking Mysuru with the historic Chamundeshwari Temple and massive monolith Nandi.",
           "travel_from_prev": {
@@ -315,15 +229,101 @@
               "context": "thanks"
             }
           ]
+        }
+      ],
+      "travel_total_min": 40
+    },
+    {
+      "day": 2,
+      "theme": "Mysuru Highlights",
+      "stops": [
+        {
+          "place_id": "mylari-dosa",
+          "start": "09:00",
+          "duration_min": 45,
+          "note_en": "Legendary eatery renowned for melt-in-your-mouth butter benne dosas served with fresh coconut chutney.",
+          "travel_from_prev": {
+            "km": 6,
+            "min": 20,
+            "mode": "cab"
+          },
+          "place": {
+            "id": "mylari-dosa",
+            "name_en": "Lunch at Mylari",
+            "name_kn": "ಮೈಲಾರಿ ದೋಸೆ",
+            "region": "Mysuru",
+            "city": "Mysuru",
+            "lat": 12.3117,
+            "lng": 76.6578,
+            "categories": [
+              "food"
+            ],
+            "duration_min": 45,
+            "entry_inr": 150,
+            "best_months": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "budget_fit": [
+              "budget",
+              "mid",
+              "premium"
+            ],
+            "is_meal": "breakfast",
+            "desc_en": "Legendary eatery renowned for melt-in-your-mouth butter benne dosas served with fresh coconut chutney.",
+            "desc_kn": "ಬೆಣ್ಣೆ ಮಸಾಲೆ ದೋಸೆ ಮತ್ತು ಸಾಗುಗೆ ಹೆಸರುವಾಸಿಯಾದ ಮೈಸೂರಿನ ಐತಿಹಾಸಿಕ ಹೋಟೆಲ್.",
+            "tip_en": "Soft butter dosa from a Mysuru institution. Expect a short wait during peak morning hours.",
+            "tip_kn": "ಬೆಣ್ಣೆ ದೋಸೆಗೆ ಹೆಸರಾದ ಮೈಸೂರಿನ ಹೋಟೆಲ್. ಬೆಳಿಗ್ಗೆ ಸ್ವಲ್ಪ ಸರತಿ ಸಾಲಿರುತ್ತದೆ.",
+            "phrase_ids": [
+              "phrase-masale-dose",
+              "phrase-delicious-food",
+              "phrase-bill-please"
+            ],
+            "verified": true,
+            "source_url": "https://karnatakatourism.org"
+          },
+          "phrases": [
+            {
+              "id": "phrase-masale-dose",
+              "kn": "ಒಂದು ಮಸಾಲೆ ದೋಸೆ ಕೊಡಿ",
+              "translit": "Ondu masale dose kodi",
+              "en": "Please give one masala dosa",
+              "context": "food"
+            },
+            {
+              "id": "phrase-delicious-food",
+              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
+              "translit": "Oota tumba ruchi aagide",
+              "en": "The food is very tasty",
+              "context": "food"
+            },
+            {
+              "id": "phrase-bill-please",
+              "kn": "ಬಿಲ್ ಕೊಡಿ",
+              "translit": "Bill kodi",
+              "en": "Please give the bill",
+              "context": "food"
+            }
+          ]
         },
         {
           "place_id": "brindavan-gardens",
-          "start": "11:20",
+          "start": "10:25",
           "duration_min": 120,
           "note_en": "Terraced botanical gardens laid across the KRS Dam with synchronized musical fountains at dusk.",
           "travel_from_prev": {
-            "km": 26,
-            "min": 50,
+            "km": 20.2,
+            "min": 40,
             "mode": "cab"
           },
           "place": {
@@ -388,7 +388,7 @@
           ]
         }
       ],
-      "travel_total_min": 65
+      "travel_total_min": 60
     },
     {
       "day": 3,
@@ -620,9 +620,9 @@
   "cost": {
     "stay": 17600,
     "food": 14400,
-    "transport": 6308,
-    "entry": 2140,
-    "total": 40448,
+    "transport": 6288,
+    "entry": 1540,
+    "total": 39828,
     "people": 4
   },
   "tips": [

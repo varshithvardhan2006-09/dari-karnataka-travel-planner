@@ -82,88 +82,8 @@
           ]
         },
         {
-          "place_id": "vv-puram-food-street",
-          "start": "10:40",
-          "duration_min": 75,
-          "note_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
-          "travel_from_prev": {
-            "km": 1.1,
-            "min": 10,
-            "mode": "auto"
-          },
-          "place": {
-            "id": "vv-puram-food-street",
-            "name_en": "VV Puram Food Street (Thindi Beedi)",
-            "name_kn": "ವಿ.ವಿ. ಪುರಂ ತಿಂಡಿ ಬೀದಿ",
-            "region": "Bengaluru",
-            "city": "Bengaluru",
-            "lat": 12.9526,
-            "lng": 77.5772,
-            "categories": [
-              "food",
-              "culture"
-            ],
-            "duration_min": 75,
-            "entry_inr": 200,
-            "best_months": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7,
-              8,
-              9,
-              10,
-              11,
-              12
-            ],
-            "budget_fit": [
-              "budget",
-              "mid",
-              "premium"
-            ],
-            "is_meal": "dinner",
-            "desc_en": "Celebrated vegetarian culinary street serving hot Congress Kadlekai, Akki Roti, paddus, and Gulkand butter.",
-            "desc_kn": "ಬಿಸಿಬಿಸಿ ಅಕ್ಕಿ ರೊಟ್ಟಿ, ಪದ್ದು, ಮಸಾಲೆ ದೋಸೆ ಮತ್ತು ಗುಲ್ಕಂಡ್ ಸಿಹಿಗೆ ಹೆಸರಾದ ಬೆಂಗಳೂರಿನ ಆಹಾರ ರಸ್ತೆ.",
-            "tip_en": "Shops open after 18:30. Try warm akki rotti followed by traditional gulkand ice cream.",
-            "tip_kn": "ಸಂಜೆ ೬:೩೦ ರ ನಂತರ ಅಂಗಡಿಗಳು ತೆರೆಯುತ್ತವೆ. ಬಿಸಿ ಅಕ್ಕಿರೊಟ್ಟಿ ಮತ್ತು ಗುಲ್ಕಂಡ್ ರುಚಿ ನೋಡಿ.",
-            "phrase_ids": [
-              "phrase-how-much",
-              "phrase-delicious-food",
-              "phrase-bill-please"
-            ],
-            "verified": true,
-            "source_url": "https://karnatakatourism.org"
-          },
-          "phrases": [
-            {
-              "id": "phrase-how-much",
-              "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು?",
-              "translit": "Idakke eshtu?",
-              "en": "How much for this?",
-              "context": "shopping"
-            },
-            {
-              "id": "phrase-delicious-food",
-              "kn": "ಊಟ ತುಂಬಾ ರುಚಿಯಾಗಿದೆ",
-              "translit": "Oota tumba ruchi aagide",
-              "en": "The food is very tasty",
-              "context": "food"
-            },
-            {
-              "id": "phrase-bill-please",
-              "kn": "ಬಿಲ್ ಕೊಡಿ",
-              "translit": "Bill kodi",
-              "en": "Please give the bill",
-              "context": "food"
-            }
-          ]
-        },
-        {
           "place_id": "bangalore-palace",
-          "start": "12:15",
+          "start": "10:50",
           "duration_min": 90,
           "note_en": "Tudor-style royal estate with fortified towers, wood carvings, and paintings of the Mysore royal family.",
           "travel_from_prev": {
@@ -234,7 +154,7 @@
           ]
         }
       ],
-      "travel_total_min": 45
+      "travel_total_min": 35
     },
     {
       "day": 2,
@@ -701,9 +621,9 @@
   "cost": {
     "stay": 8800,
     "food": 7200,
-    "transport": 9468,
-    "entry": 1250,
-    "total": 26718,
+    "transport": 9446,
+    "entry": 850,
+    "total": 26296,
     "people": 2
   },
   "tips": [
