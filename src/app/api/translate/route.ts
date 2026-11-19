@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
-import { DEFAULT_GEMINI_MODEL, DEFAULT_GROQ_MODEL } from "@/lib/ai";
+import { DEFAULT_GEMINI_MODEL, DEFAULT_GROQ_MODEL, withModelFallback } from "@/lib/ai";
 import phrasesData from "../../../../data/phrases.json";
 
 export const maxDuration = 15;
@@ -327,7 +327,7 @@ Requirements:
   });
 
   if (!res.ok) {
-    throw new Error(`Groq translation error (${res.status})`);
+    throw new Error(`Groq translation error (${res.status}): ${(await res.text()).slice(0, 200)}`);
   }
 
   const json = await res.json();
@@ -377,7 +377,7 @@ Output STRICT JSON:
   });
 
   if (!res.ok) {
-    throw new Error(`Gemini translation error (${res.status})`);
+    throw new Error(`Gemini translation error (${res.status}): ${(await res.text()).slice(0, 200)}`);
   }
 
   const json = await res.json();
@@ -513,7 +513,9 @@ export async function POST(req: NextRequest) {
     if (groqKey) {
       try {
         const groqModel = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
-        const result = await translateWithGroq(text.trim(), sourceLangName, targetLangName, groqKey, groqModel);
+        const result = await withModelFallback(groqModel, DEFAULT_GROQ_MODEL, (model) =>
+          translateWithGroq(text.trim(), sourceLangName, targetLangName, groqKey, model)
+        );
         if (result.translatedText) {
           return NextResponse.json({
             ...result,
@@ -531,7 +533,9 @@ export async function POST(req: NextRequest) {
     if (geminiKey) {
       try {
         const geminiModel = process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
-        const result = await translateWithGemini(text.trim(), sourceLangName, targetLangName, geminiKey, geminiModel);
+        const result = await withModelFallback(geminiModel, DEFAULT_GEMINI_MODEL, (model) =>
+          translateWithGemini(text.trim(), sourceLangName, targetLangName, geminiKey, model)
+        );
         if (result.translatedText) {
           return NextResponse.json({
             ...result,

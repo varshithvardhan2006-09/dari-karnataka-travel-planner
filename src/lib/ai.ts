@@ -139,6 +139,36 @@ async function callGeminiAPI(
 }
 
 /**
+ * True when a provider error means the requested model is gone (retired,
+ * renamed or misspelled), rather than a temporary failure.
+ */
+export function isMissingModelError(err: unknown): boolean {
+  const message = err instanceof Error ? err.message : String(err);
+  return /\(404\)|decommissioned|not found|no longer available|does not exist/i.test(message);
+}
+
+/**
+ * Calls a provider with the configured model and, if that model no longer
+ * exists, retries once with the default model. A stale GROQ_MODEL or
+ * GEMINI_MODEL setting therefore cannot silently switch the AI off.
+ */
+export async function withModelFallback<T>(
+  model: string,
+  defaultModel: string,
+  call: (model: string) => Promise<T>,
+  onFallback?: (model: string) => void
+): Promise<T> {
+  try {
+    return await call(model);
+  } catch (err) {
+    if (model === defaultModel || !isMissingModelError(err)) throw err;
+    console.warn(`Model "${model}" is unavailable; retrying with "${defaultModel}".`);
+    onFallback?.(defaultModel);
+    return call(defaultModel);
+  }
+}
+
+/**
  * Safely extracts JSON from LLM text output, stripping markdown fences or stray commentary.
  */
 function extractJsonPayload(text: string): string {
@@ -266,25 +296,40 @@ CANDIDATE PLACES (Use ONLY these place IDs):
 ${buildCandidatesPromptPayload(candidates)}`;
 
   const groqKey = process.env.GROQ_API_KEY;
-  const groqModel = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
+  let groqModel = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
 
   const geminiKey = process.env.GEMINI_API_KEY;
-  const geminiModel = process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
+  let geminiModel = process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
 
   const startTime = Date.now();
   const DEADLINE_MS = 24000; // 24 seconds total budget, safely within Vercel's 30s limit
   const getRemainingTimeout = () => Math.max(1500, DEADLINE_MS - (Date.now() - startTime));
 
+  // Each call falls back to the default model if the configured one is gone,
+  // and the retry after a validation failure keeps using whichever model worked.
+  const callGroq = (key: string, prompt: string) =>
+    withModelFallback(
+      groqModel,
+      DEFAULT_GROQ_MODEL,
+      (model) => callGroqAPI(systemPrompt, prompt, key, model, getRemainingTimeout()),
+      (model) => {
+        groqModel = model;
+      }
+    );
+  const callGemini = (key: string, prompt: string) =>
+    withModelFallback(
+      geminiModel,
+      DEFAULT_GEMINI_MODEL,
+      (model) => callGeminiAPI(systemPrompt, prompt, key, model, getRemainingTimeout()),
+      (model) => {
+        geminiModel = model;
+      }
+    );
+
   // Provider cascade: 1) Groq
   if (groqKey && groqKey.trim().length > 0) {
     try {
-      const rawText = await callGroqAPI(
-        systemPrompt,
-        userPrompt,
-        groqKey,
-        groqModel,
-        getRemainingTimeout()
-      );
+      const rawText = await callGroq(groqKey, userPrompt);
       const validation = parseAndValidateModelOutput(rawText, request, candidateIdSet);
 
       if (validation.success) {
@@ -294,13 +339,7 @@ ${buildCandidatesPromptPayload(candidates)}`;
       // Retry once if budget remains
       if (getRemainingTimeout() > 4000) {
         const retryPrompt = `${userPrompt}\n\nYour previous response failed with these validation errors. Please correct them and return ONLY valid JSON matching the schema:\n${validation.errors.join("\n")}`;
-        const retryText = await callGroqAPI(
-          systemPrompt,
-          retryPrompt,
-          groqKey,
-          groqModel,
-          getRemainingTimeout()
-        );
+        const retryText = await callGroq(groqKey, retryPrompt);
         const retryValidation = parseAndValidateModelOutput(retryText, request, candidateIdSet);
 
         if (retryValidation.success) {
@@ -315,13 +354,7 @@ ${buildCandidatesPromptPayload(candidates)}`;
   // Provider cascade: 2) Gemini (only if at least 4s remaining in budget)
   if (geminiKey && geminiKey.trim().length > 0 && getRemainingTimeout() > 4000) {
     try {
-      const rawText = await callGeminiAPI(
-        systemPrompt,
-        userPrompt,
-        geminiKey,
-        geminiModel,
-        getRemainingTimeout()
-      );
+      const rawText = await callGemini(geminiKey, userPrompt);
       const validation = parseAndValidateModelOutput(rawText, request, candidateIdSet);
 
       if (validation.success) {
@@ -331,13 +364,7 @@ ${buildCandidatesPromptPayload(candidates)}`;
       // Retry once if budget remains
       if (getRemainingTimeout() > 4000) {
         const retryPrompt = `${userPrompt}\n\nYour previous response failed with these validation errors. Please correct them and return ONLY valid JSON matching the schema:\n${validation.errors.join("\n")}`;
-        const retryText = await callGeminiAPI(
-          systemPrompt,
-          retryPrompt,
-          geminiKey,
-          geminiModel,
-          getRemainingTimeout()
-        );
+        const retryText = await callGemini(geminiKey, retryPrompt);
         const retryValidation = parseAndValidateModelOutput(retryText, request, candidateIdSet);
 
         if (retryValidation.success) {
