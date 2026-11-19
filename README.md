@@ -230,7 +230,7 @@ A trip of *N* days is charged for *N* − 1 nights, so a day trip has no stay co
 | PDF download | jsPDF, html-to-image | Builds a real A4 PDF file in the browser, since many phone browsers ignore the print command; loaded only when the PDF button is tapped | `src/lib/pdf-export.ts`, `src/components/PrintItinerary.tsx` |
 | Abuse protection | In-memory per-IP rate limiter | Stops one client from exhausting the AI quota | `src/lib/rate-limit.ts`, the API routes |
 | Social preview | `next/og` | Generates the link-preview image shown when the site is shared | `src/app/opengraph-image.tsx` |
-| Testing | Vitest 5 — 18 suites, 128 tests | Checks scoring, validation, costs, geo maths and API routes, with every external service stubbed so tests run offline | `tests/` |
+| Testing | Vitest 5 — 20 suites, 143 tests | Checks scoring, validation, costs, geo maths and API routes, with every external service stubbed so tests run offline | `tests/` |
 | Linting | ESLint 9 with `eslint-config-next` | Enforces React and Next.js best practices | `npm run lint`, CI |
 | CI/CD | GitHub Actions, Vercel | Every push runs lint, tests and a production build; Vercel deploys `main` automatically | `.github/workflows/ci.yml` |
 
