@@ -538,9 +538,7 @@ export default function PlannerForm() {
                 id="travellers-group-label"
                 className="block font-heading font-bold text-sm text-[#14202B] mb-1"
               >
-                {lang === "kn"
-                  ? "ಯಾರು ಪ್ರಯಾಣಿಸುತ್ತಿದ್ದಾರೆ?"
-                  : "Who is travelling?"}
+                {lang === "kn" ? "ಯಾರು ಪ್ರಯಾಣಿಸುತ್ತಿದ್ದಾರೆ?" : "Who is travelling?"}
               </span>
               <p className="text-xs text-[#586673] mb-3">
                 {lang === "kn"
@@ -703,9 +701,7 @@ export default function PlannerForm() {
               id="month-group-label"
               className="block font-heading font-bold text-sm text-[#14202B] mb-1"
             >
-              {lang === "kn"
-                ? "ಯಾವ ತಿಂಗಳಲ್ಲಿ ಪ್ರಯಾಣ?"
-                : "When are you travelling?"}
+              {lang === "kn" ? "ಯಾವ ತಿಂಗಳಲ್ಲಿ ಪ್ರಯಾಣ?" : "When are you travelling?"}
             </span>
             <p className="text-xs text-[#586673] mb-3">
               {lang === "kn"

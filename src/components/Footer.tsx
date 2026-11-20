@@ -21,9 +21,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#586673]">
         <p>
           © 2026 Dari (ದಾರಿ) ·{" "}
-          {kn
-            ? "ಕರ್ನಾಟಕಕ್ಕಾಗಿ AI ಪ್ರವಾಸ ಯೋಜಕ"
-            : "AI travel planner for Karnataka"}
+          {kn ? "ಕರ್ನಾಟಕಕ್ಕಾಗಿ AI ಪ್ರವಾಸ ಯೋಜಕ" : "AI travel planner for Karnataka"}
         </p>
         <nav className="flex items-center gap-4 font-semibold">
           <Link href="/privacy" className="hover:text-[#8E1F2F]">
