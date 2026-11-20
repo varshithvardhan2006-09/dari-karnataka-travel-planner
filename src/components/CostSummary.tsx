@@ -21,7 +21,10 @@ export default function CostSummary({ cost, days, source }: CostSummaryProps) {
   const { lang, t } = useLang();
 
   // Slices are shares of the four parts, so they always close the ring exactly.
-  const total = Math.max(1, cost.stay + cost.food + cost.transport + cost.entry);
+  const total = Math.max(
+    1,
+    cost.stay + cost.food + cost.transport + cost.entry
+  );
   const stayPct = cost.stay / total;
   const foodPct = cost.food / total;
   const transPct = cost.transport / total;
@@ -47,7 +50,8 @@ export default function CostSummary({ cost, days, source }: CostSummaryProps) {
   const sourceLabels: Record<string, { label: string; tooltip: string }> = {
     "ai-groq": {
       label: "AI (Groq)",
-      tooltip: "Generated via Groq fast inference using curated Karnataka places.",
+      tooltip:
+        "Generated via Groq fast inference using curated Karnataka places.",
     },
     "ai-gemini": {
       label: "AI (Gemini)",
@@ -55,7 +59,8 @@ export default function CostSummary({ cost, days, source }: CostSummaryProps) {
     },
     planner: {
       label: "Ready-made planner",
-      tooltip: "Generated deterministically via Dari's offline geographic clustering.",
+      tooltip:
+        "Generated deterministically via Dari's offline geographic clustering.",
     },
     sample: {
       label: "Sample",
@@ -63,7 +68,8 @@ export default function CostSummary({ cost, days, source }: CostSummaryProps) {
     },
   };
 
-  const currentSource = sourceLabels[source || "planner"] || sourceLabels.planner;
+  const currentSource =
+    sourceLabels[source || "planner"] || sourceLabels.planner;
 
   return (
     <div className="bg-white rounded-2xl p-6 border border-[#DCE1DD] shadow-xs space-y-5">
@@ -75,7 +81,10 @@ export default function CostSummary({ cost, days, source }: CostSummaryProps) {
           <div className="relative group">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#F1F3F0] text-[#14202B] border border-[#DCE1DD] cursor-help">
               <span className="w-1.5 h-1.5 rounded-full bg-[#1E6B52]" />
-              <span>{lang === "kn" ? "ಮೂಲ: " : "Plan source: "}{currentSource.label}</span>
+              <span>
+                {lang === "kn" ? "ಮೂಲ: " : "Plan source: "}
+                {currentSource.label}
+              </span>
             </span>
             <div className="absolute right-0 top-full mt-1 hidden group-hover:block z-50 w-64 p-2.5 bg-[#14202B] text-white text-[11px] rounded-xl shadow-lg leading-snug">
               {currentSource.tooltip}

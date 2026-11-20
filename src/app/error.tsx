@@ -12,7 +12,10 @@ export default function ErrorBoundary({
 }) {
   useEffect(() => {
     // Log safe error locally without leaking stack traces to the UI
-    console.warn("Application runtime error caught by boundary:", error.message);
+    console.warn(
+      "Application runtime error caught by boundary:",
+      error.message
+    );
   }, [error]);
 
   return (
@@ -27,8 +30,8 @@ export default function ErrorBoundary({
         ಕ್ಷಮಿಸಿ, ಸಣ್ಣ ತಾಂತ್ರಿಕ ದೋಷ ಕಂಡುಬಂದಿದೆ
       </p>
       <p className="text-xs text-[#586673] mt-3 leading-relaxed">
-        We encountered a temporary issue while loading this page. You can try refreshing the route
-        or return to our home planner.
+        We encountered a temporary issue while loading this page. You can try
+        refreshing the route or return to our home planner.
       </p>
 
       <div className="flex items-center gap-3 mt-8">

@@ -31,7 +31,10 @@ interface RateLimitOptions {
  * Vercel's own header is preferred because clients cannot set it.
  */
 export function getClientIp(req: Request): string {
-  const vercelIp = req.headers.get("x-vercel-forwarded-for")?.split(",")[0].trim();
+  const vercelIp = req.headers
+    .get("x-vercel-forwarded-for")
+    ?.split(",")[0]
+    .trim();
   if (vercelIp) return vercelIp;
   const forwardedFor = req.headers.get("x-forwarded-for");
   if (forwardedFor) {
@@ -44,7 +47,10 @@ export function getClientIp(req: Request): string {
 /**
  * Records a request for the given IP and reports whether it is within the limit.
  */
-export function checkRateLimit(ip: string, options: RateLimitOptions): RateLimitResult {
+export function checkRateLimit(
+  ip: string,
+  options: RateLimitOptions
+): RateLimitResult {
   const { name, limit, windowMs } = options;
   const now = Date.now();
   const windowStart = now - windowMs;

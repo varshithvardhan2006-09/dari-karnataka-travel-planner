@@ -34,7 +34,10 @@ export default function PlaceImage({
     ) {
       return <CoastScene className="w-full h-full object-cover" />;
     }
-    if (place.region === "Hampi-Ballari" || place.region === "Badami-Bagalkot") {
+    if (
+      place.region === "Hampi-Ballari" ||
+      place.region === "Badami-Bagalkot"
+    ) {
       return <HampiScene className="w-full h-full object-cover" />;
     }
     return <PalaceScene className="w-full h-full object-cover" />;

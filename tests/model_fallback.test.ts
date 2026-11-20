@@ -15,10 +15,20 @@ afterEach(() => {
 
 describe("Model fallback", () => {
   it("recognises retired-model errors but not temporary failures", () => {
-    expect(isMissingModelError(new Error("Gemini API error (404): model not found"))).toBe(true);
-    expect(isMissingModelError(new Error("Groq API error (400): model_decommissioned"))).toBe(true);
-    expect(isMissingModelError(new Error("Groq API error (429): rate limit"))).toBe(false);
-    expect(isMissingModelError(new Error("Gemini API error (503): high demand"))).toBe(false);
+    expect(
+      isMissingModelError(new Error("Gemini API error (404): model not found"))
+    ).toBe(true);
+    expect(
+      isMissingModelError(
+        new Error("Groq API error (400): model_decommissioned")
+      )
+    ).toBe(true);
+    expect(
+      isMissingModelError(new Error("Groq API error (429): rate limit"))
+    ).toBe(false);
+    expect(
+      isMissingModelError(new Error("Gemini API error (503): high demand"))
+    ).toBe(false);
   });
 
   it("retries with the default model only when the configured one is gone", async () => {
@@ -27,13 +37,17 @@ describe("Model fallback", () => {
       return `ok:${model}`;
     });
     const onFallback = vi.fn();
-    await expect(withModelFallback("old-model", "new-model", call, onFallback)).resolves.toBe("ok:new-model");
+    await expect(
+      withModelFallback("old-model", "new-model", call, onFallback)
+    ).resolves.toBe("ok:new-model");
     expect(onFallback).toHaveBeenCalledWith("new-model");
 
     const busy = vi.fn(async () => {
       throw new Error("API error (429): rate limit");
     });
-    await expect(withModelFallback("old-model", "new-model", busy)).rejects.toThrow("429");
+    await expect(
+      withModelFallback("old-model", "new-model", busy)
+    ).rejects.toThrow("429");
     expect(busy).toHaveBeenCalledTimes(1);
   });
 
@@ -60,7 +74,11 @@ describe("Model fallback", () => {
       days: reference.days.map((d) => ({
         day: d.day,
         theme: d.theme,
-        stops: d.stops.map((s) => ({ place_id: s.place_id, start: s.start, note_en: "Worth the visit." })),
+        stops: d.stops.map((s) => ({
+          place_id: s.place_id,
+          start: s.start,
+          note_en: "Worth the visit.",
+        })),
       })),
       tips: reference.tips,
     };
@@ -72,11 +90,19 @@ describe("Model fallback", () => {
         const { model } = JSON.parse(String(init.body));
         models.push(model);
         if (model === "retired-model") {
-          return new Response('{"error":{"message":"The model does not exist"}}', { status: 404 });
+          return new Response(
+            '{"error":{"message":"The model does not exist"}}',
+            { status: 404 }
+          );
         }
-        return new Response(JSON.stringify({ choices: [{ message: { content: JSON.stringify(plan) } }] }), {
-          status: 200,
-        });
+        return new Response(
+          JSON.stringify({
+            choices: [{ message: { content: JSON.stringify(plan) } }],
+          }),
+          {
+            status: 200,
+          }
+        );
       })
     );
 

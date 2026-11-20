@@ -15,7 +15,9 @@ interface KannadaSpeechOptions {
 /**
  * Checks if browser has native voice in SpeechSynthesis for specified language.
  */
-function getLanguageVoice(langCode: string = "kn"): SpeechSynthesisVoice | null {
+function getLanguageVoice(
+  langCode: string = "kn"
+): SpeechSynthesisVoice | null {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     return null;
   }
@@ -48,7 +50,13 @@ export function playKannadaSpeech(
 ): void {
   if (typeof window === "undefined" || !text) return;
 
-  const { translit, isSlow = false, lang = "kn", onStart, onEnd } = options || {};
+  const {
+    translit,
+    isSlow = false,
+    lang = "kn",
+    onStart,
+    onEnd,
+  } = options || {};
 
   try {
     // Cancel any currently playing audio stream
@@ -187,12 +195,19 @@ export function stopKannadaSpeech(): void {
 export function useKannadaSpeech() {
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [lastText, setLastText] = useState<string>("");
-  const [lastTranslit, setLastTranslit] = useState<string | undefined>(undefined);
+  const [lastTranslit, setLastTranslit] = useState<string | undefined>(
+    undefined
+  );
   const [lastLang, setLastLang] = useState<string>("kn");
   const [hasPlayed, setHasPlayed] = useState<boolean>(false);
 
   const speak = useCallback(
-    (text: string, translit?: string, isSlow: boolean = false, lang: string = "kn") => {
+    (
+      text: string,
+      translit?: string,
+      isSlow: boolean = false,
+      lang: string = "kn"
+    ) => {
       if (!text || !text.trim()) return;
       setLastText(text);
       setLastTranslit(translit);

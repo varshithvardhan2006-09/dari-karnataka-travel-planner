@@ -79,20 +79,23 @@ describe("Error, empty and fallback states", () => {
   });
 
   it("handles few_matches / zero candidates state correctly", async () => {
-    const req = new NextRequest("http://localhost:3000/api/plan?simulate=zero_candidates", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        interests: ["beach"],
-        days: 5,
-        start_city: "Bengaluru",
-        budget: "mid",
-        pace: "relaxed",
-        travellers: "couple",
-        month: 11,
-        lang: "en",
-      }),
-    });
+    const req = new NextRequest(
+      "http://localhost:3000/api/plan?simulate=zero_candidates",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          interests: ["beach"],
+          days: 5,
+          start_city: "Bengaluru",
+          budget: "mid",
+          pace: "relaxed",
+          travellers: "couple",
+          month: 11,
+          lang: "en",
+        }),
+      }
+    );
 
     const res = await POST(req);
     expect(res.status).toBe(422);
@@ -122,7 +125,9 @@ describe("Error, empty and fallback states", () => {
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.plan).toBeDefined();
-    expect(["planner", "sample", "ai-groq", "ai-gemini"]).toContain(data.plan.source);
+    expect(["planner", "sample", "ai-groq", "ai-gemini"]).toContain(
+      data.plan.source
+    );
     expect(PlanSchema.safeParse(data.plan).success).toBe(true);
   });
 
@@ -141,7 +146,9 @@ describe("Error, empty and fallback states", () => {
     expect(getSamplePlanForInterests(["heritage"]).key).toBe("heritage");
     expect(getSamplePlanForInterests(["nature"]).key).toBe("nature");
     expect(getSamplePlanForInterests(["food"]).key).toBe("food");
-    expect(getSamplePlanForInterests(["adventure", "coffee"]).key).toBe("nature");
+    expect(getSamplePlanForInterests(["adventure", "coffee"]).key).toBe(
+      "nature"
+    );
   });
 
   it("handles GET /api/plan health check correctly", async () => {
@@ -158,7 +165,9 @@ describe("Error, empty and fallback states", () => {
     const resMissing = await GET_TTS(reqMissing);
     expect(resMissing.status).toBe(400);
 
-    const reqEmpty = new NextRequest("http://localhost:3000/api/tts?text=%20%20");
+    const reqEmpty = new NextRequest(
+      "http://localhost:3000/api/tts?text=%20%20"
+    );
     const resEmpty = await GET_TTS(reqEmpty);
     expect(resEmpty.status).toBe(400);
   });
@@ -175,7 +184,9 @@ describe("Error, empty and fallback states", () => {
 
   it("returns 502 from GET /api/tts when every speech upstream is unreachable", async () => {
     stubTtsUpstream(false);
-    const req = new NextRequest("http://localhost:3000/api/tts?text=Namaskara&lang=kn");
+    const req = new NextRequest(
+      "http://localhost:3000/api/tts?text=Namaskara&lang=kn"
+    );
     const res = await GET_TTS(req);
     expect(res.status).toBe(502);
   });
@@ -195,23 +206,26 @@ describe("Error, empty and fallback states", () => {
   });
 
   it("includes Retry-After header on 429 rate limit responses", async () => {
-    const reqSimulate429 = new NextRequest("http://localhost:3000/api/plan?simulate=429", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-simulate": "429",
-      },
-      body: JSON.stringify({
-        interests: ["heritage"],
-        days: 3,
-        start_city: "Bengaluru",
-        budget: "mid",
-        pace: "relaxed",
-        travellers: "couple",
-        month: 11,
-        lang: "en",
-      }),
-    });
+    const reqSimulate429 = new NextRequest(
+      "http://localhost:3000/api/plan?simulate=429",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-simulate": "429",
+        },
+        body: JSON.stringify({
+          interests: ["heritage"],
+          days: 3,
+          start_city: "Bengaluru",
+          budget: "mid",
+          pace: "relaxed",
+          travellers: "couple",
+          month: 11,
+          lang: "en",
+        }),
+      }
+    );
 
     const res429 = await POST(reqSimulate429);
     expect(res429.status).toBe(429);

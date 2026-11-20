@@ -170,14 +170,18 @@ export default function StopCard({
       >
         {/* Left Timing and Pin Number Column */}
         <div className="w-9 sm:w-14 pt-2.5 flex flex-col items-center shrink-0">
-          <span className="text-[11px] sm:text-xs font-bold text-[#14202B]">{stop.start}</span>
+          <span className="text-[11px] sm:text-xs font-bold text-[#14202B]">
+            {stop.start}
+          </span>
           <div
             className="w-5 h-5 sm:w-6 sm:h-6 rounded-full text-white text-[10px] sm:text-[11px] font-bold flex items-center justify-center my-1 shadow-2xs shrink-0"
             style={{ backgroundColor: pinBg }}
           >
             {pinDisplay}
           </div>
-          <span className="text-[9px] sm:text-[10px] text-[#586673] font-medium leading-none">{durationText}</span>
+          <span className="text-[9px] sm:text-[10px] text-[#586673] font-medium leading-none">
+            {durationText}
+          </span>
         </div>
 
         {/* Card Body */}
@@ -274,7 +278,9 @@ export default function StopCard({
                   onToggleTimeLock?.(stop.place_id);
                 }}
                 className={`inline-flex items-center gap-1 cursor-pointer transition-colors font-medium py-0.5 ${
-                  isTimeLocked ? "text-[#1E6B52]" : "text-[#586673] hover:text-[#14202B]"
+                  isTimeLocked
+                    ? "text-[#1E6B52]"
+                    : "text-[#586673] hover:text-[#14202B]"
                 }`}
               >
                 <svg
@@ -293,8 +299,8 @@ export default function StopCard({
                       ? "ಲಾಕ್"
                       : "Locked"
                     : lang === "kn"
-                    ? "ಸಮಯ ಲಾಕ್"
-                    : "Lock time"}
+                      ? "ಸಮಯ ಲಾಕ್"
+                      : "Lock time"}
                 </span>
               </button>
 

@@ -1,6 +1,16 @@
-import { PlanRequest, AIModelOutput, AIModelOutputSchema, Place, Plan } from "./schema";
+import {
+  PlanRequest,
+  AIModelOutput,
+  AIModelOutputSchema,
+  Place,
+  Plan,
+} from "./schema";
 import { getCandidates } from "./candidates";
-import { PACE_STOP_LIMITS, validateAIOutput, buildDeterministicPlan } from "./planner";
+import {
+  PACE_STOP_LIMITS,
+  validateAIOutput,
+  buildDeterministicPlan,
+} from "./planner";
 import { enrichPlan } from "./enrich";
 
 // Defaults are models confirmed to be served by each provider; override with GROQ_MODEL / GEMINI_MODEL.
@@ -45,7 +55,8 @@ Rules:
  * stays small enough for free-tier token-per-minute limits.
  */
 export function buildCandidatesPromptPayload(candidates: Place[]): string {
-  const header = "id | name | city | lat,lng | categories | duration_min | meal | best_months";
+  const header =
+    "id | name | city | lat,lng | categories | duration_min | meal | best_months";
   const rows = candidates.map((p) =>
     [
       p.id,
@@ -71,27 +82,32 @@ async function callGroqAPI(
   model: string = DEFAULT_GROQ_MODEL,
   timeoutMs: number = 8000
 ): Promise<string> {
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      temperature: 0.4,
-      response_format: { type: "json_object" },
-    }),
-    signal: AbortSignal.timeout(Math.min(timeoutMs, PROVIDER_CALL_MAX_MS)),
-  });
+  const response = await fetch(
+    "https://api.groq.com/openai/v1/chat/completions",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        temperature: 0.4,
+        response_format: { type: "json_object" },
+      }),
+      signal: AbortSignal.timeout(Math.min(timeoutMs, PROVIDER_CALL_MAX_MS)),
+    }
+  );
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Groq API error (${response.status}): ${errorText.slice(0, 300)}`);
+    throw new Error(
+      `Groq API error (${response.status}): ${errorText.slice(0, 300)}`
+    );
   }
 
   const json = await response.json();
@@ -131,7 +147,9 @@ async function callGeminiAPI(
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Gemini API error (${response.status}): ${errorText.slice(0, 300)}`);
+    throw new Error(
+      `Gemini API error (${response.status}): ${errorText.slice(0, 300)}`
+    );
   }
 
   const json = await response.json();
@@ -144,7 +162,9 @@ async function callGeminiAPI(
  */
 export function isMissingModelError(err: unknown): boolean {
   const message = err instanceof Error ? err.message : String(err);
-  return /\(404\)|decommissioned|not found|no longer available|does not exist/i.test(message);
+  return /\(404\)|decommissioned|not found|no longer available|does not exist/i.test(
+    message
+  );
 }
 
 /**
@@ -162,7 +182,9 @@ export async function withModelFallback<T>(
     return await call(model);
   } catch (err) {
     if (model === defaultModel || !isMissingModelError(err)) throw err;
-    console.warn(`Model "${model}" is unavailable; retrying with "${defaultModel}".`);
+    console.warn(
+      `Model "${model}" is unavailable; retrying with "${defaultModel}".`
+    );
     onFallback?.(defaultModel);
     return call(defaultModel);
   }
@@ -188,7 +210,9 @@ function parseAndValidateModelOutput(
   rawText: string,
   request: PlanRequest,
   allowedCandidateIds?: Set<string>
-): { success: true; data: AIModelOutput } | { success: false; errors: string[] } {
+):
+  | { success: true; data: AIModelOutput }
+  | { success: false; errors: string[] } {
   try {
     const cleaned = extractJsonPayload(rawText);
     const parsed = JSON.parse(cleaned);
@@ -211,29 +235,37 @@ function parseAndValidateModelOutput(
               "Carry cash for local markets and tender coconut vendors.",
             ],
       days: Array.isArray(parsed.days)
-        ? (parsed.days as Array<Record<string, unknown>>).map((d, dayIdx: number) => ({
-            day: typeof d.day === "number" ? d.day : dayIdx + 1,
-            theme:
-              typeof d.theme === "string" && d.theme.trim()
-                ? d.theme.trim().slice(0, 60)
-                : `Day ${dayIdx + 1} Discovery`,
-            stops: Array.isArray(d.stops)
-              ? (d.stops as Array<Record<string, unknown>>).map((s, stopIdx: number) => ({
-                  place_id:
-                    typeof (s.place_id || s.id) === "string"
-                      ? String(s.place_id || s.id)
-                      : "",
-                  start:
-                    typeof s.start === "string" && /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(s.start)
-                      ? s.start
-                      : `${(9 + stopIdx * 2).toString().padStart(2, "0")}:00`,
-                  note_en:
-                    typeof (s.note_en || s.note) === "string" && String(s.note_en || s.note).trim()
-                      ? String(s.note_en || s.note).trim().slice(0, 200)
-                      : "Handpicked stop tailored to your interests.",
-                }))
-              : [],
-          }))
+        ? (parsed.days as Array<Record<string, unknown>>).map(
+            (d, dayIdx: number) => ({
+              day: typeof d.day === "number" ? d.day : dayIdx + 1,
+              theme:
+                typeof d.theme === "string" && d.theme.trim()
+                  ? d.theme.trim().slice(0, 60)
+                  : `Day ${dayIdx + 1} Discovery`,
+              stops: Array.isArray(d.stops)
+                ? (d.stops as Array<Record<string, unknown>>).map(
+                    (s, stopIdx: number) => ({
+                      place_id:
+                        typeof (s.place_id || s.id) === "string"
+                          ? String(s.place_id || s.id)
+                          : "",
+                      start:
+                        typeof s.start === "string" &&
+                        /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(s.start)
+                          ? s.start
+                          : `${(9 + stopIdx * 2).toString().padStart(2, "0")}:00`,
+                      note_en:
+                        typeof (s.note_en || s.note) === "string" &&
+                        String(s.note_en || s.note).trim()
+                          ? String(s.note_en || s.note)
+                              .trim()
+                              .slice(0, 200)
+                          : "Handpicked stop tailored to your interests.",
+                    })
+                  )
+                : [],
+            })
+          )
         : [],
     };
 
@@ -241,11 +273,17 @@ function parseAndValidateModelOutput(
     if (!schemaResult.success) {
       return {
         success: false,
-        errors: schemaResult.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`),
+        errors: schemaResult.error.issues.map(
+          (e) => `${e.path.join(".")}: ${e.message}`
+        ),
       };
     }
 
-    const businessValidation = validateAIOutput(schemaResult.data, request, allowedCandidateIds);
+    const businessValidation = validateAIOutput(
+      schemaResult.data,
+      request,
+      allowedCandidateIds
+    );
     if (!businessValidation.valid) {
       return {
         success: false,
@@ -278,8 +316,10 @@ export async function generateItinerary(request: PlanRequest): Promise<Plan> {
   const candidateIdSet = new Set(candidates.map((c) => c.id));
 
   const limits = PACE_STOP_LIMITS[request.pace] || PACE_STOP_LIMITS.balanced;
-  const systemPrompt = SYSTEM_PROMPT_TEMPLATE
-    .replaceAll("{days}", request.days.toString())
+  const systemPrompt = SYSTEM_PROMPT_TEMPLATE.replaceAll(
+    "{days}",
+    request.days.toString()
+  )
     .replaceAll("{min_stops}", limits.min.toString())
     .replaceAll("{max_stops}", limits.max.toString());
 
@@ -303,7 +343,8 @@ ${buildCandidatesPromptPayload(candidates)}`;
 
   const startTime = Date.now();
   const DEADLINE_MS = 24000; // 24 seconds total budget, safely within Vercel's 30s limit
-  const getRemainingTimeout = () => Math.max(1500, DEADLINE_MS - (Date.now() - startTime));
+  const getRemainingTimeout = () =>
+    Math.max(1500, DEADLINE_MS - (Date.now() - startTime));
 
   // Each call falls back to the default model if the configured one is gone,
   // and the retry after a validation failure keeps using whichever model worked.
@@ -311,7 +352,8 @@ ${buildCandidatesPromptPayload(candidates)}`;
     withModelFallback(
       groqModel,
       DEFAULT_GROQ_MODEL,
-      (model) => callGroqAPI(systemPrompt, prompt, key, model, getRemainingTimeout()),
+      (model) =>
+        callGroqAPI(systemPrompt, prompt, key, model, getRemainingTimeout()),
       (model) => {
         groqModel = model;
       }
@@ -320,7 +362,8 @@ ${buildCandidatesPromptPayload(candidates)}`;
     withModelFallback(
       geminiModel,
       DEFAULT_GEMINI_MODEL,
-      (model) => callGeminiAPI(systemPrompt, prompt, key, model, getRemainingTimeout()),
+      (model) =>
+        callGeminiAPI(systemPrompt, prompt, key, model, getRemainingTimeout()),
       (model) => {
         geminiModel = model;
       }
@@ -330,7 +373,11 @@ ${buildCandidatesPromptPayload(candidates)}`;
   if (groqKey && groqKey.trim().length > 0) {
     try {
       const rawText = await callGroq(groqKey, userPrompt);
-      const validation = parseAndValidateModelOutput(rawText, request, candidateIdSet);
+      const validation = parseAndValidateModelOutput(
+        rawText,
+        request,
+        candidateIdSet
+      );
 
       if (validation.success) {
         return enrichPlan(validation.data, request, "ai-groq");
@@ -340,22 +387,37 @@ ${buildCandidatesPromptPayload(candidates)}`;
       if (getRemainingTimeout() > 4000) {
         const retryPrompt = `${userPrompt}\n\nYour previous response failed with these validation errors. Please correct them and return ONLY valid JSON matching the schema:\n${validation.errors.join("\n")}`;
         const retryText = await callGroq(groqKey, retryPrompt);
-        const retryValidation = parseAndValidateModelOutput(retryText, request, candidateIdSet);
+        const retryValidation = parseAndValidateModelOutput(
+          retryText,
+          request,
+          candidateIdSet
+        );
 
         if (retryValidation.success) {
           return enrichPlan(retryValidation.data, request, "ai-groq");
         }
       }
     } catch (err: unknown) {
-      console.warn("Groq attempt failed, falling back:", err instanceof Error ? err.message : "Error");
+      console.warn(
+        "Groq attempt failed, falling back:",
+        err instanceof Error ? err.message : "Error"
+      );
     }
   }
 
   // Provider cascade: 2) Gemini (only if at least 4s remaining in budget)
-  if (geminiKey && geminiKey.trim().length > 0 && getRemainingTimeout() > 4000) {
+  if (
+    geminiKey &&
+    geminiKey.trim().length > 0 &&
+    getRemainingTimeout() > 4000
+  ) {
     try {
       const rawText = await callGemini(geminiKey, userPrompt);
-      const validation = parseAndValidateModelOutput(rawText, request, candidateIdSet);
+      const validation = parseAndValidateModelOutput(
+        rawText,
+        request,
+        candidateIdSet
+      );
 
       if (validation.success) {
         return enrichPlan(validation.data, request, "ai-gemini");
@@ -365,14 +427,21 @@ ${buildCandidatesPromptPayload(candidates)}`;
       if (getRemainingTimeout() > 4000) {
         const retryPrompt = `${userPrompt}\n\nYour previous response failed with these validation errors. Please correct them and return ONLY valid JSON matching the schema:\n${validation.errors.join("\n")}`;
         const retryText = await callGemini(geminiKey, retryPrompt);
-        const retryValidation = parseAndValidateModelOutput(retryText, request, candidateIdSet);
+        const retryValidation = parseAndValidateModelOutput(
+          retryText,
+          request,
+          candidateIdSet
+        );
 
         if (retryValidation.success) {
           return enrichPlan(retryValidation.data, request, "ai-gemini");
         }
       }
     } catch (err: unknown) {
-      console.warn("Gemini attempt failed, falling back:", err instanceof Error ? err.message : "Error");
+      console.warn(
+        "Gemini attempt failed, falling back:",
+        err instanceof Error ? err.message : "Error"
+      );
     }
   }
 

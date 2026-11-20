@@ -51,7 +51,9 @@ export default function LandingPage() {
 
     let isSaved = false;
     try {
-      const savedList = JSON.parse(localStorage.getItem("dari_saved_phrases") || "[]");
+      const savedList = JSON.parse(
+        localStorage.getItem("dari_saved_phrases") || "[]"
+      );
       isSaved = Array.isArray(savedList) && savedList.includes(selected.id);
     } catch {
       // ignore
@@ -151,7 +153,9 @@ export default function LandingPage() {
           <div className="flex flex-wrap items-center gap-6 text-xs sm:text-sm text-[#586673] font-medium">
             <div className="flex items-center gap-2">
               <span className="text-[#1E6B52] font-bold">✓</span>
-              <span>{lang === "kn" ? "ಸೈನ್-ಅಪ್ ಅಗತ್ಯವಿಲ್ಲ" : "No sign-up"}</span>
+              <span>
+                {lang === "kn" ? "ಸೈನ್-ಅಪ್ ಅಗತ್ಯವಿಲ್ಲ" : "No sign-up"}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[#1E6B52] font-bold">✓</span>
@@ -159,7 +163,9 @@ export default function LandingPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[#1E6B52] font-bold">✓</span>
-              <span>{lang === "kn" ? "ಕನ್ನಡದಲ್ಲೇ ಲಭ್ಯ" : "Works in Kannada"}</span>
+              <span>
+                {lang === "kn" ? "ಕನ್ನಡದಲ್ಲೇ ಲಭ್ಯ" : "Works in Kannada"}
+              </span>
             </div>
           </div>
         </div>
@@ -187,7 +193,13 @@ export default function LandingPage() {
           {/* Floating Info Card 1: Route Summary (bottom left) */}
           <div className="absolute bottom-6 left-6 z-10 bg-white/95 backdrop-blur-md rounded-2xl px-4 py-2.5 shadow-lg border border-[#DCE1DD] flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center font-bold text-xs shrink-0">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
               </svg>
             </div>
@@ -203,13 +215,18 @@ export default function LandingPage() {
 
           {/* Floating Info Card 2: Price (top right) */}
           <div className="absolute top-6 right-6 z-10 bg-white/95 backdrop-blur-md rounded-xl px-3 py-1.5 shadow-md border border-[#DCE1DD] text-xs font-bold text-[#14202B]">
-            ₹ {lang === "kn" ? "ರೂ ೧೪,೮೦೦" : "Rs 14,800"} <span className="font-normal text-[#586673] text-[10px]">{lang === "kn" ? "ಇಬ್ಬರಿಗೆ" : "for 2"}</span>
+            ₹ {lang === "kn" ? "ರೂ ೧೪,೮೦೦" : "Rs 14,800"}{" "}
+            <span className="font-normal text-[#586673] text-[10px]">
+              {lang === "kn" ? "ಇಬ್ಬರಿಗೆ" : "for 2"}
+            </span>
           </div>
 
           {/* Floating Info Card 3: Kannada Greeting (bottom right, visible on tablet/desktop to avoid mobile overlap) */}
           <div className="hidden sm:flex absolute bottom-6 right-6 z-10 bg-white/95 backdrop-blur-md rounded-xl px-3 py-1.5 shadow-md border border-[#DCE1DD] text-xs font-bold text-[#14202B] items-center gap-1.5">
             <span className="text-[#8E1F2F]">ನಮಸ್ಕಾರ</span>
-            <span className="font-normal text-[#586673] text-[10px]">Namaskara</span>
+            <span className="font-normal text-[#586673] text-[10px]">
+              Namaskara
+            </span>
           </div>
         </div>
       </section>
@@ -231,10 +248,18 @@ export default function LandingPage() {
               onChange={(e) => setQsInterests(e.target.value)}
               className="mt-1 text-sm font-semibold text-[#14202B] bg-transparent focus:outline-none cursor-pointer"
             >
-              <option value="heritage,food">{lang === "kn" ? "ಪರಂಪರೆ, ಆಹಾರ" : "Heritage, Food"}</option>
-              <option value="nature,wildlife">{lang === "kn" ? "ಪ್ರಕೃತಿ, ವನ್ಯಜೀವಿ" : "Nature, Wildlife"}</option>
-              <option value="beach,spiritual">{lang === "kn" ? "ಕಡಲತೀರ, ಆಧ್ಯಾತ್ಮಿಕ" : "Beach, Spiritual"}</option>
-              <option value="adventure,coffee">{lang === "kn" ? "ಸಾಹಸ, ಕಾಫಿ" : "Adventure, Coffee"}</option>
+              <option value="heritage,food">
+                {lang === "kn" ? "ಪರಂಪರೆ, ಆಹಾರ" : "Heritage, Food"}
+              </option>
+              <option value="nature,wildlife">
+                {lang === "kn" ? "ಪ್ರಕೃತಿ, ವನ್ಯಜೀವಿ" : "Nature, Wildlife"}
+              </option>
+              <option value="beach,spiritual">
+                {lang === "kn" ? "ಕಡಲತೀರ, ಆಧ್ಯಾತ್ಮಿಕ" : "Beach, Spiritual"}
+              </option>
+              <option value="adventure,coffee">
+                {lang === "kn" ? "ಸಾಹಸ, ಕಾಫಿ" : "Adventure, Coffee"}
+              </option>
             </select>
           </div>
 
@@ -274,9 +299,15 @@ export default function LandingPage() {
               onChange={(e) => setQsBudget(e.target.value)}
               className="mt-1 text-sm font-semibold text-[#14202B] bg-transparent focus:outline-none cursor-pointer"
             >
-              <option value="budget">{lang === "kn" ? "ಮಿತವ್ಯಯ" : "Budget"}</option>
-              <option value="mid">{lang === "kn" ? "ಮಧ್ಯಮ" : "Mid-range"}</option>
-              <option value="premium">{lang === "kn" ? "ಐಷಾರಾಮಿ" : "Premium"}</option>
+              <option value="budget">
+                {lang === "kn" ? "ಮಿತವ್ಯಯ" : "Budget"}
+              </option>
+              <option value="mid">
+                {lang === "kn" ? "ಮಧ್ಯಮ" : "Mid-range"}
+              </option>
+              <option value="premium">
+                {lang === "kn" ? "ಐಷಾರಾಮಿ" : "Premium"}
+              </option>
             </select>
           </div>
 
@@ -294,9 +325,15 @@ export default function LandingPage() {
               onChange={(e) => setQsMonth(Number(e.target.value))}
               className="mt-1 text-sm font-semibold text-[#14202B] bg-transparent focus:outline-none cursor-pointer"
             >
-              <option value={10}>{lang === "kn" ? "ಅಕ್ಟೋಬರ್" : "October"}</option>
-              <option value={11}>{lang === "kn" ? "ನವೆಂಬರ್" : "November"}</option>
-              <option value={12}>{lang === "kn" ? "ಡಿಸೆಂಬರ್" : "December"}</option>
+              <option value={10}>
+                {lang === "kn" ? "ಅಕ್ಟೋಬರ್" : "October"}
+              </option>
+              <option value={11}>
+                {lang === "kn" ? "ನವೆಂಬರ್" : "November"}
+              </option>
+              <option value={12}>
+                {lang === "kn" ? "ಡಿಸೆಂಬರ್" : "December"}
+              </option>
               <option value={1}>{lang === "kn" ? "ಜನವರಿ" : "January"}</option>
             </select>
           </div>
@@ -320,7 +357,13 @@ export default function LandingPage() {
         {/* Card 1: Curated places */}
         <div className="bg-white rounded-2xl p-5 border border-[#DCE1DD] shadow-2xs">
           <div className="w-8 h-8 rounded-xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center mb-3">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              className="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 2l10 8H2l10-8z" />
             </svg>
           </div>
@@ -328,14 +371,23 @@ export default function LandingPage() {
             {t("landing.features.real_places_title", "Curated places")}
           </h3>
           <p className="text-xs text-[#586673] mt-1.5 leading-relaxed">
-            {t("landing.features.real_places_desc", "The AI can only pick from our list, never invent.")}
+            {t(
+              "landing.features.real_places_desc",
+              "The AI can only pick from our list, never invent."
+            )}
           </p>
         </div>
 
         {/* Card 2: Kannada built in */}
         <div className="bg-white rounded-2xl p-5 border border-[#DCE1DD] shadow-2xs">
           <div className="w-8 h-8 rounded-xl bg-[#FDF2CC] text-[#8C6D05] flex items-center justify-center mb-3">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              className="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <circle cx="12" cy="12" r="10" />
               <line x1="2" y1="12" x2="22" y2="12" />
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
@@ -345,14 +397,23 @@ export default function LandingPage() {
             {t("landing.features.kannada_title", "Kannada built in")}
           </h3>
           <p className="text-xs text-[#586673] mt-1.5 leading-relaxed">
-            {t("landing.features.kannada_desc", "Names, phrases and audio, written by people.")}
+            {t(
+              "landing.features.kannada_desc",
+              "Names, phrases and audio, written by people."
+            )}
           </p>
         </div>
 
         {/* Card 3: Always answers */}
         <div className="bg-white rounded-2xl p-5 border border-[#DCE1DD] shadow-2xs">
           <div className="w-8 h-8 rounded-xl bg-[#F9EBEB] text-[#8E1F2F] flex items-center justify-center mb-3">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              className="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" />
             </svg>
           </div>
@@ -360,14 +421,22 @@ export default function LandingPage() {
             {lang === "kn" ? "ಯಾವಾಗಲೂ ಲಭ್ಯ" : "Always answers"}
           </h3>
           <p className="text-xs text-[#586673] mt-1.5 leading-relaxed">
-            {lang === "kn" ? "AI ಕಾರ್ಯನಿರತವಾಗಿದ್ದರೂ, ಸಿದ್ಧಪಡಿಸಿದ ಯೋಜಕ ನೆರವಾಗುತ್ತದೆ." : "If the AI is busy, a saved planner takes over."}
+            {lang === "kn"
+              ? "AI ಕಾರ್ಯನಿರತವಾಗಿದ್ದರೂ, ಸಿದ್ಧಪಡಿಸಿದ ಯೋಜಕ ನೆರವಾಗುತ್ತದೆ."
+              : "If the AI is busy, a saved planner takes over."}
           </p>
         </div>
 
         {/* Card 4: Honest estimates */}
         <div className="bg-white rounded-2xl p-5 border border-[#DCE1DD] shadow-2xs">
           <div className="w-8 h-8 rounded-xl bg-[#E1ECF5] text-[#2B5F8A] flex items-center justify-center mb-3">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              className="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <rect x="2" y="4" width="20" height="16" rx="2" />
               <line x1="2" y1="10" x2="22" y2="10" />
             </svg>
@@ -376,7 +445,10 @@ export default function LandingPage() {
             {t("landing.features.route_costs_title", "Honest estimates")}
           </h3>
           <p className="text-xs text-[#586673] mt-1.5 leading-relaxed">
-            {t("landing.features.route_costs_desc", "Costs shown as ranges. Check before booking.")}
+            {t(
+              "landing.features.route_costs_desc",
+              "Costs shown as ranges. Check before booking."
+            )}
           </p>
         </div>
       </section>
@@ -388,7 +460,9 @@ export default function LandingPage() {
             {lang === "kn" ? "ಇದು ಹೇಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ" : "HOW IT WORKS"}
           </span>
           <h2 className="font-heading font-extrabold text-2xl text-[#14202B] tracking-tight mt-0.5">
-            {lang === "kn" ? "ಕೆಲವೇ ಸರಳ ಆಯ್ಕೆಗಳಿಂದ ಸಂಪೂರ್ಣ ಪ್ರವಾಸ ಯೋಜನೆ" : "From a few choices to a full trip"}
+            {lang === "kn"
+              ? "ಕೆಲವೇ ಸರಳ ಆಯ್ಕೆಗಳಿಂದ ಸಂಪೂರ್ಣ ಪ್ರವಾಸ ಯೋಜನೆ"
+              : "From a few choices to a full trip"}
           </h2>
         </div>
 
@@ -399,44 +473,68 @@ export default function LandingPage() {
               ✦
             </div>
             <h3 className="font-heading font-bold text-base text-[#14202B]">
-              {lang === "kn" ? "೧. ನಿಮ್ಮಿಷ್ಟದ ಆಯ್ಕೆಗಳನ್ನು ತಿಳಿಸಿ" : "1. Choose what you like"}
+              {lang === "kn"
+                ? "೧. ನಿಮ್ಮಿಷ್ಟದ ಆಯ್ಕೆಗಳನ್ನು ತಿಳಿಸಿ"
+                : "1. Choose what you like"}
             </h3>
             <p className="text-xs text-[#586673] mt-1.5 leading-relaxed">
-              {lang === "kn" ? "ಆಸಕ್ತಿಗಳು, ದಿನಗಳು, ಬಜೆಟ್, ವೇಗ ಮತ್ತು ತಿಂಗಳು." : "Interests, days, budget, pace and month."}
+              {lang === "kn"
+                ? "ಆಸಕ್ತಿಗಳು, ದಿನಗಳು, ಬಜೆಟ್, ವೇಗ ಮತ್ತು ತಿಂಗಳು."
+                : "Interests, days, budget, pace and month."}
             </p>
           </div>
 
           {/* Step 2 */}
           <div className="bg-white rounded-2xl p-6 border border-[#DCE1DD] shadow-xs">
             <div className="w-9 h-9 rounded-xl bg-[#FDF2CC] text-[#8C6D05] flex items-center justify-center mb-4">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <circle cx="6" cy="19" r="3" />
                 <circle cx="18" cy="5" r="3" />
                 <path d="M12 19h4.5a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7H12" />
               </svg>
             </div>
             <h3 className="font-heading font-bold text-base text-[#14202B]">
-              {lang === "kn" ? "೨. AI ನೈಜ ಸ್ಥಳಗಳನ್ನು ಜೋಡಿಸುತ್ತದೆ" : "2. AI arranges real places"}
+              {lang === "kn"
+                ? "೨. AI ನೈಜ ಸ್ಥಳಗಳನ್ನು ಜೋಡಿಸುತ್ತದೆ"
+                : "2. AI arranges real places"}
             </h3>
             <p className="text-xs text-[#586673] mt-1.5 leading-relaxed">
-              {lang === "kn" ? "ಸರ್ವರ್ ಪರಿಶೀಲಿಸಿದ ಸ್ಥಳಗಳನ್ನು ಮಾತ್ರ ನಿಮ್ಮ ಯೋಜನೆಗೆ ಸೇರಿಸಲಾಗುತ್ತದೆ." : "The server checks every place id before you see it."}
+              {lang === "kn"
+                ? "ಸರ್ವರ್ ಪರಿಶೀಲಿಸಿದ ಸ್ಥಳಗಳನ್ನು ಮಾತ್ರ ನಿಮ್ಮ ಯೋಜನೆಗೆ ಸೇರಿಸಲಾಗುತ್ತದೆ."
+                : "The server checks every place id before you see it."}
             </p>
           </div>
 
           {/* Step 3 */}
           <div className="bg-white rounded-2xl p-6 border border-[#DCE1DD] shadow-xs">
             <div className="w-9 h-9 rounded-xl bg-[#E1ECF5] text-[#2B5F8A] flex items-center justify-center mb-4">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <circle cx="12" cy="12" r="10" />
                 <line x1="2" y1="12" x2="22" y2="12" />
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
               </svg>
             </div>
             <h3 className="font-heading font-bold text-base text-[#14202B]">
-              {lang === "kn" ? "೩. ಕನ್ನಡದಲ್ಲೇ ಸುಲಭ ಪ್ರಯಾಣ" : "3. Travel in Kannada"}
+              {lang === "kn"
+                ? "೩. ಕನ್ನಡದಲ್ಲೇ ಸುಲಭ ಪ್ರಯಾಣ"
+                : "3. Travel in Kannada"}
             </h3>
             <p className="text-xs text-[#586673] mt-1.5 leading-relaxed">
-              {lang === "kn" ? "ಭಾಷೆ ಬದಲಿಸಿ, ನುಡಿಗಟ್ಟುಗಳನ್ನು ಆಲಿಸಿ, ಚಾಲಕರಿಗೆ ನಿಲುಗಡೆ ತೋರಿಸಿ." : "Switch language, play phrases, show a stop to your driver."}
+              {lang === "kn"
+                ? "ಭಾಷೆ ಬದಲಿಸಿ, ನುಡಿಗಟ್ಟುಗಳನ್ನು ಆಲಿಸಿ, ಚಾಲಕರಿಗೆ ನಿಲುಗಡೆ ತೋರಿಸಿ."
+                : "Switch language, play phrases, show a stop to your driver."}
             </p>
           </div>
         </div>
@@ -450,7 +548,9 @@ export default function LandingPage() {
               {lang === "kn" ? "ಮಾದರಿ ಪ್ರವಾಸಗಳು" : "SAMPLE TRIPS"}
             </span>
             <h2 className="font-heading font-extrabold text-2xl text-[#14202B] tracking-tight mt-0.5">
-              {lang === "kn" ? "ಸಿದ್ಧಪಡಿಸಿದ ಮಾರ್ಗದಿಂದ ಪ್ರಾರಂಭಿಸಿ" : "Start from a ready-made route"}
+              {lang === "kn"
+                ? "ಸಿದ್ಧಪಡಿಸಿದ ಮಾರ್ಗದಿಂದ ಪ್ರಾರಂಭಿಸಿ"
+                : "Start from a ready-made route"}
             </h2>
           </div>
           <Link
@@ -476,10 +576,14 @@ export default function LandingPage() {
             <div className="p-4 flex-1 flex flex-col justify-between">
               <div>
                 <h3 className="font-heading font-bold text-base text-[#14202B] group-hover:text-[#8E1F2F] transition-colors">
-                  {lang === "kn" ? "ಹೊಯ್ಸಳ ಮತ್ತು ರಾಜಮನೆತನದ ಮೈಸೂರು" : "Hoysala and royal Mysuru"}
+                  {lang === "kn"
+                    ? "ಹೊಯ್ಸಳ ಮತ್ತು ರಾಜಮನೆತನದ ಮೈಸೂರು"
+                    : "Hoysala and royal Mysuru"}
                 </h3>
                 <p className="text-xs text-[#586673] mt-1">
-                  {lang === "kn" ? "ಮೈಸೂರು, ಬೇಲೂರು, ಹಳೇಬೀಡು" : "Mysuru, Belur, Halebidu"}
+                  {lang === "kn"
+                    ? "ಮೈಸೂರು, ಬೇಲೂರು, ಹಳೇಬೀಡು"
+                    : "Mysuru, Belur, Halebidu"}
                 </p>
               </div>
               <div className="flex items-center gap-1.5 mt-3">
@@ -507,10 +611,14 @@ export default function LandingPage() {
             <div className="p-4 flex-1 flex flex-col justify-between">
               <div>
                 <h3 className="font-heading font-bold text-base text-[#14202B] group-hover:text-[#8E1F2F] transition-colors">
-                  {lang === "kn" ? "ಹಂಪಿ, ಬಾದಾಮಿ ಮತ್ತು ಪಟ್ಟದಕಲ್ಲು" : "Hampi, Badami and Pattadakal"}
+                  {lang === "kn"
+                    ? "ಹಂಪಿ, ಬಾದಾಮಿ ಮತ್ತು ಪಟ್ಟದಕಲ್ಲು"
+                    : "Hampi, Badami and Pattadakal"}
                 </h3>
                 <p className="text-xs text-[#586673] mt-1">
-                  {lang === "kn" ? "ಬಂಡೆಗಳು, ದೇವಾಲಯಗಳು ಮತ್ತು ಗುಹೆಗಳು" : "Boulders, temples and caves"}
+                  {lang === "kn"
+                    ? "ಬಂಡೆಗಳು, ದೇವಾಲಯಗಳು ಮತ್ತು ಗುಹೆಗಳು"
+                    : "Boulders, temples and caves"}
                 </p>
               </div>
               <div className="flex items-center gap-1.5 mt-3">
@@ -541,7 +649,9 @@ export default function LandingPage() {
                   {lang === "kn" ? "ಕರಾವಳಿ ಕರ್ನಾಟಕ" : "Coastal Karnataka"}
                 </h3>
                 <p className="text-xs text-[#586673] mt-1">
-                  {lang === "kn" ? "ಗೋಕರ್ಣ, ಉಡುಪಿ, ಮುರ್ಡೇಶ್ವರ" : "Gokarna, Udupi, Murudeshwar"}
+                  {lang === "kn"
+                    ? "ಗೋಕರ್ಣ, ಉಡುಪಿ, ಮುರ್ಡೇಶ್ವರ"
+                    : "Gokarna, Udupi, Murudeshwar"}
                 </p>
               </div>
               <div className="flex items-center gap-1.5 mt-3">
@@ -573,13 +683,35 @@ export default function LandingPage() {
           {/* Region Chips */}
           <div className="flex flex-wrap gap-2">
             {[
-              { id: "all", label: lang === "kn" ? "ಎಲ್ಲಾ ಪ್ರದೇಶಗಳು" : "All regions" },
-              { id: "mysuru", label: lang === "kn" ? "ಮೈಸೂರು ಮತ್ತು ಹೊಯ್ಸಳ" : "Mysuru and Hoysala" },
-              { id: "hampi", label: lang === "kn" ? "ಹಂಪಿ ಮತ್ತು ಬಾದಾಮಿ" : "Hampi and Badami" },
+              {
+                id: "all",
+                label: lang === "kn" ? "ಎಲ್ಲಾ ಪ್ರದೇಶಗಳು" : "All regions",
+              },
+              {
+                id: "mysuru",
+                label:
+                  lang === "kn" ? "ಮೈಸೂರು ಮತ್ತು ಹೊಯ್ಸಳ" : "Mysuru and Hoysala",
+              },
+              {
+                id: "hampi",
+                label: lang === "kn" ? "ಹಂಪಿ ಮತ್ತು ಬಾದಾಮಿ" : "Hampi and Badami",
+              },
               { id: "coast", label: lang === "kn" ? "ಕರಾವಳಿ" : "Coast" },
-              { id: "hills", label: lang === "kn" ? "ಕೊಡಗು ಮತ್ತು ಚಿಕ್ಕಮಗಳೂರು" : "Coorg and Chikkamagaluru" },
-              { id: "bengaluru", label: lang === "kn" ? "ಬೆಂಗಳೂರು" : "Bengaluru" },
-              { id: "north", label: lang === "kn" ? "ಉತ್ತರ ಕರ್ನಾಟಕ" : "North Karnataka" },
+              {
+                id: "hills",
+                label:
+                  lang === "kn"
+                    ? "ಕೊಡಗು ಮತ್ತು ಚಿಕ್ಕಮಗಳೂರು"
+                    : "Coorg and Chikkamagaluru",
+              },
+              {
+                id: "bengaluru",
+                label: lang === "kn" ? "ಬೆಂಗಳೂರು" : "Bengaluru",
+              },
+              {
+                id: "north",
+                label: lang === "kn" ? "ಉತ್ತರ ಕರ್ನಾಟಕ" : "North Karnataka",
+              },
             ].map((reg) => (
               <button
                 key={reg.id}
@@ -600,7 +732,11 @@ export default function LandingPage() {
           <RegionMap
             selectedRegion={selectedRegion}
             onSelectPlace={(place) =>
-              router.push(place.categories[0] ? `/plan?interests=${place.categories[0]}` : "/plan")
+              router.push(
+                place.categories[0]
+                  ? `/plan?interests=${place.categories[0]}`
+                  : "/plan"
+              )
             }
           />
         </div>
@@ -608,7 +744,9 @@ export default function LandingPage() {
         {/* Right: Kannada Phrase of the Day */}
         <div className="lg:col-span-5 bg-[#FDF7E7] rounded-2xl p-6 border border-[#EADBBD] shadow-xs space-y-4">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-[#F5E5C0] text-[#8C6D05]">
-            {lang === "kn" ? "ಇಂದಿನ ಕನ್ನಡ ನುಡಿಗಟ್ಟು" : "KANNADA PHRASE OF THE DAY"}
+            {lang === "kn"
+              ? "ಇಂದಿನ ಕನ್ನಡ ನುಡಿಗಟ್ಟು"
+              : "KANNADA PHRASE OF THE DAY"}
           </div>
 
           <div className="pt-2">
@@ -619,7 +757,10 @@ export default function LandingPage() {
               {phraseOfDay.translit}
             </p>
             <p className="text-xs text-[#586673] mt-1.5 leading-relaxed">
-              {phraseOfDay.en}. {lang === "kn" ? "ಸ್ಥಳೀಯರೊಂದಿಗೆ ಸುಲಭವಾಗಿ ಸಂವಹನ ನಡೆಸಲು ನೆರವಾಗುತ್ತದೆ." : "A friendly way to connect with locals."}
+              {phraseOfDay.en}.{" "}
+              {lang === "kn"
+                ? "ಸ್ಥಳೀಯರೊಂದಿಗೆ ಸುಲಭವಾಗಿ ಸಂವಹನ ನಡೆಸಲು ನೆರವಾಗುತ್ತದೆ."
+                : "A friendly way to connect with locals."}
             </p>
           </div>
 
@@ -631,11 +772,25 @@ export default function LandingPage() {
               disabled={isPlayingAudio}
               className="px-4 py-2 rounded-xl text-xs font-bold bg-[#8E1F2F] text-white hover:bg-[#781926] active:scale-95 transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
                 <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
               </svg>
-              <span>{isPlayingAudio ? (lang === "kn" ? "ಪ್ಲೇ ಆಗುತ್ತಿದೆ..." : "Playing...") : (lang === "kn" ? "ಆಲಿಸಿ" : "Play")}</span>
+              <span>
+                {isPlayingAudio
+                  ? lang === "kn"
+                    ? "ಪ್ಲೇ ಆಗುತ್ತಿದೆ..."
+                    : "Playing..."
+                  : lang === "kn"
+                    ? "ಆಲಿಸಿ"
+                    : "Play"}
+              </span>
             </button>
 
             <button
@@ -659,7 +814,15 @@ export default function LandingPage() {
                   : "bg-white text-[#14202B] border-[#DCE1DD] hover:bg-gray-50"
               }`}
             >
-              <span>{isPhraseSaved ? (lang === "kn" ? "★ ಉಳಿಸಲಾಗಿದೆ" : "★ Saved") : (lang === "kn" ? "✦ ಉಳಿಸಿ" : "✦ Save")}</span>
+              <span>
+                {isPhraseSaved
+                  ? lang === "kn"
+                    ? "★ ಉಳಿಸಲಾಗಿದೆ"
+                    : "★ Saved"
+                  : lang === "kn"
+                    ? "✦ ಉಳಿಸಿ"
+                    : "✦ Save"}
+              </span>
             </button>
           </div>
         </div>

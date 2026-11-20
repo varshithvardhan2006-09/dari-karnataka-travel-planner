@@ -90,7 +90,9 @@ describe("Kannada mode and zero-AI-generated Kannada verification", () => {
 
     const { GET } = await import("../src/app/api/tts/route");
     const { NextRequest } = await import("next/server");
-    const req = new NextRequest("http://localhost:3000/api/tts?text=%E0%B2%A8%E0%B2%AE%E0%B2%B8%E0%B3%8D%E0%B2%95%E0%B2%BE%E0%B2%B0&lang=kn");
+    const req = new NextRequest(
+      "http://localhost:3000/api/tts?text=%E0%B2%A8%E0%B2%AE%E0%B2%B8%E0%B3%8D%E0%B2%95%E0%B2%BE%E0%B2%B0&lang=kn"
+    );
     const res = await GET(req);
     expect(res.status).toBe(200);
     expect(res.headers.get("content-type")).toContain("audio/mpeg");

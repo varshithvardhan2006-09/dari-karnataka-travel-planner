@@ -34,7 +34,9 @@ describe("Map popup HTML escaping", () => {
       lat: 12.3051,
       lng: 76.6551,
     });
-    expect(url).toBe("https://www.google.com/maps/search/?api=1&query=12.3051,76.6551");
+    expect(url).toBe(
+      "https://www.google.com/maps/search/?api=1&query=12.3051,76.6551"
+    );
     expect(url).not.toContain("<");
   });
 
@@ -63,7 +65,10 @@ describe("Shared plan payloads are validated before being rendered", () => {
   });
 
   it("rejects a tampered payload that drops required cost fields", () => {
-    const plan = buildDeterministicPlan(baseRequest) as unknown as Record<string, unknown>;
+    const plan = buildDeterministicPlan(baseRequest) as unknown as Record<
+      string,
+      unknown
+    >;
     const cost = { ...(plan.cost as Record<string, unknown>) };
     delete cost.total;
     const tampered = { ...plan, cost };
@@ -72,7 +77,9 @@ describe("Shared plan payloads are validated before being rendered", () => {
   });
 
   it("rejects a payload whose days are not the expected shape", () => {
-    expect(PlanSchema.safeParse({ days: [{ evil: true }] }).success).toBe(false);
+    expect(PlanSchema.safeParse({ days: [{ evil: true }] }).success).toBe(
+      false
+    );
     expect(PlanSchema.safeParse({ days: "not-an-array" }).success).toBe(false);
     expect(PlanSchema.safeParse(null).success).toBe(false);
   });

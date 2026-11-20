@@ -15,11 +15,26 @@ export const SAMPLE_PLANS: Record<string, Plan> = {
 /**
  * Returns the most relevant sample plan based on requested interests.
  */
-export function getSamplePlanForInterests(interests: Category[]): { plan: Plan; key: string } {
-  if (interests.some((c) => c === "heritage" || c === "culture" || c === "spiritual")) {
+export function getSamplePlanForInterests(interests: Category[]): {
+  plan: Plan;
+  key: string;
+} {
+  if (
+    interests.some(
+      (c) => c === "heritage" || c === "culture" || c === "spiritual"
+    )
+  ) {
     return { plan: SAMPLE_PLANS.heritage, key: "heritage" };
   }
-  if (interests.some((c) => c === "nature" || c === "wildlife" || c === "coffee" || c === "adventure")) {
+  if (
+    interests.some(
+      (c) =>
+        c === "nature" ||
+        c === "wildlife" ||
+        c === "coffee" ||
+        c === "adventure"
+    )
+  ) {
     return { plan: SAMPLE_PLANS.nature, key: "nature" };
   }
   if (interests.some((c) => c === "food" || c === "beach")) {
@@ -32,7 +47,10 @@ export function getSamplePlanForInterests(interests: Category[]): { plan: Plan; 
  * Returns a customized sample plan adapted strictly to the user's requested
  * duration, budget tier, party size, and transport mode.
  */
-export function getCustomizedSamplePlan(request: PlanRequest): { plan: Plan; key: string } {
+export function getCustomizedSamplePlan(request: PlanRequest): {
+  plan: Plan;
+  key: string;
+} {
   const { plan: basePlan, key } = getSamplePlanForInterests(request.interests);
 
   // Deep clone to avoid mutating static data
@@ -90,7 +108,10 @@ export function getCustomizedSamplePlan(request: PlanRequest): { plan: Plan; key
 
   // Adapt title
   if (/^\d+[\s-]*(?:days?|day)?\s*/i.test(customized.title)) {
-    customized.title = customized.title.replace(/^\d+[\s-]*(?:days?|day)?\s*/i, `${request.days}-Day `);
+    customized.title = customized.title.replace(
+      /^\d+[\s-]*(?:days?|day)?\s*/i,
+      `${request.days}-Day `
+    );
   } else {
     customized.title = `${request.days}-Day ${customized.title}`;
   }
@@ -113,5 +134,7 @@ export function getCustomizedSamplePlan(request: PlanRequest): { plan: Plan; key
  */
 export function getSamplePlan(key: string): Plan {
   // Own-property check: keys such as "constructor" must not resolve to Object internals.
-  return Object.hasOwn(SAMPLE_PLANS, key) ? SAMPLE_PLANS[key] : SAMPLE_PLANS.mixed;
+  return Object.hasOwn(SAMPLE_PLANS, key)
+    ? SAMPLE_PLANS[key]
+    : SAMPLE_PLANS.mixed;
 }

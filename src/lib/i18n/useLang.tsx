@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useSyncExternalStore, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useSyncExternalStore,
+  ReactNode,
+} from "react";
 import en from "./en.json";
 import kn from "./kn.json";
 
@@ -42,7 +48,11 @@ function getServerSnapshot(): Lang {
 }
 
 export function LangProvider({ children }: { children: ReactNode }) {
-  const storedLang = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const storedLang = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot
+  );
   const [localLang, setLocalLang] = useState<Lang | null>(null);
 
   const lang: Lang = localLang ?? storedLang;
@@ -82,24 +92,30 @@ export function LangProvider({ children }: { children: ReactNode }) {
         // Fallback to English if translation is missing in Kannada
         let enCurrent: unknown = dictionaries.en;
         for (const enKey of keys) {
-          if (enCurrent && typeof enCurrent === "object" && enKey in enCurrent) {
+          if (
+            enCurrent &&
+            typeof enCurrent === "object" &&
+            enKey in enCurrent
+          ) {
             enCurrent = (enCurrent as Record<string, unknown>)[enKey];
           } else {
             return fallback || keyPath;
           }
         }
-        return typeof enCurrent === "string" ? enCurrent : (fallback || keyPath);
+        return typeof enCurrent === "string" ? enCurrent : fallback || keyPath;
       }
     }
 
-    return typeof current === "string" ? current : (fallback || keyPath);
+    return typeof current === "string" ? current : fallback || keyPath;
   };
 
   return (
     <LangContext.Provider value={{ lang, setLang, toggleLang, t }}>
       {/* Keeps the body's flex column intact so pages using flex-1 still fill
           the viewport height (this wrapper sits between body and <main>). */}
-      <div className={`flex-1 flex flex-col min-h-0 ${lang === "kn" ? "font-kannada" : ""}`}>
+      <div
+        className={`flex-1 flex flex-col min-h-0 ${lang === "kn" ? "font-kannada" : ""}`}
+      >
         {children}
       </div>
     </LangContext.Provider>

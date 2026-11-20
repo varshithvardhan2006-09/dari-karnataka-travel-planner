@@ -71,7 +71,9 @@ describe("Trip URL Share with lz-string", () => {
       days: [{ day: 1, theme: "Theme", stops: "not an array" }], // malformed stops
       cost: { total: 100 }, // missing required cost fields
     };
-    const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(invalidPlanObject));
+    const compressed = LZString.compressToEncodedURIComponent(
+      JSON.stringify(invalidPlanObject)
+    );
     const decompressed = LZString.decompressFromEncodedURIComponent(compressed);
     const parsed = JSON.parse(decompressed!);
     const validation = PlanSchema.safeParse(parsed);
@@ -81,10 +83,15 @@ describe("Trip URL Share with lz-string", () => {
   it("successfully validates all 4 curated samples when compressed and decompressed", () => {
     const samples = ["heritage", "nature", "mixed", "food"];
     samples.forEach((key) => {
-      const sample = JSON.parse(fs.readFileSync(`data/samples/${key}.json`, "utf8"));
-      const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(sample));
+      const sample = JSON.parse(
+        fs.readFileSync(`data/samples/${key}.json`, "utf8")
+      );
+      const compressed = LZString.compressToEncodedURIComponent(
+        JSON.stringify(sample)
+      );
       expect(compressed.length).toBeGreaterThan(5000);
-      const decompressed = LZString.decompressFromEncodedURIComponent(compressed);
+      const decompressed =
+        LZString.decompressFromEncodedURIComponent(compressed);
       expect(decompressed).toBeDefined();
       const parsed = JSON.parse(decompressed!);
       const validation = PlanSchema.safeParse(parsed);

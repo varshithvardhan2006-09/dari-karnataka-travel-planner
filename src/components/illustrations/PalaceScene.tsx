@@ -1,6 +1,10 @@
 import React from "react";
 
-export default function PalaceScene({ className = "" }: { className?: string }) {
+export default function PalaceScene({
+  className = "",
+}: {
+  className?: string;
+}) {
   return (
     <svg
       viewBox="0 0 400 300"

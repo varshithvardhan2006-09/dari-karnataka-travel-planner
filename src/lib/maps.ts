@@ -62,7 +62,11 @@ export function getGoogleMapsDirectionsUrl(
     destination.lat !== 0 &&
     destination.lng !== 0
       ? `${destination.lat},${destination.lng}`
-      : encodeURIComponent([destination.name_en, destination.city, "Karnataka"].filter(Boolean).join(", "));
+      : encodeURIComponent(
+          [destination.name_en, destination.city, "Karnataka"]
+            .filter(Boolean)
+            .join(", ")
+        );
 
   if (origin && origin.trim()) {
     return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin.trim())}&destination=${destParam}&travelmode=driving`;

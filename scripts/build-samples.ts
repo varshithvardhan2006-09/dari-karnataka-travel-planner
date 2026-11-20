@@ -19,7 +19,9 @@ export function buildSamplePlan(config: SampleConfig): Plan {
   if (!result.success) {
     throw new Error(
       `Generated sample "${config.file}" does not satisfy PlanSchema:\n` +
-        result.error.issues.map((i) => `  ${i.path.join(".")}: ${i.message}`).join("\n")
+        result.error.issues
+          .map((i) => `  ${i.path.join(".")}: ${i.message}`)
+          .join("\n")
     );
   }
 

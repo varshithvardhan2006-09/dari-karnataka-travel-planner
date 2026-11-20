@@ -52,19 +52,19 @@ export default function PhraseCard({
 
             {/* Audio Speaker Button */}
             <button
-                type="button"
-                onClick={() => speak(phrase.kn, phrase.translit)}
-                aria-label={`Listen to Kannada phrase: ${phrase.translit}`}
-                className="w-9 h-9 flex-shrink-0 rounded-full bg-[#8E1F2F] hover:bg-[#781926] active:scale-95 text-white flex items-center justify-center shadow-xs transition-transform cursor-pointer"
+              type="button"
+              onClick={() => speak(phrase.kn, phrase.translit)}
+              aria-label={`Listen to Kannada phrase: ${phrase.translit}`}
+              className="w-9 h-9 flex-shrink-0 rounded-full bg-[#8E1F2F] hover:bg-[#781926] active:scale-95 text-white flex items-center justify-center shadow-xs transition-transform cursor-pointer"
+            >
+              <svg
+                className="w-4 h-4 fill-current"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  className="w-4 h-4 fill-current"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-2.5 9.77H8v-2h3.5l4.5-4.5v11l-4.5-4.5zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
-                </svg>
-              </button>
+                <path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-2.5 9.77H8v-2h3.5l4.5-4.5v11l-4.5-4.5zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
+              </svg>
+            </button>
           </div>
         ))}
       </div>

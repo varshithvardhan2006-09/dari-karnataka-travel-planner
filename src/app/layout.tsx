@@ -1,5 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Hanken_Grotesk, Noto_Sans_Kannada } from "next/font/google";
+import {
+  Bricolage_Grotesque,
+  Hanken_Grotesk,
+  Noto_Sans_Kannada,
+} from "next/font/google";
 import "./globals.css";
 import { LangProvider } from "@/lib/i18n/useLang";
 import Navbar from "@/components/Navbar";
@@ -31,17 +35,30 @@ const notoSansKannada = Noto_Sans_Kannada({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://dari-karnataka-travel-planner.vercel.app"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ||
+      "https://dari-karnataka-travel-planner.vercel.app"
+  ),
   title: "Dari (ದಾರಿ) - AI Travel Planner for Karnataka",
   description:
     "Plan personalized Karnataka itineraries based on interests, available time, and budget. Authentic places, routes, costs, and Kannada phrases.",
-  keywords: ["Karnataka", "Travel Planner", "Kannada", "Itinerary", "AI Planner", "Mysuru", "Hampi", "Gokarna"],
+  keywords: [
+    "Karnataka",
+    "Travel Planner",
+    "Kannada",
+    "Itinerary",
+    "AI Planner",
+    "Mysuru",
+    "Hampi",
+    "Gokarna",
+  ],
   icons: {
     icon: "/favicon.ico",
   },
   openGraph: {
     title: "Dari (ದಾರಿ) - AI Travel Planner for Karnataka",
-    description: "Personalized Karnataka itineraries built only from real places with Kannada phrases for every stop.",
+    description:
+      "Personalized Karnataka itineraries built only from real places with Kannada phrases for every stop.",
     type: "website",
     images: [
       {
@@ -55,7 +72,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Dari (ದಾರಿ) - AI Travel Planner for Karnataka",
-    description: "Personalized Karnataka itineraries built only from real places with Kannada phrases for every stop.",
+    description:
+      "Personalized Karnataka itineraries built only from real places with Kannada phrases for every stop.",
     images: ["/og-image.png"],
   },
 };

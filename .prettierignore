@@ -1,0 +1,10 @@
+# Generated, data and binary content
+node_modules
+.next
+coverage
+package-lock.json
+data
+docs
+public
+assets
+*.md

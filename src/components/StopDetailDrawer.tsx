@@ -74,8 +74,34 @@ export default function StopDetailDrawer({
 
     const names =
       lang === "kn"
-        ? ["ಜನ", "ಫೆಬ್ರ", "ಮಾರ್ಚ್", "ಏಪ್ರಿ", "ಮೇ", "ಜೂನ್", "ಜುಲೈ", "ಆಗ", "ಸೆಪ್ಟೆಂ", "ಅಕ್ಟೋ", "ನವೆಂ", "ಡಿಸೆಂ"]
-        : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        ? [
+            "ಜನ",
+            "ಫೆಬ್ರ",
+            "ಮಾರ್ಚ್",
+            "ಏಪ್ರಿ",
+            "ಮೇ",
+            "ಜೂನ್",
+            "ಜುಲೈ",
+            "ಆಗ",
+            "ಸೆಪ್ಟೆಂ",
+            "ಅಕ್ಟೋ",
+            "ನವೆಂ",
+            "ಡಿಸೆಂ",
+          ]
+        : [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
     const sorted = [...months].sort((a, b) => a - b);
 
     // Collapse a contiguous run (including one that wraps past December)
@@ -84,8 +110,13 @@ export default function StopDetailDrawer({
     );
     // A run that wraps past December (e.g. Jun to Jan) starts right after the
     // one gap in the sorted list; rotate the list to begin there.
-    const gapIndex = sorted.findIndex((m, i) => i > 0 && m !== sorted[i - 1] + 1);
-    const rotated = gapIndex > 0 ? [...sorted.slice(gapIndex), ...sorted.slice(0, gapIndex)] : sorted;
+    const gapIndex = sorted.findIndex(
+      (m, i) => i > 0 && m !== sorted[i - 1] + 1
+    );
+    const rotated =
+      gapIndex > 0
+        ? [...sorted.slice(gapIndex), ...sorted.slice(0, gapIndex)]
+        : sorted;
     const wraps =
       !isContiguous &&
       sorted.includes(1) &&
@@ -106,7 +137,9 @@ export default function StopDetailDrawer({
     if (!place?.source_url) return null;
     try {
       const url = new URL(place.source_url);
-      return url.protocol === "https:" || url.protocol === "http:" ? url.hostname.replace(/^www\./, "") : null;
+      return url.protocol === "https:" || url.protocol === "http:"
+        ? url.hostname.replace(/^www\./, "")
+        : null;
     } catch {
       return null;
     }
@@ -120,7 +153,8 @@ export default function StopDetailDrawer({
         (p) =>
           p.id !== place.id &&
           (!visitedPlaceIds || !visitedPlaceIds.has(p.id)) &&
-          (p.region === place.region || p.categories.some((c) => place.categories.includes(c)))
+          (p.region === place.region ||
+            p.categories.some((c) => place.categories.includes(c)))
       )
       .slice(0, 3);
   }, [place, visitedPlaceIds]);
@@ -208,16 +242,22 @@ export default function StopDetailDrawer({
               </h3>
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                  <div className="text-[#586673] text-[11px]">{lang === "kn" ? "ಪ್ರವೇಶ ಶುಲ್ಕ" : "Entry fee"}</div>
+                  <div className="text-[#586673] text-[11px]">
+                    {lang === "kn" ? "ಪ್ರವೇಶ ಶುಲ್ಕ" : "Entry fee"}
+                  </div>
                   <div className="font-bold text-[#14202B] mt-0.5">
                     {place.entry_inr === 0
-                      ? lang === "kn" ? "ಉಚಿತ" : "Free"
+                      ? lang === "kn"
+                        ? "ಉಚಿತ"
+                        : "Free"
                       : `${lang === "kn" ? "ಸುಮಾರು" : "About"} ₹${place.entry_inr}`}
                   </div>
                 </div>
 
                 <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                  <div className="text-[#586673] text-[11px]">{lang === "kn" ? "ಬೇಕಾದ ಸಮಯ" : "Time needed"}</div>
+                  <div className="text-[#586673] text-[11px]">
+                    {lang === "kn" ? "ಬೇಕಾದ ಸಮಯ" : "Time needed"}
+                  </div>
                   <div className="font-bold text-[#14202B] mt-0.5">
                     {(place.duration_min / 60).toFixed(1).replace(/\.0$/, "")}{" "}
                     {lang === "kn" ? "ಗಂಟೆ" : "hours"}
@@ -226,7 +266,9 @@ export default function StopDetailDrawer({
 
                 {place.best_time_en && (
                   <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                    <div className="text-[#586673] text-[11px]">{lang === "kn" ? "ಉತ್ತಮ ಸಮಯ" : "Best time"}</div>
+                    <div className="text-[#586673] text-[11px]">
+                      {lang === "kn" ? "ಉತ್ತಮ ಸಮಯ" : "Best time"}
+                    </div>
                     <div className="font-bold text-[#14202B] mt-0.5">
                       {place.best_time_en}
                     </div>
@@ -235,7 +277,9 @@ export default function StopDetailDrawer({
 
                 {place.opening_hours && (
                   <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                    <div className="text-[#586673] text-[11px]">{lang === "kn" ? "ಸಮಯ ಸೂಚಿ" : "Opening hours"}</div>
+                    <div className="text-[#586673] text-[11px]">
+                      {lang === "kn" ? "ಸಮಯ ಸೂಚಿ" : "Opening hours"}
+                    </div>
                     <div className="font-bold text-[#14202B] mt-0.5">
                       {place.opening_hours}
                     </div>
@@ -244,7 +288,9 @@ export default function StopDetailDrawer({
 
                 {place.crowd && (
                   <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD]">
-                    <div className="text-[#586673] text-[11px]">{lang === "kn" ? "ಜನಸಂದಣಿ" : "Crowd"}</div>
+                    <div className="text-[#586673] text-[11px]">
+                      {lang === "kn" ? "ಜನಸಂದಣಿ" : "Crowd"}
+                    </div>
                     <div className="font-bold text-[#14202B] mt-0.5 capitalize">
                       {place.crowd}
                     </div>
@@ -256,16 +302,23 @@ export default function StopDetailDrawer({
                     <div className="text-[#586673] text-[11px]">
                       {lang === "kn" ? "ಉತ್ತಮ ಕಾಲ" : "Best season"}
                     </div>
-                    <div className="font-bold text-[#14202B] mt-0.5">{bestSeasonText}</div>
+                    <div className="font-bold text-[#14202B] mt-0.5">
+                      {bestSeasonText}
+                    </div>
                   </div>
                 )}
 
                 {/* Precise GPS Coordinates Card */}
                 <div className="p-2.5 bg-white rounded-xl border border-[#DCE1DD] col-span-2 flex items-center justify-between gap-2">
                   <div>
-                    <div className="text-[#586673] text-[11px]">{lang === "kn" ? "ಸ್ಥಳ ಮತ್ತು ನಿರ್ದೇಶಾಂಕಗಳು" : "Location & Coordinates"}</div>
+                    <div className="text-[#586673] text-[11px]">
+                      {lang === "kn"
+                        ? "ಸ್ಥಳ ಮತ್ತು ನಿರ್ದೇಶಾಂಕಗಳು"
+                        : "Location & Coordinates"}
+                    </div>
                     <div className="font-bold text-[#14202B] text-xs mt-0.5">
-                      {place.city} · {place.lat.toFixed(4)}°N, {place.lng.toFixed(4)}°E
+                      {place.city} · {place.lat.toFixed(4)}°N,{" "}
+                      {place.lng.toFixed(4)}°E
                     </div>
                   </div>
                   <a
@@ -283,7 +336,11 @@ export default function StopDetailDrawer({
               <div className="text-[11px] text-[#586673] pt-1 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-t border-[#E2E7E2]/60 mt-1">
                 <span className="flex items-center gap-1.5">
                   <span className="text-[#1E6B52] font-bold">✓</span>
-                  <span>{place.verified ? "Checked against its source" : "From the curated dataset; confirm before visiting"}</span>
+                  <span>
+                    {place.verified
+                      ? "Checked against its source"
+                      : "From the curated dataset; confirm before visiting"}
+                  </span>
                 </span>
                 {sourceHost && (
                   <a
@@ -318,9 +375,7 @@ export default function StopDetailDrawer({
                         <div className="text-[#8C6D05] font-medium mt-0.5">
                           {ph.translit}
                         </div>
-                        <div className="text-[#586673] mt-0.5">
-                          {ph.en}
-                        </div>
+                        <div className="text-[#586673] mt-0.5">{ph.en}</div>
                       </div>
                       <button
                         type="button"
@@ -355,9 +410,15 @@ export default function StopDetailDrawer({
                       className="p-3 rounded-xl bg-white border border-[#DCE1DD] flex items-center justify-between gap-3 text-xs shadow-2xs hover:bg-gray-50 transition-colors"
                     >
                       <div>
-                        <div className="font-bold text-[#14202B]">{alt.name_en}</div>
+                        <div className="font-bold text-[#14202B]">
+                          {alt.name_en}
+                        </div>
                         <div className="text-[11px] text-[#586673] mt-0.5">
-                          {alt.city} · {alt.entry_inr === 0 ? "Free" : `₹${alt.entry_inr}`} · <span className="capitalize">{alt.categories[0]}</span>
+                          {alt.city} ·{" "}
+                          {alt.entry_inr === 0 ? "Free" : `₹${alt.entry_inr}`} ·{" "}
+                          <span className="capitalize">
+                            {alt.categories[0]}
+                          </span>
                         </div>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
@@ -398,7 +459,11 @@ export default function StopDetailDrawer({
             className="w-full py-3 px-4 rounded-xl bg-[#6B1421] hover:bg-[#520f19] text-white text-xs font-bold text-center shadow-xs transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
           >
             <span className="text-sm">🌐</span>
-            <span>{lang === "kn" ? "ಸ್ಥಳೀಯ ಚಾಲಕರಿಗೆ ತೋರಿಸಿ (Show to Local)" : "Show to Local Driver (ಸ್ಥಳೀಯರಿಗೆ ತೋರಿಸಿ)"}</span>
+            <span>
+              {lang === "kn"
+                ? "ಸ್ಥಳೀಯ ಚಾಲಕರಿಗೆ ತೋರಿಸಿ (Show to Local)"
+                : "Show to Local Driver (ಸ್ಥಳೀಯರಿಗೆ ತೋರಿಸಿ)"}
+            </span>
           </button>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">

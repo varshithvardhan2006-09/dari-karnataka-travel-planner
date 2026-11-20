@@ -1,13 +1,17 @@
 import placesData from "../../data/places.json";
+import { PlanRequest, Plan, Place, AIModelOutput } from "./schema";
 import {
-  PlanRequest,
-  Plan,
-  Place,
-  AIModelOutput,
-} from "./schema";
-import { getCandidates, calculateHaversineKm, getStartCityCoordinates, scoreCandidate } from "./candidates";
+  getCandidates,
+  calculateHaversineKm,
+  getStartCityCoordinates,
+  scoreCandidate,
+} from "./candidates";
 import { enrichPlan } from "./enrich";
-import { estimateRoadDistanceKm, estimateTravelTimeMin, addMinutesToTime } from "./geo";
+import {
+  estimateRoadDistanceKm,
+  estimateTravelTimeMin,
+  addMinutesToTime,
+} from "./geo";
 
 const allPlaces = placesData as Place[];
 const validPlaceIdSet = new Set(allPlaces.map((p) => p.id));
@@ -76,7 +80,10 @@ export function validateAIOutput(
     }
 
     // 3. Stop count per day check
-    if (dayItem.stops.length < limits.min || dayItem.stops.length > limits.max) {
+    if (
+      dayItem.stops.length < limits.min ||
+      dayItem.stops.length > limits.max
+    ) {
       errors.push(
         `Day ${dayItem.day} has ${dayItem.stops.length} stops; expected between ${limits.min} and ${limits.max} for ${request.pace} pace.`
       );
@@ -213,14 +220,30 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
   for (let dayNum = 1; dayNum <= request.days; dayNum++) {
     const dayStops: { place_id: string; start: string; note_en: string }[] = [];
     const remainingDays = request.days - dayNum + 1;
-    const maxEvenStops = Math.max(limits.min, Math.floor(unusedPlaces.length / remainingDays));
+    const maxEvenStops = Math.max(
+      limits.min,
+      Math.floor(unusedPlaces.length / remainingDays)
+    );
     const targetForDay = Math.min(stopsPerDay, maxEvenStops);
-    const countForToday = Math.min(targetForDay, Math.max(limits.min, unusedPlaces.length));
+    const countForToday = Math.min(
+      targetForDay,
+      Math.max(limits.min, unusedPlaces.length)
+    );
 
     // Sort unused places by distance to current anchor
     unusedPlaces.sort((a, b) => {
-      const distA = calculateHaversineKm(currentAnchorLat, currentAnchorLng, a.lat, a.lng);
-      const distB = calculateHaversineKm(currentAnchorLat, currentAnchorLng, b.lat, b.lng);
+      const distA = calculateHaversineKm(
+        currentAnchorLat,
+        currentAnchorLng,
+        a.lat,
+        a.lng
+      );
+      const distB = calculateHaversineKm(
+        currentAnchorLat,
+        currentAnchorLng,
+        b.lat,
+        b.lng
+      );
       return distA - distB;
     });
 
@@ -243,7 +266,9 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
           const roadKm = estimateRoadDistanceKm(lp.lat, lp.lng, p.lat, p.lng);
           if (roadKm > maxLeg) return false;
           const arrival = clockNow + estimateTravelTimeMin(roadKm);
-          return arrival + p.duration_min <= DAY_END_MIN && fitsMealTime(p, arrival);
+          return (
+            arrival + p.duration_min <= DAY_END_MIN && fitsMealTime(p, arrival)
+          );
         };
         let eligible = unusedPlaces.findIndex((p) => fitsDay(p, MAX_LEG_KM));
 
@@ -256,7 +281,9 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
         chosenIndex = eligible;
       } else {
         // First stop of the day: skip meal places that do not suit the morning.
-        const firstFit = unusedPlaces.findIndex((p) => fitsMealTime(p, clockNow));
+        const firstFit = unusedPlaces.findIndex((p) =>
+          fitsMealTime(p, clockNow)
+        );
         chosenIndex = firstFit === -1 ? 0 : firstFit;
       }
 
@@ -265,10 +292,14 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
         const mealIndex = unusedPlaces.findIndex((p, idx) => {
           if (idx >= 6 || seenPlaceIds.has(p.id)) return false;
           if (!p.is_meal && !p.categories.includes("food")) return false;
-          const roadKm = lastPlace ? estimateRoadDistanceKm(lastPlace.lat, lastPlace.lng, p.lat, p.lng) : 0;
+          const roadKm = lastPlace
+            ? estimateRoadDistanceKm(lastPlace.lat, lastPlace.lng, p.lat, p.lng)
+            : 0;
           if (roadKm > MAX_LEG_KM) return false;
           const arrival = clockNow + estimateTravelTimeMin(roadKm);
-          return arrival + p.duration_min <= DAY_END_MIN && fitsMealTime(p, arrival);
+          return (
+            arrival + p.duration_min <= DAY_END_MIN && fitsMealTime(p, arrival)
+          );
         });
         if (mealIndex !== -1) {
           chosenIndex = mealIndex;
@@ -276,7 +307,10 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
       }
 
       // Purge any seen places from chosen index
-      while (unusedPlaces.length > 0 && seenPlaceIds.has(unusedPlaces[chosenIndex]?.id)) {
+      while (
+        unusedPlaces.length > 0 &&
+        seenPlaceIds.has(unusedPlaces[chosenIndex]?.id)
+      ) {
         unusedPlaces.splice(chosenIndex, 1);
         if (chosenIndex >= unusedPlaces.length) chosenIndex = 0;
       }
@@ -288,7 +322,12 @@ export function buildDeterministicPlan(request: PlanRequest): Plan {
 
       // Advance clock by travel time from previous stop BEFORE recording stop arrival
       if (lastPlace) {
-        const roadKm = estimateRoadDistanceKm(lastPlace.lat, lastPlace.lng, place.lat, place.lng);
+        const roadKm = estimateRoadDistanceKm(
+          lastPlace.lat,
+          lastPlace.lng,
+          place.lat,
+          place.lng
+        );
         const travelMin = estimateTravelTimeMin(roadKm);
         dayClock = addMinutesToTime(dayClock, travelMin);
       }

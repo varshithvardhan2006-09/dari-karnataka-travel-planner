@@ -30,7 +30,11 @@ async function fetchUpstreamAudio(url: string): Promise<ArrayBuffer | null> {
       signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
     });
     // Only real audio is passed on (and cached); an HTML error or captcha page is not.
-    if (!res.ok || !(res.headers.get("content-type") || "").startsWith("audio/")) return null;
+    if (
+      !res.ok ||
+      !(res.headers.get("content-type") || "").startsWith("audio/")
+    )
+      return null;
     const buffer = await res.arrayBuffer();
     return buffer.byteLength > 0 ? buffer : null;
   } catch {
@@ -46,8 +50,12 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const text = searchParams.get("text");
-    const requestedLang = (searchParams.get("lang") || "kn").toLowerCase().trim();
-    const safeLang = ALLOWED_LANGUAGES.has(requestedLang) ? requestedLang : "kn";
+    const requestedLang = (searchParams.get("lang") || "kn")
+      .toLowerCase()
+      .trim();
+    const safeLang = ALLOWED_LANGUAGES.has(requestedLang)
+      ? requestedLang
+      : "kn";
 
     if (!text || text.trim().length === 0) {
       return new NextResponse("Missing text parameter", { status: 400 });

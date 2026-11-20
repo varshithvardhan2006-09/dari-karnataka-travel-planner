@@ -3,7 +3,10 @@
  * Returns null when the body is too large, so oversized uploads are never
  * buffered in full (a Content-Length header can be missing or wrong).
  */
-export async function readBodyWithLimit(req: Request, maxBytes: number): Promise<string | null> {
+export async function readBodyWithLimit(
+  req: Request,
+  maxBytes: number
+): Promise<string | null> {
   if (!req.body) return "";
   const reader = req.body.getReader();
   const chunks: Uint8Array[] = [];

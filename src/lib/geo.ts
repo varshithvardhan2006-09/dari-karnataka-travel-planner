@@ -95,7 +95,10 @@ export function computeTravelLeg(
 /**
  * Adds minutes to an "HH:MM" string, returning a new "HH:MM" string.
  */
-export function addMinutesToTime(timeStr: string, minutesToAdd: number): string {
+export function addMinutesToTime(
+  timeStr: string,
+  minutesToAdd: number
+): string {
   if (!timeStr || typeof timeStr !== "string" || !timeStr.includes(":")) {
     return "09:00";
   }

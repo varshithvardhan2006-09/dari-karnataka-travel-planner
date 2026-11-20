@@ -11,7 +11,8 @@ const placesWithImages = allPlaces.filter((p) => Boolean(p.image));
 const verifiedCount = allPlaces.filter((p) => p.verified).length;
 
 const SOURCE_NAMES: Record<string, string> = {
-  "https://karnatakatourism.org": "Karnataka Tourism (Department of Tourism, Government of Karnataka)",
+  "https://karnatakatourism.org":
+    "Karnataka Tourism (Department of Tourism, Government of Karnataka)",
   "https://asi.nic.in": "Archaeological Survey of India",
   "https://hampi.nic.in": "Hampi official portal",
   "https://coorg.nic.in": "Kodagu (Coorg) district portal",
@@ -80,13 +81,22 @@ export default function CreditsPage() {
         ) : (
           <div className="divide-y divide-[#F1F3F0]">
             {placesWithImages.map((place) => (
-              <div key={place.id} className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div
+                key={place.id}
+                className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+              >
                 <div>
                   <h3 className="font-heading font-bold text-sm text-[#14202B]">
-                    {lang === "kn" ? (place.name_kn || place.name_en) : place.name_en} ({place.city})
+                    {lang === "kn"
+                      ? place.name_kn || place.name_en
+                      : place.name_en}{" "}
+                    ({place.city})
                   </h3>
                   <p className="text-[#586673] mt-0.5">
-                    {lang === "kn" ? "ಛಾಯಾಚಿತ್ರ:" : "Photo by:"} <strong className="text-[#14202B]">{place.image?.credit}</strong>
+                    {lang === "kn" ? "ಛಾಯಾಚಿತ್ರ:" : "Photo by:"}{" "}
+                    <strong className="text-[#14202B]">
+                      {place.image?.credit}
+                    </strong>
                   </p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
@@ -125,15 +135,26 @@ export default function CreditsPage() {
 
         <ul className="divide-y divide-[#F1F3F0] text-xs">
           {sourceCounts.map(([url, count]) => (
-            <li key={url} className="py-2.5 flex items-center justify-between gap-3">
+            <li
+              key={url}
+              className="py-2.5 flex items-center justify-between gap-3"
+            >
               <div>
-                <div className="font-bold text-[#14202B]">{SOURCE_NAMES[url] ?? url}</div>
-                <a href={url} target="_blank" rel="noopener noreferrer" className="text-[#8E1F2F] hover:underline font-semibold">
+                <div className="font-bold text-[#14202B]">
+                  {SOURCE_NAMES[url] ?? url}
+                </div>
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#8E1F2F] hover:underline font-semibold"
+                >
                   {url.replace("https://", "")} ↗
                 </a>
               </div>
               <span className="shrink-0 px-2.5 py-1 rounded-md bg-[#F1F3F0] text-[#14202B] font-medium border border-[#DCE1DD]">
-                {count} {lang === "kn" ? "ಸ್ಥಳಗಳು" : count === 1 ? "place" : "places"}
+                {count}{" "}
+                {lang === "kn" ? "ಸ್ಥಳಗಳು" : count === 1 ? "place" : "places"}
               </span>
             </li>
           ))}

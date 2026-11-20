@@ -13,14 +13,22 @@ const PAGE_H = 841.89; // A4 height in points
 const MARGIN = 28;
 const GAP = 6;
 
-export async function exportItineraryPdf(root: HTMLElement, filename: string): Promise<void> {
-  const [{ jsPDF }, { toCanvas }] = await Promise.all([import("jspdf"), import("html-to-image")]);
+export async function exportItineraryPdf(
+  root: HTMLElement,
+  filename: string
+): Promise<void> {
+  const [{ jsPDF }, { toCanvas }] = await Promise.all([
+    import("jspdf"),
+    import("html-to-image"),
+  ]);
 
   const pdf = new jsPDF({ unit: "pt", format: "a4", compress: true });
   const contentW = PAGE_W - MARGIN * 2;
   const maxH = PAGE_H - MARGIN * 2;
   const scale = contentW / root.offsetWidth;
-  const blocks = Array.from(root.querySelectorAll<HTMLElement>("[data-pdf-block]"));
+  const blocks = Array.from(
+    root.querySelectorAll<HTMLElement>("[data-pdf-block]")
+  );
 
   let y = MARGIN;
   for (const block of blocks) {
@@ -29,7 +37,10 @@ export async function exportItineraryPdf(root: HTMLElement, filename: string): P
     // No backgroundColor option: it would replace the block's own background
     // (the dark day banners turned white). Transparent areas are backed with
     // white below instead, since JPEG has no transparency.
-    const captured = await toCanvas(block, { pixelRatio: 2, style: { margin: "0" } });
+    const captured = await toCanvas(block, {
+      pixelRatio: 2,
+      style: { margin: "0" },
+    });
     const canvas = document.createElement("canvas");
     canvas.width = captured.width;
     canvas.height = captured.height;

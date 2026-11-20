@@ -2,7 +2,14 @@ import { describe, it, expect } from "vitest";
 import { buildDeterministicPlan } from "../src/lib/planner";
 import { getCandidates, getStartCityCoordinates } from "../src/lib/candidates";
 import { calculateTripCost } from "../src/lib/cost";
-import { PlanRequest, BudgetFit, Pace, Travellers, Category, Place } from "../src/lib/schema";
+import {
+  PlanRequest,
+  BudgetFit,
+  Pace,
+  Travellers,
+  Category,
+  Place,
+} from "../src/lib/schema";
 import placesData from "../data/places.json";
 
 const places = placesData as Place[];
@@ -78,7 +85,12 @@ describe("Comprehensive Full-Stack Project Audit Verification", () => {
 
   it("verifies cost integrity: stay + food + transport + entry === total across all budget tiers", () => {
     const budgets: BudgetFit[] = ["budget", "mid", "premium"];
-    const travellerTypes: Travellers[] = ["solo", "couple", "family", "friends"];
+    const travellerTypes: Travellers[] = [
+      "solo",
+      "couple",
+      "family",
+      "friends",
+    ];
 
     budgets.forEach((budget) => {
       travellerTypes.forEach((travellers) => {
@@ -90,7 +102,9 @@ describe("Comprehensive Full-Stack Project Audit Verification", () => {
           visitedPlaces: places.slice(0, 8),
         });
 
-        expect(cost.total).toBe(cost.stay + cost.food + cost.transport + cost.entry);
+        expect(cost.total).toBe(
+          cost.stay + cost.food + cost.transport + cost.entry
+        );
         expect(cost.total).toBeGreaterThan(0);
         expect(cost.people).toBeGreaterThanOrEqual(1);
       });
@@ -135,7 +149,9 @@ describe("Comprehensive Full-Stack Project Audit Verification", () => {
       const candidates = getCandidates(req, places);
       expect(candidates.length).toBeGreaterThanOrEqual(4);
       // Matching category places should be prioritized
-      const hasMatch = candidates.some((p) => p.categories.includes(cat) || p.is_meal);
+      const hasMatch = candidates.some(
+        (p) => p.categories.includes(cat) || p.is_meal
+      );
       expect(hasMatch).toBe(true);
     });
   });

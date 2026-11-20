@@ -6,7 +6,12 @@ import { resetRateLimits } from "@/lib/rate-limit";
 import { rehydrateSharedPlan } from "@/lib/share";
 import { getSamplePlan } from "@/lib/samples";
 import { buildDeterministicPlan } from "@/lib/planner";
-import { buildCandidatesPromptPayload, SYSTEM_PROMPT_TEMPLATE, DEFAULT_GEMINI_MODEL, DEFAULT_GROQ_MODEL } from "@/lib/ai";
+import {
+  buildCandidatesPromptPayload,
+  SYSTEM_PROMPT_TEMPLATE,
+  DEFAULT_GEMINI_MODEL,
+  DEFAULT_GROQ_MODEL,
+} from "@/lib/ai";
 import { getCandidates, getStartCityCoordinates } from "@/lib/candidates";
 import { PlanRequest, PlanSchema } from "@/lib/schema";
 
@@ -36,7 +41,10 @@ beforeEach(() => resetRateLimits());
 
 describe("Request size limits measure the real body", () => {
   it("rejects an oversized /api/plan body sent without Content-Length", async () => {
-    const big = JSON.stringify({ ...baseRequest, padding: "x".repeat(40 * 1024) });
+    const big = JSON.stringify({
+      ...baseRequest,
+      padding: "x".repeat(40 * 1024),
+    });
     const req = new NextRequest("http://localhost:3000/api/plan", {
       method: "POST",
       body: streamBody(big),
@@ -63,7 +71,11 @@ describe("Lookups ignore Object prototype keys", () => {
   it("rejects 'constructor' as a translation language", async () => {
     const req = new NextRequest("http://localhost:3000/api/translate", {
       method: "POST",
-      body: JSON.stringify({ text: "hello", sourceLang: "constructor", targetLang: "kn" }),
+      body: JSON.stringify({
+        text: "hello",
+        sourceLang: "constructor",
+        targetLang: "kn",
+      }),
     });
     const res = await POST_TRANSLATE(req);
     expect(res.status).toBe(400);
@@ -103,7 +115,10 @@ describe("Shared links are rebuilt from the dataset", () => {
 
 describe("Plans carry the trip they were built for", () => {
   it("stores the trip request (city, budget, group, month, transport, interests, pace) on the plan", () => {
-    const plan = buildDeterministicPlan({ ...baseRequest, transport_mode: "bus_train" });
+    const plan = buildDeterministicPlan({
+      ...baseRequest,
+      transport_mode: "bus_train",
+    });
     expect(plan.trip).toEqual({
       start_city: "Mysuru",
       budget: "premium",
@@ -154,27 +169,66 @@ describe("Start city matching", () => {
 describe("Schedules and costs", () => {
   it("rejects an AI plan whose real schedule runs past 19:30", async () => {
     const { validateAIOutput } = await import("@/lib/planner");
-    const ids = ["mysore-zoo", "mysore-palace", "chamundi-hill", "brindavan-gardens", "devaraja-market", "mylari-dosa"];
+    const ids = [
+      "mysore-zoo",
+      "mysore-palace",
+      "chamundi-hill",
+      "brindavan-gardens",
+      "devaraja-market",
+      "mylari-dosa",
+    ];
     const plan = {
       title: "t",
       summary: "s",
       tips: [],
-      days: [{ day: 1, theme: "x", stops: ids.map((id, i) => ({ place_id: id, start: `09:${String(i * 5).padStart(2, "0")}`, note_en: "n" })) }],
+      days: [
+        {
+          day: 1,
+          theme: "x",
+          stops: ids.map((id, i) => ({
+            place_id: id,
+            start: `09:${String(i * 5).padStart(2, "0")}`,
+            note_en: "n",
+          })),
+        },
+      ],
     };
-    const result = validateAIOutput(plan, { ...baseRequest, days: 1, pace: "packed", start_city: "Mysuru" });
+    const result = validateAIOutput(plan, {
+      ...baseRequest,
+      days: 1,
+      pace: "packed",
+      start_city: "Mysuru",
+    });
     expect(result.valid).toBe(false);
     expect(result.errors.join(" ")).toMatch(/19:30/);
   });
 
   it("schedules meal places inside their meal time", () => {
-    const meal: Record<string, string> = { breakfast: "07:30-11:00", lunch: "11:30-15:00", snack: "10:00-18:00", dinner: "17:30-19:30" };
-    for (const interests of [["food"], ["food", "heritage"], ["food", "culture"]] as const) {
+    const meal: Record<string, string> = {
+      breakfast: "07:30-11:00",
+      lunch: "11:30-15:00",
+      snack: "10:00-18:00",
+      dinner: "17:30-19:30",
+    };
+    for (const interests of [
+      ["food"],
+      ["food", "heritage"],
+      ["food", "culture"],
+    ] as const) {
       for (const start_city of ["Bengaluru", "Mysuru", "Udupi"]) {
-        const plan = buildDeterministicPlan({ ...baseRequest, interests: [...interests], start_city, days: 3 });
+        const plan = buildDeterministicPlan({
+          ...baseRequest,
+          interests: [...interests],
+          start_city,
+          days: 3,
+        });
         for (const stop of plan.days.flatMap((d) => d.stops)) {
           if (!stop.place.is_meal) continue;
           const [from, to] = meal[stop.place.is_meal].split("-");
-          expect(stop.start >= from && stop.start <= to, `${stop.place_id} at ${stop.start}`).toBe(true);
+          expect(
+            stop.start >= from && stop.start <= to,
+            `${stop.place_id} at ${stop.start}`
+          ).toBe(true);
         }
       }
     }
@@ -182,8 +236,17 @@ describe("Schedules and costs", () => {
 
   it("does not add meal prices to entry fees", async () => {
     const { calculateTripCost } = await import("@/lib/cost");
-    const places = getCandidates({ ...baseRequest, interests: ["food"] }).filter((p) => p.is_meal);
-    const cost = calculateTripCost({ days: 1, budget: "mid", travellers: "solo", totalKm: 0, visitedPlaces: places });
+    const places = getCandidates({
+      ...baseRequest,
+      interests: ["food"],
+    }).filter((p) => p.is_meal);
+    const cost = calculateTripCost({
+      days: 1,
+      budget: "mid",
+      travellers: "solo",
+      totalKm: 0,
+      visitedPlaces: places,
+    });
     expect(places.length).toBeGreaterThan(0);
     expect(cost.entry).toBe(0);
   });
@@ -193,9 +256,15 @@ describe("Speech proxy", () => {
   it("refuses to pass on (and cache) a non-audio upstream reply", async () => {
     const { GET } = await import("@/app/api/tts/route");
     const spy = vi.spyOn(globalThis, "fetch").mockImplementation(
-      async () => new Response("<html>unusual traffic</html>", { status: 200, headers: { "Content-Type": "text/html" } })
+      async () =>
+        new Response("<html>unusual traffic</html>", {
+          status: 200,
+          headers: { "Content-Type": "text/html" },
+        })
     );
-    const res = await GET(new NextRequest("http://localhost:3000/api/tts?text=Namaskara&lang=kn"));
+    const res = await GET(
+      new NextRequest("http://localhost:3000/api/tts?text=Namaskara&lang=kn")
+    );
     expect(res.status).toBe(502);
     spy.mockRestore();
   });
@@ -221,7 +290,10 @@ describe("Shared links cannot show invented costs or text", () => {
     expect(rehydrateSharedPlan(renumbered)).toBeNull();
 
     const long = structuredClone(plan);
-    long.days = Array.from({ length: 8 }, (_, i) => ({ ...plan.days[0], day: i + 1 }));
+    long.days = Array.from({ length: 8 }, (_, i) => ({
+      ...plan.days[0],
+      day: i + 1,
+    }));
     expect(rehydrateSharedPlan(long)).toBeNull();
   });
 });

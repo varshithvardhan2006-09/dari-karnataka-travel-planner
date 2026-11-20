@@ -38,18 +38,31 @@ describe("Deterministic Planner and Pipeline Validation", () => {
           day: 1,
           theme: "Fake Day",
           stops: [
-            { place_id: "mysore-palace", start: "09:00", note_en: "Real place" },
-            { place_id: "completely-fake-palace-12345", start: "11:30", note_en: "Fake place" },
+            {
+              place_id: "mysore-palace",
+              start: "09:00",
+              note_en: "Real place",
+            },
+            {
+              place_id: "completely-fake-palace-12345",
+              start: "11:30",
+              note_en: "Fake place",
+            },
           ],
         },
       ],
       tips: ["Be careful of fake places"],
     };
 
-    const validation = validateAIOutput(fakeModelOutput, { ...sampleRequest, days: 1 });
+    const validation = validateAIOutput(fakeModelOutput, {
+      ...sampleRequest,
+      days: 1,
+    });
     expect(validation.valid).toBe(false);
     expect(
-      validation.errors.some((err) => err.includes("completely-fake-palace-12345"))
+      validation.errors.some((err) =>
+        err.includes("completely-fake-palace-12345")
+      )
     ).toBe(true);
   });
 
@@ -62,7 +75,11 @@ describe("Deterministic Planner and Pipeline Validation", () => {
           day: 1,
           theme: "Day 1",
           stops: [
-            { place_id: "mysore-palace", start: "09:00", note_en: "First visit" },
+            {
+              place_id: "mysore-palace",
+              start: "09:00",
+              note_en: "First visit",
+            },
             { place_id: "chamundi-hill", start: "12:00", note_en: "Chamundi" },
           ],
         },
@@ -70,7 +87,11 @@ describe("Deterministic Planner and Pipeline Validation", () => {
           day: 2,
           theme: "Day 2",
           stops: [
-            { place_id: "mysore-palace", start: "09:00", note_en: "Duplicate visit" },
+            {
+              place_id: "mysore-palace",
+              start: "09:00",
+              note_en: "Duplicate visit",
+            },
             { place_id: "devaraja-market", start: "12:00", note_en: "Market" },
           ],
         },
@@ -78,9 +99,14 @@ describe("Deterministic Planner and Pipeline Validation", () => {
       tips: [],
     };
 
-    const validation = validateAIOutput(duplicateModelOutput, { ...sampleRequest, days: 2 });
+    const validation = validateAIOutput(duplicateModelOutput, {
+      ...sampleRequest,
+      days: 2,
+    });
     expect(validation.valid).toBe(false);
-    expect(validation.errors.some((err) => err.includes("duplicated"))).toBe(true);
+    expect(validation.errors.some((err) => err.includes("duplicated"))).toBe(
+      true
+    );
   });
 
   it("(c) ensures costs add up perfectly in the generated plan", () => {
@@ -103,14 +129,19 @@ describe("Deterministic Planner and Pipeline Validation", () => {
     const allowedCandidates = new Set(["mysore-palace", "chamundi-hill"]);
     const modelOutput: AIModelOutput = {
       title: "Hampi in Mysuru?",
-      summary: "Model returned virupaksha-temple which is in Hampi, not in allowed candidates.",
+      summary:
+        "Model returned virupaksha-temple which is in Hampi, not in allowed candidates.",
       days: [
         {
           day: 1,
           theme: "Day 1",
           stops: [
             { place_id: "mysore-palace", start: "09:00", note_en: "Allowed" },
-            { place_id: "virupaksha-temple", start: "12:00", note_en: "Valid place globally but NOT in allowed candidate list" },
+            {
+              place_id: "virupaksha-temple",
+              start: "12:00",
+              note_en: "Valid place globally but NOT in allowed candidate list",
+            },
           ],
         },
       ],
@@ -124,7 +155,9 @@ describe("Deterministic Planner and Pipeline Validation", () => {
     );
     expect(validation.valid).toBe(false);
     expect(
-      validation.errors.some((err) => err.includes("not in the allowed candidate list"))
+      validation.errors.some((err) =>
+        err.includes("not in the allowed candidate list")
+      )
     ).toBe(true);
   });
 
@@ -169,20 +202,29 @@ describe("Deterministic Planner and Pipeline Validation", () => {
         {
           day: 1,
           theme: "Day 1",
-          stops: [{ place_id: "mysore-palace", start: "09:00", note_en: "Note" }],
+          stops: [
+            { place_id: "mysore-palace", start: "09:00", note_en: "Note" },
+          ],
         },
         {
           day: 3, // Skipped day 2
           theme: "Day 3",
-          stops: [{ place_id: "chamundi-hill", start: "09:00", note_en: "Note" }],
+          stops: [
+            { place_id: "chamundi-hill", start: "09:00", note_en: "Note" },
+          ],
         },
       ],
       tips: [],
     };
 
-    const validation = validateAIOutput(invalidDaysOutput, { ...sampleRequest, days: 2 });
+    const validation = validateAIOutput(invalidDaysOutput, {
+      ...sampleRequest,
+      days: 2,
+    });
     expect(validation.valid).toBe(false);
-    expect(validation.errors.some((err) => err.includes("expected sequential day 2"))).toBe(true);
+    expect(
+      validation.errors.some((err) => err.includes("expected sequential day 2"))
+    ).toBe(true);
   });
 
   it("strictly rejects itineraries starting too late or too early", () => {
@@ -193,14 +235,21 @@ describe("Deterministic Planner and Pipeline Validation", () => {
         {
           day: 1,
           theme: "Day 1",
-          stops: [{ place_id: "mysore-palace", start: "11:00", note_en: "Too late" }],
+          stops: [
+            { place_id: "mysore-palace", start: "11:00", note_en: "Too late" },
+          ],
         },
       ],
       tips: [],
     };
-    const validation = validateAIOutput(lateStartOutput, { ...sampleRequest, days: 1 });
+    const validation = validateAIOutput(lateStartOutput, {
+      ...sampleRequest,
+      days: 1,
+    });
     expect(validation.valid).toBe(false);
-    expect(validation.errors.some((err) => err.includes("between 08:30 and 10:00"))).toBe(true);
+    expect(
+      validation.errors.some((err) => err.includes("between 08:30 and 10:00"))
+    ).toBe(true);
   });
 
   it("strictly rejects itineraries concluding after 19:30 cutoff", () => {
@@ -213,13 +262,20 @@ describe("Deterministic Planner and Pipeline Validation", () => {
           theme: "Day 1",
           stops: [
             { place_id: "mysore-palace", start: "09:00", note_en: "Day stop" },
-            { place_id: "chamundi-hill", start: "19:00", note_en: "Chamundi duration is 90 min" },
+            {
+              place_id: "chamundi-hill",
+              start: "19:00",
+              note_en: "Chamundi duration is 90 min",
+            },
           ],
         },
       ],
       tips: [],
     };
-    const validation = validateAIOutput(lateFinishOutput, { ...sampleRequest, days: 1 });
+    const validation = validateAIOutput(lateFinishOutput, {
+      ...sampleRequest,
+      days: 1,
+    });
     expect(validation.valid).toBe(false);
     expect(validation.errors.some((err) => err.includes("19:30"))).toBe(true);
   });

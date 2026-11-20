@@ -1,8 +1,16 @@
 import { describe, it, expect } from "vitest";
 import { PlanSchema, PlanRequest } from "@/lib/schema";
-import { getCustomizedSamplePlan, getSamplePlan, SAMPLE_PLANS } from "@/lib/samples";
+import {
+  getCustomizedSamplePlan,
+  getSamplePlan,
+  SAMPLE_PLANS,
+} from "@/lib/samples";
 import { SAMPLE_CONFIGS } from "../scripts/sample-configs";
-import { buildSamplePlan, serializeSamplePlan, normalizeEol } from "../scripts/build-samples";
+import {
+  buildSamplePlan,
+  serializeSamplePlan,
+  normalizeEol,
+} from "../scripts/build-samples";
 import fs from "fs";
 import path from "path";
 
@@ -29,7 +37,9 @@ describe("Curated sample itineraries", () => {
 
       // Normalized so the check is about content, not the clone's line endings
       const committed = normalizeEol(fs.readFileSync(filePath, "utf-8"));
-      const expected = normalizeEol(serializeSamplePlan(buildSamplePlan(config)));
+      const expected = normalizeEol(
+        serializeSamplePlan(buildSamplePlan(config))
+      );
 
       expect(
         committed,
@@ -68,7 +78,10 @@ describe("Curated sample itineraries", () => {
 
   it("exposes every generated sample under the key the UI requests", () => {
     SAMPLE_CONFIGS.forEach((config) => {
-      expect(SAMPLE_PLANS[config.key], `SAMPLE_PLANS is missing "${config.key}"`).toBeDefined();
+      expect(
+        SAMPLE_PLANS[config.key],
+        `SAMPLE_PLANS is missing "${config.key}"`
+      ).toBeDefined();
       expect(getSamplePlan(config.key).title).toBe(config.title);
     });
   });

@@ -26,6 +26,9 @@ jobs:
       - name: Lint check (ESLint)
         run: npm run lint
 
+      - name: Format check (Prettier)
+        run: npm run format:check
+
       - name: Run automated test suite (Vitest)
         run: npx vitest run
 

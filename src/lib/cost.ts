@@ -1,4 +1,10 @@
-import { BudgetFit, Travellers, Place, CostSummary, TransportPreference } from "./schema";
+import {
+  BudgetFit,
+  Travellers,
+  Place,
+  CostSummary,
+  TransportPreference,
+} from "./schema";
 
 export const PEOPLE_COUNT_MAP: Record<Travellers, number> = {
   solo: 1,
@@ -8,7 +14,10 @@ export const PEOPLE_COUNT_MAP: Record<Travellers, number> = {
 };
 
 // Daily rates per person in INR
-const TIER_DAILY_RATES: Record<BudgetFit, { stayPerPerson: number; foodPerPerson: number }> = {
+const TIER_DAILY_RATES: Record<
+  BudgetFit,
+  { stayPerPerson: number; foodPerPerson: number }
+> = {
   budget: {
     stayPerPerson: 1000,
     foodPerPerson: 600,
@@ -44,12 +53,27 @@ export function calculateTripCost(params: {
   peopleCount?: number;
   transportPreference?: TransportPreference;
 }): CostSummary {
-  const { days, budget, travellers, totalKm, visitedPlaces, peopleCount, transportPreference } = params;
-  const safeDays = Math.max(1, typeof days === "number" && !isNaN(days) ? days : 1);
-  const safeKm = Math.max(0, typeof totalKm === "number" && !isNaN(totalKm) ? totalKm : 0);
-  const people = (peopleCount && peopleCount >= 1 && peopleCount <= 10)
-    ? peopleCount
-    : PEOPLE_COUNT_MAP[travellers] || 2;
+  const {
+    days,
+    budget,
+    travellers,
+    totalKm,
+    visitedPlaces,
+    peopleCount,
+    transportPreference,
+  } = params;
+  const safeDays = Math.max(
+    1,
+    typeof days === "number" && !isNaN(days) ? days : 1
+  );
+  const safeKm = Math.max(
+    0,
+    typeof totalKm === "number" && !isNaN(totalKm) ? totalKm : 0
+  );
+  const people =
+    peopleCount && peopleCount >= 1 && peopleCount <= 10
+      ? peopleCount
+      : PEOPLE_COUNT_MAP[travellers] || 2;
   const rates = TIER_DAILY_RATES[budget] || TIER_DAILY_RATES.mid;
 
   // 1. Stay cost: people * stayPerPerson * (days - 1 for nights, min 1 for multi-day, 0 for 1-day day trip)
@@ -70,8 +94,12 @@ export function calculateTripCost(params: {
   } else {
     // Cab or Auto
     const isAutoSolo = people === 1 && safeKm < 40;
-    const perKmRate = isAutoSolo ? TRANSPORT_RATES.autoPerKm : TRANSPORT_RATES.cabPerKm;
-    transport = Math.round(safeKm * perKmRate + safeDays * TRANSPORT_RATES.baseBookingFee);
+    const perKmRate = isAutoSolo
+      ? TRANSPORT_RATES.autoPerKm
+      : TRANSPORT_RATES.cabPerKm;
+    transport = Math.round(
+      safeKm * perKmRate + safeDays * TRANSPORT_RATES.baseBookingFee
+    );
   }
 
   // 4. Entry fees: sum of entry_inr * people. For meal places entry_inr is the
@@ -104,8 +132,14 @@ export function estimateCostRange(
   people: number,
   transportPreference?: TransportPreference
 ): { min: number; max: number; text: string } {
-  const safeDays = Math.max(1, typeof days === "number" && !isNaN(days) ? days : 1);
-  const safePeople = Math.max(1, typeof people === "number" && !isNaN(people) ? people : 2);
+  const safeDays = Math.max(
+    1,
+    typeof days === "number" && !isNaN(days) ? days : 1
+  );
+  const safePeople = Math.max(
+    1,
+    typeof people === "number" && !isNaN(people) ? people : 2
+  );
   const rates = TIER_DAILY_RATES[budget] || TIER_DAILY_RATES.mid;
   const nights = safeDays > 1 ? safeDays - 1 : 0;
   const stay = safePeople * rates.stayPerPerson * nights;
@@ -118,7 +152,8 @@ export function estimateCostRange(
   } else if (transportPreference === "bus_train") {
     transport = safeDays * avgKmPerDay * 4 * safePeople + safeDays * 100;
   } else {
-    transport = safeDays * avgKmPerDay * 20 + safeDays * TRANSPORT_RATES.baseBookingFee;
+    transport =
+      safeDays * avgKmPerDay * 20 + safeDays * TRANSPORT_RATES.baseBookingFee;
   }
 
   const avgEntry = safeDays * 3 * 50 * safePeople;

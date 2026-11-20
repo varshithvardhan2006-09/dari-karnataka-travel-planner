@@ -120,8 +120,13 @@ export default function PrivacyPage() {
 
       <div className="space-y-4">
         {SECTIONS.map((s) => (
-          <section key={s.titleEn} className="bg-white rounded-2xl border border-[#DCE1DD] shadow-xs p-6">
-            <h2 className="font-heading font-bold text-lg text-[#14202B]">{kn ? s.titleKn : s.titleEn}</h2>
+          <section
+            key={s.titleEn}
+            className="bg-white rounded-2xl border border-[#DCE1DD] shadow-xs p-6"
+          >
+            <h2 className="font-heading font-bold text-lg text-[#14202B]">
+              {kn ? s.titleKn : s.titleEn}
+            </h2>
             <ul className="mt-3 space-y-2 text-sm text-[#3E4E5C] leading-relaxed list-disc pl-5 marker:text-[#8E1F2F]">
               {(kn ? s.kn : s.en).map((line) => (
                 <li key={line}>{line}</li>
@@ -133,7 +138,9 @@ export default function PrivacyPage() {
 
       <div className="p-4 rounded-xl bg-[#F7F9F6] border border-[#DCE1DD] text-xs text-[#586673] leading-relaxed">
         <strong>{kn ? "ಸಂಪರ್ಕ:" : "Contact:"}</strong>{" "}
-        {kn ? "ಗೌಪ್ಯತೆಯ ಬಗ್ಗೆ ಪ್ರಶ್ನೆಗಳಿದ್ದರೆ " : "For privacy questions, open an issue on "}
+        {kn
+          ? "ಗೌಪ್ಯತೆಯ ಬಗ್ಗೆ ಪ್ರಶ್ನೆಗಳಿದ್ದರೆ "
+          : "For privacy questions, open an issue on "}
         <a
           href="https://github.com/varshithvardhan2006-09/dari-karnataka-travel-planner/issues"
           target="_blank"

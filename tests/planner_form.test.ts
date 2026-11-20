@@ -47,7 +47,12 @@ describe("Planner form match counter and cost range", () => {
 
   it("verifies candidate matches and deterministic plan for user screenshot preferences", () => {
     // Exact categories matching screenshot showing 35 matches:
-    const screenshotInterests = ["heritage", "nature", "wildlife", "coffee"] as const;
+    const screenshotInterests = [
+      "heritage",
+      "nature",
+      "wildlife",
+      "coffee",
+    ] as const;
     const matchCount = countMatchingPlaces([...screenshotInterests], places);
     expect(matchCount).toBeGreaterThanOrEqual(30);
 

@@ -53,7 +53,9 @@ describe("Trip cost calculations", () => {
       visitedPlaces: dummyPlaces,
     });
 
-    expect(cost.total).toBe(cost.stay + cost.food + cost.transport + cost.entry);
+    expect(cost.total).toBe(
+      cost.stay + cost.food + cost.transport + cost.entry
+    );
   });
 
   it("accurately maps traveller counts", () => {
@@ -159,9 +161,15 @@ describe("Trip cost calculations", () => {
     expect(carCost.transport).toBeLessThan(cabCost.transport);
     expect(busCost.transport).toBeLessThan(cabCost.transport);
     // Invariants must hold
-    expect(cabCost.total).toBe(cabCost.stay + cabCost.food + cabCost.transport + cabCost.entry);
-    expect(carCost.total).toBe(carCost.stay + carCost.food + carCost.transport + carCost.entry);
-    expect(busCost.total).toBe(busCost.stay + busCost.food + busCost.transport + busCost.entry);
+    expect(cabCost.total).toBe(
+      cabCost.stay + cabCost.food + cabCost.transport + cabCost.entry
+    );
+    expect(carCost.total).toBe(
+      carCost.stay + carCost.food + carCost.transport + carCost.entry
+    );
+    expect(busCost.total).toBe(
+      busCost.stay + busCost.food + busCost.transport + busCost.entry
+    );
   });
 
   it("accurately applies custom peopleCount when specified", () => {
@@ -176,6 +184,11 @@ describe("Trip cost calculations", () => {
 
     expect(group5Cost.people).toBe(5);
     expect(group5Cost.entry).toBe(150 * 5); // 150/person * 5 people
-    expect(group5Cost.total).toBe(group5Cost.stay + group5Cost.food + group5Cost.transport + group5Cost.entry);
+    expect(group5Cost.total).toBe(
+      group5Cost.stay +
+        group5Cost.food +
+        group5Cost.transport +
+        group5Cost.entry
+    );
   });
 });

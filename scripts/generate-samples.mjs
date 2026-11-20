@@ -37,7 +37,9 @@ async function main() {
   try {
     const { buildSamplePlan, serializeSamplePlan, normalizeEol } =
       await server.ssrLoadModule("/scripts/build-samples.ts");
-    const { SAMPLE_CONFIGS } = await server.ssrLoadModule("/scripts/sample-configs.ts");
+    const { SAMPLE_CONFIGS } = await server.ssrLoadModule(
+      "/scripts/sample-configs.ts"
+    );
 
     await fs.mkdir(SAMPLES_DIR, { recursive: true });
 
@@ -55,7 +57,9 @@ async function main() {
 
       await fs.writeFile(filePath, next, "utf-8");
       changed += 1;
-      console.log(`  ${previous === null ? "created  " : "updated  "}  data/samples/${config.file}`);
+      console.log(
+        `  ${previous === null ? "created  " : "updated  "}  data/samples/${config.file}`
+      );
     }
 
     console.log(

@@ -14,8 +14,8 @@ export default function NotFound() {
         ಈ ಪುಟ ಕಾಣುತ್ತಿಲ್ಲ ಅಥವಾ ಲಿಂಕ್ ಅವಧಿ ಮುಗಿದಿದೆ
       </p>
       <p className="text-xs text-[#586673] mt-3 leading-relaxed">
-        The destination you are looking for does not exist or the shared link is no longer valid.
-        Let&apos;s get you back on the right route.
+        The destination you are looking for does not exist or the shared link is
+        no longer valid. Let&apos;s get you back on the right route.
       </p>
 
       <div className="flex items-center gap-3 mt-8">

@@ -51,7 +51,8 @@ function buildSteps(
   totalPlaces: number,
   regions: string[]
 ): StepItem[] {
-  const regionText = regions.length > 0 ? regions.slice(0, 3).join(", ") : "Karnataka";
+  const regionText =
+    regions.length > 0 ? regions.slice(0, 3).join(", ") : "Karnataka";
 
   return [
     {
@@ -93,8 +94,18 @@ function buildSteps(
 }
 
 const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 export default function ProgressSteps({
@@ -116,13 +127,21 @@ export default function ProgressSteps({
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
   const steps = React.useMemo(
-    () => buildSteps(matchCount ?? placeCount, totalPlaces ?? placeCount, candidateRegions),
+    () =>
+      buildSteps(
+        matchCount ?? placeCount,
+        totalPlaces ?? placeCount,
+        candidateRegions
+      ),
     [matchCount, totalPlaces, placeCount, candidateRegions]
   );
 
   // Show the real shortlist, capped so the row stays on a couple of lines
   const visibleChips = candidateNames.slice(0, 7);
-  const hiddenChipCount = Math.max(0, candidateNames.length - visibleChips.length);
+  const hiddenChipCount = Math.max(
+    0,
+    candidateNames.length - visibleChips.length
+  );
 
   // Advance steps smoothly on a realistic timer (approx 2s per step)
   useEffect(() => {
@@ -154,7 +173,10 @@ export default function ProgressSteps({
     }
   };
 
-  const progressPercent = Math.min(100, Math.round(((currentStepIndex + 1) / steps.length) * 100));
+  const progressPercent = Math.min(
+    100,
+    Math.round(((currentStepIndex + 1) / steps.length) * 100)
+  );
   const secondsLeft = Math.max(2, (steps.length - 1 - currentStepIndex) * 2);
 
   return (
@@ -163,7 +185,9 @@ export default function ProgressSteps({
       <div className="lg:col-span-6 flex flex-col justify-center space-y-6">
         <div>
           <span className="text-xs font-bold tracking-wider uppercase text-[#8E1F2F]">
-            {lang === "kn" ? "ನಿಮ್ಮ ಪ್ರವಾಸ ರೂಪಿಸಲಾಗುತ್ತಿದೆ" : "BUILDING YOUR TRIP"}
+            {lang === "kn"
+              ? "ನಿಮ್ಮ ಪ್ರವಾಸ ರೂಪಿಸಲಾಗುತ್ತಿದೆ"
+              : "BUILDING YOUR TRIP"}
           </span>
           <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-[#14202B] tracking-tight mt-1">
             {lang === "kn"
@@ -171,7 +195,8 @@ export default function ProgressSteps({
               : `Arranging ${days} days across ${placeCount} places`}
           </h1>
           <p className="text-xs text-[#586673] mt-1 font-medium">
-            {interests} · {budget} · {pace} · {MONTH_NAMES[(month - 1 + 12) % 12] || "November"}
+            {interests} · {budget} · {pace} ·{" "}
+            {MONTH_NAMES[(month - 1 + 12) % 12] || "November"}
           </p>
         </div>
 
@@ -258,7 +283,9 @@ export default function ProgressSteps({
             onClick={handleUseReadyMade}
             className="px-4 py-2.5 rounded-xl border border-[#DCE1DD] bg-white text-[#14202B] hover:bg-gray-50 text-xs font-semibold transition-all cursor-pointer shadow-2xs active:scale-95"
           >
-            {lang === "kn" ? "ಸಿದ್ಧಪಡಿಸಿದ ಪ್ರವಾಸ ಬಳಸಿ" : "Use a ready-made plan now"}
+            {lang === "kn"
+              ? "ಸಿದ್ಧಪಡಿಸಿದ ಪ್ರವಾಸ ಬಳಸಿ"
+              : "Use a ready-made plan now"}
           </button>
         </div>
       </div>
@@ -269,7 +296,9 @@ export default function ProgressSteps({
         <div className="relative rounded-2xl overflow-hidden border border-[#DCE1DD] bg-white p-3 space-y-2">
           <div className="flex items-center justify-between">
             <span className="bg-white/95 px-2.5 py-1 rounded-lg text-xs font-bold text-[#8E1F2F] border border-[#DCE1DD] shadow-2xs">
-              {lang === "kn" ? `${placeCount} ಸ್ಥಳಗಳನ್ನು ಜೋಡಿಸಲಾಗುತ್ತಿದೆ` : `Placing ${placeCount} stops`}
+              {lang === "kn"
+                ? `${placeCount} ಸ್ಥಳಗಳನ್ನು ಜೋಡಿಸಲಾಗುತ್ತಿದೆ`
+                : `Placing ${placeCount} stops`}
             </span>
             <span className="text-[11px] text-[#586673] font-medium">
               {lang === "kn" ? "ಶಾರ್ಟ್‌ಲಿಸ್ಟ್ ನಕ್ಷೆ" : "Shortlist map"}
@@ -284,7 +313,9 @@ export default function ProgressSteps({
         <div className="bg-[#FDF7E7] rounded-2xl p-4 border border-[#EADBBD] shadow-2xs flex items-center justify-between gap-3">
           <div>
             <div className="text-[10px] font-bold text-[#8C6D05] uppercase tracking-wider">
-              {lang === "kn" ? "ಕಾಯುತ್ತಿರುವಾಗ: ಪದ ಕಲಿಯಿರಿ" : "WHILE YOU WAIT: LEARN A WORD"}
+              {lang === "kn"
+                ? "ಕಾಯುತ್ತಿರುವಾಗ: ಪದ ಕಲಿಯಿರಿ"
+                : "WHILE YOU WAIT: LEARN A WORD"}
             </div>
             <div className="font-heading font-extrabold text-2xl text-[#14202B] mt-1">
               ನಮಸ್ಕಾರ
@@ -300,7 +331,13 @@ export default function ProgressSteps({
             aria-label="Play audio"
             className="w-10 h-10 rounded-xl bg-[#8E1F2F] text-white flex items-center justify-center hover:bg-[#781926] active:scale-95 transition-all shadow-xs shrink-0 cursor-pointer"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              className="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
               <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
             </svg>

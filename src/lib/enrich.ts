@@ -30,9 +30,12 @@ export function enrichPlan(
   request: PlanRequest,
   source: "ai-groq" | "ai-gemini" | "planner" | "sample" = "planner"
 ): Plan {
-  const people = (request.people_count && request.people_count >= 1 && request.people_count <= 10)
-    ? request.people_count
-    : PEOPLE_COUNT_MAP[request.travellers] || 2;
+  const people =
+    request.people_count &&
+    request.people_count >= 1 &&
+    request.people_count <= 10
+      ? request.people_count
+      : PEOPLE_COUNT_MAP[request.travellers] || 2;
   const allVisitedPlaces: Place[] = [];
   let totalTripKm = 0;
 
@@ -50,7 +53,9 @@ export function enrichPlan(
       const place = placesMap.get(stopRef.place_id);
 
       if (!place) {
-        throw new Error(`Unknown place_id in plan output: "${stopRef.place_id}"`);
+        throw new Error(
+          `Unknown place_id in plan output: "${stopRef.place_id}"`
+        );
       }
 
       allVisitedPlaces.push(place);
@@ -133,7 +138,9 @@ export function enrichPlan(
       });
 
       // Advance clock by stop visit duration rounded to 5 mins
-      currentClock = roundTimeTo5Min(addMinutesToTime(startTime, place.duration_min));
+      currentClock = roundTimeTo5Min(
+        addMinutesToTime(startTime, place.duration_min)
+      );
     }
 
     if (enrichedStops.length > 0) {
@@ -174,16 +181,19 @@ export function enrichPlan(
 
   return {
     title: rawPlan.title || `${request.days} Days Karnataka Itinerary`,
-    summary: rawPlan.summary || `A personalized ${request.pace} journey through Karnataka tailored to your interests.`,
+    summary:
+      rawPlan.summary ||
+      `A personalized ${request.pace} journey through Karnataka tailored to your interests.`,
     days,
     cost,
-    tips: rawPlan.tips && rawPlan.tips.length > 0
-      ? rawPlan.tips
-      : [
-          "Start your days early around 08:30 to beat mid-day heat and large tourist buses.",
-          "Keep small currency denominations ready for parking and traditional market stalls.",
-          "Respect dress guidelines at sacred temple sanctums (shoulders and knees covered).",
-        ],
+    tips:
+      rawPlan.tips && rawPlan.tips.length > 0
+        ? rawPlan.tips
+        : [
+            "Start your days early around 08:30 to beat mid-day heat and large tourist buses.",
+            "Keep small currency denominations ready for parking and traditional market stalls.",
+            "Respect dress guidelines at sacred temple sanctums (shoulders and knees covered).",
+          ],
     source,
     trip: {
       start_city: request.start_city,

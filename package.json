@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
-    "generate:samples": "node scripts/generate-samples.mjs"
+    "generate:samples": "node scripts/generate-samples.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "html-to-image": "1.11.13",
@@ -28,6 +30,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
+    "prettier": "3.9.10",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vite": "^8.3.5",

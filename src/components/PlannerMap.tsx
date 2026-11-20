@@ -34,7 +34,9 @@ export default function PlannerMap({
   const layerGroupRef = useRef<L.LayerGroup | null>(null);
 
   const createPinIcon = (category: string, isMatch: boolean) => {
-    const color = isMatch ? CATEGORY_PIN_COLORS[category] || "#8E1F2F" : "#94A3B8";
+    const color = isMatch
+      ? CATEGORY_PIN_COLORS[category] || "#8E1F2F"
+      : "#94A3B8";
     const size = isMatch ? 22 : 14;
     const border = isMatch ? "2.5px solid #ffffff" : "1.5px solid #ffffff";
     const opacity = isMatch ? "1.0" : "0.35";
@@ -148,7 +150,9 @@ export default function PlannerMap({
     allPlaces.forEach((place) => {
       const isMatch =
         selectedCategories.length === 0 ||
-        place.categories.some((c) => selectedCategories.includes(c as Category));
+        place.categories.some((c) =>
+          selectedCategories.includes(c as Category)
+        );
 
       if (isMatch) {
         matchingPlaces.push(place);
@@ -173,7 +177,6 @@ export default function PlannerMap({
         </div>`,
         { closeButton: true, offset: [0, -10] }
       );
-
     });
 
     // The map lives in a container that is display:none below the lg breakpoint.

@@ -29,7 +29,11 @@ describe("POST /api/translate", () => {
   it("rejects unsupported language pair with 400", async () => {
     const req = new NextRequest("http://localhost:3000/api/translate", {
       method: "POST",
-      body: JSON.stringify({ text: "Hello", sourceLang: "en", targetLang: "xyz" }),
+      body: JSON.stringify({
+        text: "Hello",
+        sourceLang: "en",
+        targetLang: "xyz",
+      }),
     });
     const res = await POST(req);
     expect(res.status).toBe(400);
@@ -40,7 +44,11 @@ describe("POST /api/translate", () => {
   it("returns same text when source equals target language", async () => {
     const req = new NextRequest("http://localhost:3000/api/translate", {
       method: "POST",
-      body: JSON.stringify({ text: "Namaskara", sourceLang: "kn", targetLang: "kn" }),
+      body: JSON.stringify({
+        text: "Namaskara",
+        sourceLang: "kn",
+        targetLang: "kn",
+      }),
     });
     const res = await POST(req);
     expect(res.status).toBe(200);
@@ -52,7 +60,11 @@ describe("POST /api/translate", () => {
   it("translates English to Kannada using the fallback translation pipeline", async () => {
     const req = new NextRequest("http://localhost:3000/api/translate", {
       method: "POST",
-      body: JSON.stringify({ text: "Thank you", sourceLang: "en", targetLang: "kn" }),
+      body: JSON.stringify({
+        text: "Thank you",
+        sourceLang: "en",
+        targetLang: "kn",
+      }),
     });
     const res = await POST(req);
     expect(res.status).toBe(200);
@@ -65,11 +77,17 @@ describe("POST /api/translate", () => {
   it("translates offline travel phrases reliably even if upstream endpoints fail", async () => {
     const originalFetch = globalThis.fetch;
     // Simulate cloud endpoint failure / network offline
-    globalThis.fetch = vi.fn().mockRejectedValue(new Error("Network unreachable"));
+    globalThis.fetch = vi
+      .fn()
+      .mockRejectedValue(new Error("Network unreachable"));
 
     const req = new NextRequest("http://localhost:3000/api/translate", {
       method: "POST",
-      body: JSON.stringify({ text: "Please", sourceLang: "en", targetLang: "kn" }),
+      body: JSON.stringify({
+        text: "Please",
+        sourceLang: "en",
+        targetLang: "kn",
+      }),
     });
     const res = await POST(req);
     expect(res.status).toBe(200);
@@ -85,7 +103,14 @@ describe("POST /api/translate", () => {
     // Mock public Google Translate response for novel arbitrary sentence
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
-      json: async () => [[["ಕರ್ನಾಟಕದ ಹವಾಮಾನ ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ.", "The weather in Karnataka is very pleasant."]]],
+      json: async () => [
+        [
+          [
+            "ಕರ್ನಾಟಕದ ಹವಾಮಾನ ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ.",
+            "The weather in Karnataka is very pleasant.",
+          ],
+        ],
+      ],
     } as unknown as Response);
 
     const req = new NextRequest("http://localhost:3000/api/translate", {
@@ -108,12 +133,18 @@ describe("POST /api/translate", () => {
   it("translates offline travel phrases across all supported Indian languages (hi, te, ta, ml)", async () => {
     const originalFetch = globalThis.fetch;
     // Simulate cloud endpoint failure / network offline
-    globalThis.fetch = vi.fn().mockRejectedValue(new Error("Network unreachable"));
+    globalThis.fetch = vi
+      .fn()
+      .mockRejectedValue(new Error("Network unreachable"));
 
     // 1. Hindi test
     const reqHi = new NextRequest("http://localhost:3000/api/translate", {
       method: "POST",
-      body: JSON.stringify({ text: "Please stop the car here", sourceLang: "en", targetLang: "hi" }),
+      body: JSON.stringify({
+        text: "Please stop the car here",
+        sourceLang: "en",
+        targetLang: "hi",
+      }),
     });
     const resHi = await POST(reqHi);
     expect(resHi.status).toBe(200);
@@ -125,7 +156,11 @@ describe("POST /api/translate", () => {
     // 2. Telugu test
     const reqTe = new NextRequest("http://localhost:3000/api/translate", {
       method: "POST",
-      body: JSON.stringify({ text: "Where is the ticket counter", sourceLang: "en", targetLang: "te" }),
+      body: JSON.stringify({
+        text: "Where is the ticket counter",
+        sourceLang: "en",
+        targetLang: "te",
+      }),
     });
     const resTe = await POST(reqTe);
     expect(resTe.status).toBe(200);
@@ -136,7 +171,11 @@ describe("POST /api/translate", () => {
     // 3. Tamil test
     const reqTa = new NextRequest("http://localhost:3000/api/translate", {
       method: "POST",
-      body: JSON.stringify({ text: "Thank you", sourceLang: "en", targetLang: "ta" }),
+      body: JSON.stringify({
+        text: "Thank you",
+        sourceLang: "en",
+        targetLang: "ta",
+      }),
     });
     const resTa = await POST(reqTa);
     expect(resTa.status).toBe(200);
@@ -147,7 +186,11 @@ describe("POST /api/translate", () => {
     // 4. Malayalam test
     const reqMl = new NextRequest("http://localhost:3000/api/translate", {
       method: "POST",
-      body: JSON.stringify({ text: "Water", sourceLang: "en", targetLang: "ml" }),
+      body: JSON.stringify({
+        text: "Water",
+        sourceLang: "en",
+        targetLang: "ml",
+      }),
     });
     const resMl = await POST(reqMl);
     expect(resMl.status).toBe(200);

@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
-import { DEFAULT_GEMINI_MODEL, DEFAULT_GROQ_MODEL, withModelFallback } from "@/lib/ai";
+import {
+  DEFAULT_GEMINI_MODEL,
+  DEFAULT_GROQ_MODEL,
+  withModelFallback,
+} from "@/lib/ai";
 import { readBodyWithLimit } from "@/lib/request-body";
 import phrasesData from "../../../../data/phrases.json";
 
@@ -29,7 +33,10 @@ const SUPPORTED_LANGUAGES: Record<string, string> = {
 
 /** Lower-cases and drops punctuation, so "Eshtu?" matches "eshtu". */
 function stripPunctuation(value: string): string {
-  return value.toLowerCase().replace(/[.,!?;:]/g, "").trim();
+  return value
+    .toLowerCase()
+    .replace(/[.,!?;:]/g, "")
+    .trim();
 }
 
 interface TranslateRequestBody {
@@ -43,7 +50,10 @@ interface OfflinePhraseEntry {
   translit?: string;
 }
 
-const COMMON_OFFLINE_PHRASES: Record<string, Partial<Record<string, OfflinePhraseEntry>>> = {
+const COMMON_OFFLINE_PHRASES: Record<
+  string,
+  Partial<Record<string, OfflinePhraseEntry>>
+> = {
   "thank you": {
     kn: { text: "ಧನ್ಯವಾದಗಳು", translit: "Dhanyavadagalu" },
     hi: { text: "धन्यवाद", translit: "Dhanyavaad" },
@@ -51,35 +61,35 @@ const COMMON_OFFLINE_PHRASES: Record<string, Partial<Record<string, OfflinePhras
     ta: { text: "நன்றி", translit: "Nandri" },
     ml: { text: "നന്ദി", translit: "Nandi" },
   },
-  "thanks": {
+  thanks: {
     kn: { text: "ಧನ್ಯವಾದ", translit: "Dhanyavada" },
     hi: { text: "धन्यवाद", translit: "Dhanyavaad" },
     te: { text: "ధన్యవాదాలు", translit: "Dhanyavaadaalu" },
     ta: { text: "நன்றி", translit: "Nandri" },
     ml: { text: "നന്ദി", translit: "Nandi" },
   },
-  "hello": {
+  hello: {
     kn: { text: "ನಮಸ್ಕಾರ", translit: "Namaskara" },
     hi: { text: "नमस्ते", translit: "Namaste" },
     te: { text: "నమస్కారం", translit: "Namaskaram" },
     ta: { text: "வணக்கம்", translit: "Vanakkam" },
     ml: { text: "നമസ്കാരം", translit: "Namaskaram" },
   },
-  "hi": {
+  hi: {
     kn: { text: "ನಮಸ್ಕಾರ", translit: "Namaskara" },
     hi: { text: "नमस्ते", translit: "Namaste" },
     te: { text: "నమస్కారం", translit: "Namaskaram" },
     ta: { text: "வணக்கம்", translit: "Vanakkam" },
     ml: { text: "നമസ്കാരം", translit: "Namaskaram" },
   },
-  "greetings": {
+  greetings: {
     kn: { text: "ನಮಸ್ಕಾರಗಳು", translit: "Namaskaragalu" },
     hi: { text: "नमस्कार", translit: "Namaskar" },
     te: { text: "నమస్కారములు", translit: "Namaskaaramulu" },
     ta: { text: "வணக்கங்கள்", translit: "Vanakkangal" },
     ml: { text: "നമസ്കാരം", translit: "Namaskaram" },
   },
-  "please": {
+  please: {
     kn: { text: "ದಯವಿಟ್ಟು", translit: "Dayavittu" },
     hi: { text: "कृपया", translit: "Kripya" },
     te: { text: "దయచేసి", translit: "Dayachesi" },
@@ -93,28 +103,28 @@ const COMMON_OFFLINE_PHRASES: Record<string, Partial<Record<string, OfflinePhras
     ta: { text: "எவ்வளவு?", translit: "Evvalavu?" },
     ml: { text: "എത്രയാണ്?", translit: "Ethrayaanu?" },
   },
-  "water": {
+  water: {
     kn: { text: "ನೀರು", translit: "Neeru" },
     hi: { text: "पानी", translit: "Paani" },
     te: { text: "నీళ్లు", translit: "Neellu" },
     ta: { text: "தண்ணீர்", translit: "Thanneer" },
     ml: { text: "വെള്ളം", translit: "Vellam" },
   },
-  "food": {
+  food: {
     kn: { text: "ಊಟ", translit: "Oota" },
     hi: { text: "खाना", translit: "Khaana" },
     te: { text: "భోజనం", translit: "Bhojanam" },
     ta: { text: "உணவு", translit: "Unavu" },
     ml: { text: "ഭക്ഷണം", translit: "Bhakshanam" },
   },
-  "tea": {
+  tea: {
     kn: { text: "ಚಹಾ", translit: "Chaha" },
     hi: { text: "चाय", translit: "Chai" },
     te: { text: "టీ", translit: "Tea" },
     ta: { text: "தேநீர்", translit: "Theneer" },
     ml: { text: "ചായ", translit: "Chaya" },
   },
-  "coffee": {
+  coffee: {
     kn: { text: "ಕಾಫಿ", translit: "Kaafi" },
     hi: { text: "कॉफ़ी", translit: "Coffee" },
     te: { text: "కాఫీ", translit: "Coffee" },
@@ -132,45 +142,48 @@ const COMMON_OFFLINE_PHRASES: Record<string, Partial<Record<string, OfflinePhras
     kn: { text: "ಬಸ್ ನಿಲ್ದಾಣ ಎಲ್ಲಿದೆ?", translit: "Bus nildana ellide?" },
     hi: { text: "बस स्टैंड कहाँ है?", translit: "Bus stand kahan hai?" },
     te: { text: "బస్ స్టాండ్ ఎక్కడ ఉంది?", translit: "Bus stand ekkada undi?" },
-    ta: { text: "பேருந்து நிலையம் எங்கே?", translit: "Paerundhu nilayam engae?" },
+    ta: {
+      text: "பேருந்து நிலையம் எங்கே?",
+      translit: "Paerundhu nilayam engae?",
+    },
     ml: { text: "ബസ് സ്റ്റാൻഡ് എവിടെയാണ്?", translit: "Bus stand evideyaanu?" },
   },
-  "help": {
+  help: {
     kn: { text: "ಸಹಾಯ ಮಾಡಿ", translit: "Sahaya maadi" },
     hi: { text: "मदद कीजिए", translit: "Madad kijiye" },
     te: { text: "సహాయం చేయండి", translit: "Sahaayam cheyandi" },
     ta: { text: "உதவி செய்யுங்கள்", translit: "Udhavi seiyungal" },
     ml: { text: "സഹായിക്കൂ", translit: "Sahaayikku" },
   },
-  "yes": {
+  yes: {
     kn: { text: "ಹೌದು", translit: "Haudu" },
     hi: { text: "हाँ", translit: "Haan" },
     te: { text: "అవును", translit: "Avunu" },
     ta: { text: "ஆம்", translit: "Aam" },
     ml: { text: "അതെ", translit: "Athe" },
   },
-  "no": {
+  no: {
     kn: { text: "ಇಲ್ಲ", translit: "Illa" },
     hi: { text: "नहीं", translit: "Nahi" },
     te: { text: "కాదు", translit: "Kaadu" },
     ta: { text: "இல்லை", translit: "Illai" },
     ml: { text: "അല്ല", translit: "Alla" },
   },
-  "stop": {
+  stop: {
     kn: { text: "ನಿಲ್ಲಿಸಿ", translit: "Nillisi" },
     hi: { text: "रोकिए", translit: "Rokiye" },
     te: { text: "ఆపండి", translit: "Aapandi" },
     ta: { text: "நிறுத்துங்கள்", translit: "Niruthungal" },
     ml: { text: "നിർത്തൂ", translit: "Nirthu" },
   },
-  "good": {
+  good: {
     kn: { text: "ಚೆನ್ನಾಗಿದೆ", translit: "Chennagide" },
     hi: { text: "अच्छा है", translit: "Achha hai" },
     te: { text: "బాగుంది", translit: "Baagundi" },
     ta: { text: "நன்றாக உள்ளது", translit: "Nandraaga ulladhu" },
     ml: { text: "നന്നായിട്ടുണ്ട്", translit: "Nannaayittundu" },
   },
-  "welcome": {
+  welcome: {
     kn: { text: "ಸುಸ್ವಾಗತ", translit: "Susvaagata" },
     hi: { text: "स्वागत है", translit: "Swagat hai" },
     te: { text: "స్వాగతం", translit: "Swaagatham" },
@@ -178,46 +191,118 @@ const COMMON_OFFLINE_PHRASES: Record<string, Partial<Record<string, OfflinePhras
     ml: { text: "സ്വാഗതം", translit: "Swaagatham" },
   },
   "how much is the auto fare": {
-    kn: { text: "ಆಟೋ ಬಾಡಿಗೆ ಎಷ್ಟು ಆಗುತ್ತದೆ?", translit: "Auto baadige eshtu aaguttade?" },
-    hi: { text: "ऑटो का किराया कितना है?", translit: "Auto ka kiraya kitna hai?" },
-    te: { text: "ఆటో ఛార్జీ ఎంత అవుతుంది?", translit: "Auto charge entha avuthundi?" },
+    kn: {
+      text: "ಆಟೋ ಬಾಡಿಗೆ ಎಷ್ಟು ಆಗುತ್ತದೆ?",
+      translit: "Auto baadige eshtu aaguttade?",
+    },
+    hi: {
+      text: "ऑटो का किराया कितना है?",
+      translit: "Auto ka kiraya kitna hai?",
+    },
+    te: {
+      text: "ఆటో ఛార్జీ ఎంత అవుతుంది?",
+      translit: "Auto charge entha avuthundi?",
+    },
     ta: { text: "ஆட்டோ கட்டணம் எவ்வளவு?", translit: "Auto kattanam evvalavu?" },
     ml: { text: "ഓട്ടോ കൂലി എത്രയാണ്?", translit: "Auto kooli ethrayanu?" },
   },
   "please take me to the railway station": {
-    kn: { text: "ದಯವಿಟ್ಟು ರೈಲ್ವೆ ನಿಲ್ದಾಣಕ್ಕೆ ಕರೆದುಕೊಂಡು ಹೋಗಿ.", translit: "Dayavittu railway nildanakke karedukondu hogi." },
-    hi: { text: "कृपया मुझे रेलवे स्टेशन ले चलिए।", translit: "Kripya mujhe railway station le chaliye." },
-    te: { text: "దయచేసి నన్ను రైల్వే స్టేషన్‌కు తీసుకెళ్లండి.", translit: "Dayachesi nannu railway station-ku theesukellandi." },
-    ta: { text: "தயவுசெய்து என்னை ரயில் நிலையத்திற்கு அழைத்துச் செல்லுங்கள்.", translit: "Thayavuseithu ennai railway nilayathirku azhaithu chellungal." },
-    ml: { text: "ദയവായി എന്നെ റെയിൽവേ സ്റ്റേഷനിലേക്ക് കൊണ്ടുപോകൂ.", translit: "Dayavaayi enne railway station-ilekku kondupookoo." },
+    kn: {
+      text: "ದಯವಿಟ್ಟು ರೈಲ್ವೆ ನಿಲ್ದಾಣಕ್ಕೆ ಕರೆದುಕೊಂಡು ಹೋಗಿ.",
+      translit: "Dayavittu railway nildanakke karedukondu hogi.",
+    },
+    hi: {
+      text: "कृपया मुझे रेलवे स्टेशन ले चलिए।",
+      translit: "Kripya mujhe railway station le chaliye.",
+    },
+    te: {
+      text: "దయచేసి నన్ను రైల్వే స్టేషన్‌కు తీసుకెళ్లండి.",
+      translit: "Dayachesi nannu railway station-ku theesukellandi.",
+    },
+    ta: {
+      text: "தயவுசெய்து என்னை ரயில் நிலையத்திற்கு அழைத்துச் செல்லுங்கள்.",
+      translit: "Thayavuseithu ennai railway nilayathirku azhaithu chellungal.",
+    },
+    ml: {
+      text: "ദയവായി എന്നെ റെയിൽവേ സ്റ്റേഷനിലേക്ക് കൊണ്ടുപോകൂ.",
+      translit: "Dayavaayi enne railway station-ilekku kondupookoo.",
+    },
   },
   "please stop the car here": {
-    kn: { text: "ದಯವಿಟ್ಟು ಕಾರನ್ನು ಇಲ್ಲಿಯೇ ನಿಲ್ಲಿಸಿ.", translit: "Dayavittu car-annu illiye nillisi." },
-    hi: { text: "कृपया गाड़ी यहीं रोकिए।", translit: "Kripya gaadi yahin rokiye." },
-    te: { text: "దయచేసి కారును ఇక్కడే ఆపండి.", translit: "Dayachesi car-nu ikkade aapandi." },
-    ta: { text: "தயவுசெய்து காரை இங்கே நிறுத்துங்கள்.", translit: "Thayavuseithu kaarai ingae niruthungal." },
-    ml: { text: "ദയവായി വണ്ടി ഇവിടെ നിർത്തൂ.", translit: "Dayavaayi vandi ivide nirthoo." },
+    kn: {
+      text: "ದಯವಿಟ್ಟು ಕಾರನ್ನು ಇಲ್ಲಿಯೇ ನಿಲ್ಲಿಸಿ.",
+      translit: "Dayavittu car-annu illiye nillisi.",
+    },
+    hi: {
+      text: "कृपया गाड़ी यहीं रोकिए।",
+      translit: "Kripya gaadi yahin rokiye.",
+    },
+    te: {
+      text: "దయచేసి కారును ఇక్కడే ఆపండి.",
+      translit: "Dayachesi car-nu ikkade aapandi.",
+    },
+    ta: {
+      text: "தயவுசெய்து காரை இங்கே நிறுத்துங்கள்.",
+      translit: "Thayavuseithu kaarai ingae niruthungal.",
+    },
+    ml: {
+      text: "ദയവായി വണ്ടി ഇവിടെ നിർത്തൂ.",
+      translit: "Dayavaayi vandi ivide nirthoo.",
+    },
   },
   "is this food vegetarian": {
     kn: { text: "ಈ ಊಟ ಸಸ್ಯಾಹಾರವೇ?", translit: "Ee oota sasyaahaarave?" },
-    hi: { text: "क्या यह खाना शाकाहारी है?", translit: "Kya yeh khana shakahari hai?" },
-    te: { text: "ఈ భోజనం శాఖాహారమా?", translit: "Ee bhojanam shaakhaahaaramaa?" },
+    hi: {
+      text: "क्या यह खाना शाकाहारी है?",
+      translit: "Kya yeh khana shakahari hai?",
+    },
+    te: {
+      text: "ఈ భోజనం శాఖాహారమా?",
+      translit: "Ee bhojanam shaakhaahaaramaa?",
+    },
     ta: { text: "இந்த உணவு சைவமா?", translit: "Indha unavu saivamaa?" },
-    ml: { text: "ഈ ഭക്ഷണം സസ്യാഹാരമാണോ?", translit: "Ee bhakshanam sasyaahaaramaano?" },
+    ml: {
+      text: "ഈ ഭക്ഷണം സസ്യാഹാരമാണോ?",
+      translit: "Ee bhakshanam sasyaahaaramaano?",
+    },
   },
   "where is the ticket counter": {
     kn: { text: "ಟಿಕೆಟ್ ಕೌಂಟರ್ ಎಲ್ಲಿದೆ?", translit: "Ticket counter ellide?" },
     hi: { text: "टिकट काउंटर कहाँ है?", translit: "Ticket counter kahan hai?" },
-    te: { text: "టికెట్ కౌంటర్ ఎక్కడ ఉంది?", translit: "Ticket counter ekkada undi?" },
-    ta: { text: "டிக்கெட் கவுண்டர் எங்கே உள்ளது?", translit: "Ticket counter engae ulladhu?" },
-    ml: { text: "ടിക്കറ്റ് കൗണ്ടർ എവിടെയാണ്?", translit: "Ticket counter evideyaanu?" },
+    te: {
+      text: "టికెట్ కౌంటర్ ఎక్కడ ఉంది?",
+      translit: "Ticket counter ekkada undi?",
+    },
+    ta: {
+      text: "டிக்கெட் கவுண்டர் எங்கே உள்ளது?",
+      translit: "Ticket counter engae ulladhu?",
+    },
+    ml: {
+      text: "ടിക്കറ്റ് കൗണ്ടർ എവിടെയാണ്?",
+      translit: "Ticket counter evideyaanu?",
+    },
   },
   "can you wait here for 10 minutes": {
-    kn: { text: "ದಯವಿಟ್ಟು ಹತ್ತು ನಿಮಿಷ ಇಲ್ಲಿಯೇ ಕಾಯಬಹುದೇ?", translit: "Dayavittu hattu nimisha illiye kaayabahude?" },
-    hi: { text: "क्या आप यहाँ 10 मिनट रुक सकते हैं?", translit: "Kya aap yahan 10 minute ruk sakte hain?" },
-    te: { text: "మీరు ఇక్కడ 10 నిమిషాలు వేచి ఉండగలరా?", translit: "Meeru ikkada 10 nimishaalu vechi undagalaraa?" },
-    ta: { text: "நீங்கள் இங்கே 10 நிமிடங்கள் காத்திருக்க முடியுமா?", translit: "Neengal ingae 10 nimidangal kaathirukka mudiyumaa?" },
-    ml: { text: "നിങ്ങൾക്ക് ഇവിടെ 10 മിനിറ്റ് കാത്തുനിൽക്കാമോ?", translit: "Ningalkku ivide 10 minute kaathunilkaamo?" },
+    kn: {
+      text: "ದಯವಿಟ್ಟು ಹತ್ತು ನಿಮಿಷ ಇಲ್ಲಿಯೇ ಕಾಯಬಹುದೇ?",
+      translit: "Dayavittu hattu nimisha illiye kaayabahude?",
+    },
+    hi: {
+      text: "क्या आप यहाँ 10 मिनट रुक सकते हैं?",
+      translit: "Kya aap yahan 10 minute ruk sakte hain?",
+    },
+    te: {
+      text: "మీరు ఇక్కడ 10 నిమిషాలు వేచి ఉండగలరా?",
+      translit: "Meeru ikkada 10 nimishaalu vechi undagalaraa?",
+    },
+    ta: {
+      text: "நீங்கள் இங்கே 10 நிமிடங்கள் காத்திருக்க முடியுமா?",
+      translit: "Neengal ingae 10 nimidangal kaathirukka mudiyumaa?",
+    },
+    ml: {
+      text: "നിങ്ങൾക്ക് ഇവിടെ 10 മിനിറ്റ് കാത്തുനിൽക്കാമോ?",
+      translit: "Ningalkku ivide 10 minute kaathunilkaamo?",
+    },
   },
 };
 
@@ -239,14 +324,20 @@ function lookupOfflinePhrase(
     }
 
     if (targetLang === "kn") {
-      const phraseMatch = (phrasesData as Array<{ en: string; kn: string; translit: string }>).find(
-        (p) => {
-          const pNorm = p.en.toLowerCase().replace(/[.,!?;:]/g, "").trim();
-          return pNorm === normalized;
-        }
-      );
+      const phraseMatch = (
+        phrasesData as Array<{ en: string; kn: string; translit: string }>
+      ).find((p) => {
+        const pNorm = p.en
+          .toLowerCase()
+          .replace(/[.,!?;:]/g, "")
+          .trim();
+        return pNorm === normalized;
+      });
       if (phraseMatch) {
-        return { translatedText: phraseMatch.kn, transliteration: phraseMatch.translit };
+        return {
+          translatedText: phraseMatch.kn,
+          transliteration: phraseMatch.translit,
+        };
       }
     }
   }
@@ -258,15 +349,20 @@ function lookupOfflinePhrase(
       if (
         targetObj &&
         (targetObj.text === query.trim() ||
-          (targetObj.translit && stripPunctuation(targetObj.translit) === normalized))
+          (targetObj.translit &&
+            stripPunctuation(targetObj.translit) === normalized))
       ) {
         return { translatedText: enKey };
       }
     }
 
     if (sourceLang === "kn") {
-      const phraseMatchKn = (phrasesData as Array<{ en: string; kn: string; translit: string }>).find(
-        (p) => p.kn.trim() === query.trim() || stripPunctuation(p.translit) === normalized
+      const phraseMatchKn = (
+        phrasesData as Array<{ en: string; kn: string; translit: string }>
+      ).find(
+        (p) =>
+          p.kn.trim() === query.trim() ||
+          stripPunctuation(p.translit) === normalized
       );
       if (phraseMatchKn) {
         return { translatedText: phraseMatchKn.en };
@@ -337,7 +433,9 @@ Requirements:
   });
 
   if (!res.ok) {
-    throw new Error(`Groq translation error (${res.status}): ${(await res.text()).slice(0, 200)}`);
+    throw new Error(
+      `Groq translation error (${res.status}): ${(await res.text()).slice(0, 200)}`
+    );
   }
 
   const json = await res.json();
@@ -345,7 +443,9 @@ Requirements:
   const parsed = JSON.parse(raw);
   return {
     translatedText: String(parsed.translatedText || "").trim(),
-    transliteration: parsed.transliteration ? String(parsed.transliteration).trim() : undefined,
+    transliteration: parsed.transliteration
+      ? String(parsed.transliteration).trim()
+      : undefined,
   };
 }
 
@@ -388,7 +488,9 @@ Output STRICT JSON:
   });
 
   if (!res.ok) {
-    throw new Error(`Gemini translation error (${res.status}): ${(await res.text()).slice(0, 200)}`);
+    throw new Error(
+      `Gemini translation error (${res.status}): ${(await res.text()).slice(0, 200)}`
+    );
   }
 
   const json = await res.json();
@@ -396,7 +498,9 @@ Output STRICT JSON:
   const parsed = JSON.parse(raw);
   return {
     translatedText: String(parsed.translatedText || "").trim(),
-    transliteration: parsed.transliteration ? String(parsed.transliteration).trim() : undefined,
+    transliteration: parsed.transliteration
+      ? String(parsed.transliteration).trim()
+      : undefined,
   };
 }
 
@@ -424,7 +528,12 @@ async function translateWithPublicFallback(
       if (item && typeof item[0] === "string") {
         translatedParts.push(item[0]);
       }
-      if (item && item[0] === null && typeof item[2] === "string" && item[2].trim()) {
+      if (
+        item &&
+        item[0] === null &&
+        typeof item[2] === "string" &&
+        item[2].trim()
+      ) {
         transliteration = item[2].trim();
       }
     }
@@ -444,7 +553,10 @@ export async function POST(req: NextRequest) {
     if (!rateLimit.allowed) {
       return NextResponse.json(
         { error: "Too many translation requests. Please retry shortly." },
-        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterS) } }
+        {
+          status: 429,
+          headers: { "Retry-After": String(rateLimit.retryAfterS) },
+        }
       );
     }
 
@@ -461,18 +573,26 @@ export async function POST(req: NextRequest) {
     try {
       body = JSON.parse(rawBody) as TranslateRequestBody;
     } catch {
-      return NextResponse.json({ error: "Malformed JSON payload." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Malformed JSON payload." },
+        { status: 400 }
+      );
     }
 
     const { text, sourceLang = "en", targetLang = "kn" } = body || {};
 
     if (!text || typeof text !== "string" || text.trim().length === 0) {
-      return NextResponse.json({ error: "Text is required for translation." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Text is required for translation." },
+        { status: 400 }
+      );
     }
 
     if (text.length > MAX_TEXT_LENGTH) {
       return NextResponse.json(
-        { error: `Text exceeds maximum allowed length of ${MAX_TEXT_LENGTH} characters.` },
+        {
+          error: `Text exceeds maximum allowed length of ${MAX_TEXT_LENGTH} characters.`,
+        },
         { status: 400 }
       );
     }
@@ -488,7 +608,10 @@ export async function POST(req: NextRequest) {
     const tLang = targetLang.toLowerCase();
 
     // Own-property check, so keys like "constructor" are not mistaken for languages.
-    if (!Object.hasOwn(SUPPORTED_LANGUAGES, sLang) || !Object.hasOwn(SUPPORTED_LANGUAGES, tLang)) {
+    if (
+      !Object.hasOwn(SUPPORTED_LANGUAGES, sLang) ||
+      !Object.hasOwn(SUPPORTED_LANGUAGES, tLang)
+    ) {
       return NextResponse.json(
         { error: `Unsupported language pair: ${sLang} to ${tLang}` },
         { status: 400 }
@@ -528,8 +651,18 @@ export async function POST(req: NextRequest) {
     if (groqKey && remaining() > 2000) {
       try {
         const groqModel = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
-        const result = await withModelFallback(groqModel, DEFAULT_GROQ_MODEL, (model) =>
-          translateWithGroq(text.trim(), sourceLangName, targetLangName, groqKey, model, providerTimeout())
+        const result = await withModelFallback(
+          groqModel,
+          DEFAULT_GROQ_MODEL,
+          (model) =>
+            translateWithGroq(
+              text.trim(),
+              sourceLangName,
+              targetLangName,
+              groqKey,
+              model,
+              providerTimeout()
+            )
         );
         if (result.translatedText) {
           return NextResponse.json({
@@ -548,8 +681,18 @@ export async function POST(req: NextRequest) {
     if (geminiKey && remaining() > 2000) {
       try {
         const geminiModel = process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
-        const result = await withModelFallback(geminiModel, DEFAULT_GEMINI_MODEL, (model) =>
-          translateWithGemini(text.trim(), sourceLangName, targetLangName, geminiKey, model, providerTimeout())
+        const result = await withModelFallback(
+          geminiModel,
+          DEFAULT_GEMINI_MODEL,
+          (model) =>
+            translateWithGemini(
+              text.trim(),
+              sourceLangName,
+              targetLangName,
+              geminiKey,
+              model,
+              providerTimeout()
+            )
         );
         if (result.translatedText) {
           return NextResponse.json({

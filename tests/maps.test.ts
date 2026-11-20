@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { getGoogleMapsSearchUrl, getGoogleMapsDirectionsUrl } from "../src/lib/maps";
+import {
+  getGoogleMapsSearchUrl,
+  getGoogleMapsDirectionsUrl,
+} from "../src/lib/maps";
 
 describe("Google Maps URL Generator", () => {
   it("generates coordinate-based search URL when valid lat/lng are provided", () => {
@@ -9,7 +12,9 @@ describe("Google Maps URL Generator", () => {
       lat: 12.3052,
       lng: 76.6552,
     });
-    expect(url).toBe("https://www.google.com/maps/search/?api=1&query=12.3052,76.6552");
+    expect(url).toBe(
+      "https://www.google.com/maps/search/?api=1&query=12.3052,76.6552"
+    );
   });
 
   it("generates fallback text query URL when coordinates are missing", () => {
@@ -29,7 +34,9 @@ describe("Google Maps URL Generator", () => {
       lat: 15.335,
       lng: 76.46,
     });
-    expect(url).toBe("https://www.google.com/maps/dir/?api=1&destination=15.335,76.46&travelmode=driving");
+    expect(url).toBe(
+      "https://www.google.com/maps/dir/?api=1&destination=15.335,76.46&travelmode=driving"
+    );
   });
 
   it("generates directions URL with custom origin if provided", () => {

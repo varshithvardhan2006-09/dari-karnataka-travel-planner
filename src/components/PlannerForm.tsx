@@ -78,13 +78,33 @@ const PRESETS = [
 ];
 
 const MONTH_NAMES = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 const MONTH_NAMES_KN = [
-  "ಜನ", "ಫೆಬ್ರ", "ಮಾರ್ಚ್", "ಏಪ್ರಿ", "ಮೇ", "ಜೂನ್",
-  "ಜುಲೈ", "ಆಗ", "ಸೆಪ್ಟೆಂ", "ಅಕ್ಟೋ", "ನವೆಂ", "ಡಿಸೆಂ"
+  "ಜನ",
+  "ಫೆಬ್ರ",
+  "ಮಾರ್ಚ್",
+  "ಏಪ್ರಿ",
+  "ಮೇ",
+  "ಜೂನ್",
+  "ಜುಲೈ",
+  "ಆಗ",
+  "ಸೆಪ್ಟೆಂ",
+  "ಅಕ್ಟೋ",
+  "ನವೆಂ",
+  "ಡಿಸೆಂ",
 ];
 
 const PRESET_LABELS: Record<string, { en: string; kn: string }> = {
@@ -94,23 +114,63 @@ const PRESET_LABELS: Record<string, { en: string; kn: string }> = {
   "Coffee and hills": { en: "Coffee and hills", kn: "ಕಾಫಿ ಮತ್ತು ಗಿರಿಧಾಮಗಳು" },
 };
 
-const TRAVELLER_CONFIG: { id: Travellers; labelEn: string; labelKn: string }[] = [
-  { id: "solo", labelEn: "Solo", labelKn: "ಒಬ್ಬರೇ" },
-  { id: "couple", labelEn: "Couple", labelKn: "ದಂಪತಿ" },
-  { id: "family", labelEn: "Family", labelKn: "ಕುಟುಂಬ" },
-  { id: "friends", labelEn: "Friends", labelKn: "ಸ್ನೇಹಿತರು" },
-];
+const TRAVELLER_CONFIG: { id: Travellers; labelEn: string; labelKn: string }[] =
+  [
+    { id: "solo", labelEn: "Solo", labelKn: "ಒಬ್ಬರೇ" },
+    { id: "couple", labelEn: "Couple", labelKn: "ದಂಪತಿ" },
+    { id: "family", labelEn: "Family", labelKn: "ಕುಟುಂಬ" },
+    { id: "friends", labelEn: "Friends", labelKn: "ಸ್ನೇಹಿತರು" },
+  ];
 
 const BUDGET_TIERS = [
-  { id: "budget" as BudgetFit, sym: "₹", titleEn: "Budget", titleKn: "ಮಿತವ್ಯಯ", subEn: "under 2.5k", subKn: "₹ ೨,೫೦೦ ಕ್ಕಿಂತ ಕಡಿಮೆ" },
-  { id: "mid" as BudgetFit, sym: "₹₹", titleEn: "Mid-range", titleKn: "ಮಧ್ಯಮ", subEn: "2.5k to 5k", subKn: "₹ ೨.೫k ರಿಂದ ೫k" },
-  { id: "premium" as BudgetFit, sym: "₹₹₹", titleEn: "Premium", titleKn: "ಐಷಾರಾಮಿ", subEn: "above 5k", subKn: "₹ ೫,೦೦೦ ಕ್ಕಿಂತ ಹೆಚ್ಚು" },
+  {
+    id: "budget" as BudgetFit,
+    sym: "₹",
+    titleEn: "Budget",
+    titleKn: "ಮಿತವ್ಯಯ",
+    subEn: "under 2.5k",
+    subKn: "₹ ೨,೫೦೦ ಕ್ಕಿಂತ ಕಡಿಮೆ",
+  },
+  {
+    id: "mid" as BudgetFit,
+    sym: "₹₹",
+    titleEn: "Mid-range",
+    titleKn: "ಮಧ್ಯಮ",
+    subEn: "2.5k to 5k",
+    subKn: "₹ ೨.೫k ರಿಂದ ೫k",
+  },
+  {
+    id: "premium" as BudgetFit,
+    sym: "₹₹₹",
+    titleEn: "Premium",
+    titleKn: "ಐಷಾರಾಮಿ",
+    subEn: "above 5k",
+    subKn: "₹ ೫,೦೦೦ ಕ್ಕಿಂತ ಹೆಚ್ಚು",
+  },
 ];
 
 const PACE_TIERS = [
-  { id: "relaxed" as Pace, titleEn: "Relaxed", titleKn: "ನಿರಾಳ", subEn: "2 to 3", subKn: "೨ ರಿಂದ ೩" },
-  { id: "balanced" as Pace, titleEn: "Balanced", titleKn: "ಸಮತೋಲಿತ", subEn: "3 to 4", subKn: "೩ ರಿಂದ ೪" },
-  { id: "packed" as Pace, titleEn: "Packed", titleKn: "ಚುರುಕಾದ", subEn: "5+", subKn: "೫+" },
+  {
+    id: "relaxed" as Pace,
+    titleEn: "Relaxed",
+    titleKn: "ನಿರಾಳ",
+    subEn: "2 to 3",
+    subKn: "೨ ರಿಂದ ೩",
+  },
+  {
+    id: "balanced" as Pace,
+    titleEn: "Balanced",
+    titleKn: "ಸಮತೋಲಿತ",
+    subEn: "3 to 4",
+    subKn: "೩ ರಿಂದ ೪",
+  },
+  {
+    id: "packed" as Pace,
+    titleEn: "Packed",
+    titleKn: "ಚುರುಕಾದ",
+    subEn: "5+",
+    subKn: "೫+",
+  },
 ];
 
 const FOOD_OPTIONS = [
@@ -122,7 +182,11 @@ const FOOD_OPTIONS = [
 const TRANSPORT_OPTIONS = [
   { id: "cab" as const, labelEn: "Cab", labelKn: "ಕ್ಯಾಬ್" },
   { id: "own_car" as const, labelEn: "Own car", labelKn: "ಸ್ವಂತ ಕಾರು" },
-  { id: "bus_train" as const, labelEn: "Bus & train", labelKn: "ಬಸ್ ಮತ್ತು ರೈಲು" },
+  {
+    id: "bus_train" as const,
+    labelEn: "Bus & train",
+    labelKn: "ಬಸ್ ಮತ್ತು ರೈಲು",
+  },
 ];
 
 const BEST_SEASON_MONTHS = [10, 11, 12, 1, 2]; // Oct to Feb in Karnataka
@@ -139,7 +203,9 @@ export default function PlannerForm() {
     if (qInterests) {
       const parsed = qInterests
         .split(",")
-        .filter((c) => CATEGORY_TILES.some((tile) => tile.id === c)) as Category[];
+        .filter((c) =>
+          CATEGORY_TILES.some((tile) => tile.id === c)
+        ) as Category[];
       if (parsed.length > 0) return parsed.slice(0, 4);
     }
     return ["heritage", "food"];
@@ -154,13 +220,17 @@ export default function PlannerForm() {
   const [startCity, setStartCity] = useState<StartCity>(() => {
     if (!searchParams) return "Bengaluru";
     const qCity = searchParams.get("city") || searchParams.get("start_city");
-    return qCity && qCity.trim().length > 0 ? (qCity.trim() as StartCity) : "Bengaluru";
+    return qCity && qCity.trim().length > 0
+      ? (qCity.trim() as StartCity)
+      : "Bengaluru";
   });
 
   const [budget, setBudget] = useState<BudgetFit>(() => {
     if (!searchParams) return "mid";
     const qBudget = searchParams.get("budget") as BudgetFit;
-    return qBudget && BUDGET_TIERS.some((b) => b.id === qBudget) ? qBudget : "mid";
+    return qBudget && BUDGET_TIERS.some((b) => b.id === qBudget)
+      ? qBudget
+      : "mid";
   });
 
   const [pace, setPace] = useState<Pace>("relaxed");
@@ -175,7 +245,9 @@ export default function PlannerForm() {
 
   // Optional filters (safe & backwards compatible)
   const [foodPref, setFoodPref] = useState<"any" | "veg" | "nonveg">("any");
-  const [transportMode, setTransportMode] = useState<"cab" | "own_car" | "bus_train">("cab");
+  const [transportMode, setTransportMode] = useState<
+    "cab" | "own_car" | "bus_train"
+  >("cab");
   const [lowWalking, setLowWalking] = useState<boolean>(false);
   const [showAllMatches, setShowAllMatches] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState(false);
@@ -210,7 +282,7 @@ export default function PlannerForm() {
   };
 
   // Apply preset
-  const applyPreset = (preset: typeof PRESETS[0]) => {
+  const applyPreset = (preset: (typeof PRESETS)[0]) => {
     setDays(preset.days);
     setStartCity(preset.city);
     setInterests(preset.interests);
@@ -288,7 +360,10 @@ export default function PlannerForm() {
     try {
       router.push(targetUrl);
     } catch (err) {
-      console.warn("Client router navigation failed, using direct location:", err);
+      console.warn(
+        "Client router navigation failed, using direct location:",
+        err
+      );
       // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.href = targetUrl;
       return;
@@ -298,7 +373,10 @@ export default function PlannerForm() {
     // /trip within 1.2s (RSC prefetch stall or connection lag), fall back to a
     // direct browser navigation so the user is never stuck on "Generating...".
     const fallbackTimer = setTimeout(() => {
-      if (typeof window !== "undefined" && !window.location.pathname.startsWith("/trip")) {
+      if (
+        typeof window !== "undefined" &&
+        !window.location.pathname.startsWith("/trip")
+      ) {
         // eslint-disable-next-line @next/next/no-location-assign-relative-destination
         window.location.href = targetUrl;
       }
@@ -333,7 +411,9 @@ export default function PlannerForm() {
                 onClick={() => applyPreset(p)}
                 className="px-3 py-1.5 rounded-full text-xs font-medium bg-[#F1F3F0] hover:bg-gray-200 text-[#14202B] transition-colors cursor-pointer"
               >
-                {lang === "kn" ? PRESET_LABELS[p.label]?.kn || p.label : p.label}
+                {lang === "kn"
+                  ? PRESET_LABELS[p.label]?.kn || p.label
+                  : p.label}
               </button>
             ))}
           </div>
@@ -351,8 +431,12 @@ export default function PlannerForm() {
               </span>
               <span className="text-xs text-[#586673]">
                 {interests.length >= 4
-                  ? lang === "kn" ? "ಗರಿಷ್ಠ ೪" : "Max 4"
-                  : lang === "kn" ? "೧ ರಿಂದ ೪ ಆರಿಸಿ" : "Pick 1 to 4"}
+                  ? lang === "kn"
+                    ? "ಗರಿಷ್ಠ ೪"
+                    : "Max 4"
+                  : lang === "kn"
+                    ? "೧ ರಿಂದ ೪ ಆರಿಸಿ"
+                    : "Pick 1 to 4"}
               </span>
             </div>
             <p className="text-xs text-[#586673] mb-3">
@@ -368,7 +452,9 @@ export default function PlannerForm() {
             >
               {CATEGORY_TILES.map((cat) => {
                 const selected = interests.includes(cat.id);
-                const placeCount = allPlaces.filter((p) => p.categories.includes(cat.id)).length;
+                const placeCount = allPlaces.filter((p) =>
+                  p.categories.includes(cat.id)
+                ).length;
 
                 return (
                   <button
@@ -425,7 +511,13 @@ export default function PlannerForm() {
                   {days}
                 </span>
                 <span className="text-xs font-semibold text-[#14202B]">
-                  {days === 1 ? (lang === "kn" ? "ದಿನ" : "day") : (lang === "kn" ? "ದಿನಗಳು" : "days")}
+                  {days === 1
+                    ? lang === "kn"
+                      ? "ದಿನ"
+                      : "day"
+                    : lang === "kn"
+                      ? "ದಿನಗಳು"
+                      : "days"}
                 </span>
               </div>
               <input
@@ -446,10 +538,14 @@ export default function PlannerForm() {
                 id="travellers-group-label"
                 className="block font-heading font-bold text-sm text-[#14202B] mb-1"
               >
-                {lang === "kn" ? "ಯಾರು ಪ್ರಯಾಣಿಸುತ್ತಿದ್ದಾರೆ?" : "Who is travelling?"}
+                {lang === "kn"
+                  ? "ಯಾರು ಪ್ರಯಾಣಿಸುತ್ತಿದ್ದಾರೆ?"
+                  : "Who is travelling?"}
               </span>
               <p className="text-xs text-[#586673] mb-3">
-                {lang === "kn" ? "ಗುಂಪಿಗೆ ಅನುಗುಣವಾಗಿ ವೆಚ್ಚ ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತದೆ" : "Costs are worked out for the group"}
+                {lang === "kn"
+                  ? "ಗುಂಪಿಗೆ ಅನುಗುಣವಾಗಿ ವೆಚ್ಚ ಲೆಕ್ಕಹಾಕಲಾಗುತ್ತದೆ"
+                  : "Costs are worked out for the group"}
               </p>
 
               <div
@@ -483,19 +579,30 @@ export default function PlannerForm() {
                   type="button"
                   disabled={peopleCount <= 1}
                   onClick={() => setPeopleCount((c) => Math.max(1, c - 1))}
-                  aria-label={lang === "kn" ? "ಒಬ್ಬ ವ್ಯಕ್ತಿ ಕಡಿಮೆ" : "One person fewer"}
+                  aria-label={
+                    lang === "kn" ? "ಒಬ್ಬ ವ್ಯಕ್ತಿ ಕಡಿಮೆ" : "One person fewer"
+                  }
                   className="w-8 h-8 rounded-lg bg-[#F1F3F0] border border-[#DCE1DD] font-bold text-sm text-[#14202B] flex items-center justify-center disabled:opacity-40 cursor-pointer"
                 >
                   -
                 </button>
                 <span className="text-sm font-bold text-[#14202B] px-2">
-                  {peopleCount} {peopleCount === 1 ? (lang === "kn" ? "ವ್ಯಕ್ತಿ" : "person") : (lang === "kn" ? "ಜನರು" : "people")}
+                  {peopleCount}{" "}
+                  {peopleCount === 1
+                    ? lang === "kn"
+                      ? "ವ್ಯಕ್ತಿ"
+                      : "person"
+                    : lang === "kn"
+                      ? "ಜನರು"
+                      : "people"}
                 </span>
                 <button
                   type="button"
                   disabled={peopleCount >= 10}
                   onClick={() => setPeopleCount((c) => Math.min(10, c + 1))}
-                  aria-label={lang === "kn" ? "ಒಬ್ಬ ವ್ಯಕ್ತಿ ಹೆಚ್ಚು" : "One person more"}
+                  aria-label={
+                    lang === "kn" ? "ಒಬ್ಬ ವ್ಯಕ್ತಿ ಹೆಚ್ಚು" : "One person more"
+                  }
                   className="w-8 h-8 rounded-lg bg-[#F1F3F0] border border-[#DCE1DD] font-bold text-sm text-[#14202B] flex items-center justify-center disabled:opacity-40 cursor-pointer"
                 >
                   +
@@ -515,7 +622,9 @@ export default function PlannerForm() {
                 {lang === "kn" ? "ಬಜೆಟ್" : "Budget"}
               </span>
               <p className="text-xs text-[#586673] mb-3">
-                {lang === "kn" ? "ಪ್ರತಿ ವ್ಯಕ್ತಿಗೆ ದಿನಕ್ಕೆ, ವಾಸ್ತವ್ಯ ಮತ್ತು ಊಟ ಸೇರಿ" : "Rs per person per day, stay and food included"}
+                {lang === "kn"
+                  ? "ಪ್ರತಿ ವ್ಯಕ್ತಿಗೆ ದಿನಕ್ಕೆ, ವಾಸ್ತವ್ಯ ಮತ್ತು ಊಟ ಸೇರಿ"
+                  : "Rs per person per day, stay and food included"}
               </p>
               <div
                 role="group"
@@ -534,9 +643,15 @@ export default function PlannerForm() {
                         : "bg-white border-[#DCE1DD] text-[#586673] hover:border-gray-400"
                     }`}
                   >
-                    <div className="text-xs text-[#8C6D05] font-bold">{b.sym}</div>
-                    <div className="text-xs font-bold text-[#14202B] mt-0.5">{lang === "kn" ? b.titleKn : b.titleEn}</div>
-                    <div className="text-[10px] text-[#586673]">{lang === "kn" ? b.subKn : b.subEn}</div>
+                    <div className="text-xs text-[#8C6D05] font-bold">
+                      {b.sym}
+                    </div>
+                    <div className="text-xs font-bold text-[#14202B] mt-0.5">
+                      {lang === "kn" ? b.titleKn : b.titleEn}
+                    </div>
+                    <div className="text-[10px] text-[#586673]">
+                      {lang === "kn" ? b.subKn : b.subEn}
+                    </div>
                   </button>
                 ))}
               </div>
@@ -570,8 +685,12 @@ export default function PlannerForm() {
                         : "bg-white border-[#DCE1DD] text-[#586673] hover:border-gray-400"
                     }`}
                   >
-                    <div className="text-xs font-bold text-[#14202B]">{lang === "kn" ? p.titleKn : p.titleEn}</div>
-                    <div className="text-[10px] text-[#586673] mt-0.5">{lang === "kn" ? p.subKn : p.subEn}</div>
+                    <div className="text-xs font-bold text-[#14202B]">
+                      {lang === "kn" ? p.titleKn : p.titleEn}
+                    </div>
+                    <div className="text-[10px] text-[#586673] mt-0.5">
+                      {lang === "kn" ? p.subKn : p.subEn}
+                    </div>
                   </button>
                 ))}
               </div>
@@ -584,10 +703,14 @@ export default function PlannerForm() {
               id="month-group-label"
               className="block font-heading font-bold text-sm text-[#14202B] mb-1"
             >
-              {lang === "kn" ? "ಯಾವ ತಿಂಗಳಲ್ಲಿ ಪ್ರಯಾಣ?" : "When are you travelling?"}
+              {lang === "kn"
+                ? "ಯಾವ ತಿಂಗಳಲ್ಲಿ ಪ್ರಯಾಣ?"
+                : "When are you travelling?"}
             </span>
             <p className="text-xs text-[#586673] mb-3">
-              {lang === "kn" ? "ಹಸಿರು ಚುಕ್ಕೆ ನಿಮ್ಮ ಆಸಕ್ತಿಗಳಿಗೆ ಉತ್ತಮ ತಿಂಗಳುಗಳನ್ನು ಸೂಚಿಸುತ್ತದೆ" : "A green dot marks the best months for your interests"}
+              {lang === "kn"
+                ? "ಹಸಿರು ಚುಕ್ಕೆ ನಿಮ್ಮ ಆಸಕ್ತಿಗಳಿಗೆ ಉತ್ತಮ ತಿಂಗಳುಗಳನ್ನು ಸೂಚಿಸುತ್ತದೆ"
+                : "A green dot marks the best months for your interests"}
             </p>
             <div
               role="group"
@@ -636,7 +759,9 @@ export default function PlannerForm() {
             {/* Food preference */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <span className="text-xs font-medium text-[#14202B]">
-                {lang === "kn" ? "ಆಹಾರ ಆದ್ಯತೆ (ಊಟದ ನಿಲುಗಡೆಗಳು)" : "Food preference (filters meal stops)"}
+                {lang === "kn"
+                  ? "ಆಹಾರ ಆದ್ಯತೆ (ಊಟದ ನಿಲುಗಡೆಗಳು)"
+                  : "Food preference (filters meal stops)"}
               </span>
               <div className="flex items-center gap-1.5">
                 {FOOD_OPTIONS.map((pref) => (
@@ -660,7 +785,9 @@ export default function PlannerForm() {
             {/* Getting around */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <span className="text-xs font-medium text-[#14202B]">
-                {lang === "kn" ? "ಸಾರಿಗೆ ವಿಧಾನ (ಪ್ರಯಾಣ ಸಮಯ ಮತ್ತು ವೆಚ್ಚ)" : "Getting around (changes travel time and cost)"}
+                {lang === "kn"
+                  ? "ಸಾರಿಗೆ ವಿಧಾನ (ಪ್ರಯಾಣ ಸಮಯ ಮತ್ತು ವೆಚ್ಚ)"
+                  : "Getting around (changes travel time and cost)"}
               </span>
               <div className="flex items-center gap-1.5">
                 {TRANSPORT_OPTIONS.map((mode) => (
@@ -688,7 +815,9 @@ export default function PlannerForm() {
                   {lang === "kn" ? "ಕಡಿಮೆ ನಡಿಗೆ" : "Low walking"}
                 </div>
                 <div className="text-[11px] text-[#586673]">
-                  {lang === "kn" ? "ಹಿರಿಯರು ಮತ್ತು ಮಕ್ಕಳಿಗೆ ಸೂಕ್ತ" : "Better for seniors and young children"}
+                  {lang === "kn"
+                    ? "ಹಿರಿಯರು ಮತ್ತು ಮಕ್ಕಳಿಗೆ ಸೂಕ್ತ"
+                    : "Better for seniors and young children"}
                 </div>
               </div>
               <button
@@ -730,7 +859,15 @@ export default function PlannerForm() {
               className="w-full sm:w-auto justify-center px-8 py-3.5 rounded-xl font-bold text-sm bg-[#8E1F2F] hover:bg-[#781926] text-white shadow-sm transition-all active:scale-95 cursor-pointer disabled:opacity-50 flex items-center gap-2"
             >
               <span>✦</span>
-              <span>{submitting ? (lang === "kn" ? "ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ..." : "Generating...") : (lang === "kn" ? "ನನ್ನ ಪ್ರವಾಸ ಯೋಜನೆ ರಚಿಸಿ" : "Generate my itinerary")}</span>
+              <span>
+                {submitting
+                  ? lang === "kn"
+                    ? "ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ..."
+                    : "Generating..."
+                  : lang === "kn"
+                    ? "ನನ್ನ ಪ್ರವಾಸ ಯೋಜನೆ ರಚಿಸಿ"
+                    : "Generate my itinerary"}
+              </span>
             </button>
             <button
               type="button"
@@ -776,40 +913,74 @@ export default function PlannerForm() {
 
           <div className="space-y-2 text-xs divide-y divide-[#F1F3F0]">
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-[#586673]">{lang === "kn" ? "ಪ್ರವಾಸ" : "Trip"}</span>
+              <span className="text-[#586673]">
+                {lang === "kn" ? "ಪ್ರವಾಸ" : "Trip"}
+              </span>
               <span className="font-semibold text-[#14202B]">
-                {lang === "kn" ? `${startCity} ನಿಂದ ${days} ದಿನಗಳು` : `${days} days from ${startCity}`}
+                {lang === "kn"
+                  ? `${startCity} ನಿಂದ ${days} ದಿನಗಳು`
+                  : `${days} days from ${startCity}`}
               </span>
             </div>
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-[#586673]">{lang === "kn" ? "ಪ್ರಯಾಣಿಕರು" : "Travellers"}</span>
+              <span className="text-[#586673]">
+                {lang === "kn" ? "ಪ್ರಯಾಣಿಕರು" : "Travellers"}
+              </span>
               <span className="font-semibold text-[#14202B]">
-                {lang === "kn" ? (TRAVELLER_CONFIG.find(t => t.id === travellers)?.labelKn || travellers) : travellers} ({peopleCount})
+                {lang === "kn"
+                  ? TRAVELLER_CONFIG.find((t) => t.id === travellers)
+                      ?.labelKn || travellers
+                  : travellers}{" "}
+                ({peopleCount})
               </span>
             </div>
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-[#586673]">{lang === "kn" ? "ಆಸಕ್ತಿಗಳು" : "Interests"}</span>
+              <span className="text-[#586673]">
+                {lang === "kn" ? "ಆಸಕ್ತಿಗಳು" : "Interests"}
+              </span>
               <span className="font-semibold text-[#14202B]">
-                {interests.map(i => lang === "kn" ? (CATEGORY_TILES.find(c => c.id === i)?.labelKn || i) : i).join(", ")}
+                {interests
+                  .map((i) =>
+                    lang === "kn"
+                      ? CATEGORY_TILES.find((c) => c.id === i)?.labelKn || i
+                      : i
+                  )
+                  .join(", ")}
               </span>
             </div>
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-[#586673]">{lang === "kn" ? "ವೆಚ್ಚ ಮತ್ತು ವೇಗ" : "Spend"}</span>
+              <span className="text-[#586673]">
+                {lang === "kn" ? "ವೆಚ್ಚ ಮತ್ತು ವೇಗ" : "Spend"}
+              </span>
               <span className="font-semibold text-[#14202B]">
-                {lang === "kn" ? (BUDGET_TIERS.find(b => b.id === budget)?.titleKn || budget) : budget}, {lang === "kn" ? (PACE_TIERS.find(p => p.id === pace)?.titleKn || pace) : pace}
+                {lang === "kn"
+                  ? BUDGET_TIERS.find((b) => b.id === budget)?.titleKn || budget
+                  : budget}
+                ,{" "}
+                {lang === "kn"
+                  ? PACE_TIERS.find((p) => p.id === pace)?.titleKn || pace
+                  : pace}
               </span>
             </div>
             <div className="flex items-center justify-between py-1.5">
-              <span className="text-[#586673]">{lang === "kn" ? "ತಿಂಗಳು" : "Month"}</span>
+              <span className="text-[#586673]">
+                {lang === "kn" ? "ತಿಂಗಳು" : "Month"}
+              </span>
               <span className="font-semibold text-[#14202B]">
-                {lang === "kn" ? MONTH_NAMES_KN[month - 1] : MONTH_NAMES[month - 1]} {BEST_SEASON_MONTHS.includes(month) && (lang === "kn" ? "· ಉತ್ತಮ ಕಾಲ" : "· Best season")}
+                {lang === "kn"
+                  ? MONTH_NAMES_KN[month - 1]
+                  : MONTH_NAMES[month - 1]}{" "}
+                {BEST_SEASON_MONTHS.includes(month) &&
+                  (lang === "kn" ? "· ಉತ್ತಮ ಕಾಲ" : "· Best season")}
               </span>
             </div>
           </div>
 
           <div className="pt-3 border-t border-[#DCE1DD]">
             <div className="text-[11px] text-[#586673]">
-              {lang === "kn" ? `${peopleCount} ಜನರಿಗೆ ಅಂದಾಜು ಒಟ್ಟು` : `Estimated total for ${peopleCount}`}
+              {lang === "kn"
+                ? `${peopleCount} ಜನರಿಗೆ ಅಂದಾಜು ಒಟ್ಟು`
+                : `Estimated total for ${peopleCount}`}
             </div>
             <div className="font-heading font-extrabold text-2xl text-[#14202B]">
               {costRange.text}
@@ -824,13 +995,20 @@ export default function PlannerForm() {
           </h4>
 
           <div className="space-y-2.5">
-            {(showAllMatches ? matchedCandidates : matchedCandidates.slice(0, 5)).map((place) => (
+            {(showAllMatches
+              ? matchedCandidates
+              : matchedCandidates.slice(0, 5)
+            ).map((place) => (
               <div
                 key={place.id}
                 className="flex items-center justify-between p-2 rounded-xl bg-[#F7F9F6] border border-[#E2E7E2] text-xs"
               >
                 <div>
-                  <div className="font-bold text-[#14202B]">{lang === "kn" ? (place.name_kn || place.name_en) : place.name_en}</div>
+                  <div className="font-bold text-[#14202B]">
+                    {lang === "kn"
+                      ? place.name_kn || place.name_en
+                      : place.name_en}
+                  </div>
                   <div className="text-[11px] text-[#586673]">{place.city}</div>
                 </div>
                 <span className="text-[#1E6B52] font-bold">✓</span>
@@ -845,8 +1023,12 @@ export default function PlannerForm() {
               className="text-xs font-semibold text-[#8E1F2F] hover:underline cursor-pointer"
             >
               {showAllMatches
-                ? (lang === "kn" ? "ಕಡಿಮೆ ತೋರಿಸಿ" : "Show fewer")
-                : (lang === "kn" ? `+ ${matchedCandidates.length - 5} ಇತರ ಸ್ಥಳಗಳು` : `+ ${matchedCandidates.length - 5} more places`)}
+                ? lang === "kn"
+                  ? "ಕಡಿಮೆ ತೋರಿಸಿ"
+                  : "Show fewer"
+                : lang === "kn"
+                  ? `+ ${matchedCandidates.length - 5} ಇತರ ಸ್ಥಳಗಳು`
+                  : `+ ${matchedCandidates.length - 5} more places`}
             </button>
           )}
         </div>
@@ -861,7 +1043,9 @@ export default function PlannerForm() {
               : `${totalMatchingPlacesCount} ${totalMatchingPlacesCount === 1 ? "place matches" : "places match"}`}
           </div>
           <div className="text-[11px] text-[#586673]">
-            {lang === "kn" ? `ಸುಮಾರು ${costRange.text}` : `about ${costRange.text}`}
+            {lang === "kn"
+              ? `ಸುಮಾರು ${costRange.text}`
+              : `about ${costRange.text}`}
           </div>
         </div>
         <button
@@ -871,8 +1055,12 @@ export default function PlannerForm() {
           className="px-5 py-2.5 rounded-xl font-bold text-xs bg-[#8E1F2F] text-white shadow-xs active:scale-95 cursor-pointer disabled:opacity-50"
         >
           {submitting
-            ? (lang === "kn" ? "ಸಿದ್ಧವಾಗುತ್ತಿದೆ..." : "Generating...")
-            : (lang === "kn" ? "ರಚಿಸಿ" : "Generate")}
+            ? lang === "kn"
+              ? "ಸಿದ್ಧವಾಗುತ್ತಿದೆ..."
+              : "Generating..."
+            : lang === "kn"
+              ? "ರಚಿಸಿ"
+              : "Generate"}
         </button>
       </div>
     </div>

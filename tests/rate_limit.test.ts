@@ -59,7 +59,9 @@ describe("Shared sliding-window rate limiter", () => {
     });
     expect(getClientIp(realIp)).toBe("198.51.100.4");
 
-    expect(getClientIp(new NextRequest("http://localhost:3000/api/plan"))).toBe("127.0.0.1");
+    expect(getClientIp(new NextRequest("http://localhost:3000/api/plan"))).toBe(
+      "127.0.0.1"
+    );
   });
 });
 
@@ -110,7 +112,11 @@ describe("Route handlers enforce their own rate limits", () => {
             "x-forwarded-for": "77.77.77.77",
           },
           // A known offline phrase keeps every call on the local dictionary path.
-          body: JSON.stringify({ text: "thank you", sourceLang: "en", targetLang: "kn" }),
+          body: JSON.stringify({
+            text: "thank you",
+            sourceLang: "en",
+            targetLang: "kn",
+          }),
         })
       );
 

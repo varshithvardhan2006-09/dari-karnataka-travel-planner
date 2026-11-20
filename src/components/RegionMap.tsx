@@ -56,7 +56,10 @@ interface RegionMapProps {
   onSelectPlace?: (place: Place) => void;
 }
 
-export default function RegionMap({ selectedRegion, onSelectPlace }: RegionMapProps) {
+export default function RegionMap({
+  selectedRegion,
+  onSelectPlace,
+}: RegionMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const layerGroupRef = useRef<L.LayerGroup | null>(null);
@@ -64,9 +67,13 @@ export default function RegionMap({ selectedRegion, onSelectPlace }: RegionMapPr
   const createPinIcon = (category: string, isHighlighted: boolean) => {
     const color = CATEGORY_PIN_COLORS[category] || "#8E1F2F";
     const size = isHighlighted ? 24 : 16;
-    const border = isHighlighted ? "2.5px solid #ffffff" : "1.5px solid #ffffff";
+    const border = isHighlighted
+      ? "2.5px solid #ffffff"
+      : "1.5px solid #ffffff";
     const opacity = isHighlighted ? "1.0" : "0.5";
-    const shadow = isHighlighted ? "0 2px 8px rgba(0,0,0,0.4)" : "0 1px 3px rgba(0,0,0,0.2)";
+    const shadow = isHighlighted
+      ? "0 2px 8px rgba(0,0,0,0.4)"
+      : "0 1px 3px rgba(0,0,0,0.2)";
 
     return L.divIcon({
       className: "region-place-pin",
@@ -170,12 +177,33 @@ export default function RegionMap({ selectedRegion, onSelectPlace }: RegionMapPr
 
     const isPlaceMatching = (p: Place) => {
       if (selectedRegion === "all") return true;
-      if (selectedRegion === "mysuru" && (p.region === "Mysuru" || p.region === "Hassan")) return true;
-      if (selectedRegion === "hampi" && (p.region === "Hampi-Ballari" || p.region === "Badami-Bagalkot")) return true;
-      if (selectedRegion === "coast" && (p.region === "Coast" || p.region === "North Kannada")) return true;
-      if (selectedRegion === "hills" && (p.region === "Coorg" || p.region === "Chikkamagaluru")) return true;
-      if (selectedRegion === "bengaluru" && p.region === "Bengaluru") return true;
-      if (selectedRegion === "north" && (p.region === "Kalyana-Karnataka" || p.region === "Dharwad-Hubballi")) return true;
+      if (
+        selectedRegion === "mysuru" &&
+        (p.region === "Mysuru" || p.region === "Hassan")
+      )
+        return true;
+      if (
+        selectedRegion === "hampi" &&
+        (p.region === "Hampi-Ballari" || p.region === "Badami-Bagalkot")
+      )
+        return true;
+      if (
+        selectedRegion === "coast" &&
+        (p.region === "Coast" || p.region === "North Kannada")
+      )
+        return true;
+      if (
+        selectedRegion === "hills" &&
+        (p.region === "Coorg" || p.region === "Chikkamagaluru")
+      )
+        return true;
+      if (selectedRegion === "bengaluru" && p.region === "Bengaluru")
+        return true;
+      if (
+        selectedRegion === "north" &&
+        (p.region === "Kalyana-Karnataka" || p.region === "Dharwad-Hubballi")
+      )
+        return true;
       return false;
     };
 

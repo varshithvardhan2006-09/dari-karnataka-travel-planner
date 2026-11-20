@@ -24,31 +24,36 @@ const LANGUAGE_CONFIG: Record<
     title: "ಕನ್ನಡಕ್ಕೆ ಭಾಷಾಂತರಿಸಿ (Translate to Kannada)",
     badge: "ಕನ್ನಡ ನುಡಿ (Kannada)",
     listenLabel: "Listen (ಕೇಳಿ)",
-    placeholder: "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
+    placeholder:
+      "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
   },
   hi: {
     title: "हिन्दी में अनुवाद (Translate to Hindi)",
     badge: "हिन्दी (Hindi)",
     listenLabel: "Listen (सुनें)",
-    placeholder: "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
+    placeholder:
+      "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
   },
   te: {
     title: "తెలుగులోకి అనువదించండి (Translate to Telugu)",
     badge: "తెలుగు (Telugu)",
     listenLabel: "Listen (వినండి)",
-    placeholder: "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
+    placeholder:
+      "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
   },
   ta: {
     title: "தமிழில் மொழிபெயர்க்கவும் (Translate to Tamil)",
     badge: "தமிழ் (Tamil)",
     listenLabel: "Listen (கேளுங்கள்)",
-    placeholder: "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
+    placeholder:
+      "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
   },
   ml: {
     title: "മലയാളത്തിലേക്ക് വിവർത്തനം ചെയ്യുക (Translate to Malayalam)",
     badge: "മലയാളം (Malayalam)",
     listenLabel: "Listen (കേൾക്കൂ)",
-    placeholder: "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
+    placeholder:
+      "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
   },
 };
 
@@ -89,7 +94,8 @@ const QUICK_PHRASES: QuickPhraseItem[] = [
     te: "దయచేసి నన్ను రైల్వే స్టేషన్‌కు తీసుకెళ్లండి.",
     te_translit: "Dayachesi nannu railway station-ku theesukellandi.",
     ta: "தயவுசெய்து என்னை ரயில் நிலையத்திற்கு அழைத்துச் செல்லுங்கள்.",
-    ta_translit: "Thayavuseithu ennai railway nilayathirku azhaithu chellungal.",
+    ta_translit:
+      "Thayavuseithu ennai railway nilayathirku azhaithu chellungal.",
     ml: "ദയവായി എന്നെ റെയിൽവേ സ്റ്റേഷനിലേക്ക് കൊണ്ടുപോകൂ.",
     ml_translit: "Dayavaayi enne railway station-ilekku kondupookoo.",
   },
@@ -178,7 +184,9 @@ export default function ShowToLocalModal({
   isOpen,
   onClose,
 }: ShowToLocalModalProps) {
-  const [activeTab, setActiveTab] = useState<"destination" | "translator">("destination");
+  const [activeTab, setActiveTab] = useState<"destination" | "translator">(
+    "destination"
+  );
   const [targetLang, setTargetLang] = useState<string>("kn");
   const [isSlow, setIsSlow] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -213,9 +221,12 @@ export default function ShowToLocalModal({
     onClose();
   }, [onClose]);
 
-  useEffect(() => () => {
-    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    },
+    []
+  );
 
   // Move focus into the dialog when it opens and give it back when it closes.
   useEffect(() => {
@@ -292,7 +303,11 @@ export default function ShowToLocalModal({
   const destinationInfo = getDestinationInfo(targetLang);
   const activeSpokenText = customSpokenText || destinationInfo.text;
 
-  const playAudio = (text: string, translit?: string, langCode: string = "kn") => {
+  const playAudio = (
+    text: string,
+    translit?: string,
+    langCode: string = "kn"
+  ) => {
     if (isPlaying) {
       stopKannadaSpeech();
       setIsPlaying(false);
@@ -319,7 +334,8 @@ export default function ShowToLocalModal({
     playKannadaSpeech(activeSpokenText, {
       isSlow,
       lang: targetLang,
-      translit: activeTab === "translator" ? transliteration : destinationInfo.translit,
+      translit:
+        activeTab === "translator" ? transliteration : destinationInfo.translit,
       onStart: () => setIsPlaying(true),
       onEnd: () => {
         setIsPlaying(false);
@@ -327,7 +343,10 @@ export default function ShowToLocalModal({
     });
   };
 
-  const handleTranslate = async (textToTranslate?: string, langOverride?: string) => {
+  const handleTranslate = async (
+    textToTranslate?: string,
+    langOverride?: string
+  ) => {
     const query = (textToTranslate || inputText).trim();
     if (!query) return;
 
@@ -349,7 +368,9 @@ export default function ShowToLocalModal({
 
       if (!res.ok) {
         const errJson = await res.json().catch(() => ({}));
-        throw new Error(errJson.error || `Translation failed with status ${res.status}`);
+        throw new Error(
+          errJson.error || `Translation failed with status ${res.status}`
+        );
       }
 
       const data = await res.json();
@@ -360,7 +381,8 @@ export default function ShowToLocalModal({
       setCustomSpokenText(data.translatedText);
     } catch (err: unknown) {
       if (requestId !== translateRequestRef.current) return;
-      const msg = err instanceof Error ? err.message : "Translation service unavailable";
+      const msg =
+        err instanceof Error ? err.message : "Translation service unavailable";
       setTranslateError(msg);
     } finally {
       if (requestId === translateRequestRef.current) setIsTranslating(false);
@@ -476,11 +498,21 @@ export default function ShowToLocalModal({
             className="bg-black/40 border border-white/25 text-white rounded-xl px-2 sm:px-2.5 py-1.5 text-xs font-bold cursor-pointer focus:outline-none hover:bg-black/60 transition-colors shadow-2xs"
             aria-label="Select Target Language"
           >
-            <option value="kn" className="bg-[#14202B]">ಕನ್ನಡ (Kannada)</option>
-            <option value="hi" className="bg-[#14202B]">हिन्दी (Hindi)</option>
-            <option value="te" className="bg-[#14202B]">తెలుగు (Telugu)</option>
-            <option value="ta" className="bg-[#14202B]">தமிழ் (Tamil)</option>
-            <option value="ml" className="bg-[#14202B]">മലയാളം (Malayalam)</option>
+            <option value="kn" className="bg-[#14202B]">
+              ಕನ್ನಡ (Kannada)
+            </option>
+            <option value="hi" className="bg-[#14202B]">
+              हिन्दी (Hindi)
+            </option>
+            <option value="te" className="bg-[#14202B]">
+              తెలుగు (Telugu)
+            </option>
+            <option value="ta" className="bg-[#14202B]">
+              தமிழ் (Tamil)
+            </option>
+            <option value="ml" className="bg-[#14202B]">
+              മലയാളം (Malayalam)
+            </option>
           </select>
 
           <button
@@ -589,7 +621,10 @@ export default function ShowToLocalModal({
             {/* Input Form */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="show-to-local-input" className="text-xs font-bold text-white/90">
+                <label
+                  htmlFor="show-to-local-input"
+                  className="text-xs font-bold text-white/90"
+                >
                   Your sentence (English):
                 </label>
                 <span className="text-xs text-[#F2B705] font-bold">
@@ -632,7 +667,9 @@ export default function ShowToLocalModal({
                 className="w-full py-2.5 px-4 rounded-xl bg-[#F2B705] hover:bg-[#e0a800] text-[#14202B] font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 <span>✦</span>
-                <span>{isTranslating ? "Translating..." : "Translate with AI"}</span>
+                <span>
+                  {isTranslating ? "Translating..." : "Translate with AI"}
+                </span>
               </button>
 
               {translateError && (
@@ -685,7 +722,11 @@ export default function ShowToLocalModal({
             type="button"
             onClick={() => {
               if (activeTab === "destination") {
-                playAudio(destinationInfo.text, destinationInfo.translit, targetLang);
+                playAudio(
+                  destinationInfo.text,
+                  destinationInfo.translit,
+                  targetLang
+                );
               } else if (translatedText) {
                 playAudio(translatedText, transliteration, targetLang);
               }
@@ -699,7 +740,9 @@ export default function ShowToLocalModal({
           >
             <span>{isPlaying ? "⏹️" : "🔊"}</span>
             <span className="truncate">
-              {isPlaying ? "Stop" : (LANGUAGE_CONFIG[targetLang]?.listenLabel || "Listen")}
+              {isPlaying
+                ? "Stop"
+                : LANGUAGE_CONFIG[targetLang]?.listenLabel || "Listen"}
             </span>
           </button>
 

@@ -20,7 +20,9 @@ describe("i18n dictionary structure", () => {
       for (const [key, value] of Object.entries(obj)) {
         const fullPath = prefix ? `${prefix}.${key}` : key;
         if (value && typeof value === "object" && !Array.isArray(value)) {
-          paths = paths.concat(getLeafPaths(value as Record<string, unknown>, fullPath));
+          paths = paths.concat(
+            getLeafPaths(value as Record<string, unknown>, fullPath)
+          );
         } else {
           paths.push(fullPath);
         }
@@ -29,7 +31,9 @@ describe("i18n dictionary structure", () => {
     }
 
     const enLeaves = getLeafPaths(en as unknown as Record<string, unknown>);
-    const knLeaves = new Set(getLeafPaths(kn as unknown as Record<string, unknown>));
+    const knLeaves = new Set(
+      getLeafPaths(kn as unknown as Record<string, unknown>)
+    );
 
     const missingInKn = enLeaves.filter((path) => !knLeaves.has(path));
     expect(missingInKn).toEqual([]);

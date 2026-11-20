@@ -37,7 +37,8 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
-    const simulateHeader = req.headers.get("x-simulate") || searchParams.get("simulate");
+    const simulateHeader =
+      req.headers.get("x-simulate") || searchParams.get("simulate");
 
     // Simulation hooks for automated test verification. Never enabled in production.
     const isSimulateAllowed = process.env.NODE_ENV !== "production";
@@ -49,9 +50,15 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      if (simulateHeader === "few_matches" || simulateHeader === "zero_candidates") {
+      if (
+        simulateHeader === "few_matches" ||
+        simulateHeader === "zero_candidates"
+      ) {
         return NextResponse.json(
-          { error: "few_matches", match_count: simulateHeader === "zero_candidates" ? 0 : 3 },
+          {
+            error: "few_matches",
+            match_count: simulateHeader === "zero_candidates" ? 0 : 3,
+          },
           { status: 422 }
         );
       }
@@ -71,7 +78,10 @@ export async function POST(req: NextRequest) {
     if (!rateLimit.allowed) {
       return NextResponse.json(
         { error: "busy", retry_after_s: rateLimit.retryAfterS },
-        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterS) } }
+        {
+          status: 429,
+          headers: { "Retry-After": String(rateLimit.retryAfterS) },
+        }
       );
     }
 
@@ -100,7 +110,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           error: "invalid_input",
-          details: parseResult.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`),
+          details: parseResult.error.issues.map(
+            (e) => `${e.path.join(".")}: ${e.message}`
+          ),
         },
         { status: 400 }
       );
@@ -126,12 +138,18 @@ export async function POST(req: NextRequest) {
       const plan = await generateItinerary(planRequest);
       return NextResponse.json({ plan }, { status: 200 });
     } catch (pipelineErr) {
-      console.warn("Pipeline warning, executing fallback planner:", pipelineErr);
+      console.warn(
+        "Pipeline warning, executing fallback planner:",
+        pipelineErr
+      );
       try {
         const fallbackPlan = buildDeterministicPlan(planRequest);
         return NextResponse.json({ plan: fallbackPlan }, { status: 200 });
       } catch (fallbackErr) {
-        console.warn("Deterministic planner exception, serving curated customized sample:", fallbackErr);
+        console.warn(
+          "Deterministic planner exception, serving curated customized sample:",
+          fallbackErr
+        );
         const { plan: samplePlan } = getCustomizedSamplePlan(planRequest);
         return NextResponse.json({ plan: samplePlan }, { status: 200 });
       }
@@ -141,7 +159,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error: "server_error",
-        message: "An unexpected server error occurred while processing the itinerary request. Please retry.",
+        message:
+          "An unexpected server error occurred while processing the itinerary request. Please retry.",
       },
       { status: 500 }
     );

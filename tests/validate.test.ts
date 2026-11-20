@@ -1,7 +1,13 @@
 import { describe, it, expect } from "vitest";
 import placesData from "../data/places.json";
 import phrasesData from "../data/phrases.json";
-import { PlaceSchema, PhraseSchema, Place, Phrase, PlanRequestSchema } from "../src/lib/schema";
+import {
+  PlaceSchema,
+  PhraseSchema,
+  Place,
+  Phrase,
+  PlanRequestSchema,
+} from "../src/lib/schema";
 
 describe("Dataset validation with Zod", () => {
   const places = placesData as Place[];
@@ -15,7 +21,11 @@ describe("Dataset validation with Zod", () => {
     places.forEach((place) => {
       const result = PlaceSchema.safeParse(place);
       if (!result.success) {
-        console.error("Validation error for place:", place.id, result.error.format());
+        console.error(
+          "Validation error for place:",
+          place.id,
+          result.error.format()
+        );
       }
       expect(result.success).toBe(true);
     });

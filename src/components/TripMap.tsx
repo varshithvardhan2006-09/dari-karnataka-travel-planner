@@ -36,7 +36,11 @@ export default function TripMap({
   const lastViewKeyRef = useRef("");
 
   // Create custom HTML divIcon for a stop with pin numbering
-  const createDayPinIcon = (pinNumber: number, dayNum: number, isSelected: boolean) => {
+  const createDayPinIcon = (
+    pinNumber: number,
+    dayNum: number,
+    isSelected: boolean
+  ) => {
     const color = DAY_PIN_COLORS[dayNum] || "#8E1F2F";
     const size = isSelected ? 34 : 28;
     const borderWidth = isSelected ? 3 : 2;
@@ -74,9 +78,13 @@ export default function TripMap({
       } else {
         // Scroll to whichever copy of the stop card (desktop or mobile) is visible.
         const cards = Array.from(
-          document.querySelectorAll<HTMLElement>(`[data-stop-card="${CSS.escape(placeId)}"]`)
+          document.querySelectorAll<HTMLElement>(
+            `[data-stop-card="${CSS.escape(placeId)}"]`
+          )
         );
-        (cards.find((node) => node.offsetParent !== null) || cards[0])?.scrollIntoView({
+        (
+          cards.find((node) => node.offsetParent !== null) || cards[0]
+        )?.scrollIntoView({
           behavior: "smooth",
           block: "center",
         });
@@ -199,11 +207,15 @@ export default function TripMap({
     markersRef.current.clear();
 
     // Determine which days to display
-    const visibleDays = wholeTrip ? days : days.filter((d) => d.day === selectedDay);
+    const visibleDays = wholeTrip
+      ? days
+      : days.filter((d) => d.day === selectedDay);
 
     // 2a. Draw polylines with white casing underneath for high contrast
     visibleDays.forEach((dayPlan) => {
-      const points = dayPlan.stops.map((s) => [s.place.lat, s.place.lng] as [number, number]);
+      const points = dayPlan.stops.map(
+        (s) => [s.place.lat, s.place.lng] as [number, number]
+      );
       if (points.length < 2) return;
 
       const color = DAY_PIN_COLORS[dayPlan.day] || "#8E1F2F";
@@ -234,7 +246,8 @@ export default function TripMap({
           wholeTrip
         );
         const isSelected = selectedPlaceId === stop.place_id;
-        const placeLabel = lang === "kn" ? stop.place.name_kn : stop.place.name_en;
+        const placeLabel =
+          lang === "kn" ? stop.place.name_kn : stop.place.name_en;
 
         const marker = L.marker([stop.place.lat, stop.place.lng], {
           icon: createDayPinIcon(pinNumber, dayPlan.day, isSelected),
@@ -289,7 +302,8 @@ export default function TripMap({
           });
         }
       } else {
-        const currentDayPlan = days.find((d) => d.day === selectedDay) || days[0];
+        const currentDayPlan =
+          days.find((d) => d.day === selectedDay) || days[0];
         if (currentDayPlan && currentDayPlan.stops.length > 0) {
           const latLngs = currentDayPlan.stops.map(
             (s) => [s.place.lat, s.place.lng] as [number, number]
