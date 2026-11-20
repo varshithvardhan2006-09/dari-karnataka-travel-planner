@@ -23,13 +23,11 @@ const CATEGORY_PIN_COLORS: Record<string, string> = {
 interface PlannerMapProps {
   selectedCategories?: Category[];
   height?: string;
-  onSelectPlace?: (place: Place) => void;
 }
 
 export default function PlannerMap({
   selectedCategories = [],
   height = "h-[320px]",
-  onSelectPlace,
 }: PlannerMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -176,9 +174,6 @@ export default function PlannerMap({
         { closeButton: true, offset: [0, -10] }
       );
 
-      marker.on("click", () => {
-        onSelectPlace?.(place);
-      });
     });
 
     // The map lives in a container that is display:none below the lg breakpoint.
@@ -210,7 +205,7 @@ export default function PlannerMap({
         { padding: [30, 30], duration: 0.8 }
       );
     }
-  }, [selectedCategories, onSelectPlace]);
+  }, [selectedCategories]);
 
   return (
     <div

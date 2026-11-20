@@ -15,7 +15,7 @@ export default function PhraseCard({
   noMargin = false,
   className = "",
 }: PhraseCardProps) {
-  const { hasVoice, speak } = useKannadaSpeech();
+  const { speak } = useKannadaSpeech();
 
   if (!phrases || phrases.length === 0) return null;
 
@@ -50,9 +50,8 @@ export default function PhraseCard({
               </div>
             </div>
 
-            {/* Audio Speaker Button (conditionally rendered when voice is supported) */}
-            {hasVoice && (
-              <button
+            {/* Audio Speaker Button */}
+            <button
                 type="button"
                 onClick={() => speak(phrase.kn, phrase.translit)}
                 aria-label={`Listen to Kannada phrase: ${phrase.translit}`}
@@ -66,7 +65,6 @@ export default function PhraseCard({
                   <path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-2.5 9.77H8v-2h3.5l4.5-4.5v11l-4.5-4.5zM16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
                 </svg>
               </button>
-            )}
           </div>
         ))}
       </div>

@@ -72,15 +72,9 @@ export default function CreditsPage() {
                 : "Places in Dari currently use custom inline SVG scene illustrations (Palace, Hampi, Coast) with zero external copyright dependencies."}
             </p>
             <p className="mt-2 text-xs text-[#8A99A8]">
-              {lang === "kn" ? (
-                <>
-                  <code className="font-mono bg-gray-100 px-1 py-0.5 rounded">scripts/fetch-images.mjs</code> ಮೂಲಕ ಸೇರಿಸಲಾದ ಯಾವುದೇ ವಿಕಿಮೀಡಿಯಾ ಫೋಟೋಗಳು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಇಲ್ಲಿ ಕಾಣಿಸಿಕೊಳ್ಳುತ್ತವೆ.
-                </>
-              ) : (
-                <>
-                  Any Wikimedia photos added via <code className="font-mono bg-gray-100 px-1 py-0.5 rounded">scripts/fetch-images.mjs</code> will be automatically attributed here.
-                </>
-              )}
+              {lang === "kn"
+                ? "ಡೇಟಾಸೆಟ್‌ಗೆ ಸೇರಿಸುವ ಯಾವುದೇ ಫೋಟೋಗಳ ಕೃಪೆ ಇಲ್ಲಿ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಕಾಣಿಸಿಕೊಳ್ಳುತ್ತದೆ."
+                : "Any photos added to the dataset will be credited here automatically."}
             </p>
           </div>
         ) : (

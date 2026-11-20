@@ -154,10 +154,6 @@ export default function ProgressSteps({
     }
   };
 
-  const playKannadaWord = (text: string) => {
-    playKannadaSpeech(text);
-  };
-
   const progressPercent = Math.min(100, Math.round(((currentStepIndex + 1) / steps.length) * 100));
   const secondsLeft = Math.max(2, (steps.length - 1 - currentStepIndex) * 2);
 
@@ -299,7 +295,7 @@ export default function ProgressSteps({
           </div>
           <button
             type="button"
-            onClick={() => playKannadaWord("ನಮಸ್ಕಾರ")}
+            onClick={() => playKannadaSpeech("ನಮಸ್ಕಾರ")}
             title="Play audio"
             aria-label="Play audio"
             className="w-10 h-10 rounded-xl bg-[#8E1F2F] text-white flex items-center justify-center hover:bg-[#781926] active:scale-95 transition-all shadow-xs shrink-0 cursor-pointer"

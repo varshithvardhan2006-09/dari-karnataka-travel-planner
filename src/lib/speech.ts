@@ -226,7 +226,6 @@ export function useKannadaSpeech() {
   );
 
   return {
-    hasVoice: true, // Server audio with a browser-voice fallback, so playback is always attempted
     isSpeaking,
     hasPlayed,
     speak,

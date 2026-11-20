@@ -8,8 +8,8 @@ describe("i18n dictionary structure", () => {
   });
 
   it("contains required landing keys", () => {
-    expect(en.landing.title).toBeDefined();
-    expect(kn.landing.title).toBeDefined();
+    expect(en.landing.subtitle).toBeDefined();
+    expect(kn.landing.subtitle).toBeDefined();
     expect(en.landing.cta_plan).toBeDefined();
     expect(kn.landing.cta_plan).toBeDefined();
   });

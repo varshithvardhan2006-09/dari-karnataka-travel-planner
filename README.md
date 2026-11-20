@@ -304,7 +304,7 @@ Each item below fixes a limit of the current version.
 |---|---|---|
 | **Data** | Check the remaining 22 places against their sources and record page-level source links | 17 of 39 places are marked checked; sources are recorded per website |
 | | Grow the dataset beyond 39 places, starting with Udupi–Karwar coast, Malnad and Kalyana-Karnataka | 39 places, so some regions have only a few options |
-| | Add licensed photos through `scripts/fetch-images.mjs`, credited on the Credits page | Places use original SVG illustrations only |
+| | Add licensed photos to the dataset, credited automatically on the Credits page | Places use original SVG illustrations only |
 | **Routing** | Real road distances and times from a routing service such as OSRM | Straight-line distance × 1.3 at a flat 40 km/h |
 | | Live KSRTC bus and Indian Railways timings for inter-city legs | Bus and train cost is estimated per km; no timetables |
 | | Opening days and seasonal closures (for example, monsoon trek bans) checked during planning | Only best months are considered |

@@ -14,8 +14,6 @@ interface ShowToLocalModalProps {
 const LANGUAGE_CONFIG: Record<
   string,
   {
-    name: string;
-    nativeName: string;
     title: string;
     badge: string;
     listenLabel: string;
@@ -23,40 +21,30 @@ const LANGUAGE_CONFIG: Record<
   }
 > = {
   kn: {
-    name: "Kannada",
-    nativeName: "ಕನ್ನಡ",
     title: "ಕನ್ನಡಕ್ಕೆ ಭಾಷಾಂತರಿಸಿ (Translate to Kannada)",
     badge: "ಕನ್ನಡ ನುಡಿ (Kannada)",
     listenLabel: "Listen (ಕೇಳಿ)",
     placeholder: "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
   },
   hi: {
-    name: "Hindi",
-    nativeName: "हिन्दी",
     title: "हिन्दी में अनुवाद (Translate to Hindi)",
     badge: "हिन्दी (Hindi)",
     listenLabel: "Listen (सुनें)",
     placeholder: "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
   },
   te: {
-    name: "Telugu",
-    nativeName: "తెలుగు",
     title: "తెలుగులోకి అనువదించండి (Translate to Telugu)",
     badge: "తెలుగు (Telugu)",
     listenLabel: "Listen (వినండి)",
     placeholder: "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
   },
   ta: {
-    name: "Tamil",
-    nativeName: "தமிழ்",
     title: "தமிழில் மொழிபெயர்க்கவும் (Translate to Tamil)",
     badge: "தமிழ் (Tamil)",
     listenLabel: "Listen (கேளுங்கள்)",
     placeholder: "e.g. Please tell me how to reach Mysuru Palace from the bus stand...",
   },
   ml: {
-    name: "Malayalam",
-    nativeName: "മലയാളം",
     title: "മലയാളത്തിലേക്ക് വിവർത്തനം ചെയ്യുക (Translate to Malayalam)",
     badge: "മലയാളം (Malayalam)",
     listenLabel: "Listen (കേൾക്കൂ)",

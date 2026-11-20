@@ -20,7 +20,7 @@ export interface SampleConfig {
 /**
  * Canonical definitions of the four curated sample itineraries.
  *
- * Shared by `scripts/generate-samples.ts`, which writes the JSON, and by
+ * Shared by `scripts/generate-samples.mjs`, which writes the JSON, and by
  * `tests/samples.test.ts`, which checks the committed JSON still matches.
  * Changing a request here changes the expected output, so regenerate with
  * `npm run generate:samples` afterwards.
