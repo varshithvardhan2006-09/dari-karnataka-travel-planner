@@ -153,9 +153,7 @@ export default function LandingPage() {
           <div className="flex flex-wrap items-center gap-6 text-xs sm:text-sm text-[#586673] font-medium">
             <div className="flex items-center gap-2">
               <span className="text-[#1E6B52] font-bold">✓</span>
-              <span>
-                {lang === "kn" ? "ಸೈನ್-ಅಪ್ ಅಗತ್ಯವಿಲ್ಲ" : "No sign-up"}
-              </span>
+              <span>{lang === "kn" ? "ಸೈನ್-ಅಪ್ ಅಗತ್ಯವಿಲ್ಲ" : "No sign-up"}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[#1E6B52] font-bold">✓</span>
@@ -163,9 +161,7 @@ export default function LandingPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[#1E6B52] font-bold">✓</span>
-              <span>
-                {lang === "kn" ? "ಕನ್ನಡದಲ್ಲೇ ಲಭ್ಯ" : "Works in Kannada"}
-              </span>
+              <span>{lang === "kn" ? "ಕನ್ನಡದಲ್ಲೇ ಲಭ್ಯ" : "Works in Kannada"}</span>
             </div>
           </div>
         </div>
@@ -325,15 +321,9 @@ export default function LandingPage() {
               onChange={(e) => setQsMonth(Number(e.target.value))}
               className="mt-1 text-sm font-semibold text-[#14202B] bg-transparent focus:outline-none cursor-pointer"
             >
-              <option value={10}>
-                {lang === "kn" ? "ಅಕ್ಟೋಬರ್" : "October"}
-              </option>
-              <option value={11}>
-                {lang === "kn" ? "ನವೆಂಬರ್" : "November"}
-              </option>
-              <option value={12}>
-                {lang === "kn" ? "ಡಿಸೆಂಬರ್" : "December"}
-              </option>
+              <option value={10}>{lang === "kn" ? "ಅಕ್ಟೋಬರ್" : "October"}</option>
+              <option value={11}>{lang === "kn" ? "ನವೆಂಬರ್" : "November"}</option>
+              <option value={12}>{lang === "kn" ? "ಡಿಸೆಂಬರ್" : "December"}</option>
               <option value={1}>{lang === "kn" ? "ಜನವರಿ" : "January"}</option>
             </select>
           </div>
@@ -744,9 +734,7 @@ export default function LandingPage() {
         {/* Right: Kannada Phrase of the Day */}
         <div className="lg:col-span-5 bg-[#FDF7E7] rounded-2xl p-6 border border-[#EADBBD] shadow-xs space-y-4">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-[#F5E5C0] text-[#8C6D05]">
-            {lang === "kn"
-              ? "ಇಂದಿನ ಕನ್ನಡ ನುಡಿಗಟ್ಟು"
-              : "KANNADA PHRASE OF THE DAY"}
+            {lang === "kn" ? "ಇಂದಿನ ಕನ್ನಡ ನುಡಿಗಟ್ಟು" : "KANNADA PHRASE OF THE DAY"}
           </div>
 
           <div className="pt-2">

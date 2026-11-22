@@ -427,8 +427,8 @@ export function PrintItinerary({
             • <strong>ಇದು ಎಲ್ಲಿ ಇದೆ? (Idu elli ide?)</strong> — Where is this?
           </div>
           <div>
-            • <strong>ದಯವಿಟ್ಟು ಸಹಾಯ ಮಾಡಿ (Dayavittu sahaya maadi)</strong> —
-            Please help
+            • <strong>ದಯವಿಟ್ಟು ಸಹಾಯ ಮಾಡಿ (Dayavittu sahaya maadi)</strong> — Please
+            help
           </div>
           <div>
             • <strong>ಊಟ ಚೆನ್ನಾಗಿದೆ (Oota chennagide)</strong> — Food is good

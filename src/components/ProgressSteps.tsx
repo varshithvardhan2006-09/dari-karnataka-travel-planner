@@ -185,9 +185,7 @@ export default function ProgressSteps({
       <div className="lg:col-span-6 flex flex-col justify-center space-y-6">
         <div>
           <span className="text-xs font-bold tracking-wider uppercase text-[#8E1F2F]">
-            {lang === "kn"
-              ? "ನಿಮ್ಮ ಪ್ರವಾಸ ರೂಪಿಸಲಾಗುತ್ತಿದೆ"
-              : "BUILDING YOUR TRIP"}
+            {lang === "kn" ? "ನಿಮ್ಮ ಪ್ರವಾಸ ರೂಪಿಸಲಾಗುತ್ತಿದೆ" : "BUILDING YOUR TRIP"}
           </span>
           <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-[#14202B] tracking-tight mt-1">
             {lang === "kn"
@@ -283,9 +281,7 @@ export default function ProgressSteps({
             onClick={handleUseReadyMade}
             className="px-4 py-2.5 rounded-xl border border-[#DCE1DD] bg-white text-[#14202B] hover:bg-gray-50 text-xs font-semibold transition-all cursor-pointer shadow-2xs active:scale-95"
           >
-            {lang === "kn"
-              ? "ಸಿದ್ಧಪಡಿಸಿದ ಪ್ರವಾಸ ಬಳಸಿ"
-              : "Use a ready-made plan now"}
+            {lang === "kn" ? "ಸಿದ್ಧಪಡಿಸಿದ ಪ್ರವಾಸ ಬಳಸಿ" : "Use a ready-made plan now"}
           </button>
         </div>
       </div>

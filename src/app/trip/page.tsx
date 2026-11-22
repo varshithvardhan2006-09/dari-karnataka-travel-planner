@@ -1073,9 +1073,7 @@ function TripViewContent() {
     return (
       <div className="max-w-xl mx-auto px-4 py-16 text-center">
         <h2 className="text-xl font-bold text-[#14202B]">
-          {lang === "kn"
-            ? "ಪ್ರವಾಸವನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ"
-            : "Could not load trip"}
+          {lang === "kn" ? "ಪ್ರವಾಸವನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ" : "Could not load trip"}
         </h2>
         <p className="text-sm text-[#586673] mt-2 mb-6">
           {lang === "kn"
@@ -1455,8 +1453,7 @@ function TripViewContent() {
                   <div
                     className={`text-[10px] sm:text-[11px] mt-0.5 truncate ${isSelected ? "text-white/80" : "text-[#586673]"}`}
                   >
-                    {dayCity} · {stopCount}{" "}
-                    {lang === "kn" ? "ನಿಲುಗಡೆ" : "stops"}
+                    {dayCity} · {stopCount} {lang === "kn" ? "ನಿಲುಗಡೆ" : "stops"}
                     {dayKm > 0 ? ` · ${dayKm} km` : ""}
                   </div>
                 </button>
